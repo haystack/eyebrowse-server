@@ -1,4 +1,0 @@
-eyebrowse-server
-================
-
-Eyebrowser Server

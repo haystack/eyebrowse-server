@@ -1,8 +1,0 @@
-.DS_Store
-.dropbox
-.env
-venv
-*.log
-*.pot
-*.pyc
-local_settings.py
