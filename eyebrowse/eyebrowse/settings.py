@@ -1,10 +1,19 @@
 # Django settings for eyebrowse project.
+import os
+import sys
+import django
+
+from os import environ as env
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Joshua Blum', 'joshblum@mit.edu'),
+    ('Jason Hu', 'mjhu@mit.edu'),
 )
 
 MANAGERS = ADMINS
@@ -24,7 +33,7 @@ DATABASES = {
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/New_York'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -45,18 +54,18 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -75,10 +84,18 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+
+    'compressor.finders.CompressorFinder',
+)
+
+##### settings for django-compressor
+COMPRESS_ENABLED = True
+COMPRESS_CSS_FILTERS = (
+    'compressor.filters.template.TemplateFilter',
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '_)$=im71ub4@!=%!@139s7c+w%699sv(bi2uj+e_wz1z%_mlke'
+SECRET_KEY = env['SECRET_KEY']
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -106,6 +123,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(SITE_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -116,9 +134,15 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+
+    # third party
+    'compressor',
+    'south',
+
+    #eyebrowse
 )
 
 # A sample logging configuration. The only tangible logging
@@ -149,3 +173,21 @@ LOGGING = {
         },
     }
 }
+
+
+# allowing for local_settings overides
+# how this should ultimately be set up
+# (if this is the pattern we follow)
+# is that common or default settings go in here,
+# and each different deploy location has a differnt
+# settings override that is specified by environment 
+# variable or hard code.
+try:
+    local_settings_file = open('eyebrowse/local_settings.py', 'r')
+except IOError:
+    ## something useful should be here
+    print "Unable to open local settings!"
+    
+else:
+    local_settings_script = local_settings_file.read()
+    exec local_settings_script
