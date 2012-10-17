@@ -1,4 +1,6 @@
 {% load filters %}
+{% load staticfiles %}
+{% load compress %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -11,18 +13,22 @@
         <!-- analytics -->
     
         <!--  styles -->
+        {% compress css %}
 
-        {% include_style {% static "common/css/reset" %} %}
-        {% include_style {% static "common/css/bootstrap" %} %}
-        {% include_style {% static "common/css/bootstrap-responsive" %} %}
-        {% include_style {% static "common/css/base" %} %}
-        {% block styles %} {% endblock%}
+        {% include_style "common/css/reset" %}
+        {% include_style "common/css/bootstrap" %}
+        {% include_style "common/css/bootstrap-responsive" %}
+        {% include_style "common/css/base" %}
+        
+        {% block styles %} 
+        {% endblock%}
+        {% endcompress %}
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
 
-        <link rel="shortcut icon" href={% static "/common/img/favicon.ico }">
+        <link rel="shortcut icon" href="{% static "common/img/favicon.ico" %}">
        
     </head>
 
@@ -32,7 +38,7 @@
             <div class="navbar-inner nav-bg">
                 <div class="container-fluid">
                     <a class="brand" href="/"> 
-                        <img class="logo" src={% static "/common/img/eye-logo.png" }/> eyebrowse
+                        <img class="logo" src="{% static "common/img/logo.png" %}"/> eyebrowse
                     </a>
                     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                         <span class="icon-bar"></span>
@@ -41,9 +47,11 @@
                     </a>  
                     <div class="nav-collapse collapse">
                         <ul class="nav topbar">
+                            {% comment %}
                             <li class={{ nav_blog }}>
                                 <a href="#">Blog</a>
-                            </li>
+                            </li> 
+                            {% endcomment %}
                         {% if user.is_authenticated %}
                             <li class={{ nav_home }}>
                                 <a href="/">Home</a>
@@ -138,20 +146,19 @@
 
         <!--  javascript -->
         
-        {% include {% static "common/send_feedback.html" %} %}
-        {% include_script {% static 'common/js/jquery-1.8.2.min' %} %}
+        {% include 'common/send_feedback.html' %}
+        {% include_script 'common/js/jquery-1.8.2.min' %}
 
         <!--  helpers -->
-        {% include_script {% static 'common/js/mobile_detection' %} %}
-        {% include_script {% static 'common/js/es5-shim.min' %}
-         %}
+        {% include_script 'common/js/mobile_detection' %}
+        {% include_script 'common/js/es5-shim.min' %}
 
         <!--  bootstrap -->
-        {% include_script {% static 'common/js/bootstrap' %}
-        {% include_script {% static  %}'common/js/jquery.cookie' %} %}
-        {% include_script {% static 'common/js/bootstrap-tour' %} %}
+        {% include_script 'common/js/bootstrap' %}
+        {% include_script 'common/js/jquery.cookie' %}
+        {% include_script 'common/js/bootstrap-tour' %}
 
-        {% include_script {% static 'common/js/base' %} %}
+        {% include_script 'common/js/base' %}
 
         {% block scripts %}
 

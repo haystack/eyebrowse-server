@@ -21,3 +21,12 @@ html, body {
 .footer, .push {
     height: 4em;
 }
+
+.logo {
+    width:27px;
+    height:27px;
+}
+
+.topbar {
+    margin-top:3px !important;
+}
