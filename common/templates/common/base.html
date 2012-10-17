@@ -5,7 +5,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title id="page_title"> eyebrowse | {{ page_title }}</title>
+        <title id="page_title"> eyebrowse | {{ page_title }} {% block title %} {% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
@@ -109,15 +109,11 @@
             </div>
         </div>
         <div class="container wrapper">
-            <!-- <div class="push"></div> -->
-        </div> <!-- /container -->
-
-        <div class="wrapper">
             {% block content %} {% endblock%}
             <div class="push"></div>
         </div>
         <div class="footer">
-            <div class="navbar footer">
+            <div class="navbar">
                 <div class="navbar-inner nav-bg">
                     <div class="container">
                             <ul class="nav pull-right">

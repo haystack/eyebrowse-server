@@ -1,6 +1,8 @@
+{% load staticfiles %}
+
 body {
-    padding-top: 60px;
-    padding-bottom: 40px;
+    padding-top: 100px;
+    background: url({% static "common/img/bg-body.png" %}) repeat top left;
 }
 .sidebar-nav {
     padding: 9px 0;
@@ -29,4 +31,12 @@ html, body {
 
 .topbar {
     margin-top:3px !important;
+}
+
+.nav-bg {
+    background: url({% static "common/img/bg-nav.png" %})  repeat top left;
+}
+
+.well {
+    background-color: #DDD !important;
 }

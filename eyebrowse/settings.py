@@ -148,7 +148,6 @@ INSTALLED_APPS = (
 
     #eyebrowse
     'common',
-    'reg',
 )
 
 
