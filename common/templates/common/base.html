@@ -1,0 +1,167 @@
+{% load filters %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title id="page_title"> eyebrowse | {{ page_title }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- analytics -->
+    
+        <!--  styles -->
+
+        {% include_style {% static "common/css/reset" %} %}
+        {% include_style {% static "common/css/bootstrap" %} %}
+        {% include_style {% static "common/css/bootstrap-responsive" %} %}
+        {% include_style {% static "common/css/base" %} %}
+        {% block styles %} {% endblock%}
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <link rel="shortcut icon" href={% static "/common/img/favicon.ico }">
+       
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner nav-bg">
+                <div class="container-fluid">
+                    <a class="brand" href="/"> 
+                        <img class="logo" src={% static "/common/img/eye-logo.png" }/> eyebrowse
+                    </a>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>  
+                    <div class="nav-collapse collapse">
+                        <ul class="nav topbar">
+                            <li class={{ nav_blog }}>
+                                <a href="#">Blog</a>
+                            </li>
+                        {% if user.is_authenticated %}
+                            <li class={{ nav_home }}>
+                                <a href="/">Home</a>
+                            </li>
+
+                            <li class={{ nav_profile }}>
+                                <a id="user_prof" href=/accounts/{{user.username}}>Profile</a>
+                            </li>
+                            <li id="account_dropdown" class="dropdown {{ nav_account }}">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    Account<b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="/accounts/{{user.username}}">
+                                            <i class="icon-user"></i>
+                                            My Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/accounts/edit">
+                                            <i class="icon-wrench"></i>
+                                            Edit Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a data-toggle="modal" href="#send-feedback-modal" >
+                                            <i class="icon-envelope"></i>
+                                            Send Feedback
+                                        </a>
+                                    </li>
+                                        {% if user.is_authenticated %}
+                                            <li class="divider"></li>
+                                            <li>
+                                                <a href={% url django.contrib.auth.views.logout %}> Logout </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                            </li>
+                        </ul>
+                        <ul class="nav pull-right topbar">
+                            <li>
+                                <form id="navbar-search" class="navbar-search">
+                                    <input type="search" id="search_bar" class="search-query" placeholder="Find people..." autocomplete="off"> 
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class={{ nav_login }}>
+                                 <a href="/accounts/login">Login</a>
+                            </li>
+                        {% endif %}
+                        </ul>
+                    </div><!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+        <div class="container wrapper">
+            <!-- <div class="push"></div> -->
+        </div> <!-- /container -->
+
+        <div class="wrapper">
+            {% block content %} {% endblock%}
+            <div class="push"></div>
+        </div>
+        <div class="footer">
+            <div class="navbar footer">
+                <div class="navbar-inner nav-bg">
+                    <div class="container">
+                            <ul class="nav pull-right">
+                                <li>
+                                    <a href="http://github.com/joshblum/eyebrowse">
+                                        GitHub Project
+                                    </a>
+                                </li>
+                                <li> <a>|</a> </li>
+                                <li>
+                                    <a data-toggle="modal" href="#send-feedback-modal">
+                                        Contact
+                                    </a>
+                                </li>
+                                <li> <a>|</a> </li>
+                                <li>
+                                    <a href="twitter.com/eyebrowse">
+                                        @eyebrowse_proj
+                                    </a>
+                                </li>
+                            </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--  javascript -->
+        
+        {% include {% static "common/send_feedback.html" %} %}
+        {% include_script {% static 'common/js/jquery-1.8.2.min' %} %}
+
+        <!--  helpers -->
+        {% include_script {% static 'common/js/mobile_detection' %} %}
+        {% include_script {% static 'common/js/es5-shim.min' %}
+         %}
+
+        <!--  bootstrap -->
+        {% include_script {% static 'common/js/bootstrap' %}
+        {% include_script {% static  %}'common/js/jquery.cookie' %} %}
+        {% include_script {% static 'common/js/bootstrap-tour' %} %}
+
+        {% include_script {% static 'common/js/base' %} %}
+
+        {% block scripts %}
+
+        {% endblock %}
+        <script type="text/javascript">
+            {% if user.profile.use_tour %}
+                var use_tour = true;
+            {% else %}
+                var use_tour = false;
+            {% endif %}
+        </script>
+    </body>
+</html>
