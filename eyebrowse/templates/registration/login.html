@@ -1,5 +1,9 @@
 {% extends "registration/registration_base.html" %}
-{% block title %}Login{% endblock %}
+
+{% block title %}
+Login
+{% endblock %}
+
 {% block content %}
 
 {% if form.errors %}
@@ -30,7 +34,4 @@
     </form>
 </div>
 
-{% endblock %}
-{% block scripts %} 
-{% include_script 'registration/js/registration' %}
 {% endblock %}

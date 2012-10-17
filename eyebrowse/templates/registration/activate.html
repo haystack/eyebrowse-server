@@ -1,10 +1,31 @@
 {% extends "registration/registration_base.html" %}
-{% block title %}{% if account %}Activation complete{% else %}Activation problem{% endif %}{% endblock %}
-{% block content %}
+
+{% block title %}
+
 {% if account %}
-Thanks {{ account }}, activation complete!  You may now <a href='{% url auth_login %}'>login</a> using the username and password you set at registration.
+        Activation complete 
 {% else %}
-Oops &ndash; it seems that your activation key is invalid.  Please check the url again.
+        Activation problem
 {% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div class="span4 offset4">
+    {% if account %}
+     <div class="alert alert-success">
+        <p>
+            <strong> Thanks {{ account }}! </strong>
+        </p>
+        <p>
+            You may now <a href='{% url auth_login %}'>login</a> or visit the <a href="#"> download </a> page.
+        </p>
+    </div>
+    {% else %}
+    <p class="alert alert-error">
+        <strong> Oops &ndash; </strong> it seems that your activation key is invalid.  Please check the url again.
+    </p>
+    {% endif %}
+</div> 
 {% endblock %}
 
