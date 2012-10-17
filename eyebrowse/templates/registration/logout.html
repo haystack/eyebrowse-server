@@ -1,13 +1,13 @@
 {% extends "common/snippets/hero_err_template.html" %}
 
 {% block title %}
-Logged out
+logged out
 {% endblock %}
 
 {% block hero_content %} 
     <p> Come back soon. </p>
       <p>
-        <a class="btn btn-primary btn-large" href="/login">
+        <a class="btn btn-primary btn-large" href="{% url auth_login %}">
           Login Again
         </a>
       </p>
@@ -16,7 +16,6 @@ Logged out
 {% block scripts %}
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#page_title').html("comm.prod | logout");
         $('#hero').html(setHero());
     });
 
