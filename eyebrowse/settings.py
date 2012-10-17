@@ -14,6 +14,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 ADMINS = (
     ('Joshua Blum', 'joshblum@mit.edu'),
     ('Jason Hu', 'mjhu@mit.edu'),
+    ('eyebrowse-admins', 'comm.prod@mit.edu'),
 )
 
 MANAGERS = ADMINS
@@ -140,10 +141,21 @@ INSTALLED_APPS = (
 
     # third party
     'compressor',
-    'south',
+    'django_evolution',
+    'registration',
 
     #eyebrowse
 )
+
+
+#email settings from sendgrid.com
+EMAIL_HOST = env['EMAIL_HOST']
+EMAIL_HOST_USER = env['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = env['PASSWORD']
+EMAIL_PORT = env['EMAIL_PORT']
+EMAIL_USE_TLS = env['EMAIL_USE_TLS']
+
+ACCOUNT_ACTIVATION_DAYS = 14 # Two-week activation window;
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

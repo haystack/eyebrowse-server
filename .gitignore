@@ -1,0 +1,9 @@
+.DS_Store
+.dropbox
+*.pyc
+*.log
+.env
+venv
+Profile
+ß
+local_settings.py
