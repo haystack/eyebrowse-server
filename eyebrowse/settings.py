@@ -199,10 +199,17 @@ LOGGING = {
 # variable or hard code.
 try:
     local_settings_file = open('eyebrowse/local_settings.py', 'r')
-except IOError:
-    ## something useful should be here
-    print "Unable to open local settings!"
-    
-else:
     local_settings_script = local_settings_file.read()
     exec local_settings_script
+except IOError:
+    ## tmp for dev
+    DATABASES['default'] = {
+       'ENGINE': 'django.db.backends.sqlite3',
+       'NAME': 'eyebrowse_dev.db',
+       'HOST': None,
+       'USER': None,
+       'PASSWORD': None,
+       'PORT': None
+    }
+    print "Unable to open local settings!"
+    
