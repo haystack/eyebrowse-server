@@ -5,6 +5,5 @@ eyebrowse/static
 *.log
 .env
 venv
-Profile
-ß
+
 local_settings.py
