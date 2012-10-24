@@ -5,6 +5,7 @@ Register for an account
 {% endblock %}
 
 {% block content %}
+{{ block.super }}
 <div class="span4 offset4 well">
     <table>
         <form method='post' action=''>{% csrf_token %}
