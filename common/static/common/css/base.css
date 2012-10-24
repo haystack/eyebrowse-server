@@ -40,3 +40,7 @@ html, body {
 .well {
     background-color: #DDD !important;
 }
+
+ul.errorlist {
+    display:none;
+}

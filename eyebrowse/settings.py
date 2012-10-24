@@ -154,11 +154,18 @@ INSTALLED_APPS = (
 
 
 #email settings from sendgrid.com
-EMAIL_HOST = env['EMAIL_HOST']
-EMAIL_HOST_USER = env['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = env['PASSWORD']
-EMAIL_PORT = env['EMAIL_PORT']
-EMAIL_USE_TLS = env['EMAIL_USE_TLS']
+if DEBUG:
+    EMAIL_HOST = '127.0.0.1'
+    EMAIL_HOST_USER = ''
+    EMAIL_HOST_PASSWORD = ''
+    EMAIL_PORT = 1025
+    EMAIL_USE_TLS = False
+else:
+    EMAIL_HOST = env['EMAIL_HOST']
+    EMAIL_HOST_USER = env['EMAIL_HOST_USER']
+    EMAIL_HOST_PASSWORD = env['PASSWORD']
+    EMAIL_PORT = env['EMAIL_PORT']
+    EMAIL_USE_TLS = env['EMAIL_USE_TLS']
 
 ACCOUNT_ACTIVATION_DAYS = 14 # Two-week activation window;
 

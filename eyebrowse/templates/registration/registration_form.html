@@ -5,8 +5,8 @@ Register for an account
 {% endblock %}
 
 {% block content %}
-{{ block.super }}
 <div class="span4 offset4 well">
+    {% include 'common/snippets/form_error.html' %}
     <table>
         <form method='post' action=''>{% csrf_token %}
             {{ form }}
