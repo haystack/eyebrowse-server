@@ -12,10 +12,12 @@ TEMPLATE_DEBUG = DEBUG
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
+DEFAULT_EMAIL = "eyebrowse@mit.edu"
+
 ADMINS = (
     ('Joshua Blum', 'joshblum@mit.edu'),
     ('Jason Hu', 'mjhu@mit.edu'),
-    ('eyebrowse-admins', 'comm.prod@mit.edu'),
+    ('eyebrowse-admins', DEFAULT_EMAIL),
 )
 
 MANAGERS = ADMINS

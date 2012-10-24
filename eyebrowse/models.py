@@ -35,11 +35,11 @@ class Email(models.Model):
     date_created = models.DateTimeField(auto_now=True, default=datetime.now())
     activation_key = models.CharField(max_length=40, default=sha.new(sha.new(str(random.random())).hexdigest()[:5]).hexdigest())
 
-    def sendConfirmEmail(self):
+    def send_confirm_email(self):
         content = email_templates.alt_email['content'] % (self.user_profile.user.first_name, self.email, settings.BASE_URL + '/confirm_email/' + self.activation_key + '/')
         subject = email_templates.alt_email['subject']
         emails = [self.email]
-        utils.emailUsers(subject, content, emails)
+        utils.send_mail(subject, content, emails)
 
         self.removeExpiredEmails() #perform cleanup of unconfirmed emails
 
@@ -47,7 +47,7 @@ class Email(models.Model):
         self.confirmed = True
         self.save()
 
-    def removeExpiredEmails(self):
+    def rm_expired_emails(self):
         time_threshold = datetime.now() - timedelta(hours=24)
         Email.objects.filter(date_created__lt=time_threshold, confirmed=False).delete()
 
