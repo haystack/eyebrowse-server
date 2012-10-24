@@ -149,6 +149,7 @@ INSTALLED_APPS = (
 
     # third party
     'compressor',
+    'gunicorn',
     'django_evolution',
     'registration',
 
