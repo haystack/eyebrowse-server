@@ -6,7 +6,11 @@ import django
 from os import environ as env
 from registration_defaults.settings import *
 
-DEBUG = True
+#custom auth
+AUTH_PROFILE_MODULE = 'common.UserProfile'
+
+DEBUG = (not env['DEBUG'] == 'False') #convert from string to bool
+
 TEMPLATE_DEBUG = DEBUG
 
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
@@ -24,12 +28,12 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': env['MYSQL_NAME'],# Or path to database file if using sqlite3.
+        'USER': env['MYSQL_USER'], # Not used with sqlite3.
+        'PASSWORD': env['MYSQL_PASSWORD'],# Not used with sqlite3.
+        'HOST':env['MYSQL_HOST'], # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '', # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -150,22 +154,16 @@ INSTALLED_APPS = (
 
     #eyebrowse
     'common',
+    'data_logging',
 )
 
 
 #email settings from sendgrid.com
-if DEBUG:
-    EMAIL_HOST = '127.0.0.1'
-    EMAIL_HOST_USER = ''
-    EMAIL_HOST_PASSWORD = ''
-    EMAIL_PORT = 1025
-    EMAIL_USE_TLS = False
-else:
-    EMAIL_HOST = env['EMAIL_HOST']
-    EMAIL_HOST_USER = env['EMAIL_HOST_USER']
-    EMAIL_HOST_PASSWORD = env['PASSWORD']
-    EMAIL_PORT = env['EMAIL_PORT']
-    EMAIL_USE_TLS = env['EMAIL_USE_TLS']
+EMAIL_HOST = env['EMAIL_HOST']
+EMAIL_HOST_USER = env['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = env['PASSWORD']
+EMAIL_PORT = env['EMAIL_PORT']
+EMAIL_USE_TLS = env['EMAIL_USE_TLS']
 
 ACCOUNT_ACTIVATION_DAYS = 14 # Two-week activation window;
 
@@ -198,27 +196,17 @@ LOGGING = {
     }
 }
 
-
-# allowing for local_settings overides
-# how this should ultimately be set up
-# (if this is the pattern we follow)
-# is that common or default settings go in here,
-# and each different deploy location has a differnt
-# settings override that is specified by environment 
-# variable or hard code.
-try:
-    local_settings_file = open('eyebrowse/local_settings.py', 'r')
-    local_settings_script = local_settings_file.read()
-    exec local_settings_script
-except IOError:
-    ## tmp for dev
-    DATABASES['default'] = {
-       'ENGINE': 'django.db.backends.sqlite3',
-       'NAME': 'eyebrowse_dev.db',
-       'HOST': None,
-       'USER': None,
-       'PASSWORD': None,
-       'PORT': None
-    }
-    print "Unable to open local settings!"
-    
+if DEBUG:
+    # allowing for local_settings overides
+    # how this should ultimately be set up
+    # (if this is the pattern we follow)
+    # is that common or default settings go in here,
+    # and each different deploy location has a differnt
+    # settings override that is specified by environment 
+    # variable or hard code.
+    try:
+        local_settings_file = open('eyebrowse/local_settings.py', 'r')
+        local_settings_script = local_settings_file.read()
+        exec local_settings_script
+    except IOError:
+        print "Unable to open local settings!"
