@@ -1,0 +1,14 @@
+{% if form.errors %}
+    <div class='row'>
+        <div class='form-errors span4 offset4 alert alert-error'>
+            <h3> Sorry, there were some errors...</h3>
+            <div>
+            {% for key, value in form.errors.items %}
+                {% for v in value %}
+                    <p> {{ key }} : {{ v }} </p>
+                {% endfor %}
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}
