@@ -1,6 +1,9 @@
 """
     Generic view helpers live here.
 """
+from django.shortcuts import HttpResponse
+from django.utils import simplejson as json
+
 
 def JSONResponse(payload):
     """

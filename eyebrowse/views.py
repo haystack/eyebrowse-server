@@ -1,34 +1,33 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
 
-from django.conf.settings import ADMINS
+from eyebrowse.settings import ADMINS
 from common.admin import email_templates
 
-from commmon.models import *
-from common.view_helpers import *
+from common.models import *
+from common.view_helpers import _template_values, JSONResponse
 
 def home(request):
     template_values = {}
     return render_to_response('common/base.html', template_values, context_instance=RequestContext(request))
 
 @login_required
-def profile(request, username):
+def profile(request, username=None):
     """
         User profile page
     """
+    if not username:
+        username = request.user.username
 
     profile_user = get_object_or_404(User, username=username)
 
-    request_type = request.GET.get('type', "")
-
-    subnav_key, subnav_value, page_title =  get_active_page('profile', request_type)
-
     template_values = _template_values(request, nav_bar='nav_profile', profile_user=profile_user)
 
-    return render_to_response('profile.html', template_values, context_instance=RequestContext(request))
+    return render_to_response('eyebrowse/profile.html', template_values, context_instance=RequestContext(request))
 
 
 @login_required

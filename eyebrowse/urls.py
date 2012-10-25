@@ -14,6 +14,7 @@ urlpatterns = patterns('',
 
     url(r'^accounts/', include('registration.urls')),
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+    url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 )
 
 urlpatterns += patterns('eyebrowse.views', 
@@ -24,7 +25,7 @@ urlpatterns += patterns('eyebrowse.views',
 
     url(r'^confirm_email/(?P<key>\w+)', 'confirm_email'),
     url(r'^feedback$', 'feedback'),
-    
+
     url(r'^$', 'home'),
 
 )
