@@ -12,14 +12,13 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^accounts/', include('registration.urls')),
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
     url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
+
+    url(r'^accounts/', include('accounts.urls')),
 )
 
-urlpatterns += patterns('eyebrowse.views', 
-    url(r'^accounts/profile/$', 'profile'),
-    url(r'^accounts/edit/profile/$', 'edit_profile'),
+urlpatterns += patterns('eyebrowse.views',
 
     url(r'^users/(?P<username>.+)$', 'profile'),
 

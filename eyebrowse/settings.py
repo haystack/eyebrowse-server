@@ -156,6 +156,7 @@ INSTALLED_APPS = (
     'registration',
 
     #eyebrowse
+    'accounts',
     'common',
     'data_logging',
 )
