@@ -18,8 +18,8 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('eyebrowse.views', 
-    url(r'^accounts/profile$', 'profile'),
-    url(r'^accounts/edit/profile$', 'edit_profile'),
+    url(r'^accounts/profile/$', 'profile'),
+    url(r'^accounts/edit/profile/$', 'edit_profile'),
 
     url(r'^users/(?P<username>.+)$', 'profile'),
 

@@ -29,6 +29,20 @@ def profile(request, username=None):
 
     return render_to_response('eyebrowse/profile.html', template_values, context_instance=RequestContext(request))
 
+@login_required
+def edit_profile(request):
+    """
+    Edit profile page
+    """
+
+    user = request.user
+    print user
+    profile = user.profile
+
+    template_values = _template_values(request, nav_bar=nav_account)
+
+    return render_to_response('edit_profile.html', template_values, context_instance=RequestContext(request))
+
 
 @login_required
 @csrf_exempt
