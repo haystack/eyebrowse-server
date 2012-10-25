@@ -13,12 +13,18 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^accounts/', include('registration.urls')),
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
 )
 
-urlpatterns += patterns('',
-    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-    )
-
 urlpatterns += patterns('eyebrowse.views', 
+    url(r'^accounts/profile$', 'profile'),
+    url(r'^accounts/edit/profile$', 'edit_profile'),
+
+    url(r'^users/(?P<username>.+)$', 'profile'),
+
+    url(r'^confirm_email/(?P<key>\w+)', 'confirm_email'),
+    url(r'^feedback$', 'feedback'),
+    
     url(r'^$', 'home'),
+
 )
