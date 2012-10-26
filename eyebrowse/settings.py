@@ -158,7 +158,7 @@ INSTALLED_APPS = (
     #eyebrowse
     'accounts',
     'common',
-    'data_logging',
+    'api',
 )
 
 

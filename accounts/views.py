@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.shortcuts import get_object_or_404
 
 from common.models import *
-from data_logging.models import *
+from api.models import *
 from common.view_helpers import _template_values, JSONResponse, validateEmail, validate_url
 from common.helpers import put_profile_pic
 

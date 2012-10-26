@@ -3,7 +3,7 @@
 {% load filters %}
 
 {% block styles %} 
-{% include_style "data_logging/css/base" %}
+{% include_style "api/css/base" %}
 {% endblock%}
 
 {% block content %}
@@ -29,7 +29,7 @@
       <td>total_time </td>
     </tr>
     {% for item in history_data %}
-        {% include 'data_logging/row_history.html' with item=item %}
+        {% include 'api/row_history.html' with item=item %}
     {% endfor %}
   </tbody>
 </table>
