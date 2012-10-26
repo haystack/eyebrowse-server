@@ -7,12 +7,12 @@ from django.shortcuts import get_object_or_404
 from common.models import *
 from common.view_helpers import _template_values, JSONResponse
 
-
 @login_required
 def profile(request, username=None):
     """
-        User profile page
+    Own profile page
     """
+
     if not username:
         username = request.user.username
 
