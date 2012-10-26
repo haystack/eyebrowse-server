@@ -1,0 +1,15 @@
+<tr>
+    <td> 
+        {{ count }}{#{! count !}#}
+    </td>
+    <td> 
+        <a href="{#{! url !}#}{{item.url}}"> 
+            {{ item.url }}{#{! url !}#}
+        </a> 
+    </td>
+    <td>
+        <a class="btn btn-danger btn-small rm-whitelist" data-url="{#{! url !}#}{{ item.url }}">
+            <i class="icon-remove icon-white"></i>
+        </a>
+    </td>
+</tr>

@@ -62,6 +62,27 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function renderHistoryRow(historyData) {
+    var $history_row = ich['api/jstemplates/row_history.html'](
+        {
+            'title' : historyData.title,
+            'start_time' : historyData.start_time,
+            'end_time' : historyData.end_time,
+            'total_time' : historyData.total_time,
+        });
+}
+
+function renderWhitelistRow(whitelist) {
+    var $history_row = ich['api/jstemplates/row_history.html'](
+        {
+            'title' : historyData.title,
+            'start_time' : historyData.start_time,
+            'end_time' : historyData.end_time,
+            'total_time' : historyData.total_time,
+        });
+}
+
+
 $(function(){
     $(document).on('click', '#submit_feedback', submitFeedBack)
 

@@ -15,6 +15,9 @@ def JSONResponse(payload):
     """
     return HttpResponse(json.dumps(payload), mimetype='application/json')
 
+def NotImplementedResponse():
+    return JSONResponse({'error':"NotYetImplemented"})
+
 def _template_values(request, navbar='', **kwargs):
     template_values = {
         navbar : 'active',
@@ -34,7 +37,7 @@ def validateEmail(email):
 def validate_url(url):
     if not url.count('://'):
         url = "http://" + url
-        
+
     validate = URLValidator(verify_exists=True)
     try:
         validate(url)
