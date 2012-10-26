@@ -42,6 +42,7 @@ function submitForm(e, d){
         $form.find('.btn[type=submit]').button('reset')
 
         $('#pic').find('.btn[type=submit]').addClass('disabled')//reset pic submit to be disabled.
+        $form.trigger('formRes', res)
     });
 }
 

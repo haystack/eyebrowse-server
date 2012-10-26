@@ -37,10 +37,9 @@ def validateEmail(email):
 def validate_url(url):
     if not url.count('://'):
         url = "http://" + url
-
     validate = URLValidator(verify_exists=True)
     try:
         validate(url)
         return True
-    except ValidationError:
+    except ValidationError, e:
         return False

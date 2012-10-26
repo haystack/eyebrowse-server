@@ -36,12 +36,13 @@ def edit_profile(request):
     if request.POST and request.is_ajax():
         success = False
         errors = {}
+        data = None
         type = request.POST.get('form_type', None)
         
         if type == "whitelist":
             url = request.POST.get('whitelist')
             errors['whitelist'] = []
-
+            data = url
             if not validate_url(url):
                 if url.strip() == "":
                     errors['whitelist'].append("Enter a url!")
@@ -90,7 +91,9 @@ def edit_profile(request):
 
         return_obj = {
             'success' : success,
-            'errors': errors
+            'errors': errors,
+            'type' : type,
+            'data' : data,
         }
 
         return JSONResponse(return_obj)

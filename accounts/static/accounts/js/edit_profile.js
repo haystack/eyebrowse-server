@@ -3,7 +3,7 @@ function removeInput(e, d){
 }
 
 function addEmailInput(){
-    var template = '<p><input type="email" class="removable_input" placeholder="Alternate email" name="email"><a class="btn remove-input remove-shirt-name"><i class="icon-minus"></i></a></p>'
+    var template = '<p><input type="email" class="removable_input" placeholder="Alternate email" name="email"><a class="btn remove-input"><i class="icon-minus"></i></a></p>'
     $('#add-email').closest('p').before(template);
 }
 
@@ -16,24 +16,45 @@ function switchTab(e, d) {
     $('.edit').find('.alert').slideUp(0)
 }
 
-function rmWhitelist(e, d) {
+function rmWhitelistItem(e, d) {
     var postUrl = '/api/whitelist/rm';
     var $target = $(e.target);
     var url = $target.data('url');
     var csrftoken = $.cookie('csrftoken')
     $target.closest('tr').remove()
-    $.post(url, {
-        'url': url,
-        'csrftoken' : csrftoken,
+    $.post(postUrl, {
+        url : url,
     });
 }
+
+function addWhitelist(res){
+    if (res.success) {
+        $('.rm-margin').val('')
+        var $rows = $('.whitelist-row');
+        var $toAdd = $rows.filter(':last');
+        var template = ich['api/js_templates/whitelist_row.html']({
+                'url' : res.data
+            });
+
+        $toAdd.after(template);
+    }
+}
+
+function handleFormResponse(e, d){
+    if (d.type == 'whitelist') {
+        addWhitelist(d)
+    }
+}
+
 
 $(function(){
     $('.tab').click(switchTab);;
 
     $('.edit').submit(submitForm);
 
-    $('.rm-whitelist').click(rmWhitelist);
+    $('.edit').on('formRes', handleFormResponse);
+
+    $('.rm-whitelist').click(rmWhitelistItem);
 
     $(document).on('click', '.remove-input', removeInput);
 
@@ -41,6 +62,5 @@ $(function(){
     
     $('#add-email').click();
     $('#whitelist-tab').click();
-
 
 });

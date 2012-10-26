@@ -54,14 +54,13 @@
         <table class="table table-condensed table-striped table-bordered">
           <thead>
             <tr>
-              <th></th>
               <th>URL</th>
               <th>Remove</th>
             </tr>
           </thead>
           <tbody>
             {% for item in history_data %}
-                {% include 'api/js_templates/whitelist_row.html' with item=item count=forloop.counter %}
+                {% include 'api/whitelist_row.html' with item=item count=forloop.counter %}
             {% endfor %}
           </tbody>
         </table>
