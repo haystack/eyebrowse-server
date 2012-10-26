@@ -24,9 +24,9 @@
         </li>
     </ul>
 </div>
-<div class="well span4 offset4">
+<div class="span4 offset4">
 
-    <form class="hidden edit" id="pic" data-url="/edit">
+    <form class="hidden edit" id="pic" data-url="/accounts/profile/edit">
         {% csrf_token %}
         {% include 'common/snippets/alert_box.html' %}
         Coming soon!
@@ -39,15 +39,20 @@
         <input class="btn btn-primary disabled" disabled type="submit" value="Save" data-loading-text="Saving..." id="profile-pic-save"/> -->
     </form>
 
-    <form class="hidden edit" id="whitelist" data-url="/edit" >
+    <form class="hidden edit" id="whitelist" data-url="/accounts/profile/edit" >
         {% include 'common/snippets/alert_box.html' %}
         {% csrf_token %}
+        
+        <p id="">
+            <input class="rm-margin" placeholder="Add whitelist URL" type="text" name="whitelist" value="">
+            <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Add " id="whitelist-save"/>
+        </p> <br>
+
         <input type="hidden" name="form_type" value="whitelist">
-        {% for input in whitelist %}
-        <table class="table table-striped table-condensed">
+        <table class="table table-condensed table-striped table-bordered">
           <thead>
             <tr>
-              <th>Number</th>
+              <th></th>
               <th>URL</th>
               <th>Remove</th>
             </tr>
@@ -55,34 +60,33 @@
           <tbody>
             {% for item in history_data %}
                 <tr>
-                  <td> 
-                    {{ forloop.counter }}
-                </td>
-                  <td> 
-                    <a href="{{item.url}}"> {{item.url}} </a> 
-                </td>
-                <td>
-                    ×
-                </td>
+                    <td> 
+                        {{ forloop.counter }}
+                    </td>
+                    <td> 
+                        <a href="{{item.url}}"> 
+                            {{item.url}} 
+                        </a> 
+                    </td>
+                    <td>
+                        <a class="btn btn-danger btn-small rm-whitelist" data-url="{{item.url}}">
+                            <i class="icon-remove icon-white"></i>
+                        </a>
+                    </td>
                 </tr>
             {% endfor %}
           </tbody>
         </table>
-        {% endfor %}
 
-        <p id="">
-            <a id='add-whitelist' class="btn"><i class="icon-plus"></i> Add </a>
-        </p> <br>
-        <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Save" id="whitelist-save"/>
     </form>
 
-    <form class="hidden edit" id="email" data-url="/edit" >
+    <form class="hidden edit" id="email" data-url="/accounts/profile/edit" >
         {% include 'common/snippets/alert_box.html' %}
         {% csrf_token %}
         <input type="hidden" name="form_type" value="email">
         {% for input in email %}
         <p>
-            <input type="text" value="{{input.value}}" class="disabled" disabled>
+            <input type="text" value="{{input.value}}" class="disabled rm-margin" disabled>
         </p>
         {% endfor %}
 

@@ -16,15 +16,31 @@ function switchTab(e, d) {
     $('.edit').find('.alert').slideUp(0)
 }
 
+function rmWhitelist(e, d) {
+    var postUrl = '/api/whitelist/rm';
+    var $target = $(e.target);
+    var url = $target.data('url');
+    var csrftoken = $.cookie('csrftoken')
+    $target.closest('tr').remove()
+    $.post(url, {
+        'url': url,
+        'csrftoken' : csrftoken,
+    });
+}
+
 $(function(){
     $('.tab').click(switchTab);;
 
     $('.edit').submit(submitForm);
+
+    $('.rm-whitelist').click(rmWhitelist);
+
     $(document).on('click', '.remove-input', removeInput);
 
     $(document).on('click', '#add-email', addEmailInput);
     
     $('#add-email').click();
     $('#whitelist-tab').click();
+
 
 });

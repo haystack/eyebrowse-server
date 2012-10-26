@@ -6,3 +6,5 @@ django-registration-defaults==0.3
 django-appconf==0.5
 django-compressor==1.2
 django-evolution==0.6.7
+requests==0.13.2
+boto==2.5.2
