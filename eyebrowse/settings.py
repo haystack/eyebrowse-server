@@ -7,9 +7,11 @@ from os import environ as env
 from registration_defaults.settings import *
 
 #custom auth
-AUTH_PROFILE_MODULE = 'common.UserProfile'
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 DEBUG = (not env['DEBUG'] == 'False') #convert from string to bool
+BASE_URL = 'http://www.eyebrowse.herokuapp.com'
+BASE_URL_DEV = 'http://localhost:5000'
 
 TEMPLATE_DEBUG = DEBUG
 

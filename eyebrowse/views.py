@@ -3,11 +3,12 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.template import RequestContext
+from django.shortcuts import redirect
 
-from eyebrowse.settings import ADMINS
-from common.admin import email_templates
+from django.conf import settings
+from common.admin import email_templates, utils
 
-from common.models import *
+from accounts.models import *
 from common.view_helpers import _template_values, JSONResponse
 
 def home(request):
@@ -41,6 +42,6 @@ def feedback(request):
     user = request.user
     subject = email_templates.feedback['subject']
     content = email_templates.feedback['content'] % (user.username, feedback)
-    admin_emails = [admin[1] for admin in ADMINS]
-    emailUsers(subject, content, admin_emails, from_email=user.email)
+    admin_emails = [admin[1] for admin in settings.ADMINS]
+    utils.send_mail(subject, content, admin_emails, from_email=user.email)
     return JSONResponse({'res':'success'})

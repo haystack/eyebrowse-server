@@ -58,9 +58,9 @@
               <th>Remove</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="whitelist-body">
             {% for item in history_data %}
-                {% include 'api/whitelist_row.html' with item=item count=forloop.counter %}
+                {% include 'api/whitelist_row.html' with item=item %}
             {% endfor %}
           </tbody>
         </table>

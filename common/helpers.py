@@ -1,7 +1,7 @@
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
-from common.models import *
+from accounts.models import *
 from os import environ as env
 from urllib import urlretrieve
 

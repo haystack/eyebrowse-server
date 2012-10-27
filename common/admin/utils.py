@@ -17,10 +17,10 @@ def send_mail(subject, html_content, user_emails, from_email=settings.DEFAULT_EM
     user_emails is a list of emails to send to.
     """
     #send live mail
-    if setttings.DEBUG:
+    if settings.DEBUG:
         for to_email in user_emails:
 
-            localSend(subject, html_content, to_email, from_email)
+            send_local_mail(subject, html_content, to_email, from_email)
     else:
         text_content = strip_tags(html_content)
         msg = EmailMultiAlternatives(subject, text_content, from_email, user_emails)

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import simplejson as json
-from common.models import *
+from accounts.models import *
 
 from datetime import datetime
 

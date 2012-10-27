@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
 
-from common.models import *
+from accounts.models import *
 from api.models import *
 from common.view_helpers import _template_values, JSONResponse, validateEmail, validate_url
 from common.helpers import put_profile_pic
@@ -51,7 +51,7 @@ def edit_profile(request):
 
             #make sure email doesn't exists
             elif WhiteListItem.objects.filter(url=url, user_profile=profile).exists():
-                    errors['whitelist'].append(url + ' you already registered this whitelist item')
+                    errors['whitelist'].append('You already registered the whitelist item %s'%url)
 
             if not len(errors['whitelist']):
                 whitelist_item = WhiteListItem(url=url, user_profile=profile)
@@ -71,7 +71,7 @@ def edit_profile(request):
                         errors['email'].append(email + ' is not a valid email.')
 
                 #make sure email doesn't exists
-                elif Email.objects.filter(email=email, email__confirmed=True).exists():
+                elif Email.objects.filter(email=email, confirmed=True).exists():
                     errors['email'].append(email + ' is already registered with an account.')
 
             if errors['email'] == []:

@@ -3,7 +3,7 @@ function removeInput(e, d){
 }
 
 function addEmailInput(){
-    var template = '<p><input type="email" class="removable_input" placeholder="Alternate email" name="email"><a class="btn remove-input"><i class="icon-minus"></i></a></p>'
+    var template = '<p><input type="email" class="rm-margin" placeholder="Alternate email" name="email"><a class="btn remove-input"><i class="icon-minus"></i></a></p>'
     $('#add-email').closest('p').before(template);
 }
 
@@ -31,7 +31,12 @@ function addWhitelist(res){
     if (res.success) {
         $('.rm-margin').val('')
         var $rows = $('.whitelist-row');
-        var $toAdd = $rows.filter(':last');
+        var $toAdd;
+        if ($rows.length == 0 ){
+            $toAdd = $('.whitelist-body')
+        } else {
+            $toAdd = $rows.filter(':last');
+        }
         var template = ich['api/js_templates/whitelist_row.html']({
                 'url' : res.data
             });

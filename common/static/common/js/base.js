@@ -24,6 +24,8 @@ function submitForm(e, d){
     var id = $form.attr('id');
     var url = $form.data('url');
     $form.find('.btn[type=submit]').button('loading')
+    $form.find('.alert').slideUp();
+    
     $.post(url, $form.serialize(), function(res){
         if (res.success){
             var addClass = "alert-success";

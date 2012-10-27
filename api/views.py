@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 
 from django.views.decorators.csrf import csrf_exempt
 
-from common.models import *
+from accounts.models import *
 from api.models import *
 from common.view_helpers import _template_values, JSONResponse, NotImplementedResponse
 
