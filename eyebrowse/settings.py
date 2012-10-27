@@ -181,26 +181,55 @@ ACCOUNT_ACTIVATION_DAYS = 14 # Two-week activation window;
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
     },
     'handlers': {
+        # Include the default Django email handler for errors
+        # This is what you'd get without configuring logging at all.
         'mail_admins': {
+            'class': 'django.utils.log.AdminEmailHandler',
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+             # But the emails are plain text by default - HTML is nicer
+            'include_html': True,
+        },
+        # Log to a text file that can be rotated by logrotate
+        'logfile': {
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': os.path.join(SITE_ROOT, 'logs/log.log'),
+        },
+        # Log to a text file that can be rotated by logrotate
+        'errorfile': {
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': os.path.join(SITE_ROOT, 'logs/error_log.log'),
+        },
     },
     'loggers': {
+        # Again, default Django configuration to email unhandled exceptions
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
         },
-    }
+        # Might as well log any errors anywhere else in Django
+        'django': {
+            'handlers': ['errorfile'],
+            'level': 'ERROR',
+            'propagate': False,
+            'formatter': 'simple',
+        },
+        # Your own app - this assumes all your logger names start with "myapp."
+        'eyebrowse.views': {
+            'handlers': ['logfile'],
+            'level': 'INFO', # Or maybe INFO or DEBUG
+            'propagate': False,
+            'formatter': 'simple',
+        },
+    },
 }
+
 
 if DEBUG:
     # allowing for local_settings overides
