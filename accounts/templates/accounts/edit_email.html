@@ -1,0 +1,15 @@
+<form class="hidden edit" id="email" data-url="/accounts/profile/edit" >
+    {% include 'common/snippets/alert_box.html' %}
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="email">
+    {% for input in email %}
+    <p>
+        <input type="text" value="{{input.value}}" class="disabled rm-margin" disabled>
+    </p>
+    {% endfor %}
+
+    <p id="">
+        <a id='add-email' class="btn" ><i class="icon-plus"></i> Add another email</a>
+    </p> <br>
+    <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Save" id="email-save"/>
+</form>

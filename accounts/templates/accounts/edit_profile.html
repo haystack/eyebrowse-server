@@ -16,10 +16,10 @@
             <a id="pic-tab" href="#pic" class="tab">Account Info</a>
         </li>
         <li>
-            <a href="/accounts/password/change/">Change Password</a>
+            <a id="email-tab" href="#email" class="tab">Add Emails </a>
         </li>
         <li>
-            <a id="email-tab" href="#email" class="tab">Add Emails </a>
+            <a href="/accounts/password/change/">Change Password</a>
         </li>
         <li>
             <a id="con-tab" href="#con" class="tab">Add Connections </a>
@@ -28,60 +28,11 @@
 </div>
 <div class="span4 offset4">
 
-    <form class="hidden edit" id="pic" data-url="/accounts/profile/edit">
-        {% csrf_token %}
-        {% include 'common/snippets/alert_box.html' %}
-        Coming soon!
-<!--         <input type="hidden" name="form_type" value="pic">
+{% include 'accounts/edit_whitelist.html' %}
+{% include 'accounts/edit_account_info.html' %}
+{% include 'accounts/edit_email.html' %}
+{% include 'accounts/edit_connections.html' %}
 
-        <input type='hidden' name='pic_url' value="{{ user.profile.pic_url }}" id='id_pic_url'>
-        <img id="profile_pic" class="author-pic" src="{{ user.profile.pic_url }}">
-
-        <input class="btn" name="upload" id="upload" type="button" value="Edit profile picture"/>
-        <input class="btn btn-primary disabled" disabled type="submit" value="Save" data-loading-text="Saving..." id="profile-pic-save"/> -->
-    </form>
-
-    <form class="hidden edit" id="whitelist" data-url="/accounts/profile/edit" >
-        {% include 'common/snippets/alert_box.html' %}
-        {% csrf_token %}
-        
-        <p id="">
-            <input class="rm-margin" placeholder="Add whitelist URL" type="text" name="whitelist" value="">
-            <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Add " id="whitelist-save"/>
-        </p> <br>
-
-        <input type="hidden" name="form_type" value="whitelist">
-        <table class="table table-condensed table-striped table-bordered">
-          <thead>
-            <tr>
-              <th>URL</th>
-              <th>Remove</th>
-            </tr>
-          </thead>
-          <tbody class="whitelist-body">
-            {% for item in history_data %}
-                {% include 'api/whitelist_row.html' with item=item %}
-            {% endfor %}
-          </tbody>
-        </table>
-        {% include_ichtemplate 'api/js_templates/whitelist_row.html' %}
-    </form>
-
-    <form class="hidden edit" id="email" data-url="/accounts/profile/edit" >
-        {% include 'common/snippets/alert_box.html' %}
-        {% csrf_token %}
-        <input type="hidden" name="form_type" value="email">
-        {% for input in email %}
-        <p>
-            <input type="text" value="{{input.value}}" class="disabled rm-margin" disabled>
-        </p>
-        {% endfor %}
-
-        <p id="">
-            <a id='add-email' class="btn" ><i class="icon-plus"></i> Add another email</a>
-        </p> <br>
-        <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Save" id="email-save"/>
-    </form>
 </div>
 {%  endblock %}
 
