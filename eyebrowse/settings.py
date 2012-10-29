@@ -156,6 +156,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'django_evolution',
     'registration',
+    'tastypie',
 
     #eyebrowse
     'accounts',
