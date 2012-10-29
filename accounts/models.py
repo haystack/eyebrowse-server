@@ -61,7 +61,5 @@ class Email(models.Model):
 
 User.profile = property(lambda u: u.get_profile())
 
-
-
 import signals
 signals.setup()

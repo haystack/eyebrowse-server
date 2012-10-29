@@ -10,12 +10,7 @@ class WhiteListItem(models.Model):
 
     url = models.CharField(max_length=2000, default='')
     date_created = models.DateTimeField(auto_now=True, default=datetime.now())
-
-    def to_json(self):
-        return json.dumps({
-            'url': self.url
-            })
-
+    
     def __unicode__(self):
           return "Whitelist item %s for %s" % (self.url, self.user_profile.user.username)
 
@@ -34,20 +29,6 @@ class EyeHistory(models.Model):
     end_time = models.DateTimeField()
 
     total_time = models.DateTimeField()
-
-    def to_json(self):
-        return json.dumps({
-            'user' : self.user_profile.user.username,
-            'tabId' : self.tabId,
-            'url': self.url,
-            'faviconUrl' : self.faviconUrl,
-            'title' : self.title,
-            'start_event' : self.start_event,
-            'start_time' : self.start_time,
-            'end_event' : self.end_event,
-            'end_event' : self.end_time,
-            'total_time' : self.total_time,
-            }) 
 
     def __unicode__(self):
           return "EyeHistory item %s for %s on %s" % (self.url, self.user_profile.user.username, self.start_time)
