@@ -141,16 +141,19 @@
             </div>
         </div>
 
+
+        {% include 'common/send_feedback.html' %}
+
         <!--  javascript -->
         
-        {% include 'common/send_feedback.html' %}
         {% include_script 'common/js/jquery-1.8.2.min' %}
 
         <!--  helpers -->
         {% include_script 'common/js/mobile_detection' %}
         {% include_script 'common/js/es5-shim.min' %}
         {% include_script 'common/js/ich' %}
-
+        {% include_script 'common/js/sprintf-0.7-beta1' %}
+        
         <!--  bootstrap -->
         {% include_script 'common/js/bootstrap' %}
         {% include_script 'common/js/jquery.cookie' %}

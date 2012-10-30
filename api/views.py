@@ -11,7 +11,7 @@ from api.models import *
 from common.view_helpers import _template_values, JSONResponse, NotImplementedResponse
 
 from common.decorators import assert_post_request
-
+from common.view_helpers import validate_url
 ###whitelist functionality
 
 @login_required
@@ -20,7 +20,43 @@ def whitelist_add(request):
     """
     API endpoint to add a whitelist item
     """
-    return NotImplementedResponse()
+    user = request.user
+    profile = user.profile
+    success = False
+    errors = {}
+    data = None
+    type = request.POST.get('form_type', None)
+    
+    if request.POST and request.is_ajax():
+        
+        if type == "whitelist":
+            url = request.POST.get('whitelist')
+            errors['whitelist'] = []
+            data = {'url' : url}
+            if not validate_url(url):
+                if url.strip() == "":
+                    errors['whitelist'].append("Enter a url!")
+                else:
+                    errors['whitelist'].append(url + ' is not a valid url.')
+
+            #make sure email doesn't exists
+            elif WhiteListItem.objects.filter(url=url, user_profile=profile).exists():
+                    errors['whitelist'].append('You already registered the whitelist item %s'%url)
+
+            if not len(errors['whitelist']):
+                whitelist_item = WhiteListItem(url=url, user_profile=profile)
+                whitelist_item.save()
+                data['id'] = whitelist_item.id
+                success = "Added %s"%url
+
+    return_obj = {
+        'success' : success,
+        'errors': errors,
+        'type' : type,
+        'data' : data,
+    }
+
+    return JSONResponse(return_obj)
 
 @csrf_exempt
 @login_required

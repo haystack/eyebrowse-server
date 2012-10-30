@@ -18,12 +18,6 @@ class UserProfile(models.Model):
     pic_url = models.CharField(max_length=1000, default="/static/common/img/placeholder.png")
     use_tour = models.BooleanField(default=True)
 
-    def to_json(self):
-        return json.dumps({
-            'username': self.user.username,
-            'name' : self.user.first_name + " " + self.user.last_name,
-            })
-
     def add_email(self, email):
         email = Email(user_profile=self, email=email)
         email.send_confirm_email();

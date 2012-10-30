@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 
 from accounts.models import *
 from api.models import *
-from common.view_helpers import _template_values, JSONResponse, validateEmail, validate_url
+from common.view_helpers import _template_values, JSONResponse, validateEmail
 from common.helpers import put_profile_pic
 
 @login_required
@@ -42,7 +42,7 @@ def edit_profile(request):
         if type == "whitelist":
             url = request.POST.get('whitelist')
             errors['whitelist'] = []
-            data = url
+            data = {'url' : url}
             if not validate_url(url):
                 if url.strip() == "":
                     errors['whitelist'].append("Enter a url!")
@@ -56,6 +56,7 @@ def edit_profile(request):
             if not len(errors['whitelist']):
                 whitelist_item = WhiteListItem(url=url, user_profile=profile)
                 whitelist_item.save()
+                data['id'] = whitelist_item.id
                 success = "Added %s"%url
         
         elif type == "email":

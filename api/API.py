@@ -43,7 +43,7 @@ class WhiteListItemResource(ModelResource):
         queryset = WhiteListItem.objects.all()
         resource_name = 'whitelist'
 
-        list_allowed_methods = ['get', 'post']
+        list_allowed_methods = ['get', 'post', 'put', 'delete']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
             'user_profile': ALL_WITH_RELATIONS,
@@ -60,7 +60,7 @@ class EyeHistoryResource(ModelResource):
         queryset = EyeHistory.objects.all()
         resource_name = 'history-data'
 
-        list_allowed_methods = ['get', 'post']
+        list_allowed_methods = ['get', 'put']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
             'user_profile': ALL_WITH_RELATIONS,

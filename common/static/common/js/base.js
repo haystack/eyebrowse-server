@@ -85,8 +85,21 @@ function renderWhitelistRow(whitelist) {
         });
 }
 
+function getApiURL(resource, id, params) { 
+    params = params || {};
+    var apiBase = '/api/v1/' + resource;
+    var getParams = ''
+    $.each(params, function(key, val){
+        getParams += sprintf("&%s=%s", key, val);
+    });
+    if (id != null) {
+        apiBase += '/' + id;
+    } 
+    return sprintf("%s/?format=json%s", apiBase, getParams)
+}
 
 $(function(){
+
     $(document).on('click', '#submit_feedback', submitFeedBack)
 
     $(document).on('typeaheadItemSelected', dropitemSelected)

@@ -1,6 +1,6 @@
 {% load jstemplate %}
 
-<form class="hidden edit" id="whitelist" data-url="/accounts/profile/edit" >
+<form class="hidden edit" id="whitelist" data-url="/api/whitelist/add/" >
         {% include 'common/snippets/alert_box.html' %}
         {% csrf_token %}
         

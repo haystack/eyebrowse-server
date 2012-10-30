@@ -7,7 +7,7 @@ function addEmailInput(){
     $('#add-email').closest('p').before(template);
 }
 
-function switchTab(e, d) {
+function switchTab(e) {
     $('.tab').closest('li').removeClass("active");
     $(e.target).closest('li').addClass("active");
     var id = $(e.currentTarget).attr('id').split("-")[0];
@@ -16,18 +16,19 @@ function switchTab(e, d) {
     $('.edit').find('.alert').slideUp(0)
 }
 
-function rmWhitelistItem(e, d) {
-    var postUrl = '/api/whitelist/rm';
+function rmWhitelistItem(e) {
     var $target = $(e.target);
-    var url = $target.data('url');
-    var csrftoken = $.cookie('csrftoken')
+    var id = $target.data('id');
     $target.closest('tr').remove()
-    $.post(postUrl, {
-        url : url,
+    $.ajax({
+        url: getApiURL('whitelist', id),
+        type: 'DELETE',
     });
+
 }
 
 function addWhitelist(res){
+    console.log(res.data.id)
     if (res.success) {
         $('.rm-margin').val('')
         var $rows = $('.whitelist-row');
@@ -38,10 +39,13 @@ function addWhitelist(res){
             $toAdd = $rows.filter(':last');
         }
         var template = ich['api/js_templates/whitelist_row.html']({
-                'url' : res.data
+                'url' : res.data.url,
+                'id' : res.data.id,
             });
 
         $toAdd.after(template);
+        $('.rm-whitelist').click(rmWhitelistItem);
+
     }
 }
 
