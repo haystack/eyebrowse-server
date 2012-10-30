@@ -10,9 +10,18 @@ class WhiteListItem(models.Model):
 
     url = models.CharField(max_length=2000, default='')
     date_created = models.DateTimeField(auto_now=True, default=datetime.now())
-    
+
     def __unicode__(self):
           return "Whitelist item %s for %s" % (self.url, self.user_profile.user.username)
+
+class BlackListItem(models.Model):
+    user_profile = models.ForeignKey(UserProfile)
+
+    url = models.CharField(max_length=2000, default='')
+    date_created = models.DateTimeField(auto_now=True, default=datetime.now())
+    
+    def __unicode__(self):
+          return "Blacklist item %s for %s" % (self.url, self.user_profile.user.username)
 
 class EyeHistory(models.Model):
     user_profile = models.ForeignKey(UserProfile)

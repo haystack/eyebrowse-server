@@ -164,6 +164,8 @@ INSTALLED_APPS = (
     'api',
 )
 
+APPEND_SLASH=False
+
 
 #email settings from sendgrid.com
 EMAIL_HOST = env['EMAIL_HOST']

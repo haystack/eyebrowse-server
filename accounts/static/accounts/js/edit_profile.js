@@ -16,43 +16,44 @@ function switchTab(e) {
     $('.edit').find('.alert').slideUp(0)
 }
 
-function rmWhitelistItem(e) {
-    var $target = $(e.target);
-    var id = $target.data('id');
-    $target.closest('tr').remove()
-    $.ajax({
-        url: getApiURL('whitelist', id),
-        type: 'DELETE',
-    });
-
-}
-
-function addWhitelist(res){
-    console.log(res.data.id)
+function addFilterlist(res, type){
+    console.log()
     if (res.success) {
         $('.rm-margin').val('')
-        var $rows = $('.whitelist-row');
+        var $rows = $(sprintf('.%s-row', type));
         var $toAdd;
         if ($rows.length == 0 ){
-            $toAdd = $('.whitelist-body')
+            $toAdd = $(sprintf('.%s-body', type))
         } else {
             $toAdd = $rows.filter(':last');
         }
-        var template = ich['api/js_templates/whitelist_row.html']({
+        var template = ich[sprintf('api/js_templates/%s_row.html', type)]({
                 'url' : res.data.url,
                 'id' : res.data.id,
             });
 
         $toAdd.after(template);
-        $('.rm-whitelist').click(rmWhitelistItem);
+        $('.rm-whitelist').click('whitelist', rmFilterListItem);
+        $('.rm-blacklist').click('blacklist', rmFilterListItem);
 
     }
 }
 
-function handleFormResponse(e, d){
-    if (d.type == 'whitelist') {
-        addWhitelist(d)
+function rmFilterListItem(e) {
+    var $target = $(e.target);
+    var id = $target.data('id');
+    if (!isNaN(id)){
+        $target.closest('tr').remove()
+        $.ajax({
+            url: getApiURL(e.data, id),
+            type: 'DELETE',
+        });
     }
+    
+}
+
+function handleFormResponse(e, d){
+    return addFilterlist(d, d.type)
 }
 
 
@@ -63,7 +64,8 @@ $(function(){
 
     $('.edit').on('formRes', handleFormResponse);
 
-    $('.rm-whitelist').click(rmWhitelistItem);
+    $('.rm-whitelist').click('whitelist', rmFilterListItem);
+    $('.rm-blacklist').click('blacklist', rmFilterListItem);
 
     $(document).on('click', '.remove-input', removeInput);
 

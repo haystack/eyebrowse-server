@@ -11,6 +11,7 @@ v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
 v1_api.register(UserProfileResource())
 v1_api.register(WhiteListItemResource())
+v1_api.register(BlackListItemResource())
 v1_api.register(EyeHistoryResource())
 
 # Uncomment the next two lines to enable the admin:
