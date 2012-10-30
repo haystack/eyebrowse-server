@@ -51,6 +51,12 @@ class WhiteListItemResource(ModelResource):
             'url' : ALL,
         }
 
+        def obj_create(self, bundle, request=None, **kwargs):
+            return super(WhiteListItemResource, self).obj_create(bundle, request, user=request.user)
+
+        def apply_authorization_limits(self, request, object_list):
+            return object_list.filter(user=request.user)
+
 class EyeHistoryResource(ModelResource):
     user_profile = fields.ForeignKey(UserProfileResource, 'user_profile')
 
@@ -70,3 +76,10 @@ class EyeHistoryResource(ModelResource):
             'end_time' : ALL,
             'total_time' : ALL,
         }
+
+        
+        def obj_create(self, bundle, request=None, **kwargs):
+            return super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user)
+
+        def apply_authorization_limits(self, request, object_list):
+            return object_list.filter(user=request.user)
