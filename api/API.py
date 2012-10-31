@@ -35,7 +35,7 @@ class UserProfileResource(ModelResource):
         }
 
 class WhiteListItemResource(ModelResource):
-    user_profile = fields.ForeignKey(UserProfileResource, 'user_profile')
+    user_profile = fields.ForeignKey(UserProfileResource, 'user_profile' )
     
     class Meta:
 
@@ -50,6 +50,11 @@ class WhiteListItemResource(ModelResource):
             'date_created': ALL,
             'url' : ALL,
         }
+
+        def hydrate(self, bundle):
+            print bundle
+
+            return bundle
 
         def obj_create(self, bundle, request=None, **kwargs):
 
