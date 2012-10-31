@@ -31,7 +31,6 @@ def edit_profile(request):
     """
 
     user = request.user
-    profile = user.profile
 
     if request.POST and request.is_ajax():
         success = False
@@ -39,48 +38,28 @@ def edit_profile(request):
         data = None
         type = request.POST.get('form_type', None)
         
-        if type == "whitelist":
-            url = request.POST.get('whitelist')
-            errors['whitelist'] = []
-            data = {'url' : url}
-            if not validate_url(url):
-                if url.strip() == "":
-                    errors['whitelist'].append("Enter a url!")
-                else:
-                    errors['whitelist'].append(url + ' is not a valid url.')
+        # if type == "email":
+        #     emails = request.POST.getlist('email')
+        #     errors['email'] = []
 
-            #make sure email doesn't exists
-            elif WhiteListItem.objects.filter(url=url, user_profile=profile).exists():
-                    errors['whitelist'].append('You already registered the whitelist item %s'%url)
+        #     for email in emails:
+        #         #makes sure email is valid
+        #         if not validateEmail(email):
+        #             if email.strip() == "":
+        #                 errors['email'].append("Empty email entered.")
+        #             else:
+        #                 errors['email'].append(email + ' is not a valid email.')
 
-            if not len(errors['whitelist']):
-                whitelist_item = WhiteListItem(url=url, user_profile=profile)
-                whitelist_item.save()
-                data['id'] = whitelist_item.id
-                success = "Added %s"%url
-        
-        elif type == "email":
-            emails = request.POST.getlist('email')
-            errors['email'] = []
+        #         #make sure email doesn't exists
+        #         elif Email.objects.filter(email=email, confirmed=True).exists():
+        #             errors['email'].append(email + ' is already registered with an account.')
 
-            for email in emails:
-                #makes sure email is valid
-                if not validateEmail(email):
-                    if email.strip() == "":
-                        errors['email'].append("Empty email entered.")
-                    else:
-                        errors['email'].append(email + ' is not a valid email.')
+        #     if errors['email'] == []:
+        #         for email in emails:
+        #             profile.add_email(email)
+        #         success = "Confirmation emails sent out!"
 
-                #make sure email doesn't exists
-                elif Email.objects.filter(email=email, confirmed=True).exists():
-                    errors['email'].append(email + ' is already registered with an account.')
-
-            if errors['email'] == []:
-                for email in emails:
-                    profile.add_email(email)
-                success = "Confirmation emails sent out!"
-
-        elif type == 'pic':
+        if type == 'pic':
             pic_url = request.POST.get('pic_url')
             pic_url = put_profile_pic(pic_url, user.profile) #download and upload to our S3
             if pic_url: #no errors/less than 1mb #patlsotw
@@ -102,13 +81,13 @@ def edit_profile(request):
     #not post request
 
     email_form = [{'value':user.email}]
-    for email in Email.objects.filter(user_profile=profile, confirmed=True).values_list('email', flat=True):
-        field = {
-            'value': email
-        }
-        email_form.append(field)
+    # for email in Email.objects.filter(user=user, confirmed=True).values_list('email', flat=True):
+    #     field = {
+    #         'value': email
+    #     }
+    #     email_form.append(field)
     
-    history_data = WhiteListItem.objects.filter(user_profile=profile)
+    history_data = WhiteListItem.objects.filter(user=user)
 
     template_values = _template_values(request, page_title="Edit Profile", navbar='nav_account', email=email_form, history_data=history_data)
 

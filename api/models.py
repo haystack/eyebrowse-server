@@ -1,30 +1,31 @@
 from django.db import models
 from django.utils import simplejson as json
+from django.contrib.auth.models import User
 from accounts.models import *
 
 from datetime import datetime
 
 
 class WhiteListItem(models.Model):
-    user_profile = models.ForeignKey(UserProfile)
+    user = models.ForeignKey(User)
 
     url = models.CharField(max_length=2000, default='')
     date_created = models.DateTimeField(auto_now=True, default=datetime.now())
 
     def __unicode__(self):
-          return "Whitelist item %s for %s" % (self.url, self.user_profile.user.username)
+          return "Whitelist item %s for %s" % (self.url, self.user.username)
 
 class BlackListItem(models.Model):
-    user_profile = models.ForeignKey(UserProfile)
+    user = models.ForeignKey(User)
 
     url = models.CharField(max_length=2000, default='')
     date_created = models.DateTimeField(auto_now=True, default=datetime.now())
     
     def __unicode__(self):
-          return "Blacklist item %s for %s" % (self.url, self.user_profile.user.username)
+          return "Blacklist item %s for %s" % (self.url, self.user.username)
 
 class EyeHistory(models.Model):
-    user_profile = models.ForeignKey(UserProfile)
+    user = models.ForeignKey(User)
 
     tabId = models.CharField(max_length=40, default='')
     url = models.CharField(max_length=2000, default='')
@@ -40,4 +41,4 @@ class EyeHistory(models.Model):
     total_time = models.DateTimeField()
 
     def __unicode__(self):
-          return "EyeHistory item %s for %s on %s" % (self.url, self.user_profile.user.username, self.start_time)
+          return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)

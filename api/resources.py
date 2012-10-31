@@ -1,3 +1,4 @@
+from django.conf.urls import url
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.authorization import Authorization
 from tastypie.authentication import BasicAuthentication
@@ -12,7 +13,7 @@ from api.models import *
 class UserResource(ModelResource):
     class Meta:
         queryset = User.objects.all()
-        resource_name = 'auth/user'
+        resource_name = 'user'
         fields = ['username', 'first_name', 'last_name', 'last_login']
         allowed_methods = ['get']
         authentication = BasicAuthentication()
@@ -21,6 +22,10 @@ class UserResource(ModelResource):
             'username': ALL,
         }
 
+    def override_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/(?P<username>[\w\d_.-]+)/$" % self._meta.resource_name, self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
+        ]
 
 class UserProfileResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user')
@@ -34,8 +39,9 @@ class UserProfileResource(ModelResource):
             'user' : ALL_WITH_RELATIONS
         }
 
+
 class WhiteListItemResource(ModelResource):
-    user_profile = fields.ForeignKey(UserProfileResource, 'user_profile' )
+    user = fields.ForeignKey(UserResource, 'user' )
     
     class Meta:
 
@@ -46,25 +52,16 @@ class WhiteListItemResource(ModelResource):
         list_allowed_methods = ['get', 'post', 'put', 'delete']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
-            'user_profile': ALL_WITH_RELATIONS,
+            'user': ALL_WITH_RELATIONS,
             'date_created': ALL,
             'url' : ALL,
         }
-
-        def hydrate(self, bundle):
-            print bundle
-
-            return bundle
-
-        def obj_create(self, bundle, request=None, **kwargs):
-
-            return super(WhiteListItemResource, self).obj_create(bundle, request, user_profile=user_profile, **kwargs)
 
         def apply_authorization_limits(self, request, object_list):
             return object_list.filter(user=request.user)
 
 class BlackListItemResource(ModelResource):
-    user_profile = fields.ForeignKey(UserProfileResource, 'user_profile')
+    user = fields.ForeignKey(UserResource, 'user')
     
     class Meta:
 
@@ -75,19 +72,16 @@ class BlackListItemResource(ModelResource):
         list_allowed_methods = ['get', 'post', 'put', 'delete']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
-            'user_profile': ALL_WITH_RELATIONS,
+            'user': ALL_WITH_RELATIONS,
             'date_created': ALL,
             'url' : ALL,
         }
-
-        def obj_create(self, bundle, request=None, **kwargs):
-            return super(WhiteListItemResource, self).obj_create(bundle, request, user=request.user)
 
         def apply_authorization_limits(self, request, object_list):
             return object_list.filter(user=request.user)
 
 class EyeHistoryResource(ModelResource):
-    user_profile = fields.ForeignKey(UserProfileResource, 'user_profile')
+    user = fields.ForeignKey(UserResource, 'user')
 
     class Meta:
 
@@ -98,16 +92,13 @@ class EyeHistoryResource(ModelResource):
         list_allowed_methods = ['get', 'put']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
-            'user_profile': ALL_WITH_RELATIONS,
+            'user': ALL_WITH_RELATIONS,
             'url' : ALL,
             'title' : ALL,
             'start_time' : ALL,
             'end_time' : ALL,
             'total_time' : ALL,
         }
-
-        def obj_create(self, bundle, request=None, **kwargs):
-            return super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user)
 
         def apply_authorization_limits(self, request, object_list):
             return object_list.filter(user=request.user)

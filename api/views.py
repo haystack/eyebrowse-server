@@ -21,7 +21,6 @@ def whitelist_add(request):
     API endpoint to add a whitelist item
     """
     user = request.user
-    profile = user.profile
     success = False
     errors = {}
     data = None
@@ -39,12 +38,11 @@ def whitelist_add(request):
                 else:
                     errors['whitelist'].append(url + ' is not a valid url.')
 
-            #make sure email doesn't exists
-            elif WhiteListItem.objects.filter(url=url, user_profile=profile).exists():
+            elif WhiteListItem.objects.filter(url=url, user=user).exists():
                     errors['whitelist'].append('You already registered the whitelist item %s'%url)
 
             if not len(errors['whitelist']):
-                whitelist_item = WhiteListItem(url=url, user_profile=profile)
+                whitelist_item = WhiteListItem(url=url, user=user)
                 whitelist_item.save()
                 data['id'] = whitelist_item.id
                 success = "Added %s"%url
@@ -65,7 +63,7 @@ def whitelist_rm(request):
     """
     API endpoint to remove an item from the whitelist.
     """
-    user_profile = request.user.profile
+    user = request.user
     url = request.POST.get('url', None)
 
     res = {'success' : False, 'errors' : []}
@@ -74,7 +72,7 @@ def whitelist_rm(request):
         res['errors'].append('url required')
         return JSONResponse(res)
     
-    whitelist_item = WhiteListItem.objects.filter(user_profile=user_profile, url=url)
+    whitelist_item = WhiteListItem.objects.filter(user=user, url=url)
 
     if not whitelist_item.exists():
         res['errors'].append('entry did not exist')
