@@ -1,19 +1,33 @@
+from django.contrib.sessions.models import Session
+from django.contrib.auth.models import User
 from django.conf.urls import url
+
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.authorization import Authorization
 from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
 
-from django.contrib.auth.models import User
-
 from accounts.models import UserProfile
 from api.models import *
 
+class MyBasicAuthentication(BasicAuthentication):
+    def __init__(self, *args, **kwargs):
+        super(MyBasicAuthentication, self).__init__(*args, **kwargs)
+
+    def is_authenticated(self, request, **kwargs):
+        if 'sessionid' in request.COOKIES:
+            s = Session.objects.get(pk=request.COOKIES['sessionid'])
+            if '_auth_user_id' in s.get_decoded():
+                u = User.objects.get(id=s.get_decoded()['_auth_user_id'])
+                request.user = u
+                return True
+        return False
+
 class BaseMeta:
-    authentication = BasicAuthentication()
+    authentication = MyBasicAuthentication()
     authorization = DjangoAuthorization()
-    
+
     def apply_authorization_limits(self, request, object_list):
             return object_list.filter(user=request.user)
 
@@ -38,7 +52,7 @@ class UserResource(ModelResource):
 class UserProfileResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user')
 
-    class Meta:
+    class Meta(BaseMeta):
         queryset = UserProfile.objects.all()
         resource_name = 'user_profile'
 
@@ -52,11 +66,9 @@ class UserProfileResource(ModelResource):
 class FilterSetItemResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user' )
     
-    class Meta:
+    class Meta(BaseMeta):
 
-        authorization = Authorization()
-
-        list_allowed_methods = ['get', 'post']
+        #list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
             'user': ALL_WITH_RELATIONS,
@@ -71,7 +83,8 @@ class WhiteListItemResource(FilterSetItemResource):
         queryset = WhiteListItem.objects.all()
         resource_name = 'whitelist'
 
-
+        def apply_authorization_limits(self, request, object_list):
+            return object_list.filter(user=request.user)
 class BlackListItemResource(FilterSetItemResource):
 
     
@@ -83,9 +96,7 @@ class BlackListItemResource(FilterSetItemResource):
 class EyeHistoryResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user')
 
-    class Meta:
-
-        # authorization = DjangoAuthorization()
+    class Meta(BaseMeta):
         queryset = EyeHistory.objects.all()
         resource_name = 'history-data'
 
