@@ -95,7 +95,7 @@ function getApiURL(resource, id, params) {
     if (id != null) {
         apiBase += '/' + id;
     } 
-    return sprintf("%s/?format=json%s", apiBase, getParams)
+    return sprintf("%s?format=json%s", apiBase, getParams)
 }
 
 $(function(){
