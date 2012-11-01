@@ -39,46 +39,39 @@ class UserProfileResource(ModelResource):
             'user' : ALL_WITH_RELATIONS
         }
 
-
-class WhiteListItemResource(ModelResource):
+class FilterSetItemResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user' )
     
     class Meta:
 
         authorization = Authorization()
+
+        list_allowed_methods = ['get', 'post', 'put', 'delete']
+        detail_allowed_methods = ['get', 'post', 'put', 'delete']
+        filtering = {
+            'user': ALL_WITH_RELATIONS,
+            'date_created': ALL,
+            'url' : ALL,
+        }
+
+        def apply_authorization_limits(self, request, object_list):
+            return object_list.filter(user=request.user)
+
+class WhiteListItemResource(FilterSetItemResource):
+    
+    class Meta(FilterSetItemResource.Meta):
+
         queryset = WhiteListItem.objects.all()
         resource_name = 'whitelist'
 
-        list_allowed_methods = ['get', 'post', 'put', 'delete']
-        detail_allowed_methods = ['get', 'post', 'put', 'delete']
-        filtering = {
-            'user': ALL_WITH_RELATIONS,
-            'date_created': ALL,
-            'url' : ALL,
-        }
 
-        def apply_authorization_limits(self, request, object_list):
-            return object_list.filter(user=request.user)
+class BlackListItemResource(FilterSetItemResource):
 
-class BlackListItemResource(ModelResource):
-    user = fields.ForeignKey(UserResource, 'user')
     
-    class Meta:
+    class Meta(FilterSetItemResource.Meta):
 
-        # authorization = DjangoAuthorization()
         queryset = BlackListItem.objects.all()
         resource_name = 'blacklist'
-
-        list_allowed_methods = ['get', 'post', 'put', 'delete']
-        detail_allowed_methods = ['get', 'post', 'put', 'delete']
-        filtering = {
-            'user': ALL_WITH_RELATIONS,
-            'date_created': ALL,
-            'url' : ALL,
-        }
-
-        def apply_authorization_limits(self, request, object_list):
-            return object_list.filter(user=request.user)
 
 class EyeHistoryResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user')

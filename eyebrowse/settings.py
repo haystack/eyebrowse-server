@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'api',
 )
 
+APPEND_SLASH = False
 
 #email settings from sendgrid.com
 EMAIL_HOST = env['EMAIL_HOST']
@@ -173,6 +174,13 @@ EMAIL_PORT = env['EMAIL_PORT']
 EMAIL_USE_TLS = env['EMAIL_USE_TLS']
 
 ACCOUNT_ACTIVATION_DAYS = 14 # Two-week activation window;
+
+
+##Tastypie settings:
+
+API_LIMIT_PER_PAGE = 0 #no default
+TASTYPIE_FULL_DEBUG = DEBUG
+TASTYPIE_ALLOW_MISSING_SLASH = True
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

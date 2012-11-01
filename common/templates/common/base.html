@@ -87,7 +87,7 @@
                                         {% if user.is_authenticated %}
                                             <li class="divider"></li>
                                             <li>
-                                                <a href={% url django.contrib.auth.views.logout %}> Logout </a>
+                                                <a href="{% url django.contrib.auth.views.logout %}"> Logout </a>
                                             </li>
                                         {% endif %}
                                     </ul>
@@ -101,7 +101,7 @@
                             </li>
                         {% else %}
                             <li class={{ nav_login }}>
-                                 <a href="/accounts/login">Login</a>
+                                 <a href="{% url django.contrib.auth.views.login %}">Login</a>
                             </li>
                         {% endif %}
                         </ul>
