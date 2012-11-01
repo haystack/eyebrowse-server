@@ -16,9 +16,6 @@
             <a id="pic-tab" href="#pic" class="tab">Account Info</a>
         </li>
         <li>
-            <a id="email-tab" href="#email" class="tab">Add Emails </a>
-        </li>
-        <li>
             <a id="con-tab" href="#con" class="tab">Add Connections </a>
         </li>
         <li>
@@ -28,9 +25,8 @@
 </div>
 <div class="span4 offset4">
 
-{% include 'accounts/edit_whitelist.html' %}
+{% include 'accounts/edit_filterset.html' with items=whitelist type="whitelist" %}
 {% include 'accounts/edit_account_info.html' %}
-{% include 'accounts/edit_email.html' %}
 {% include 'accounts/edit_connections.html' %}
 
 </div>

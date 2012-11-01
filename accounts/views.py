@@ -37,27 +37,6 @@ def edit_profile(request):
         errors = {}
         data = None
         type = request.POST.get('form_type', None)
-        
-        # if type == "email":
-        #     emails = request.POST.getlist('email')
-        #     errors['email'] = []
-
-        #     for email in emails:
-        #         #makes sure email is valid
-        #         if not validateEmail(email):
-        #             if email.strip() == "":
-        #                 errors['email'].append("Empty email entered.")
-        #             else:
-        #                 errors['email'].append(email + ' is not a valid email.')
-
-        #         #make sure email doesn't exists
-        #         elif Email.objects.filter(email=email, confirmed=True).exists():
-        #             errors['email'].append(email + ' is already registered with an account.')
-
-        #     if errors['email'] == []:
-        #         for email in emails:
-        #             profile.add_email(email)
-        #         success = "Confirmation emails sent out!"
 
         if type == 'pic':
             pic_url = request.POST.get('pic_url')
@@ -79,16 +58,10 @@ def edit_profile(request):
         return JSONResponse(return_obj)
 
     #not post request
-
-    email_form = [{'value':user.email}]
-    # for email in Email.objects.filter(user=user, confirmed=True).values_list('email', flat=True):
-    #     field = {
-    #         'value': email
-    #     }
-    #     email_form.append(field)
     
-    history_data = WhiteListItem.objects.filter(user=user)
+    whitelist = WhiteListItem.objects.filter(user=user)
+    blacklist = BlackListItem.objects.filter(user=user)
 
-    template_values = _template_values(request, page_title="Edit Profile", navbar='nav_account', email=email_form, history_data=history_data)
+    template_values = _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist)
 
     return render_to_response('accounts/edit_profile.html', template_values, context_instance=RequestContext(request))

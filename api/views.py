@@ -10,12 +10,10 @@ from accounts.models import *
 from api.models import *
 from common.view_helpers import _template_values, JSONResponse, NotImplementedResponse
 
-from common.decorators import assert_post_request
 from common.view_helpers import validate_url
 ###whitelist functionality
 
 @login_required
-#@assert_post_request
 def whitelist_add(request):
     """
     API endpoint to add a whitelist item
@@ -55,35 +53,6 @@ def whitelist_add(request):
     }
 
     return JSONResponse(return_obj)
-
-@csrf_exempt
-@login_required
-#@assert_post_request
-def whitelist_rm(request):
-    """
-    API endpoint to remove an item from the whitelist.
-    """
-    user = request.user
-    url = request.POST.get('url', None)
-
-    res = {'success' : False, 'errors' : []}
-    
-    if not url:
-        res['errors'].append('url required')
-        return JSONResponse(res)
-    
-    whitelist_item = WhiteListItem.objects.filter(user=user, url=url)
-
-    if not whitelist_item.exists():
-        res['errors'].append('entry did not exist')
-        return JSONResponse(res)
-    
-    whitelist_item = whitelist_item[0]
-    whitelist_item.delete()
-    res['success'] = True
-    
-    return JSONResponse(res)
-
 
 @login_required
 #@assert_post_request

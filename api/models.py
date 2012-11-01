@@ -5,21 +5,20 @@ from accounts.models import *
 
 from datetime import datetime
 
-
-class WhiteListItem(models.Model):
+class FilterListItem(models.Model):
     user = models.ForeignKey(User)
 
-    url = models.CharField(max_length=2000, default='')
+    url = models.URLField(max_length=2000, default='')
     date_created = models.DateTimeField(auto_now=True, default=datetime.now())
+    
+class WhiteListItem(FilterListItem):
+    type = models.CharField(max_length=40, default='whitelist')
 
     def __unicode__(self):
           return "Whitelist item %s for %s" % (self.url, self.user.username)
 
-class BlackListItem(models.Model):
-    user = models.ForeignKey(User)
-
-    url = models.CharField(max_length=2000, default='')
-    date_created = models.DateTimeField(auto_now=True, default=datetime.now())
+class BlackListItem(FilterListItem):
+    type = models.CharField(max_length=40, default='blacklist')
     
     def __unicode__(self):
           return "Blacklist item %s for %s" % (self.url, self.user.username)
@@ -28,8 +27,8 @@ class EyeHistory(models.Model):
     user = models.ForeignKey(User)
 
     tabId = models.CharField(max_length=40, default='')
-    url = models.CharField(max_length=2000, default='')
-    faviconUrl = models.CharField(max_length=2000, default='')
+    url = models.URLField(max_length=2000, default='')
+    faviconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=40, default='')
 
     start_event = models.CharField(max_length=40, default='')

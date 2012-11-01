@@ -1,0 +1,27 @@
+{% load jstemplate %}
+
+<form class="hidden edit" id="{{type}}" data-url="/api/{{type}}/add/" >
+        {% include 'common/snippets/alert_box.html' %}
+        {% csrf_token %}
+        
+        <p id="">
+                <input class="rm-margin" placeholder="Add {{type}} URL" type="text" name="{{type}}" value="">
+                <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Add " id="{{type}}-save"/>
+        </p> <br>
+
+        <input type="hidden" name="form_type" value="{{type}}">
+        <table class="table table-condensed table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>URL</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody class="{{type}}-body">
+                {% for item in items %}
+                        {% include 'api/filterset_row.html' with item=item %}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include_ichtemplate 'api/js_templates/filterset_row.html' %}
+</form>
