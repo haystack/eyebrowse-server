@@ -20,7 +20,9 @@ def profile(request, username=None):
 
     profile_user = get_object_or_404(User, username=username)
 
-    template_values = _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user)
+    eye_history = EyeHistory.objects.all()
+
+    template_values = _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history)
 
     return render_to_response('accounts/profile.html', template_values, context_instance=RequestContext(request))
 

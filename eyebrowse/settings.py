@@ -123,7 +123,8 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'common.profiler.ProfileMiddleware',
+    'common.middleware.profiler.ProfileMiddleware',
+     'common.middleware.crossdomainxhr.XsSharing'
 )
 
 ROOT_URLCONF = 'eyebrowse.urls'
@@ -181,6 +182,10 @@ ACCOUNT_ACTIVATION_DAYS = 14 # Two-week activation window;
 API_LIMIT_PER_PAGE = 0 #no default
 TASTYPIE_FULL_DEBUG = DEBUG
 TASTYPIE_ALLOW_MISSING_SLASH = True
+
+XS_SHARING_ALLOWED_ORIGINS = "http://localhost:5000"
+
+XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

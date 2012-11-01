@@ -28,7 +28,7 @@ class EyeHistory(models.Model):
 
     tabId = models.CharField(max_length=40, default='')
     url = models.URLField(max_length=2000, default='')
-    faviconUrl = models.URLField(max_length=2000, default='')
+    favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=40, default='')
 
     start_event = models.CharField(max_length=40, default='')
@@ -37,7 +37,9 @@ class EyeHistory(models.Model):
     end_event = models.CharField(max_length=40, default='')
     end_time = models.DateTimeField()
 
-    total_time = models.DateTimeField()
+    total_time = models.IntegerField() # store in ms
+    humanize_time = models.CharField(max_length=200, default='') # store as human readable according to moment.js library: http://momentjs.com/docs/#/displaying/humanize-duration/
+
 
     def __unicode__(self):
           return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)

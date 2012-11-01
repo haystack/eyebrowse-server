@@ -17,11 +17,13 @@ class MyBasicAuthentication(BasicAuthentication):
 
     def is_authenticated(self, request, **kwargs):
         if 'sessionid' in request.COOKIES:
-            s = Session.objects.get(pk=request.COOKIES['sessionid'])
-            if '_auth_user_id' in s.get_decoded():
-                u = User.objects.get(id=s.get_decoded()['_auth_user_id'])
-                request.user = u
-                return True
+            s = Session.objects.filter(pk=request.COOKIES['sessionid'])
+            if s.exists():
+                s = s[0]
+                if '_auth_user_id' in s.get_decoded():
+                    u = User.objects.get(id=s.get_decoded()['_auth_user_id'])
+                    request.user = u
+                    return True
         return False
 
 class BaseMeta:
@@ -100,7 +102,7 @@ class EyeHistoryResource(ModelResource):
         queryset = EyeHistory.objects.all()
         resource_name = 'history-data'
 
-        list_allowed_methods = ['get', 'put']
+        list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
             'user': ALL_WITH_RELATIONS,
