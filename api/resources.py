@@ -10,14 +10,22 @@ from django.contrib.auth.models import User
 from accounts.models import UserProfile
 from api.models import *
 
+class BaseMeta:
+    authentication = BasicAuthentication()
+    authorization = DjangoAuthorization()
+    
+    def apply_authorization_limits(self, request, object_list):
+            return object_list.filter(user=request.user)
+
 class UserResource(ModelResource):
-    class Meta:
+    class Meta(BaseMeta):
         queryset = User.objects.all()
         resource_name = 'user'
+        
+        detail_allowed_methods = ['get']
+        list_allowed_methods = []
         fields = ['username', 'first_name', 'last_name', 'last_login']
-        allowed_methods = ['get']
-        authentication = BasicAuthentication()
-        authorization = DjangoAuthorization()
+
         filtering = {
             'username': ALL,
         }
@@ -33,7 +41,9 @@ class UserProfileResource(ModelResource):
     class Meta:
         queryset = UserProfile.objects.all()
         resource_name = 'user_profile'
-        allowed_methods = ['get']
+
+        detail_allowed_methods = ['get']
+        list_allowed_methods = []
         fields = ['pic_url']
         filtering = {
             'user' : ALL_WITH_RELATIONS
@@ -46,16 +56,13 @@ class FilterSetItemResource(ModelResource):
 
         authorization = Authorization()
 
-        list_allowed_methods = ['get', 'post', 'put', 'delete']
+        list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
             'user': ALL_WITH_RELATIONS,
             'date_created': ALL,
             'url' : ALL,
         }
-
-        def apply_authorization_limits(self, request, object_list):
-            return object_list.filter(user=request.user)
 
 class WhiteListItemResource(FilterSetItemResource):
     
@@ -92,6 +99,3 @@ class EyeHistoryResource(ModelResource):
             'end_time' : ALL,
             'total_time' : ALL,
         }
-
-        def apply_authorization_limits(self, request, object_list):
-            return object_list.filter(user=request.user)
