@@ -14,8 +14,8 @@ function dropitemSelected (e, v) {
 }
 
 function navToUser(val){
-    var username = user_dict[val];
-    window.location = '/users/' + username
+    //var username = user_dict[val];
+    //window.location = '/users/' + username
 }
 
 function submitForm(e, d){
@@ -103,7 +103,7 @@ $(function(){
     $(document).on('click', '#submit_feedback', submitFeedBack)
 
     $(document).on('typeaheadItemSelected', dropitemSelected)
-
+    
     $('#search_bar').typeahead({
         'source' : []
     });

@@ -1671,7 +1671,7 @@
             this.$element
                 .val(this.updater(val))
                 .change()
-            this.$element.trigger('typeaheadItemSelected', val)
+            this.$element.trigger('typeaheadItemSelected', val);
             return this.hide()
         }
 

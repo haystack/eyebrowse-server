@@ -4,7 +4,9 @@
 
 {% load jstemplate %}
 
-
+{% block styles %} 
+{% include_style "accounts/css/edit_profile" %}
+{% endblock%}
 {% block content %}
 <div class="row offset3 span7">
     <h2 class="offset2"> Edit Profile </h2>

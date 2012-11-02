@@ -20,11 +20,13 @@ function addFilterlist(res, type){
     if (res.success) {
         $('.rm-margin').val('')
         var $rows = $(sprintf('.%s-row', type));
-        var $toAdd;
+        var $toAdd, addFunc;
         if ($rows.length == 0 ){
             $toAdd = $(sprintf('.%s-body', type))
+            addFunc = 'append';
         } else {
             $toAdd = $rows.filter(':last');
+            addFunc = 'after'
         }
         var template = ich['api/js_templates/filterset_row.html']({
                 'url' : res.data.url,
@@ -32,7 +34,7 @@ function addFilterlist(res, type){
                 'type' : type,
             });
 
-        $toAdd.after(template);
+        $toAdd[addFunc](template);
         $('.rm-whitelist').click('whitelist', rmFilterListItem);
         $('.rm-blacklist').click('blacklist', rmFilterListItem);
 
@@ -69,6 +71,34 @@ function setupFilterList() {
 }
 
 
+// custom css expression for a case-insensitive contains()
+$.expr[':'].Contains = function(a,i,m){
+  return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
+};
+
+
+function listFilter(list) {
+
+    $('.filter-input').change(function() {
+        var filter = $(this).val();
+        if(filter) {
+          // this finds all links in a list that contain the input,
+          // and hide the ones not containing the input while showing the ones that do
+          $(list).find("a:not(:Contains(" + filter + "))").closest('tr').slideUp();
+          $(list).find("a:Contains(" + filter + ")").closest('tr').slideDown();
+        } else {
+          $(list).find("tr").slideDown();
+        }
+        return false;
+      })
+    .keyup( function () {
+        // fire the above change event after every letter
+        $(this).change();
+    });
+}
+
+
+
 $(function(){
     $('.tab').click(switchTab);;
 
@@ -85,5 +115,7 @@ $(function(){
     
     $('#add-email').click();
     $('#whitelist-tab').click();
+
     setupFilterList();
+    listFilter($(".whitelist-body"));
 });
