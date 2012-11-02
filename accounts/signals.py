@@ -1,7 +1,9 @@
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
-from common.defaults import DEFAULT_WHITELIST, DEFAULT_BLACKLIST
 
+from common.defaults import DEFAULT_WHITELIST, DEFAULT_BLACKLIST
+from accounts.models import *
+from api.models import *
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:  
@@ -19,3 +21,4 @@ def add_defaults(user, default_list, filter_set_item):
 
 def setup():
     post_save.connect(create_user_profile, sender=User) 
+    post_save.connect(set_default_filterset, sender=User)
