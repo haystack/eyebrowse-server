@@ -5,5 +5,5 @@ eyebrowse/static/CACHE
 *.log
 .env
 venv
-
+*.db
 local_settings.py

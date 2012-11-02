@@ -20,7 +20,7 @@ def profile(request, username=None):
 
     profile_user = get_object_or_404(User, username=username)
 
-    eye_history = EyeHistory.objects.all()
+    eye_history = EyeHistory.objects.all().order_by('-end_time')
 
     template_values = _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history)
 
