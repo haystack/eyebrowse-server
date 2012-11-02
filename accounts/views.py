@@ -3,6 +3,8 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
+from django.core import serializers
+
 
 from accounts.models import *
 from api.models import *
@@ -60,10 +62,9 @@ def edit_profile(request):
         return JSONResponse(return_obj)
 
     #not post request
-    
     whitelist = WhiteListItem.objects.filter(user=user)
     blacklist = BlackListItem.objects.filter(user=user)
-
+    
     template_values = _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist)
-
+    print template_values
     return render_to_response('accounts/edit_profile.html', template_values, context_instance=RequestContext(request))

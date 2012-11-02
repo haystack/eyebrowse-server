@@ -28,7 +28,7 @@ class EyeHistory(models.Model):
 
     tabId = models.CharField(max_length=40, default='')
     url = models.URLField(max_length=2000, default='')
-    faviconUrl = models.URLField(max_length=2000, default='')
+    favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=40, default='')
 
     start_event = models.CharField(max_length=40, default='')

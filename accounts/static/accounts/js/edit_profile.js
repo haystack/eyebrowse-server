@@ -17,7 +17,6 @@ function switchTab(e) {
 }
 
 function addFilterlist(res, type){
-    console.log()
     if (res.success) {
         $('.rm-margin').val('')
         var $rows = $(sprintf('.%s-row', type));
@@ -27,9 +26,10 @@ function addFilterlist(res, type){
         } else {
             $toAdd = $rows.filter(':last');
         }
-        var template = ich[sprintf('api/js_templates/%s_row.html', type)]({
+        var template = ich['api/js_templates/filterset_row.html']({
                 'url' : res.data.url,
                 'id' : res.data.id,
+                'type' : type,
             });
 
         $toAdd.after(template);
@@ -56,6 +56,18 @@ function handleFormResponse(e, d){
     return addFilterlist(d, d.type)
 }
 
+function setupFilterList() {
+    if (whitelist_filterset != undefined) { 
+        $.each(whitelist_filterset, function(index, item){
+            item = {
+                'success':true,
+                'data': item,
+            }
+            addFilterlist(item, 'whitelist');
+        });
+    }
+}
+
 
 $(function(){
     $('.tab').click(switchTab);;
@@ -73,5 +85,5 @@ $(function(){
     
     $('#add-email').click();
     $('#whitelist-tab').click();
-
+    setupFilterList();
 });

@@ -12,18 +12,24 @@
         <input type="hidden" name="form_type" value="{{type}}">
         <div class="filterset-container">
             <table class="table table-condensed table-striped table-bordered">
-                <thead>
+                <thead class='hidden'>
                     <tr>
-                        <th>URL</th>
-                        <th>Remove</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody class="{{type}}-body">
-                    {% for item in items %}
-                            {% include 'api/filterset_row.html' with item=item %}
-                    {% endfor %}
                 </tbody>
             </table>
         </div>
         {% include_ichtemplate 'api/js_templates/filterset_row.html' %}
+        <script type="text/javascript">
+            var {{type}}_filterset = []
+            {% for item in items %}
+                {{type}}_filterset.push({
+                    'id' : "{{item.id}}",
+                    'url' : "{{item.url}}",
+                });
+            {% endfor %}
+        </script>
 </form>
