@@ -1,12 +1,17 @@
 from django import template
+from django.contrib.staticfiles.storage import staticfiles_storage
+
+from time import mktime
 
 register = template.Library()
-import json
-from django.contrib.staticfiles.storage import staticfiles_storage
 
 def fill(template, path):
     static_path = staticfiles_storage.url(path)
     return template % static_path
+
+@register.filter
+def date_ms(dt):
+    return int(1000*mktime(dt.timetuple()))
 
 @register.simple_tag
 def include_script(script_name):

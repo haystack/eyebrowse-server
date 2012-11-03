@@ -52,3 +52,11 @@ ul.errorlist {
 .table td, .table th {
    text-align: center;   
 }
+
+.title-offset {
+    padding-bottom: 25px;
+}
+
+.pointer {
+    cursor: pointer;
+}

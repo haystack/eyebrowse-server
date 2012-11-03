@@ -50,10 +50,10 @@ function submitForm(e, d){
 
 //defaults to placing right and focus trigger if 
 //no values given.
-function makeTip(div, title, placement, trigger) {
+function makeTip(selector, title, placement, trigger) {
     placement = placement || 'right';
     trigger = trigger || 'focus'
-    $('#' + div).tooltip({
+    $(selector).tooltip({
         "placement" : placement,
         "title" : title,
         "trigger" : trigger,
@@ -103,7 +103,7 @@ $(function(){
     $(document).on('click', '#submit_feedback', submitFeedBack)
 
     $(document).on('typeaheadItemSelected', dropitemSelected)
-    
+
     $('#search_bar').typeahead({
         'source' : []
     });
