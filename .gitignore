@@ -2,7 +2,7 @@
 .dropbox
 eyebrowse/static/CACHE
 *.pyc
-*.log
+
 .env
 venv
 *.db
