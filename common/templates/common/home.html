@@ -1,0 +1,43 @@
+{% extends 'common/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+ <div class="hero-unit well">
+        <h1>Welcome to Eyebrowse!</h1>
+        <p> 
+            Eyebrowse allows users to automatically track and selectively publish their use of the Web in real-time. Currently, there is no simple way for the end-user to keep track of the vast time spent browsing the Web. Since there is no clear picture of how users access the Web as a whole, the Eyebrowse Project aims to allow public logging of Web usage through client-side services. Eyebrowse gives control to the user, while providing data for public use. Interested? First register and then select browser extension below to download.
+        </p>
+        <p>
+            <a class="btn btn-primary btn-large" href="/accounts/register">Register &raquo;</a>
+        </p>
+</div>
+<div class="row">
+    <div class="span4">
+            <h2> <img class="ext-icon" src='{% static "common/img/chrome-logo.png" %}'> Chrome Extension</h2>
+            <p> Track you data through the Chrome browser. The extension will link to your account and keep track of your whitelist and browsing data. </p>
+            <p>
+                <a class="btn" href="#">Download &raquo;</a>
+            </p>
+    </div>
+    <div class="span4">
+        <h2> <img class="ext-icon" src='{% static "common/img/firefox-logo.png" %}'> Firefox Extension</h2>
+        <p>
+            Track you data through the Chrome browser. The extension will link to your account and keep track of your whitelist and browsing data. 
+        </p>
+        <p>
+            <a class="btn" href="#">Download &raquo;</a>
+        </p>
+    </div>
+    <div class="span4">
+        <h2>Private Server</h2>
+        <p>
+            If you are interested in running your own server to manage your Eyebrowse data you can download an opensource version of our server and keep track of your data locally. 
+        </p>
+        <p>
+            <a class="btn" href="#">More Details &raquo;</a>
+        </p>
+    </div>
+</div>
+
+
+{% endblock %}
