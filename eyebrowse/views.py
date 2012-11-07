@@ -12,21 +12,8 @@ from accounts.models import *
 from common.view_helpers import _template_values, JSONResponse
 
 def home(request):
-    template_values = {}
-    return render_to_response('common/base.html', template_values, context_instance=RequestContext(request))
-
-@login_required
-@csrf_exempt
-def confirm_email(request, key):
-    """
-    Endpoint to confirm you are owner of email
-    """
-    alt_email = Email.objects.filter(activation_key=key)
-    if alt_email.exists():
-        alt_email[0].confirm()
-        return redirect('/')
-    hero_title ="We weren't able to complete your request..."
-    return renderErrorMessage(request, hero_title)
+    template_values = _template_values(request, page_title="home", navbar='nav_home')
+    return render_to_response('common/home.html', template_values, context_instance=RequestContext(request))
 
 @login_required
 @csrf_exempt

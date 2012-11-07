@@ -36,7 +36,6 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('eyebrowse.views',
-    url(r'^confirm_email/(?P<key>\w+)', 'confirm_email'),
     url(r'^feedback$', 'feedback'),
 
     url(r'^$', 'home'),

@@ -29,7 +29,7 @@
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
 
-        <link rel="shortcut icon" href="{% static "common/img/favicon.ico" %}">
+        <link rel="shortcut icon" href='{% static "common/img/favicon.ico" %}'>
        
     </head>
 
@@ -109,11 +109,18 @@
                 </div>
             </div>
         </div>
-        <div class="container wrapper">
-            {% block content %} {% endblock%}
-            <div class="push"></div>
+        <!-- Part 1: Wrap all page content here -->
+        <div class="wrap">
+
+            <!-- Begin page content -->
+            <div class="container">
+                {% block content %} {% endblock%}
+            </div>
+
+          <div class="push"></div>
         </div>
-        <!-- <div class="footer">
+
+        <div class="footer">
             <div class="navbar">
                 <div class="navbar-inner nav-bg">
                     <div class="container">
@@ -139,7 +146,7 @@
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
 
 
         {% include 'common/send_feedback.html' %}
