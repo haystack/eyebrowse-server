@@ -66,30 +66,56 @@ class UserProfileResource(ModelResource):
         }
 
 class FilterSetItemResource(ModelResource):
-    user = fields.ForeignKey(UserResource, 'user' )
+    """
+        Abstract base class
+    """
+    user = fields.ForeignKey(UserResource, 'user' )        
     
     class Meta(BaseMeta):
 
-        #list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
             'user': ALL_WITH_RELATIONS,
             'date_created': ALL,
             'url' : ALL,
         }
+        resource_name = 'filterset'
+
+
+        
 
 class WhiteListItemResource(FilterSetItemResource):
-    
+
+    def obj_create(self, bundle, request=None, **kwargs):
+
+        username = bundle.data['user'].split('/')[-1]
+        url = bundle.data['url']
+
+        try:
+            obj = WhiteListItem.objects.get(user__username=username, url=url)
+        except WhiteListItem.DoesNotExist:
+            return super(WhiteListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+        return bundle
+
     class Meta(FilterSetItemResource.Meta):
 
         queryset = WhiteListItem.objects.all()
         resource_name = 'whitelist'
+        
 
-        def apply_authorization_limits(self, request, object_list):
-            return object_list.filter(user=request.user)
 class BlackListItemResource(FilterSetItemResource):
-
     
+    def obj_create(self, bundle, request=None, **kwargs):
+
+        username = bundle.data['user'].split('/')[-1]
+        url = bundle.data['url']
+
+        try:
+            obj = BlackListItem.objects.get(user__username=username, url=url)
+        except BlackListItem.DoesNotExist:
+            return super(BlackListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+        return bundle
+
     class Meta(FilterSetItemResource.Meta):
 
         queryset = BlackListItem.objects.all()
@@ -112,3 +138,18 @@ class EyeHistoryResource(ModelResource):
             'end_time' : ALL,
             'total_time' : ALL,
         }
+
+    def obj_create(self, bundle, request=None, **kwargs):
+
+        username = bundle.data['user'].split('/')[-1]
+        url = bundle.data['url']
+        title = bundle.data['title']
+        total_time = bundle.data['total_time']
+        tabId = bundle.data['tabId']
+
+        try:
+            obj = EyeHistory.objects.get(user__username=username, url=url, title=title, total_time=total_time, tabId=tabId)
+        except EyeHistory.DoesNotExist:
+            return super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+        return bundle
+        

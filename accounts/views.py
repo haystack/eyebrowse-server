@@ -64,5 +64,5 @@ def edit_profile(request):
     blacklist = BlackListItem.objects.filter(user=user)
     
     template_values = _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist)
-    print template_values
+    
     return render_to_response('accounts/edit_profile.html', template_values, context_instance=RequestContext(request))

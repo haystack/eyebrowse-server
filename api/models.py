@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from accounts.models import *
 
 from datetime import datetime
+from urlparse import urlparse
 
 class FilterListItem(models.Model):
     user = models.ForeignKey(User)
