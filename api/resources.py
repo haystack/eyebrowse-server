@@ -10,6 +10,7 @@ from tastypie import fields
 
 from accounts.models import UserProfile
 from api.models import *
+from resource_helpers import *
 
 class MyBasicAuthentication(BasicAuthentication):
     def __init__(self, *args, **kwargs):
@@ -32,6 +33,7 @@ class BaseMeta:
 
     def apply_authorization_limits(self, request, object_list):
             return object_list.filter(user=request.user)
+
 
 class UserResource(ModelResource):
     class Meta(BaseMeta):
@@ -90,6 +92,10 @@ class WhiteListItemResource(FilterSetItemResource):
 
         username = bundle.data['user'].split('/')[-1]
         url = bundle.data['url']
+        
+        blacklist_item = getBlackListItem(url) #check to see if this exists
+        if blacklist_item:
+            blacklist_item.delete()
 
         try:
             obj = WhiteListItem.objects.get(user__username=username, url=url)
@@ -101,7 +107,6 @@ class WhiteListItemResource(FilterSetItemResource):
 
         queryset = WhiteListItem.objects.all()
         resource_name = 'whitelist'
-        
 
 class BlackListItemResource(FilterSetItemResource):
     
@@ -110,10 +115,13 @@ class BlackListItemResource(FilterSetItemResource):
         username = bundle.data['user'].split('/')[-1]
         url = bundle.data['url']
 
+        whitelist_item = getWhiteListItem(url) #check to see if this exists
+        if whitelist_item:
+            whitelist_item.delete()
         try:
             obj = BlackListItem.objects.get(user__username=username, url=url)
         except BlackListItem.DoesNotExist:
-            return super(BlackListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+            return super(WhiteListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
         return bundle
 
     class Meta(FilterSetItemResource.Meta):
@@ -146,10 +154,12 @@ class EyeHistoryResource(ModelResource):
         title = bundle.data['title']
         total_time = bundle.data['total_time']
         tabId = bundle.data['tabId']
-
+        if not inWhitelist(url):
+            return bundle
         try:
             obj = EyeHistory.objects.get(user__username=username, url=url, title=title, total_time=total_time, tabId=tabId)
+        
         except EyeHistory.DoesNotExist:
             return super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
-        return bundle
         
+        return bundle

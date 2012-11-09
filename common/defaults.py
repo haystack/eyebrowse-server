@@ -8,6 +8,7 @@ DEFAULT_WHITELIST = []
 DEFAULT_BLACKLIST = [
     getURL('google', https=True),
     getURL('google'),
-    getURL('localhost'),
-    'chrome://',
+    'localhost',
+    'chrome',
+    'chrome-devtools',
 ]
