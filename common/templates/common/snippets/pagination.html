@@ -1,0 +1,19 @@
+<div class="row">
+    <ul class="pager">
+        {% if objs.has_previous %}
+        <li class="previous"> 
+            <a href="?page={{ objs.previous_page_number }}{{ link_mod }}">
+                &larr; previous
+            </a>
+        </li>
+        {% endif %}
+
+        {% if objs.has_next %}
+        <li class="next">
+            <a href="?page={{ objs.next_page_number }}{{ link_mod }}">
+                next &rarr; 
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>

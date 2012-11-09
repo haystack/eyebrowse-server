@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from accounts.models import *
 from api.models import *
 from common.view_helpers import _template_values, JSONResponse, validateEmail
+from common.pagination import paginator
 from common.helpers import put_profile_pic
 
 @login_required
@@ -20,8 +21,10 @@ def profile(request, username=None):
 
     profile_user = get_object_or_404(User, username=username)
 
+    page = request.GET.get('page',1)
+    
     eye_history = EyeHistory.objects.all().order_by('-end_time')
-
+    eye_history = paginator(page, eye_history)
     template_values = _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history)
 
     return render_to_response('accounts/profile.html', template_values, context_instance=RequestContext(request))
@@ -64,5 +67,5 @@ def edit_profile(request):
     blacklist = BlackListItem.objects.filter(user=user)
     
     template_values = _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist)
-    
+
     return render_to_response('accounts/edit_profile.html', template_values, context_instance=RequestContext(request))

@@ -18,10 +18,10 @@ def inFilterSet(set_type, url):
     domain, protocol = split_url(url)
     return (set_type.objects.filter(url=domain).exists() or set_type.objects.filter(url=protocol).exists() or set_type.objects.filter(url=url).exists())
 
-def getWhitelistItem(url):
+def getWhiteListItem(url):
     return getFilterSetItem(WhiteListItem, url)
 
-def getBlacklistItem(url):
+def getBlackListItem(url):
     return getFilterSetItem(BlackListItem, url)
 
 def getFilterSetItem(set_type, url):

@@ -158,6 +158,7 @@ INSTALLED_APPS = (
     'django_evolution',
     'registration',
     'tastypie',
+    'pagination',
 
     #eyebrowse
     'accounts',
