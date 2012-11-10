@@ -50,6 +50,8 @@ function rmFilterListItem(e) {
             url: getApiURL(e.data, id),
             type: 'DELETE',
         });
+        $('.filter-input').val('').trigger('keyup');
+
     }
     
 }
@@ -89,6 +91,7 @@ function listFilter(list) {
         } else {
           $(list).find("tr").slideDown();
         }
+        $('.rm-whitelist').click('whitelist', rmFilterListItem);
         return false;
       })
     .keyup( function () {
