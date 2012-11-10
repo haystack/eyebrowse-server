@@ -121,7 +121,7 @@ class BlackListItemResource(FilterSetItemResource):
         try:
             obj = BlackListItem.objects.get(user__username=username, url=url)
         except BlackListItem.DoesNotExist:
-            return super(WhiteListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+            return super(BlackListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
         return bundle
 
     class Meta(FilterSetItemResource.Meta):

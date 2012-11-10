@@ -21,7 +21,7 @@ def profile(request, username=None):
 
     profile_user = get_object_or_404(User, username=username)
 
-    page = request.GET.get('page',1)
+    page = request.GET.get('page', 1)
     
     eye_history = EyeHistory.objects.all().order_by('-end_time')
     eye_history = paginator(page, eye_history)
