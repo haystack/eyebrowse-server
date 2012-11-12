@@ -42,18 +42,9 @@ function addFilterlist(res, type){
 }
 
 function rmFilterListItem(e) {
-    var $target = $(e.target);
-    var id = $target.data('id');
-    if (!isNaN(id)){
-        $target.closest('tr').remove()
-        $.ajax({
-            url: getApiURL(e.data, id),
-            type: 'DELETE',
-        });
+    if (rmItem(e)) {    
         $('.filter-input').val('').trigger('keyup');
-
     }
-    
 }
 
 function handleFormResponse(e, d){

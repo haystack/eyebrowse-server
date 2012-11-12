@@ -88,7 +88,7 @@ function renderWhitelistRow(whitelist) {
 function getApiURL(resource, id, params) { 
     params = params || {};
     var apiBase = '/api/v1/' + resource;
-    var getParams = ''
+    var getParams = '';
     $.each(params, function(key, val){
         getParams += sprintf("&%s=%s", key, val);
     });
@@ -96,6 +96,23 @@ function getApiURL(resource, id, params) {
         apiBase += '/' + id;
     } 
     return sprintf("%s?format=json%s", apiBase, getParams)
+}
+
+/*
+Deletes a resource, requires data of resource type and the id of the item to be in the item triggering the event.
+*/
+function rmItem(e) {
+    var $target = $(e.target);
+    var id = $target.data('id');
+    if (!isNaN(id)){
+        $target.closest('tr').remove()
+        $.ajax({
+            url: getApiURL(e.data, id),
+            type: 'DELETE',
+        });
+        return true;
+    }
+    return false;
 }
 
 $(function(){

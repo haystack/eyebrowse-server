@@ -1,11 +1,8 @@
 {% load filters %}
 <tr class="history-row">
     <td>
-        <img class="favicon" src="{{ item.favIconUrl }}">
-    </td>
-    <td>
         <a href="{{ item.url }}" data-content="{{ item.url }}" class="cut-content pointer">
-         {{ item.url|url_domain|truncatechars:30 }} 
+         <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain|truncatechars:30 }} 
         </a>
     </td>
     <td class="cut-content pointer" data-content="{{ item.title }}">
@@ -19,5 +16,10 @@
     </td>
     <td data-order-by="{{ item.end_time|date_ms }}">
         {{ item.end_time }}
+    </td>
+    <td class="hidden edit">
+        <a class="btn btn-danger btn-small rm-history" data-id="{{ item.id }}">
+            <i class="icon-remove icon-white"></i>
+        </a>
     </td>
 </tr>
