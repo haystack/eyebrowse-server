@@ -12,6 +12,8 @@ from accounts.models import *
 from common.view_helpers import _template_values, JSONResponse
 
 def home(request):
+    if request.user.is_authenticated():
+        return redirect('/accounts/profile/')
     template_values = _template_values(request, page_title="home", navbar='nav_home')
     return render_to_response('common/home.html', template_values, context_instance=RequestContext(request))
 
