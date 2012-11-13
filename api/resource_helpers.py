@@ -8,23 +8,23 @@ def split_url(url):
     protocol = parsed.scheme
     return domain, protocol
 
-def inWhitelist(url):
-    return inFilterSet(WhiteListItem, url)
+def in_Whitelist(url):
+    return in_FilterSet(WhiteListItem, url)
 
-def inBlacklist(url):
-    return inFilterSet(BlackListItem, url)
+def in_Blacklist(url):
+    return in_FilterSet(BlackListItem, url)
 
-def inFilterSet(set_type, url):
+def in_FilterSet(set_type, url):
     domain, protocol = split_url(url)
     return (set_type.objects.filter(url=domain).exists() or set_type.objects.filter(url=protocol).exists() or set_type.objects.filter(url=url).exists())
 
-def getWhiteListItem(url):
-    return getFilterSetItem(WhiteListItem, url)
+def get_WhiteListItem(url):
+    return get_FilterSetItem(WhiteListItem, url)
 
-def getBlackListItem(url):
-    return getFilterSetItem(BlackListItem, url)
+def get_BlackListItem(url):
+    return get_FilterSetItem(BlackListItem, url)
 
-def getFilterSetItem(set_type, url):
+def get_FilterSetItem(set_type, url):
     domain, protocol = split_url(url)
     urls = [domain, protocol, url]
     for item in urls:
@@ -32,3 +32,13 @@ def getFilterSetItem(set_type, url):
         if item_set.exists():
             return item_set[0]
     return None
+
+def get_username(bundle):
+    """
+    Requires a bundle object from obj_create
+    Returns None if no user data is present in the bundle
+    """
+    try:
+        return bundle.data['user'].split('/')[-1]
+    except:
+        return None

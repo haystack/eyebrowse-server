@@ -93,7 +93,7 @@ class WhiteListItemResource(FilterSetItemResource):
         username = bundle.data['user'].split('/')[-1]
         url = bundle.data['url']
         
-        blacklist_item = getBlackListItem(url) #check to see if this exists
+        blacklist_item = get_BlackListItem(url) #check to see if this exists
         if blacklist_item:
             blacklist_item.delete()
 
@@ -112,10 +112,10 @@ class BlackListItemResource(FilterSetItemResource):
     
     def obj_create(self, bundle, request=None, **kwargs):
 
-        username = bundle.data['user'].split('/')[-1]
+        username = get_username(bundle)
         url = bundle.data['url']
 
-        whitelist_item = getWhiteListItem(url) #check to see if this exists
+        whitelist_item = get_WhiteListItem(url) #check to see if this exists
         if whitelist_item:
             whitelist_item.delete()
         try:
@@ -149,12 +149,12 @@ class EyeHistoryResource(ModelResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
 
-        username = bundle.data['user'].split('/')[-1]
+        username = get_username(bundle)
         url = bundle.data['url']
         title = bundle.data['title']
         total_time = bundle.data['total_time']
         tabId = bundle.data['tabId']
-        if not inWhitelist(url):
+        if not in_Whitelist(url):
             return bundle
         try:
             obj = EyeHistory.objects.get(user__username=username, url=url, title=title, total_time=total_time, tabId=tabId)

@@ -18,6 +18,6 @@ function toggleHistory(e) {
 $(function(){
     setTips();//set tool tips for truncated data
     $('.history-data').stupidtable();
-    $('.rm-history').click('history-data', rmEyeHistoryItem);
+    $('table').on('click', '.rm-history', 'history-data', rmEyeHistoryItem);
     $('.btn-rm-history').click(toggleHistory)
 }); 

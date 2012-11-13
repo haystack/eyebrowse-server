@@ -35,13 +35,13 @@ function addFilterlist(res, type){
             });
 
         $toAdd[addFunc](template);
-        $('.rm-whitelist').click('whitelist', rmFilterListItem);
-        $('.rm-blacklist').click('blacklist', rmFilterListItem);
-
     }
 }
 
 function rmFilterListItem(e) {
+    var $target = $(e.target);
+    var url = $target.data('url');
+    addFilterSetItem('blacklist', url);
     if (rmItem(e)) {    
         $('.filter-input').val('').trigger('keyup');
     }
@@ -82,7 +82,6 @@ function listFilter(list) {
         } else {
           $(list).find("tr").slideDown();
         }
-        $('.rm-whitelist').click('whitelist', rmFilterListItem);
         return false;
       })
     .keyup( function () {
@@ -94,14 +93,13 @@ function listFilter(list) {
 
 
 $(function(){
-    $('.tab').click(switchTab);;
+    $('.tab').on('click', switchTab);;
 
     $('.edit').submit(submitForm);
 
     $('.edit').on('formRes', handleFormResponse);
 
-    $('.rm-whitelist').click('whitelist', rmFilterListItem);
-    $('.rm-blacklist').click('blacklist', rmFilterListItem);
+    $("#whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
 
     $(document).on('click', '.remove-input', removeInput);
 

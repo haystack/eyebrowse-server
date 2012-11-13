@@ -115,6 +115,25 @@ function rmItem(e) {
     return false;
 }
 
+/*
+Deletes a resource, requires data of resource type and the id of the item to be in the item triggering the event.
+*/
+function addFilterSetItem(resource, url) {
+    $.ajax({
+        type: 'POST',
+        url: getApiURL(resource),
+        data:  JSON.stringify({ "url" : url, "user" : getResourceURI()}),
+        contentType:'application/json',
+        dataType: 'application/json',
+        processData: false,
+    });
+}
+
+function getResourceURI() { 
+    return sprintf('/api/v1/user/%s/', username)
+}
+
+
 $(function(){
 
     $(document).on('click', '#submit_feedback', submitFeedBack)
