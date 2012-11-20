@@ -129,17 +129,13 @@ function getApiURL(resource, id, params) {
 Deletes a resource, requires data of resource type and the id of the item to be in the item triggering the event.
 */
 function rmItem(e) {
-    var $target = $(e.target);
+    var $target = $(e.currentTarget);
     var id = $target.data('id');
-    if (!isNaN(id)){
-        $target.closest('tr').remove()
-        $.ajax({
-            url: getApiURL(e.data, id),
-            type: 'DELETE',
-        });
-        return true;
-    }
-    return false;
+    $target.closest('tr').remove()
+    $.ajax({
+        url: getApiURL(e.data, id),
+        type: 'DELETE',
+    });
 }
 
 /*
@@ -174,6 +170,11 @@ function urlDomain(url, cut) {
 function truncate(str, len){
     len = len || 40;
     return str.substr(0, len);
+}
+
+function date_ms(dateString) {
+    dateString = dateString.replace('a.m.', 'AM').replace('p.m.', 'PM');
+    return (new moment(dateString).unix())*1000
 }
 
 $(function(){

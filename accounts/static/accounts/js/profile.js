@@ -14,6 +14,8 @@ function getData(res) {
     var data = res.data;
     data.urlDomain = urlDomain(data.url);
     data.truncateTitle = truncate(data.title);
+    data.start_time_ms = date_ms(data.start_time);
+    data.end_time_ms = date_ms(data.end_time);
     return data
 }
 
@@ -38,6 +40,6 @@ $(function(){
     setupHistoryList();
     setTips();//set tool tips for truncated data
     $('.history-data').stupidtable();
-    $('.history-row').on('click', '.rm-history', 'history-data', rmEyeHistoryItem);
+    $('.history-body').on('click', '.rm-history', 'history-data', rmEyeHistoryItem);
     $('.btn-rm-history').click(toggleHistory)
 }); 

@@ -28,7 +28,7 @@ function addFilterlist(res, type){
 
 
 function rmFilterListItem(e) {
-    var $target = $(e.target);
+    var $target = $(e.currentTarget);
     var url = $target.data('url');
     addItem('blacklist', url);
     if (rmItem(e)) {    
