@@ -26,7 +26,7 @@ class UserProfile(models.Model):
     def __unicode__(self):
           return "%s's profile" % self.user
 
-User.user_profile = property(lambda u: u.get_profile())
+User.profile = property(lambda u: u.get_profile())
 
 import signals
 signals.setup()

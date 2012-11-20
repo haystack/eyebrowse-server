@@ -2,6 +2,7 @@
 import os
 import sys
 import django
+import urllib
 
 from os import environ as env
 from registration_defaults.settings import *
@@ -189,6 +190,11 @@ XS_SHARING_ALLOWED_ORIGINS = "http://localhost:5000"
 XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
 
 TASTYPIE_ALLOW_MISSING_SLASH = True
+
+
+#gravatar settings
+GRAVATAR_IMG_CLASS = "img-polaroid"
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
