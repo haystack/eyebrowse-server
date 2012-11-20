@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
 
+from annoying.decorators import render_to, ajax_request
+
 from accounts.models import *
 from api.models import *
 from common.view_helpers import _template_values, JSONResponse, validateEmail
@@ -11,6 +13,7 @@ from common.pagination import paginator
 from common.helpers import put_profile_pic
 
 @login_required
+@render_to('accounts/profile.html')
 def profile(request, username=None):
     """
     Own profile page
@@ -25,11 +28,10 @@ def profile(request, username=None):
     
     eye_history = EyeHistory.objects.all().order_by('-end_time')
     eye_history = paginator(page, eye_history)
-    template_values = _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history)
-
-    return render_to_response('accounts/profile.html', template_values, context_instance=RequestContext(request))
+    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history)
 
 @login_required
+@render_to('accounts/edit_profile.html')
 def edit_profile(request):
     """
     Edit profile page
@@ -53,7 +55,7 @@ def edit_profile(request):
             else:
                 errors['pic'] = ['Oops -- something went wrong.']
 
-        return_obj = {
+        resp = {
             'success' : success,
             'errors': errors,
             'type' : type,
@@ -66,6 +68,4 @@ def edit_profile(request):
     whitelist = WhiteListItem.objects.filter(user=user)
     blacklist = BlackListItem.objects.filter(user=user)
     
-    template_values = _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist)
-
-    return render_to_response('accounts/edit_profile.html', template_values, context_instance=RequestContext(request))
+    return _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist)

@@ -1,6 +1,7 @@
 Django==1.4.1
 gunicorn==0.14.6
 MySQL-python==1.2.3
+django-annoying==0.7.6
 django-registration==0.8
 django-registration-defaults==0.3
 django-appconf==0.5

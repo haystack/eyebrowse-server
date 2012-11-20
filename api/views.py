@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 
 from django.views.decorators.csrf import csrf_exempt
 
+from annoying.decorators import render_to, ajax_request
+
 from accounts.models import *
 from api.models import *
 from common.view_helpers import _template_values, JSONResponse, NotImplementedResponse
@@ -14,6 +16,7 @@ from common.view_helpers import validate_url
 ###whitelist functionality
 
 @login_required
+@ajax_request
 def whitelist_add(request):
     """
     API endpoint to add a whitelist item
@@ -45,43 +48,9 @@ def whitelist_add(request):
                 data['id'] = whitelist_item.id
                 success = "Added %s"%url
 
-    return_obj = {
+    return {
         'success' : success,
         'errors': errors,
         'type' : type,
         'data' : data,
     }
-
-    return JSONResponse(return_obj)
-
-@login_required
-#@assert_post_request
-def data_add(request):
-    """
-    API endpoint to log user data
-    """
-    return NotImplementedResponse()
-
-@login_required
-#@assert_post_request
-def data_rm(request):
-    """
-    API endpoint to remove user data
-    """
-    return NotImplementedResponse()
-
-@login_required
-#@assert_post_request
-def data_get(request, username):
-    """
-    API endpoint to get all data for a given user
-    """
-    return NotImplementedResponse()
-
-@login_required
-#@assert_post_request
-def data_search(request):
-    """
-    General purpose search function
-    """
-    return NotImplementedResponse()
