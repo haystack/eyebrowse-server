@@ -1,3 +1,22 @@
+function setupHistoryList() {
+    setupTemplateValues(eye_history, addHistoryList, 'history')
+}
+
+function addHistoryList(res, type) {
+    if (res.success) {
+        var data = getData(res);
+        var template = ich[TEMPLATE_BASE + 'row_history.html'](data);
+    }
+    addTableTemplate(type, template)
+}
+
+function getData(res) {
+    var data = res.data;
+    data.urlDomain = urlDomain(data.url);
+    data.truncateTitle = truncate(data.title);
+    return data
+}
+
 function setTips() {
     var $targets = $('.cut-content');
     $.each($targets, function(index, target) {
@@ -16,6 +35,7 @@ function toggleHistory(e) {
 }
 
 $(function(){
+    setupHistoryList();
     setTips();//set tool tips for truncated data
     $('.history-data').stupidtable();
     $('.history-row').on('click', '.rm-history', 'history-data', rmEyeHistoryItem);

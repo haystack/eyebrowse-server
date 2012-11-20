@@ -1,8 +1,24 @@
 <tr class="history-row">
-    <td><img class="favicon" src="{! favIconUrl !}"></td>
-    <td><a href="{! url !}"> {! url !} </a></td>
-    <td>{! title !}</td>
-    <td>{! start_time !}</td>
-    <td>{! end_time !}</td>
-    <td>{! total_time !}</td>
+    <td>
+        <a href="{! url !}" data-content="{! url !}" class="cut-content pointer">
+         <img class="favicon" src="{! favIconUrl !}"> {! urlDomain !} 
+        </a>
+    </td>
+    <td class="cut-content pointer" data-content="{! title !}">
+        {! truncateTitle !}
+    </td>
+    <td>
+        {! humanize_time !}
+    </td>
+    <td data-order-by="{! start_time|date_ms !}">
+        {! start_time !}
+    </td>
+    <td data-order-by="{! end_time|date_ms !}">
+        {! end_time !}
+    </td>
+    <td class="hidden edit">
+        <a class="btn btn-danger btn-small rm-history" data-id="{! id !}">
+            <i class="icon-remove icon-white"></i>
+        </a>
+    </td>
 </tr>

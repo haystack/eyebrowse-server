@@ -48,6 +48,53 @@ function submitForm(e, d){
     });
 }
 
+///////// templating helpers /////
+
+/*
+template_list is a list of elments initially sent by the server
+renderFunc is what these items are sent into
+*/
+function setupTemplateValues(template_list, renderFunc, type) {
+    if (template_list != undefined) { 
+        $.each(template_list, function(index, item){
+            item = {
+                'success': true,
+                'data': item,
+            }
+            renderFunc(item, type);
+        });
+    }
+}
+
+/*
+Adds a new row or creates an intial row the given type of row to add 
+*/
+function initTemplateTable(type) {
+    var $rows = $(sprintf('.%s-row', type));
+    var $toAdd, addFunc;
+    if ($rows.length == 0 ){
+        $toAdd = $(sprintf('.%s-body', type))
+        addFunc = 'append';
+    } else {
+        $toAdd = $rows.filter(':last');
+        addFunc = 'after'
+    }
+    return {
+        'toAdd' : $toAdd,
+        'addFunc' : addFunc,
+    }
+}
+
+/*
+Given a rendered template appends it to the proper row given by init template table
+*/
+function addTableTemplate(type, template) {
+    var init = initTemplateTable(type);
+    var $toAdd = init.toAdd;
+    var addFunc = init.addFunc;
+    $toAdd[addFunc](template);
+}
+
 //defaults to placing right and focus trigger if 
 //no values given.
 function makeTip(selector, title, placement, trigger) {
@@ -63,26 +110,6 @@ function makeTip(selector, title, placement, trigger) {
 //helper function for fomatting numbers with commas
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-function renderHistoryRow(historyData) {
-    var $history_row = ich['api/jstemplates/row_history.html'](
-        {
-            'title' : historyData.title,
-            'start_time' : historyData.start_time,
-            'end_time' : historyData.end_time,
-            'total_time' : historyData.total_time,
-        });
-}
-
-function renderWhitelistRow(whitelist) {
-    var $history_row = ich['api/jstemplates/row_history.html'](
-        {
-            'title' : historyData.title,
-            'start_time' : historyData.start_time,
-            'end_time' : historyData.end_time,
-            'total_time' : historyData.total_time,
-        });
 }
 
 function getApiURL(resource, id, params) { 
@@ -118,7 +145,7 @@ function rmItem(e) {
 /*
 Deletes a resource, requires data of resource type and the id of the item to be in the item triggering the event.
 */
-function addFilterSetItem(resource, url) {
+function addItem(resource, url) {
     $.ajax({
         type: 'POST',
         url: getApiURL(resource),
@@ -134,8 +161,23 @@ function getResourceURI() {
 }
 
 
-$(function(){
+function urlDomain(url, cut) {
+    cut = cut || true;
+    var uri = new URI(url)
+    var hostname = uri.hostname();
+    if (cut) {
+        hostname = truncate(hostname);
+    }
+    return hostname
+}
 
+function truncate(str, len){
+    len = len || 40;
+    return str.substr(0, len);
+}
+
+$(function(){
+    TEMPLATE_BASE = "api/js_templates/";
     $(document).on('click', '#submit_feedback', submitFeedBack)
 
     $(document).on('typeaheadItemSelected', dropitemSelected)

@@ -19,29 +19,18 @@ function switchTab(e) {
 function addFilterlist(res, type){
     if (res.success) {
         $('.rm-margin').val('')
-        var $rows = $(sprintf('.%s-row', type));
-        var $toAdd, addFunc;
-        if ($rows.length == 0 ){
-            $toAdd = $(sprintf('.%s-body', type))
-            addFunc = 'append';
-        } else {
-            $toAdd = $rows.filter(':last');
-            addFunc = 'after'
-        }
-        var template = ich['api/js_templates/filterset_row.html']({
-                'url' : res.data.url,
-                'id' : res.data.id,
-                'type' : type,
-            });
-
-        $toAdd[addFunc](template);
+        var data = res.data;
+        data['type'] = type;
+        var template = ich[TEMPLATE_BASE + 'filterset_row.html'](data);
     }
+    addTableTemplate(type, template)
 }
+
 
 function rmFilterListItem(e) {
     var $target = $(e.target);
     var url = $target.data('url');
-    addFilterSetItem('blacklist', url);
+    addItem('blacklist', url);
     if (rmItem(e)) {    
         $('.filter-input').val('').trigger('keyup');
     }
@@ -52,15 +41,7 @@ function handleFormResponse(e, d){
 }
 
 function setupFilterList() {
-    if (whitelist_filterset != undefined) { 
-        $.each(whitelist_filterset, function(index, item){
-            item = {
-                'success':true,
-                'data': item,
-            }
-            addFilterlist(item, 'whitelist');
-        });
-    }
+    setupTemplateValues(whitelist_filterset, addFilterlist, 'whitelist')
 }
 
 

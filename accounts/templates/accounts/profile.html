@@ -1,6 +1,7 @@
 {% extends 'common/base.html' %}
 {% load staticfiles %}
 {% load filters %}
+{% load jstemplate %}
 
 {% block styles %} 
 {% include_style "api/css/base" %}
@@ -34,12 +35,26 @@
             </th>
         </tr>
     </thead>
-    <tbody class="table table-condensed table-striped table-bordered">
-        {% for item in eye_history %}
-                {% include 'api/row_history.html' with item=item %}
-        {% endfor %}
+    <tbody class="table table-condensed table-striped table-bordered history-body">
     </tbody>
 </table>
+
+{% include_ichtemplate 'api/js_templates/row_history.html' %}
+<script type="text/javascript">
+    var eye_history = []
+    {% for item in eye_history %}
+        eye_history.push({
+            'id' : "{{item.id}}",
+            'url' : "{{item.url}}",
+            'favIconUrl' : "{{item.favIconUrl}}",
+            'humanize_time' : "{{item.humanize_time}}",
+            'start_time' : "{{item.start_time}}",
+            'end_time' : "{{item.end_time}}",
+            'title' : "{{item.title}}",
+        });
+    {% endfor %}
+</script>
+
 {% include 'common/snippets/pagination.html' with objs=eye_history %}
 
 {% endblock %}
