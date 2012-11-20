@@ -10,7 +10,7 @@
 
 {% block content %}
 <div class="title-offset row offset2 span9">
-    <h2> {% gravatar_img_for_user user %} {{user.username|capfirst}}'s Eyebrowse History  <a class="btn btn-info btn-rm-history pull-right top-margin"><i class="icon-white icon-wrench"></i> Edit </a>
+    <h2> <a href="/users/{{user.username}}">{% gravatar_img_for_user user %}</a> {{user.username|capfirst}}'s Eyebrowse History  <a class="btn btn-info btn-rm-history pull-right top-margin"><i class="icon-white icon-wrench"></i> Edit </a> </h2>
 </div>
 
 <table class="table table-striped table-condensed history-data">
