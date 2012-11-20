@@ -148,7 +148,6 @@ class EyeHistoryResource(ModelResource):
         }
 
     def obj_create(self, bundle, request=None, **kwargs):
-
         username = get_username(bundle)
         url = bundle.data['url']
         title = bundle.data['title']
