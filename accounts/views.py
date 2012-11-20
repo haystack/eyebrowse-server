@@ -18,15 +18,15 @@ def profile(request, username=None):
     """
     Own profile page
     """
-
+    user = request.user
     if not username:
-        username = request.user.username
+        username = user.username
 
     profile_user = get_object_or_404(User, username=username)
 
     page = request.GET.get('page', 1)
     
-    eye_history = EyeHistory.objects.all().order_by('-end_time')
+    eye_history = EyeHistory.objects.filter(user=user).order_by('-end_time')
     eye_history = paginator(page, eye_history)
     return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history)
 
