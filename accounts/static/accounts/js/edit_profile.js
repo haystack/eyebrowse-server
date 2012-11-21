@@ -71,8 +71,6 @@ function listFilter(list) {
     });
 }
 
-
-
 $(function(){
     $('.tab').on('click', switchTab);;
 
@@ -80,7 +78,7 @@ $(function(){
 
     $('.edit').on('formRes', handleFormResponse);
 
-    $("#whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
+    $(".whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
 
     $(document).on('click', '.remove-input', removeInput);
 

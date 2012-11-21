@@ -1,0 +1,12 @@
+{% load gravatar %}
+<li>  
+    <a href="/users/{{user.username}}">
+        {% gravatar_img_for_user user 24 %}
+        <span class="fullname">
+            {{user.first_name}} {{user.last_name}}
+        </span>
+        <span class="username">
+            <b>{{user.username}}</b>
+        </span>
+    </a>
+</li>

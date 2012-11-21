@@ -19,6 +19,7 @@ function navToUser(val){
 }
 
 function submitForm(e, d){
+    debugger
     e.preventDefault();
     var $form = $(e.target);
     var id = $form.attr('id');
@@ -45,6 +46,26 @@ function submitForm(e, d){
 
         $('#pic').find('.btn[type=submit]').addClass('disabled')//reset pic submit to be disabled.
         $form.trigger('formRes', res)
+    });
+}
+
+function typeahead(id) {
+    id = id || 'search-bar';
+    id = '#' + id;
+    $(id).typeahead({
+        source: function (typeahead, query) {
+            return $.get('/api/typeahead/', {'query':query}, function(res) {
+                if (res.success) {
+                    return typeahead.process(res.users);
+                }
+            });
+        },
+        // typeahead calls this function when a object is selected, and passes an object or string depending on what you processed, in this case a string
+        onselect: function (obj) {
+            $(id).blur();
+            window.location = $(obj).children().attr("href");
+        },
+
     });
 }
 
@@ -163,7 +184,6 @@ function follow(e) {
 }
 
 function swapFollowClass(icon, type) {
-    console.log(arguments)
     var $icon = $(icon);
     if (type == 'add-follow'){
         $icon.attr('data-type', 'rm-follow');
@@ -203,14 +223,10 @@ function date_ms(dateString) {
     dateString = dateString.replace('a.m.', 'AM').replace('p.m.', 'PM');
     return (new moment(dateString).unix())*1000
 }
-
+ 
 $(function(){
     TEMPLATE_BASE = "api/js_templates/";
-    $(document).on('click', '#submit_feedback', submitFeedBack)
+    $(document).on('click', '#submit_feedback', submitFeedBack);
 
-    $(document).on('typeaheadItemSelected', dropitemSelected)
-
-    $('#search_bar').typeahead({
-        'source' : []
-    });
+    typeahead()
 }); 

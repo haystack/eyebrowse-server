@@ -3,8 +3,9 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
-
+from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 
 from annoying.decorators import render_to, ajax_request
 
@@ -13,7 +14,6 @@ from api.models import *
 from common.view_helpers import _template_values, JSONResponse, NotImplementedResponse
 
 from common.view_helpers import validate_url
-###whitelist functionality
 
 @login_required
 @ajax_request
@@ -54,3 +54,30 @@ def whitelist_add(request):
         'type' : type,
         'data' : data,
     }
+
+@ajax_request
+def typeahead(request):
+    query = request.GET.get('query', None)
+    success =  False
+    errors = "no query"
+    users = None
+    
+    if query:
+        users = User.objects.filter(
+            Q(username__startswith=query) | Q(email__startswith=query, userprofile__anon_email=False)
+        )
+        if users.exists():
+            users = [render_to_string('api/typeahead_row.html', {'user' : user}) for user in users]
+            errors = None
+            success = True
+        else:
+            errors = 'no match. query: %s' % query
+            users = None
+    res =  {
+        'success' : success,
+        'errors' : errors,
+        'users' : users
+    }
+
+    return res
+                
