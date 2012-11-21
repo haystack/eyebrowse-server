@@ -19,7 +19,7 @@
             {% if profile_user == user %}
             <i class="icon-white icon-wrench edit-history"></i> Edit 
             {% else %}
-                <i data-user="{{profile_user.username}}" class="icon-white {% if follows %} icon-remove" data-type='add-follow'></i>Following{% else %} icon-ok" data-type="rm-follow"></i> Follow{% endif %}
+                {% include 'common/snippets/follow-btn.html' with follows=follows%}
             {% endif %}   
         </a> 
     </h2>

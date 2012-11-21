@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 from annoying.decorators import render_to, ajax_request
 
@@ -12,7 +13,6 @@ from common.view_helpers import _template_values, JSONResponse, validateEmail
 from common.pagination import paginator
 from common.helpers import put_profile_pic
 
-@login_required
 @render_to('accounts/profile.html')
 def profile(request, username=None):
     """
@@ -67,10 +67,53 @@ def edit_profile(request):
             'data' : data,
         }
 
-        return JSONResponse(return_obj)
+        return JSONResponse(resp)
 
     #not post request
     whitelist = WhiteListItem.objects.filter(user=user)
     blacklist = BlackListItem.objects.filter(user=user)
     
     return _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist)
+
+@login_required
+@ajax_request
+@csrf_exempt
+def connect(request):
+
+    success = False
+    errors = {}
+    data = None
+    req_prof = request.user.profile
+
+    if request.POST and request.is_ajax():
+        
+        type = request.POST.get('type', None)
+        username = request.POST.get('user', None)
+
+        if type and username:
+            user = User.objects.filter(username=username)
+            if not user.exists():
+                errors['user'] = "Requested user %s not found"%username
+            else:
+                if type == 'add-follow':
+                    profile = user[0].profile
+                    req_prof.follows.add(profile)
+                elif type == 'rm-follow' and req_prof.follows.filter(user=user).exists():
+                    req_prof.follows.remove(user)
+        
+            success = True
+            data = {
+                'type' : type,
+                'user' : username,
+            }
+        else:
+            errors['user'] = 'Username required. Provided %s' % username
+            errors['type'] = 'Type required. Provided %s' % type
+
+    resp = {
+        'success' : success,
+        'errors': errors,
+        'data' : data,
+    }
+
+    return resp

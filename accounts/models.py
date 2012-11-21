@@ -17,7 +17,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     #other fields here
 
-    follows = models.ManyToManyField('UserProfile', related_name='followed_by')
+    follows = models.ManyToManyField('UserProfile', related_name='followed_by', symmetrical=False)
     activation_key = models.CharField(max_length=40, default='')
     pic_url = models.CharField(max_length=1000, default="/static/common/img/placeholder.png")
     use_tour = models.BooleanField(default=True)

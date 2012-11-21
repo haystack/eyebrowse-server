@@ -155,22 +155,26 @@ function addItem(resource, url) {
 function follow(e) {
     var $icon = $(e.currentTarget).children();
     var type = $icon.data('type');
-    $.post('/account/connections', $icon.data(), swapFollowClass($icon, type));
+    $.post('/accounts/connect', $icon.data(), function(res){
+        if(res.success){
+            swapFollowClass($icon, type);
+        }
+    });
 }
 
 function swapFollowClass(icon, type) {
-    $icon = $(icon)
-    var add, rm, txt;
+    console.log(arguments)
+    var $icon = $(icon);
     if (type == 'add-follow'){
-        $icon.data.type = 'rm-follow';
-        $icon.removeClass('icon-remove').addClass('icon-ok');
-        var text = $icon.parent().html().replace('Following', 'Follow')
+        $icon.attr('data-type', 'rm-follow');
+        $icon.removeClass('icon-ok').addClass('icon-remove');
+        var text = $icon.parent().html().replace('Follow', 'Following')
         $icon.parent().html(text);
         ;
     } else {
-        $icon.data.type = 'add-follow';
-        $icon.removeClass('icon-ok').addClass('icon-remove');
-        var text = $icon.parent().html().replace('Follow', 'Following')
+        $icon.attr('data-type', 'add-follow');
+        $icon.removeClass('icon-remove').addClass('icon-ok');
+        var text = $icon.parent().html().replace('Following', 'Follow')
         $icon.parent().html(text);
     }
 }

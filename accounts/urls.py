@@ -6,4 +6,5 @@ urlpatterns = patterns('accounts.views',
     
     url(r'^profile/$', 'profile'),
     url(r'^profile/edit$', 'edit_profile'),
+    url(r'^connect$', 'connect')
 )
