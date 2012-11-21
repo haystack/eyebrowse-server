@@ -18,7 +18,6 @@ register = template.Library()
 
 
 def _imgclass_attr():
-    print GRAVATAR_IMG_CLASS
     if GRAVATAR_IMG_CLASS:
         return ' class="%s"' % (GRAVATAR_IMG_CLASS,)
     return ''
@@ -57,7 +56,7 @@ def gravatar_for_email(email, size=None, rating=None, img_url=None):
     gravatar_url = "%savatar/%s" % (GRAVATAR_URL_PREFIX,
             _get_gravatar_id(email))
     if img_url:
-        img_url = "http://eyebrowse.herokuapp.com"
+        img_url = "http://eyebrowse.herokuapp.com"  + img_url
     parameters = [p for p in (
         ('d', img_url or GRAVATAR_DEFAULT_IMAGE),
         ('s', size or GRAVATAR_DEFAULT_SIZE),
@@ -71,7 +70,7 @@ def gravatar_for_email(email, size=None, rating=None, img_url=None):
 
 
 @register.simple_tag
-def gravatar_for_user(user, size=None, rating=None):
+def gravatar_for_user(user, size=None, rating=None, default_url=None):
     """
     Generates a Gravatar URL for the given user object or username.
 
@@ -85,7 +84,8 @@ def gravatar_for_user(user, size=None, rating=None):
         {% gravatar_for_user 'jtauber' 48 pg %}
     """
     user = _get_user(user)
-    return gravatar_for_email(user.email, size, rating, user.profile.pic_url)
+    default_url = user.profile.pic_url or default_url
+    return gravatar_for_email(user.email, size, rating, default_url)
 
 
 @register.simple_tag
@@ -106,7 +106,7 @@ def gravatar_img_for_email(email, size=None, rating=None):
 
 
 @register.simple_tag
-def gravatar_img_for_user(user, size=None, rating=None):
+def gravatar_img_for_user(user, size=None, rating=None, default_url=None):
     """
     Generates a Gravatar img for the given user object or username.
 
@@ -119,7 +119,7 @@ def gravatar_img_for_user(user, size=None, rating=None):
         {% gravatar_img_for_user request.user 48 pg %}
         {% gravatar_img_for_user 'jtauber' 48 pg %}
     """
-    gravatar_url = gravatar_for_user(user, size, rating)
+    gravatar_url = gravatar_for_user(user, size, rating, default_url)
     return _wrap_img_tag(gravatar_url, user.username, size)
 
 

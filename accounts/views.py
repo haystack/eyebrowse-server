@@ -19,16 +19,21 @@ def profile(request, username=None):
     Own profile page
     """
     user = request.user
-    if not username:
+    follows = False
+    if not username: #viewing own profile
         username = user.username
+    
+    else:
+        follows = user.profile.follows.filter(user__username=username).exists() 
+
 
     profile_user = get_object_or_404(User, username=username)
 
     page = request.GET.get('page', 1)
     
-    eye_history = EyeHistory.objects.filter(user=user).order_by('-end_time')
+    eye_history = EyeHistory.objects.filter(user=profile_user).order_by('-end_time')
     eye_history = paginator(page, eye_history)
-    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history)
+    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history, follows=follows)
 
 @login_required
 @render_to('accounts/edit_profile.html')

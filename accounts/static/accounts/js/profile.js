@@ -36,10 +36,20 @@ function toggleHistory(e) {
     $('.edit').fadeToggle().toggleClass('hidden');
 }
 
+function addHeadButtonListener() {
+    var $btn = $('.btn-prof-header');
+    var $icon = $btn.children();
+    var func = follow;
+    if ($icon.hasClass('edit-history')) {
+        func = toggleHistory;
+    }
+    $btn.click(func)
+}
+
 $(function(){
     setupHistoryList();
     setTips();//set tool tips for truncated data
+    addHeadButtonListener()
     $('.history-data').stupidtable();
     $('.history-body').on('click', '.rm-history', 'history-data', rmEyeHistoryItem);
-    $('.btn-rm-history').click(toggleHistory)
 }); 

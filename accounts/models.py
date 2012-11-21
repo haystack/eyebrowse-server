@@ -21,6 +21,7 @@ class UserProfile(models.Model):
     activation_key = models.CharField(max_length=40, default='')
     pic_url = models.CharField(max_length=1000, default="/static/common/img/placeholder.png")
     use_tour = models.BooleanField(default=True)
+    anon_email =models.BooleanField(default=False)
 
     def add_email(self, email):
         email = Email(user=self, email=email)

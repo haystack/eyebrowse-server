@@ -10,7 +10,19 @@
 
 {% block content %}
 <div class="title-offset row offset2 span9">
-    <h2> <a href="/users/{{user.username}}">{% gravatar_img_for_user user %}</a> {{user.username|capfirst}}'s Eyebrowse History  <a class="btn btn-info btn-rm-history pull-right top-margin"><i class="icon-white icon-wrench"></i> Edit </a> </h2>
+    <h2> 
+        <a href="/users/{{profile_user.username}}">
+            {% gravatar_img_for_user profile_user 80 %}
+        </a> 
+        {{profile_user.username|capfirst}}'s Eyebrowse History  
+        <a class="btn btn-info pull-right top-margin btn-prof-header">
+            {% if profile_user == user %}
+            <i class="icon-white icon-wrench edit-history"></i> Edit 
+            {% else %}
+                <i data-user="{{profile_user.username}}" class="icon-white {% if follows %} icon-remove" data-type='add-follow'></i>Following{% else %} icon-ok" data-type="rm-follow"></i> Follow{% endif %}
+            {% endif %}   
+        </a> 
+    </h2>
 </div>
 
 <table class="table table-striped table-condensed history-data">

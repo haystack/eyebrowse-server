@@ -152,6 +152,29 @@ function addItem(resource, url) {
     });
 }
 
+function follow(e) {
+    var $icon = $(e.currentTarget).children();
+    var type = $icon.data('type');
+    $.post('/account/connections', $icon.data(), swapFollowClass($icon, type));
+}
+
+function swapFollowClass(icon, type) {
+    $icon = $(icon)
+    var add, rm, txt;
+    if (type == 'add-follow'){
+        $icon.data.type = 'rm-follow';
+        $icon.removeClass('icon-remove').addClass('icon-ok');
+        var text = $icon.parent().html().replace('Following', 'Follow')
+        $icon.parent().html(text);
+        ;
+    } else {
+        $icon.data.type = 'add-follow';
+        $icon.removeClass('icon-ok').addClass('icon-remove');
+        var text = $icon.parent().html().replace('Follow', 'Following')
+        $icon.parent().html(text);
+    }
+}
+
 function getResourceURI() { 
     return sprintf('/api/v1/user/%s/', username)
 }

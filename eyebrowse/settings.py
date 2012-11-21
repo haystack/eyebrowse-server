@@ -195,7 +195,6 @@ TASTYPIE_ALLOW_MISSING_SLASH = True
 #gravatar settings
 GRAVATAR_IMG_CLASS = "img-polaroid"
 
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
