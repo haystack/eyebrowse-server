@@ -2,7 +2,6 @@
 import os
 import sys
 import django
-import urllib
 
 from os import environ as env
 from registration_defaults.settings import *
