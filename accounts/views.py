@@ -59,6 +59,19 @@ def edit_profile(request):
                 success = "Profile picture changed!"
             else:
                 errors['pic'] = ['Oops -- something went wrong.']
+        elif type == 'name':
+            first_name = request.POST.get('first_name', '')
+            last_name = request.POST.get('last_name', '')
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+            success = "User info updated!"
+        
+        elif type == 'anon_email':
+            anon_email = request.POST.get('anon_checkbox', False) == 'True'
+            user.profile.anon_email = anon_email
+            user.profile.save()
+            success = "User info updated!"
 
         resp = {
             'success' : success,

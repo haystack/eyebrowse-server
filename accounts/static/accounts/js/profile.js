@@ -19,15 +19,6 @@ function getData(res) {
     return data
 }
 
-function setTips() {
-    var $targets = $('.cut-content');
-    $.each($targets, function(index, target) {
-        $target = $(target);
-        makeTip($target, $target.data('content'), 'right', 'hover');
-    });
-    
-}
-
 function rmEyeHistoryItem(e) {
     rmItem(e);
 }
@@ -48,7 +39,7 @@ function addHeadButtonListener() {
 
 $(function(){
     setupHistoryList();
-    setTips();//set tool tips for truncated data
+    setTips('.cut-content');//set tool tips for truncated data
     addHeadButtonListener()
     $('.history-data').stupidtable();
     $('.history-body').on('click', '.rm-history', 'history-data', rmEyeHistoryItem);

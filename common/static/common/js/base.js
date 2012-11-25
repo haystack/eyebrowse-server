@@ -19,7 +19,6 @@ function navToUser(val){
 }
 
 function submitForm(e, d){
-    debugger
     e.preventDefault();
     var $form = $(e.target);
     var id = $form.attr('id');
@@ -116,8 +115,10 @@ function addTableTemplate(type, template) {
     $toAdd[addFunc](template);
 }
 
-//defaults to placing right and focus trigger if 
-//no values given.
+/*
+defaults to placing right and focus trigger if 
+no values given.
+*/
 function makeTip(selector, title, placement, trigger) {
     placement = placement || 'right';
     trigger = trigger || 'focus'
@@ -126,6 +127,38 @@ function makeTip(selector, title, placement, trigger) {
         "title" : title,
         "trigger" : trigger,
     });
+}
+
+/*
+Set multiple tips to a class
+*/
+function setTips(targetClass, position, trigger) {
+    var $targets = $(targetClass);
+    position = position || 'right';
+    trigger = trigger || 'hover';
+    $.each($targets, function(index, target) {
+        $target = $(target);
+        makeTip($target, $target.data('content'), position, trigger);
+    });
+    
+}
+
+/* 
+filepicker image upload for registration/edit_profile page
+*/
+function getImg() {
+    filepicker.setKey('ANeTsQ3iXQHK45sOxgjDnz')
+    filepicker.getFile("image/*",{
+        'modal': true, 
+        'multiple' : false,
+        'services' : filepicker_services(),
+        },
+        function(url, metadata){
+            $('#pic').find('.btn[type=submit]').removeAttr('disabled').removeClass('disabled');
+            $('#profile_pic').attr("src", url);
+            $('#id_pic_url').attr("value", url);
+        }
+     );
 }
 
 //helper function for fomatting numbers with commas

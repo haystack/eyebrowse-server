@@ -2,11 +2,6 @@ function removeInput(e, d){
     $(e.target).closest('p').remove();
 }
 
-function addEmailInput(){
-    var template = '<p><input type="email" class="rm-margin" placeholder="Alternate email" name="email"><a class="btn remove-input"><i class="icon-minus"></i></a></p>'
-    $('#add-email').closest('p').before(template);
-}
-
 function switchTab(e) {
     $('.tab').closest('li').removeClass("active");
     $(e.target).closest('li').addClass("active");
@@ -17,7 +12,7 @@ function switchTab(e) {
 }
 
 function addFilterlist(res, type){
-    if (res.success) {
+    if (res.success && type == 'whitelist') {
         $('.rm-margin').val('')
         var data = res.data;
         data['type'] = type;
@@ -71,6 +66,15 @@ function listFilter(list) {
     });
 }
 
+function checkboxValue(e){
+    $target = $(e.target);
+    if (e.target.checked) {
+        $target.val('True')
+    } else {
+        $target.val('False')
+    }
+}
+
 $(function(){
     $('.tab').on('click', switchTab);;
 
@@ -79,14 +83,12 @@ $(function(){
     $('.edit').on('formRes', handleFormResponse);
 
     $(".whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
-
+    $("#anon_email").on('click', '.checkbox', checkboxValue);
     $(document).on('click', '.remove-input', removeInput);
-
-    $(document).on('click', '#add-email', addEmailInput);
     
-    $('#add-email').click();
     $('#whitelist-tab').click();
-
+    $('#upload').click(getImg);
     setupFilterList();
     listFilter($(".whitelist-body"));
+    setTips('.tip');
 });
