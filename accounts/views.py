@@ -33,7 +33,7 @@ def profile(request, username=None):
     
     eye_history = EyeHistory.objects.filter(user=profile_user).order_by('-end_time')
     eye_history = paginator(page, eye_history)
-    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history, follows=follows)
+    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history, follows=str(follows))
 
 @login_required
 @render_to('accounts/edit_profile.html')
@@ -63,9 +63,6 @@ def edit_profile(request):
             first_name = request.POST.get('first_name', '')
             last_name = request.POST.get('last_name', '')
             anon_email = request.POST.get('anon_checkbox', False) == 'True'
-            print anon_email
-            print anon_email == False
-            print anon_email == True
             user.first_name = first_name
             user.last_name = last_name
             user.save()
@@ -86,8 +83,10 @@ def edit_profile(request):
     #not post request
     whitelist = WhiteListItem.objects.filter(user=user)
     blacklist = BlackListItem.objects.filter(user=user)
-    
-    return _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist)
+    following = user.profile.follows.all()
+    followers = user.profile.followed_by.all()
+
+    return _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist, following=following, followers=followers)
 
 @login_required
 @ajax_request
@@ -106,12 +105,20 @@ def connect(request):
 
         if type and username:
             user = User.objects.filter(username=username)
-            if not user.exists():
-                errors['user'] = "Requested user %s not found"%username
+            if user.exists():
+                user = user[0]
+            else:
+                user = None
+            
+            if not user:
+                errors['user'] = "Requested user %s not found."%username
+
+            elif user.profile == req_prof:
+                errors['user'] = "Cannot follow yourself."
+
             else:
                 if type == 'add-follow':
-                    profile = user[0].profile
-                    req_prof.follows.add(profile)
+                    req_prof.follows.add(user.profile)
                 elif type == 'rm-follow' and req_prof.follows.filter(user=user).exists():
                     req_prof.follows.remove(user)
         
@@ -120,9 +127,10 @@ def connect(request):
                 'type' : type,
                 'user' : username,
             }
+
         else:
-            errors['user'] = 'Username required. Provided %s' % username
-            errors['type'] = 'Type required. Provided %s' % type
+            errors['user'] = 'Username required. Provided %s as username.' % username
+            errors['type'] = 'Type required. Provided %s as type.' % type
 
     resp = {
         'success' : success,

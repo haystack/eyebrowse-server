@@ -18,7 +18,10 @@
             <a id="info-tab" href="#info" class="tab">Account Info</a>
         </li>
         <li>
-            <a id="con-tab" href="#con" class="tab">My Connections </a>
+            <a id="following-tab" href="#following" class="tab">Following </a>
+        </li>
+        <li>
+            <a id="followers-tab" href="#followers" class="tab">Followers </a>
         </li>
         <li>
             <a href="/accounts/password/change/">Change Password</a>
@@ -29,7 +32,8 @@
 
 {% include 'accounts/edit_filterset.html' with items=whitelist type="whitelist" %}
 {% include 'accounts/edit_account_info.html' %}
-{% include 'accounts/edit_connections.html' %}
+{% include 'accounts/edit_connections.html' with type='following' items=following %}
+{% include 'accounts/edit_connections.html' with type='followers' items=followers %}
 
 </div>
 {%  endblock %}

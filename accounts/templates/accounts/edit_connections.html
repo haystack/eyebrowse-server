@@ -1,5 +1,6 @@
-<form class="hidden edit" id="con" data-url="/accounts/profile/edit">
-    {% csrf_token %}
-    {% include 'common/snippets/alert_box.html' %}
-    Coming soon!
-</form>
+
+<div id="{{type}}" class="row hidden edit">
+    
+    {% include 'accounts/connection_table.html' with type=type items=items %}
+    
+</div>

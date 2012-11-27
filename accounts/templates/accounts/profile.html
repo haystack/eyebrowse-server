@@ -19,7 +19,7 @@
             {% if profile_user == user %}
             <i class="icon-white icon-wrench edit-history"></i> Edit 
             {% else %}
-                {% include 'common/snippets/follow-btn.html' with follows=follows%}
+                {% include 'common/snippets/follow-btn.html' with follows=follows username=profile_user.username %}
             {% endif %}   
         </a> 
     </h2>

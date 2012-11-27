@@ -76,19 +76,29 @@ function checkboxValue(e){
 }
 
 $(function(){
+    //tab functions
     $('.tab').on('click', switchTab);;
-
     $('.edit').submit(submitForm);
-
     $('.edit').on('formRes', handleFormResponse);
-
-    $(".whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
-    $("#account-info").on('click', '.checkbox', checkboxValue);
-    $(document).on('click', '.remove-input', removeInput);
     
-    $('#whitelist-tab').click();
-    $('#upload').click(getImg);
+    //whitelist
+    $(".whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
     setupFilterList();
     listFilter($(".whitelist-body"));
+
+    //account info
+    $("#account-info").on('click', '.checkbox', checkboxValue);
+    $('#upload').click(getImg);
     setTips('.tip');
+
+    //following tab
+    $('#following').on('click', '.connection', follow)
+    listFilter($(".following-body"));
+
+    //followers tab
+    $('#followers').on('click', '.connection', follow)
+    listFilter($(".followers-body"));
+
+    //init first tab
+    $('#following-tab').click();
 });

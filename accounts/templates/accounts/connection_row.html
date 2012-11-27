@@ -1,0 +1,13 @@
+{% load gravatar %}
+<tr>
+    <td> 
+        <a href="/users/{{user.username}}"> 
+            {% gravatar_img_for_user user 25 %} {{ user.username }} 
+        </a>
+    </td>
+    <td> 
+        <a class="btn btn-info connection">
+            {% include 'common/snippets/follow-btn.html' with follows=follows username=user.username %} 
+        </a>
+    </td>
+</tr>

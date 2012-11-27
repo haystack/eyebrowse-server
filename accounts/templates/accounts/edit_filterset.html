@@ -4,9 +4,9 @@
         {% include 'common/snippets/alert_box.html' %}
         {% csrf_token %}
         
-        <p id="">
-                <input class="rm-margin" placeholder="Add {{type}} URL" type="text" name="{{type}}" value="">
-                <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Add " id="{{type}}-save"/>
+        <p>
+            <input class="rm-margin" placeholder="Add {{type}} URL" type="text" name="{{type}}" >
+            <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Add " id="{{type}}-save"/>
         </p> <br>
 
         <input type="hidden" name="form_type" value="{{type}}">
