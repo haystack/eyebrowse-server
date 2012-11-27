@@ -83,7 +83,7 @@ $(function(){
     $('.edit').on('formRes', handleFormResponse);
 
     $(".whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
-    $("#anon_email").on('click', '.checkbox', checkboxValue);
+    $("#account-info").on('click', '.checkbox', checkboxValue);
     $(document).on('click', '.remove-input', removeInput);
     
     $('#whitelist-tab').click();

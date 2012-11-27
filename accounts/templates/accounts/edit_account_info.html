@@ -13,26 +13,18 @@
         <input class="btn btn-primary disabled" disabled type="submit" value="Save" data-loading-text="Saving..." id="profile-pic-save"/>
     </form>
  -->
-    <form id="name" data-url="/accounts/profile/edit">
+    <form id="account-info" data-url="/accounts/profile/edit">
         {% csrf_token %}
         {% include 'common/snippets/alert_box.html' %}
-        <input type="hidden" name="form_type" value="name">
+        <input type="hidden" name="form_type" value="account-info">
 
         <input type='text' name='first_name' value="{{ user.first_name }}" id='first_name' placeholder="First Name">
         <input type='text' name='last_name' value="{{ user.last_name }}" id='last_name' placeholder="Last Name">
-
-        <input class="btn btn-primary" type="submit" value="Save" data-loading-text="Saving..." id="name-save"/>
-    </form>
-
-    <form id="anon_email" data-url="/accounts/profile/edit">
-        {% csrf_token %}
-        {% include 'common/snippets/alert_box.html' %}
-        <input type="hidden" name="form_type" value="anon_email">
         <label class="checkbox">
-            <input {% if user.profile.anon_email %} checked {% endif %} type="checkbox" name='anon_checkbox' value="checkbox" class='checkbox tip' data-content="Anonymize your email address from user searches."> Anonymous Email?
+            <input {% if user.profile.anon_email %} checked {% endif %} type="checkbox" name='anon_checkbox' class='checkbox tip' data-content="Anonymize your email address from user searches."> Anonymous Email?
         </label>
 
-        <input class="btn btn-primary" type="submit" value="Save" data-loading-text="Saving..." id="email-save"/>
-
+        <input class="btn btn-primary" type="submit" value="Save" data-loading-text="Saving..." id="account-info-save"/>
     </form>
+
 </div>
