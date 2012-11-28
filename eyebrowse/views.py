@@ -19,7 +19,7 @@ from common.view_helpers import _template_values, JSONResponse
 def home(request):
     if not request.user.is_authenticated():
         return _template_values(request, page_title="home", navbar='nav_home')
-    return redirect('/accounts/profile')
+    return redirect('/accounts/profile/')
     filter = request.GET.get('filter', 'following')
     
 
