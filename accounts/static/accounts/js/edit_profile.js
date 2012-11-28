@@ -100,5 +100,5 @@ $(function(){
     listFilter($(".followers-body"));
 
     //init first tab
-    $('#whitelist-tab').click();
+    $('#following-tab').click();
 });

@@ -1,20 +1,19 @@
-<input class="filter-input" type="text" placeholder="Filter {{type}}">
-<div class="{{type}}-container">
-    <table class="table table-striped">
-        <thead class='hidden'>
-            <tr>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody class="{{type}}-body">
-            {% for item in items %}
-                {% if item in following %}
-                    {% include 'accounts/connection_row.html' with user=item.user follows='True' %} 
-                {% else %}
-                    {% include 'accounts/connection_row.html' with user=item.user follows='False' %} 
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+
+<div id="{{type}}" class="row hidden edit">
+    <input class="filter-input" type="text" placeholder="Filter {{type}}">
+    <div class="{{type}}-container">
+        <table class="table table-striped">
+            <thead class='hidden'>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody class="{{type}}-body">
+                {% for connection in connections %}
+                    {{ connection }}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>

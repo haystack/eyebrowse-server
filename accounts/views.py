@@ -8,10 +8,14 @@ from django.views.decorators.csrf import csrf_exempt
 from annoying.decorators import render_to, ajax_request
 
 from accounts.models import *
+from accounts.renderers import *
+
 from api.models import *
+
 from common.view_helpers import _template_values, JSONResponse, validateEmail
 from common.pagination import paginator
 from common.helpers import put_profile_pic
+
 
 @render_to('accounts/profile.html')
 def profile(request, username=None):
@@ -85,8 +89,11 @@ def edit_profile(request):
     blacklist = BlackListItem.objects.filter(user=user)
     following = user.profile.follows.all()
     followers = user.profile.followed_by.all()
+    rendered_following = connection_table_renderer(following, 'following', following)
+    rendered_followers = connection_table_renderer(followers, 'followers', following)
 
-    return _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist, following=following, followers=followers)
+
+    return _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist, rendered_following=rendered_following, rendered_followers=rendered_followers)
 
 @login_required
 @ajax_request

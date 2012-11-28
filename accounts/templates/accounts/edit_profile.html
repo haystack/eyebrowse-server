@@ -32,8 +32,8 @@
 
 {% include 'accounts/edit_filterset.html' with items=whitelist type="whitelist" %}
 {% include 'accounts/edit_account_info.html' %}
-{% include 'accounts/edit_connections.html' with type='following' items=following %}
-{% include 'accounts/edit_connections.html' with type='followers' items=followers %}
+{{ rendered_following }}
+{{ rendered_followers }}
 
 </div>
 {%  endblock %}

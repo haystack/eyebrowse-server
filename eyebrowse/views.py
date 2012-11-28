@@ -8,17 +8,20 @@ from django.conf import settings
 
 from annoying.decorators import render_to, ajax_request
 
-from common.admin import email_templates, utils
-
 from accounts.models import *
+
+from common.admin import email_templates, utils
 from common.view_helpers import _template_values, JSONResponse
+
+#from data_stream.query_managers import *
 
 @render_to('common/home.html')
 def home(request):
     if not request.user.is_authenticated():
         return _template_values(request, page_title="home", navbar='nav_home')
+    return redirect('/accounts/profile')
     filter = request.GET.get('filter', 'following')
-    history_items = 
+    
 
 @login_required
 @csrf_exempt
