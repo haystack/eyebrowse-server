@@ -15,9 +15,10 @@ from common.view_helpers import _template_values, JSONResponse
 
 @render_to('common/home.html')
 def home(request):
-    if request.user.is_authenticated():
-        return redirect('/accounts/profile/')
-    return _template_values(request, page_title="home", navbar='nav_home')
+    if not request.user.is_authenticated():
+        return _template_values(request, page_title="home", navbar='nav_home')
+    filter = request.GET.get('filter', 'following')
+    history_items = 
 
 @login_required
 @csrf_exempt

@@ -105,7 +105,7 @@ class WhiteListItemResource(FilterSetItemResource):
 
     class Meta(FilterSetItemResource.Meta):
 
-        queryset = WhiteListItem.objects.all().select_related()
+        queryset = WhiteListItem.objects.select_related().all()
         resource_name = 'whitelist'
 
 class BlackListItemResource(FilterSetItemResource):
@@ -126,14 +126,14 @@ class BlackListItemResource(FilterSetItemResource):
 
     class Meta(FilterSetItemResource.Meta):
 
-        queryset = BlackListItem.objects.all().select_related()
+        queryset = BlackListItem.objects.select_related().all()
         resource_name = 'blacklist'
 
 class EyeHistoryResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user')
 
     class Meta(BaseMeta):
-        queryset = EyeHistory.objects.all().select_related()
+        queryset = EyeHistory.objects.select_related().all()
         resource_name = 'history-data'
 
         list_allowed_methods = ['get', 'post']

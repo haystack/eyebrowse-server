@@ -1,5 +1,5 @@
 function setupHistoryList() {
-    setupTemplateValues(eye_history, addHistoryList, 'history')
+    setupTemplateValues(history_items, addHistoryList, 'history')
 }
 
 function addHistoryList(res, type) {

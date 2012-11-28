@@ -31,9 +31,9 @@ def profile(request, username=None):
 
     page = request.GET.get('page', 1)
     
-    eye_history = EyeHistory.objects.filter(user=profile_user).order_by('-end_time')
-    eye_history = paginator(page, eye_history)
-    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, eye_history=eye_history, follows=str(follows))
+    history_items = EyeHistory.objects.filter(user=profile_user).order_by('-end_time')
+    history_items = paginator(page, history_items)
+    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, history_items=history_items, follows=str(follows))
 
 @login_required
 @render_to('accounts/edit_profile.html')

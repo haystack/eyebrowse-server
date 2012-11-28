@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'accounts',
     'common',
     'api',
+    'live_stream',
 )
 
 APPEND_SLASH = False

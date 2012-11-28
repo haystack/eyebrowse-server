@@ -54,9 +54,9 @@
 
 {% include_ichtemplate 'api/js_templates/row_history.html' %}
 <script type="text/javascript">
-    var eye_history = []
-    {% for item in eye_history %}
-        eye_history.push({
+    var history_items = []
+    {% for item in history_items %}
+        history_items.push({
             'id' : "{{item.id}}",
             'url' : "{{item.url}}",
             'favIconUrl' : "{{item.favIconUrl}}",
@@ -68,7 +68,7 @@
     {% endfor %}
 </script>
 
-{% include 'common/snippets/pagination.html' with objs=eye_history %}
+{% include 'common/snippets/pagination.html' with objs=history_items %}
 
 {% endblock %}
 
