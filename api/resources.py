@@ -12,6 +12,7 @@ from accounts.models import UserProfile
 from api.models import *
 from resource_helpers import *
 
+
 class MyBasicAuthentication(BasicAuthentication):
     def __init__(self, *args, **kwargs):
         super(MyBasicAuthentication, self).__init__(*args, **kwargs)
@@ -31,11 +32,18 @@ class BaseMeta:
     authentication = MyBasicAuthentication()
     authorization = DjangoAuthorization()
 
+class BaseResource(ModelResource):
     def apply_authorization_limits(self, request, object_list):
-            return object_list.filter(user=request.user)
-
+        return object_list.filter(user=request.user) 
 
 class UserResource(ModelResource):
+
+    def prepend_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/(?P<username>[\w\d_.-]+)/$" % self._meta.resource_name, self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
+        ]
+
+    
     class Meta(BaseMeta):
         queryset = User.objects.all()
         resource_name = 'user'
@@ -48,12 +56,8 @@ class UserResource(ModelResource):
             'username': ALL,
         }
 
-    def override_urls(self):
-        return [
-            url(r"^(?P<resource_name>%s)/(?P<username>[\w\d_.-]+)/$" % self._meta.resource_name, self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
-        ]
-
 class UserProfileResource(ModelResource):
+
     user = fields.ForeignKey(UserResource, 'user')
 
     class Meta(BaseMeta):
@@ -67,11 +71,11 @@ class UserProfileResource(ModelResource):
             'user' : ALL_WITH_RELATIONS
         }
 
-class FilterSetItemResource(ModelResource):
+class FilterSetItemResource(BaseResource):
     """
         Abstract base class
     """
-    user = fields.ForeignKey(UserResource, 'user' )        
+    user = fields.ForeignKey(UserResource, 'user')  
     
     class Meta(BaseMeta):
 
@@ -83,8 +87,6 @@ class FilterSetItemResource(ModelResource):
         }
         resource_name = 'filterset'
 
-
-        
 
 class WhiteListItemResource(FilterSetItemResource):
 
@@ -129,7 +131,8 @@ class BlackListItemResource(FilterSetItemResource):
         queryset = BlackListItem.objects.select_related().all()
         resource_name = 'blacklist'
 
-class EyeHistoryResource(ModelResource):
+
+class EyeHistoryResource(BaseResource):
     user = fields.ForeignKey(UserResource, 'user')
 
     class Meta(BaseMeta):
