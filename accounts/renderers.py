@@ -20,7 +20,7 @@ def connection_row_renderer(connections, type, following):
         follows = connection in following
         template_values = {
             'user' : connection.user,
-            'follows' : follows
+            'follows' : str(follows)
         }
         rows.append(render_to_string('accounts/connection_row.html', template_values))
     return rows

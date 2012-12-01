@@ -24,7 +24,7 @@ class MyBasicAuthentication(BasicAuthentication):
                 if '_auth_user_id' in s.get_decoded():
                     u = User.objects.get(id=s.get_decoded()['_auth_user_id'])
                     request.user = u
-                    return True
+                    return True 
         return False
 
 class BaseMeta:

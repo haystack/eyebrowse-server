@@ -9,7 +9,6 @@ from email_templates import *
 import email.utils
 import smtplib
 
-import os, sha, re, random
 
 def send_mail(subject, html_content, user_emails, from_email=settings.DEFAULT_EMAIL):
     """
