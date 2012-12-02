@@ -3,7 +3,6 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
 
 from annoying.decorators import render_to, ajax_request
 
@@ -97,7 +96,6 @@ def edit_profile(request):
 
 @login_required
 @ajax_request
-@csrf_exempt
 def connect(request):
 
     success = False

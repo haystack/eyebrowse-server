@@ -29,10 +29,16 @@ class MyBasicAuthentication(BasicAuthentication):
         return False
 
 class BaseMeta:
+    """
+        Abstract class to get basic authentication and authorization.
+    """
     authentication = MyBasicAuthentication()
     authorization = DjangoAuthorization()
 
 class BaseResource(ModelResource):
+    """
+        Subclass this to get generic ModelResource add-ins that TastyPie doesn't supply.
+    """
     def apply_authorization_limits(self, request, object_list):
         return object_list.filter(user=request.user) 
 
@@ -43,7 +49,6 @@ class UserResource(ModelResource):
             url(r"^(?P<resource_name>%s)/(?P<username>[\w\d_.-]+)/$" % self._meta.resource_name, self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
         ]
 
-    
     class Meta(BaseMeta):
         queryset = User.objects.all()
         resource_name = 'user'

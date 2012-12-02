@@ -6,7 +6,7 @@ from django.conf import settings
 
 from annoying.fields import AutoOneToOneField
 
-from common.admin import email_templates, utils
+from api.models import EyeHistory
 
 from datetime import datetime, timedelta
 
@@ -25,6 +25,14 @@ class UserProfile(models.Model):
         email = Email(user=self, email=email)
         email.send_confirm_email();
         email.save()
+
+    def get_following_history(self, history=None):
+        following = self.follows.all()
+        if not history:
+            history = EyeHistory.objects.all()
+        
+        query_set = history.filter(user__in=following)
+        return query_set
 
     def __unicode__(self):
           return "%s's profile" % self.user

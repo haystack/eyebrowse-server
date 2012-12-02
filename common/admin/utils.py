@@ -15,7 +15,7 @@ def send_mail(subject, html_content, user_emails, from_email=settings.DEFAULT_EM
     Email current users
     user_emails is a list of emails to send to.
     """
-    #send live mail
+    #send lcoal mail
     if settings.DEBUG:
         for to_email in user_emails:
 
