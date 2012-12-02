@@ -1,0 +1,22 @@
+{% load filters %}
+{% load humanize %}
+{% load gravatar %}
+
+<div id="history_item_{{item.id}}" class='row item-container' data-id="{{ item.id }}">
+    <div class="author-container">
+        <a class="author-name" href="/users/{{ item.user.username }}">
+            <img class="author-pic" src="{% gravatar_for_user item.user %}"/>
+        </a>
+        {% include 'common/snippets/follow-btn.html' with follows=item.follows username=item.user.username %} 
+    </div>
+    <div id="history_item_{{ item.id }}_content" class="item-content">
+        <a href="{{ item.url }}" target="_blank" data-content="{{ url }}" class="pointer">
+         <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
+        </a>
+        <p> {{ item.title }} </p>
+    </div>
+    <div class="item-footer">
+        <span class="date"> {{ item.start_time }} </span>
+        <span> <strong> Total Time: </strong> {{ humanize_time }}
+    </div>
+</div>

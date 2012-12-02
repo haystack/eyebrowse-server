@@ -14,7 +14,7 @@ def history_renderer(user, history, return_type, page=None):
 
         return render_to_string('live_stream/timeline.html',template_values)
 
-    elif return_type == "list":       
+    elif return_type == "list":
         history_list = []
         for h_item in history:
            history_list.append(str(render_to_string('live_stream/history_item_template.html', 

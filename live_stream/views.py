@@ -10,7 +10,15 @@ from common.view_helpers import _template_values
 
 from live_stream.query_managers import *
 
-@render_to('common/home.html')
+@render_to('live_stream/home.html')
 def home(request):
-    live_stream_query_manager(request.GET, request.user)
-    
+    history = live_stream_query_manager(request.GET, request.user)
+    subnav = "subnav_" + request.GET.get('filter', "following")
+    print history
+    return _template_values(request, page_title="Live Stream", navbar="nav_home", sub_navbar=subnav, history=history)
+
+@ajax_request
+def ping(request):
+    request.get['type'] = 'ping'
+    history = live_stream_query_manager(live_stream_query_manager(request.GET, request.user, return_type="list"))
+    return {'history' : history}

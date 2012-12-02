@@ -1,6 +1,6 @@
 from api.models import *
 
-from live_steam.renderers import *
+from live_stream.renderers import *
 
 from accounts.models import *
 
@@ -10,11 +10,11 @@ from django.db.models import Q
 
 def live_stream_query_manager(get_dict, user, return_type="html"):
 
-    valid_params = ['history_id', 'query', 'following', 'firehose', 'ping', 'user']
+    valid_params = ['history_id', 'query', 'following', 'firehose', 'search', 'ping', 'user']
 
     valid_types = {
         'ping' : {
-            'history_id' : get_dict.get(history_id, None), 
+            'history_id' : get_dict.get('history_id', None), 
         },
     }
     
@@ -25,12 +25,16 @@ def live_stream_query_manager(get_dict, user, return_type="html"):
         search_params = dict(search_params, **valid_types[type])
 
     history = history_search(**search_params)
+    following = user.profile.follows.all()
 
+    for h_item in history:
+        h_item.follows = h_item.user in following
+        
     return history_renderer(user, history, return_type, get_dict.get('page',1))
 
 
 
-def history_search(history_id=None, query=None, filter='following', type='ping', user=None):
+def history_search(history_id=None, query=None, filter='firehose', type='ping', user=None):
 
     history = EyeHistory.objects.all()
     

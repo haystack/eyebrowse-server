@@ -17,7 +17,7 @@ from common.view_helpers import _template_values
 def home(request):
     if not request.user.is_authenticated():
         return _template_values(request, page_title="home", navbar='nav_home')
-    return redirect('/accounts/profile/')
+    return redirect('/live_stream/home/')
     
 
 @login_required

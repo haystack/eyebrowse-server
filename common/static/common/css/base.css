@@ -81,3 +81,7 @@ ul.errorlist {
 .top-margin {
     margin-top:29px;
 }
+
+.empty-search {
+    text-align: center;
+}
