@@ -1,7 +1,6 @@
 <div class="history-timeline-container span7 well">
     {% for h_item in history %}
         {% include "live_stream/history_item_template.html" with item=h_item user=user %}
-
     {% endfor %}
     {% if history|length == 0 %}
         {% include "common/snippets/empty_search.html" %}

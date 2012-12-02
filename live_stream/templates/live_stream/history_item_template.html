@@ -6,14 +6,14 @@
     <div class="author-container">
         <a class="author-name" href="/users/{{ item.user.username }}">
             <img class="author-pic img-polaroid" src="{% gravatar_for_user item.user %}"/>
-            {{ item.user.profile.get_full_name }}
+            {{ item.user.profile.get_full_name }} 
         </a>
 
         <div class="connection-container pull-right">
             {% if user.username != item.user.username %} 
                 <a class="btn btn-info connection">
-                    {% include 'common/snippets/follow-btn.html' with follows=follows username=username %}
-                </a>    
+                    {% include 'common/snippets/follow-btn.html' with follows=item.follows username=username %}
+                </a>
             {% endif %}
         </div>
     </div>

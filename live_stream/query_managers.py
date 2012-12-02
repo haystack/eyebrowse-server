@@ -6,11 +6,11 @@ from accounts.models import *
 
 from django.db.models import Q
 
+import itertools
 
+def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
-def live_stream_query_manager(get_dict, user, return_type="html"):
-
-    valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction', 'ping', 'user', 'limit']
+    valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction','filter', 'ping', 'req_user', 'user', 'limit']
 
     valid_types = {
         'ping' : {
@@ -25,19 +25,21 @@ def live_stream_query_manager(get_dict, user, return_type="html"):
     if type in valid_types:
         search_params = dict(search_params, **valid_types[type])
 
-    history = history_search(**search_params)
-    following = user.profile.follows.all()
-
+    history = history_search(req_user, **search_params)
+    
+    #convert followers to dictionary
+    following = dict(itertools.izip_longest(*[iter(req_user.profile.follows.all())] * 2, fillvalue=""))
+    
     for h_item in history:
-        h_item.follows = h_item.user in following
-    return history_renderer(user, history, return_type, get_dict.get('page',1))
+        h_item.follows = str(h_item.user.profile in following)
+
+    return history_renderer(req_user, history, return_type, get_dict.get('page',1))
 
 
 
-def history_search(timestamp=None, query=None, filter='firehose', type=None, direction='hl', orderBy="start_time", limit=None, user=None):
+def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=None, user=None):
 
     history = EyeHistory.objects.all()
-    
     try:
         #ping data with latest id and see if new id is present
         if type == 'ping' and timestamp:
@@ -46,8 +48,10 @@ def history_search(timestamp=None, query=None, filter='firehose', type=None, dir
         if query:
             history = history.filter(Q(title__contains=query) | Q(url__contains=query))
 
-        if filter == 'following' and user:
-            history = user.get_following_history(history=history)
+        if filter == 'following':
+            history = req_user.profile.get_following_history(history=history)
+        if user:
+            history = history.filter(user=user)
 
         orderBy = "-" + orderBy
         if direction == 'lh':
@@ -58,7 +62,8 @@ def history_search(timestamp=None, query=None, filter='firehose', type=None, dir
             history = history[:limit]
             
     except Exception as e:
-        raise Exception(e)
+        #raise Exception(e)
+        print str(e)
         history = EyeHistory.objects.all()
 
     return history.select_related()
