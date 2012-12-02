@@ -12,5 +12,5 @@ from live_stream.query_managers import *
 
 @render_to('common/home.html')
 def home(request):
-    query_managers(request.GET, request.user)
+    live_stream_query_manager(request.GET, request.user)
     
