@@ -1,0 +1,15 @@
+{% load humanize %}
+
+<!-- Desktop display -->
+<div class="span3 offset1 search-nav hidden-phone">
+    <ul class="nav nav-list well">
+    {% include 'common/subnav_content.html' %}
+    </ul>
+</div>
+
+<!-- Mobile display -->
+<div class="span2 offset1 search-nav visible-phone">
+    <ul class="nav nav-pills well">
+    {% include 'common/subnav_content.html' %}
+    </ul>
+</div>
