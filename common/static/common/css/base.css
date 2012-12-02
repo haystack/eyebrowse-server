@@ -85,3 +85,8 @@ ul.errorlist {
 .empty-search {
     text-align: center;
 }
+
+.favicon {
+    width:19px;
+    height:19px;
+}

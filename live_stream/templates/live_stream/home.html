@@ -2,18 +2,18 @@
 {% load filters %}
 {% load staticfiles %}
 
+{% block styles %}
+
+{% include_style 'live_stream/css/history_item' %}
+
+{% endblock %}
+
 {% block content %} 
 <div class="row">
     {% include "common/subnav.html" %}
-    <div class="history-timeline-container span7">
-        <h1 class="centered">{{page_title}}</h1>
-        <div class="history-timeline well">
-            <div class="loading-container">
-                <img class="loading" src='{% static "common/img/logo.png" %}'/>
-            </div> 
-        </div>
-    </div>
+    {{ history_stream }}
 </div>
+
 {% endblock %}
 
 {% block scripts %} 

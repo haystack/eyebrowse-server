@@ -10,6 +10,7 @@ def history_renderer(user, history, return_type, page=None):
     if return_type == "html":
         template_values =  {
             'history' : paginator(page, history),
+            'user' : user,
         }
 
         return render_to_string('live_stream/timeline.html',template_values)

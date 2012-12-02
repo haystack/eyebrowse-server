@@ -29,7 +29,6 @@ def live_stream_query_manager(get_dict, user, return_type="html"):
 
     for h_item in history:
         h_item.follows = h_item.user in following
-        
     return history_renderer(user, history, return_type, get_dict.get('page',1))
 
 
@@ -55,4 +54,4 @@ def history_search(history_id=None, query=None, filter='firehose', type='ping', 
     except:
         history = EyeHistory.objects.all()
 
-    return history.select_related()
+    return history.select_related().order_by('-start_time')
