@@ -1,8 +1,9 @@
 from django import template
 from django.contrib.staticfiles.storage import staticfiles_storage
 
-from time import mktime
 from urlparse import urlparse
+
+import time
 
 register = template.Library()
 
@@ -19,7 +20,11 @@ def url_domain(url):
 
 @register.filter
 def date_ms(dt):
-    return int(1000*mktime(dt.timetuple()))
+    return int(1000*time.mktime(dt.timetuple()))
+
+@register.filter
+def date_fmt(dt):
+    return str(dt)
 
 @register.simple_tag
 def include_script(script_name):

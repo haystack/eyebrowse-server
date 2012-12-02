@@ -10,11 +10,12 @@ from django.db.models import Q
 
 def live_stream_query_manager(get_dict, user, return_type="html"):
 
-    valid_params = ['history_id', 'query', 'following', 'firehose', 'search', 'ping', 'user']
+    valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction', 'ping', 'user', 'limit']
 
     valid_types = {
         'ping' : {
-            'history_id' : get_dict.get('history_id', None), 
+            'timestamp' : get_dict.get('timestamp', None),
+            'type' : 'ping',
         },
     }
     
@@ -33,7 +34,7 @@ def live_stream_query_manager(get_dict, user, return_type="html"):
 
 
 
-def history_search(timestamp=None, query=None, filter='firehose', type='ping', user=None):
+def history_search(timestamp=None, query=None, filter='firehose', type=None, direction='hl', orderBy="start_time", limit=None, user=None):
 
     history = EyeHistory.objects.all()
     
@@ -48,10 +49,16 @@ def history_search(timestamp=None, query=None, filter='firehose', type='ping', u
         if filter == 'following' and user:
             history = user.get_following_history(history=history)
 
+        orderBy = "-" + orderBy
+        if direction == 'lh':
+            orderBy = orderBy[1:]
+        history = history.order_by(orderBy)
+
         if limit:
             history = history[:limit]
             
-    except:
+    except Exception as e:
+        raise Exception(e)
         history = EyeHistory.objects.all()
 
-    return history.select_related().order_by('-start_time')
+    return history.select_related()

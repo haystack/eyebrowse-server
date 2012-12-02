@@ -18,8 +18,6 @@ def home(request):
 
 @ajax_request
 def ping(request):
-    get_dict = dict(request.GET)
-    get_dict['type'] = 'ping'
     history = live_stream_query_manager(request.GET, request.user, return_type="list")
     return {'history' : history}
 

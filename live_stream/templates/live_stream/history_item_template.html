@@ -26,6 +26,6 @@
         <p> <strong> Total Time: </strong> {{ item.humanize_time }} </span>
     </div>
     <div class="item-footer">
-        <span class="date"> {{ item.start_time }} </span>
+        <span class="date" data-timestamp="{{item.start_time|date_fmt}}"> {{ item.start_time }} </span>
     </div>
 </div>

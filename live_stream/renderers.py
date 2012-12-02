@@ -22,6 +22,7 @@ def history_renderer(user, history, return_type, page=None):
            history_list.append(render_to_string('live_stream/history_item_template.html', 
                 {
                     'item' : h_item,
+                    'user' : user,
                 })
             )
 

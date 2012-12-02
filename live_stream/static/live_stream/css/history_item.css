@@ -40,14 +40,10 @@
     color:#444;
 }
 
-.history-container .author-name:hover {
-    color:  rgb(254,114,39);
-}
-
 .history-container .date {
     font-size: .8em;
 }
 
-.vote-container {
-    margin-top:20px;
+.center {
+    margin-left:270px;
 }

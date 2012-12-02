@@ -1,53 +1,66 @@
-function insertHistoryItem(e, d){
-    var $toAdd = $(data.commprods.shift());
+function insertHistoryItems(e){
+    $('.first').removeClass('first');
+    $('.load-new').fadeOut();
+    $.each(data.history.reverse(), function(index, item){
+        var $toAdd = $(item);
 
-    $toAdd.addClass('first');
-    $toAdd.hide();
-    $toAdd.css('opacity', 0);
+        $toAdd.hide();
+        $toAdd.css('opacity', 0);
 
-    $(e.currentTarget).find('.first').removeClass('first');
-    $(e.currentTarget).prepend($toAdd);
+        $('.history-timeline-container').prepend($toAdd);
 
-    $toAdd.slideDown(function(){
-        $toAdd.animate({opacity:1}, 150);
-    });
-    if (data.commprods.length == 0) {
-        $(document).trigger('complete_rec')
-    }
-    if (data.commprods.length < 10){
-        ping();
-    } 
+        $toAdd.slideDown(function(){
+            $toAdd.animate({opacity:1}, 150);
+        });
+        if (index == data.history.length){
+            $toAdd.addClass('first');
+        }
+    })
 
-    //add popover since this commprod wasn't arround when it was first added
-    $toAdd.find('.permalink').hover(detailsCorrectionText, detailsDefaultText).popover()
-    //same for favoriting
-    $toAdd.find('.fav').hover(favToggle).click(favVote);
+    data.history = []
 }
 
-function ping(cb){
-    $.getJSON('/live_stream/ping', {
-        filter:true, 
-        limit:15, 
-        rec: true, 
-        orderBy:'?', 
-        return_type:'list'
+function ping(callback){
+    var filter = getURLParameter('filter') || 'following';
+    if (filter == 'null'){
+        filter = 'following'
+    }
+    var timestamp = $('.first .date').data('timestamp');
+    $.getJSON('/live_stream/ping/', {
+        'filter' : filter, 
+        'timestamp' : timestamp,
+        'return_type' : 'list',
+        'type' : 'ping',
         }, function(res){
-            data.commprods = data.commprods.concat(res.res);
-            if (cb){
-                cb(res);
+            data.history = res.history;
+            if (callback){
+                callback(res);
             }
+            if (data.history.length) {
+                $(document).trigger('ping-new');
+            }     
     });
-    $(document).trigger('requestMoreProds', {loc: 'home'});
+}
+
+function addFirst() {
+    $('.history-timeline-container').children().first().addClass('first');
+}
+
+function showNewHistoryNotification() {
+    var newHistoryTemplate = "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>"
+    if (!$('.load-new').length){
+        $('.history-timeline-container').prepend(newHistoryTemplate);
+    }
 }
 
 $(function(){
-    var $history_timeline = $('.history-timeline');
-
-    $history_timeline.on('updateHistory', insertHistoryItem)
+    addFirst();
+    data = {
+        'history' : []
+    }
     
-
-    ping(function(){
-        $('.new-history').hide();
-        $history_timeline.trigger('needsCommprod');    
-    });
+    $('.history-timeline-container').on('click', '.load-new', insertHistoryItems);
+    $(document).on('ping-new', showNewHistoryNotification);
+    
+    setInterval(ping, 5000);
 })

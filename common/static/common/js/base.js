@@ -278,6 +278,12 @@ function sameOrigin(url) {
         !(/^(\/\/|http:|https:).*/.test(url));
 }
 
+function getURLParameter(name) {
+    return decodeURI(
+        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    );
+}
+
 $(function(){
     var csrftoken = $.cookie('csrftoken');
     $.ajaxSetup({
@@ -291,7 +297,7 @@ $(function(){
         }
     });
     TEMPLATE_BASE = "api/js_templates/";
-    $(document).on('click', '#submit_feedback', submitFeedBack);
+    $("#account_dropdown").on('click', '#submit_feedback', submitFeedBack);
 
     typeahead()
 }); 
