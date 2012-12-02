@@ -11,7 +11,7 @@
             {% gravatar_img_for_user profile_user 80 %}
         </a> 
         {{profile_user.username|capfirst}}'s Eyebrowse History  
-        <a class="btn btn-info pull-right top-margin btn-prof-header">
+        <a class="btn btn-info pull-right top-margin btn-prof-header connection">
             {% if profile_user == user %}
             <i class="icon-white icon-wrench edit-history"></i> Edit 
             {% else %}

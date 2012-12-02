@@ -211,7 +211,12 @@ function follow(e) {
     var type = $icon.data('type');
     $.post('/accounts/connect', $icon.data(), function(res){
         if(res.success){
-            swapFollowClass($icon, type);
+            $.each($('.connection'), function(index, item){
+                $item = $(item).children();
+                if ($item.data('user') == $icon.data('user')){
+                    swapFollowClass($item, type);
+                }
+            });
         }
     });
 }

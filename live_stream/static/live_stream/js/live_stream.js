@@ -76,7 +76,7 @@ $(function(){
     data = {
         'history' : []
     }
-    
+    $('.history-container').on('click', '.connection', follow)
     $('.history-timeline-container').on('click', '.load-new', insertHistoryItems);
     $(document).on('ping-new', showNewHistoryNotification);
     
