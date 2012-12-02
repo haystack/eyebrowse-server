@@ -6,7 +6,9 @@
     <div class="author-container">
         <a class="author-name" href="/users/{{ item.user.username }}">
             <img class="author-pic img-polaroid" src="{% gravatar_for_user item.user %}"/>
+            {{ item.user.profile.get_full_name }}
         </a>
+
         <div class="vote-container pull-right">
             {% if user.username != item.user.username %} 
                 <a class="btn btn-info connection">

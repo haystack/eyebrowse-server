@@ -17,11 +17,12 @@ def history_renderer(user, history, return_type, page=None):
 
     elif return_type == "list":
         history_list = []
+
         for h_item in history:
-           history_list.append(str(render_to_string('live_stream/history_item_template.html', 
+           history_list.append(render_to_string('live_stream/history_item_template.html', 
                 {
-                    'history' : history,
-                }))
+                    'item' : h_item,
+                })
             )
 
         return history_list

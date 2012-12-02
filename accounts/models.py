@@ -34,6 +34,12 @@ class UserProfile(models.Model):
         query_set = history.filter(user__in=following)
         return query_set
 
+    def get_full_name(self):
+        fullname = self.user.get_full_name()
+        if fullname:
+            return fullname
+        return self.user.username
+
     def __unicode__(self):
           return "%s's profile" % self.user
 

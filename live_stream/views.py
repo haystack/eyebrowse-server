@@ -18,6 +18,10 @@ def home(request):
 
 @ajax_request
 def ping(request):
-    request.get['type'] = 'ping'
-    history = live_stream_query_manager(live_stream_query_manager(request.GET, request.user, return_type="list"))
+    get_dict = dict(request.GET)
+    get_dict['type'] = 'ping'
+    history = live_stream_query_manager(request.GET, request.user, return_type="list")
     return {'history' : history}
+
+def search(request):
+    return home(request)

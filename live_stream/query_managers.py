@@ -33,14 +33,14 @@ def live_stream_query_manager(get_dict, user, return_type="html"):
 
 
 
-def history_search(history_id=None, query=None, filter='firehose', type='ping', user=None):
+def history_search(timestamp=None, query=None, filter='firehose', type='ping', user=None):
 
     history = EyeHistory.objects.all()
     
     try:
         #ping data with latest id and see if new id is present
-        if type == 'ping' and history_id:
-            history = history.filter(id__gt=history_id)
+        if type == 'ping' and timestamp:
+            history = history.filter(start_time__gt=timestamp)
 
         if query:
             history = history.filter(Q(title__contains=query) | Q(url__contains=query))
