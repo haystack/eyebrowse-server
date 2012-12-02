@@ -9,23 +9,25 @@
             {{ item.user.profile.get_full_name }}
         </a>
 
-        <div class="vote-container pull-right">
+        <div class="connection-container pull-right">
             {% if user.username != item.user.username %} 
                 <a class="btn btn-info connection">
                     {% include 'common/snippets/follow-btn.html' with follows=follows username=username %}
-                </a>
+                </a>    
             {% endif %}
         </div>
     </div>
-    <div id="history_item_{{ item.id }}_content" class="item-content">
-        <p>
+    <div id="history_item_{{ item.id }}_content" class="hisotry-content">
+        <span>
             <a href="{{ item.url }}" target="_blank" data-content="{{ url }}" class="pointer">
              <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
             </a> {{ item.title }} 
-        </p>
-        <p> <strong> Total Time: </strong> {{ item.humanize_time }} </span>
+        </span> |
+        <span> <strong> Total Time: </strong> {{ item.humanize_time }} </span>
     </div>
-    <div class="item-footer">
+    <hr class='rm-margin'>
+    <div class="history-footer">
         <span class="date" data-timestamp="{{item.start_time|date_fmt}}"> {{ item.start_time }} </span>
     </div>
+
 </div>
