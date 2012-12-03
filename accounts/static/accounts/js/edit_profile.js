@@ -21,7 +21,6 @@ function addFilterlist(res, type){
     addTableTemplate(type, template)
 }
 
-
 function rmFilterListItem(e) {
     var $target = $(e.currentTarget);
     var url = $target.data('url');
@@ -39,12 +38,10 @@ function setupFilterList() {
     setupTemplateValues(whitelist_filterset, addFilterlist, 'whitelist')
 }
 
-
 // custom css expression for a case-insensitive contains()
 $.expr[':'].Contains = function(a,i,m){
   return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
 };
-
 
 function listFilter(list) {
 

@@ -13,7 +13,9 @@ from live_stream.query_managers import *
 @render_to('live_stream/home.html')
 def home(request):
     history_stream = live_stream_query_manager(request.GET, request.user)
+    
     subnav = "subnav_" + request.GET.get('filter', "following")
+
     return _template_values(request, page_title="Live Stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream)
 
 @ajax_request

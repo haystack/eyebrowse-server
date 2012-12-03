@@ -1,14 +1,12 @@
 {% extends 'common/base.html' %}
 {% load staticfiles %}
 {% load filters %}
-{% load jstemplate %}
 {% load gravatar %}
 
 {% block content %}
-<div class="title-offset row offset2 span9">
+<div class="title-offset row offset2 span9 user-info" data-username="{{profile_user.username}}">
     <h2> 
         <a href="/users/{{profile_user.username}}">
-            {% gravatar_img_for_user profile_user 80 %}
         </a> 
         {{profile_user.username|capfirst}}'s Eyebrowse History  
         <a class="btn btn-info pull-right top-margin btn-prof-header connection">
@@ -21,53 +19,10 @@
     </h2>
 </div>
 
-<table class="table table-striped table-condensed history-data">
-    <thead>
-        <tr>
-            <th class="pointer type-string">
-                URL
-            </th>
-            <th class="pointer type-string">
-                Page Title
-            </th>
-            <th> 
-                Time Spent 
-            </th>
-            <th class="pointer type-date">
-                Start Time
-            </th>
-            <th class="pointer type-date">
-                End Time
-            </th>
-            <th class="pointer hidden edit">
-                Edit
-            </th>
-        </tr>
-    </thead>
-    <tbody class="table table-condensed table-striped table-bordered history-body">
-    </tbody>
-</table>
+{% include 'live_stream/history_table.html' with history_items=history_items %}
 
-{% include_ichtemplate 'api/js_templates/row_history.html' %}
-<script type="text/javascript">
-    var history_items = []
-    {% for item in history_items %}
-        history_items.push({
-            'id' : "{{item.id}}",
-            'url' : "{{item.url}}",
-            'favIconUrl' : "{{item.favIconUrl}}",
-            'humanize_time' : "{{item.humanize_time}}",
-            'start_time' : "{{item.start_time}}",
-            'end_time' : "{{item.end_time}}",
-            'title' : "{{item.title}}",
-        });
-    {% endfor %}
-</script>
-
-{% include 'common/snippets/pagination.html' with objs=history_items %}
 
 {% endblock %}
-
 
 {% block scripts %} 
 {% include_script 'accounts/js/profile' %}

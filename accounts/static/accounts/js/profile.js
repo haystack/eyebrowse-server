@@ -1,15 +1,3 @@
-function setupHistoryList() {
-    setupTemplateValues(history_items, addHistoryList, 'history')
-}
-
-function addHistoryList(res, type) {
-    if (res.success) {
-        var data = getData(res);
-        var template = ich[TEMPLATE_BASE + 'row_history.html'](data);
-    }
-    addTableTemplate(type, template)
-}
-
 function getData(res) {
     var data = res.data;
     data.urlDomain = urlDomain(data.url);
@@ -38,9 +26,13 @@ function addHeadButtonListener() {
 }
 
 $(function(){
-    setupHistoryList();
     setTips('.cut-content');//set tool tips for truncated data
     addHeadButtonListener()
+    var updateTemplate = "<tr class='load-new pointer history-row'><td class='load-new-background' colspan='4'><strong>Load new content.</strong></td>"
+    new liveStreamPing(nullFilter, 'none', {
+        'username' : $('.user-info').data('username'),
+        'template' : 'history_row',
+        }, updateTemplate);
     $('.history-data').stupidtable();
     $('.history-body').on('click', '.rm-history', 'history-data', rmEyeHistoryItem);
 }); 

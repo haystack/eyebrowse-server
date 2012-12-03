@@ -1,0 +1,23 @@
+{% load filters %}
+
+<tr class="history-row">
+    <td>
+        <a href="{{ item.url }}" target="_blank" data-content="{{ item.url }}" class="cut-content pointer">
+        <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
+        </a>
+    </td>
+    <td class="cut-content pointer" data-content="{{ item.title }}">
+        {{ item.title|truncatechars:30 }}
+    </td>
+    <td>
+        {{ item.humanize_time }}
+    </td>
+    <td class='date' data-timestamp="{{ item.start_time|date_fmt }}" data-order-by="{{ item.start_time|date_ms }}">
+        {{ item.start_time }}
+    </td>
+    <td class="hidden edit">
+        <a class="btn btn-danger btn-small rm-history" data-id="{{ item.id }}">
+            <i class="icon-remove icon-white"></i>
+        </a>
+    </td>
+</tr>

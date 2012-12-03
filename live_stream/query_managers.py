@@ -10,7 +10,7 @@ import itertools
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
-    valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction','filter', 'ping', 'req_user', 'user', 'limit']
+    valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction','filter', 'ping', 'req_user', 'username', 'limit']
 
     valid_types = {
         'ping' : {
@@ -33,11 +33,11 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     for h_item in history:
         h_item.follows = str(h_item.user.profile in following)
 
-    return history_renderer(req_user, history, return_type, get_dict.get('page',1))
+    return history_renderer(req_user, history, return_type,  get_dict.get('template'), get_dict.get('page',1))
 
 
 
-def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=None, user=None):
+def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=15, username=None):
 
     history = EyeHistory.objects.all()
     try:
@@ -50,8 +50,8 @@ def history_search(req_user, timestamp=None, query=None, filter='following', typ
 
         if filter == 'following':
             history = req_user.profile.get_following_history(history=history)
-        if user:
-            history = history.filter(user=user)
+        if username:
+            history = history.filter(user__username=username)
 
         orderBy = "-" + orderBy
         if direction == 'lh':

@@ -284,9 +284,18 @@ function sameOrigin(url) {
 }
 
 function getURLParameter(name) {
-    return decodeURI(
+    var res =  decodeURI(
         (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
     );
+    if (res == 'null'){
+        res = null
+    }
+
+    return res
+}
+
+function nullFilter(filter){
+    return null
 }
 
 $(function(){
