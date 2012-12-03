@@ -16,7 +16,7 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
     this.$container = $('.live-stream-container');
     this.pingIntervalValue = 2500;
     this.searchParams = searchParams
-    this.updateTemplate = updateTemplate || "<div class='load-new pointer history-container row well' style='background-color:#5bb75b !important;'> <span class='center'> <strong> Load new items </strong> </span> </div>"
+    this.updateTemplate = updateTemplate || "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>"
 
     this.setup = function() {
         this.pingInterval = setInterval($.proxy(this.ping, this), this.pingIntervalValue);
