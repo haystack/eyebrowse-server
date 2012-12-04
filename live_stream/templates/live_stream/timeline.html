@@ -5,6 +5,7 @@
     {% if history|length == 0 %}
         {% include "common/snippets/empty_search.html" with msg=empty_search_msg %}
     {% endif %}
-</div>
 
-{% include 'common/snippets/pagination.html' with objs=history %}
+{% include 'common/snippets/pagination.html' with objs=history link_mod=link_mod %}
+
+</div>

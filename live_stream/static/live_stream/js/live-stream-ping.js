@@ -97,6 +97,9 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
         this.history = [];
         $loadNew.remove();
     }
-    this.setup()
+    if (ping != undefined && ping === true){
+        this.setup()    
+    }
+    
     return this
 }

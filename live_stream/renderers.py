@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from common.pagination import paginator
 from common.constants import *
 
-def history_renderer(user, history, return_type, template, page=None):
+def history_renderer(user, history, return_type, template, get_param=None, page=None):
     """ 
     Can render a history as html block or list of
     html items. User is the user requesting the view.
@@ -17,6 +17,9 @@ def history_renderer(user, history, return_type, template, page=None):
             'user' : user,
             'empty_search_msg': empty_search_msg,
         }
+
+        if get_param:
+            template_values['link_mod'] = "&filter=" + get_param
 
         return render_to_string('live_stream/timeline.html',template_values)
 

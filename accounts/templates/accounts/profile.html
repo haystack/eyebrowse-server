@@ -7,6 +7,7 @@
 <div class="title-offset row offset2 span9 user-info" data-username="{{profile_user.username}}">
     <h2> 
         <a href="/users/{{profile_user.username}}">
+            {% gravatar_img_for_user profile_user 80 %}
         </a> 
         {{profile_user.username|capfirst}}'s Eyebrowse History  
         <a class="btn btn-info pull-right top-margin btn-prof-header connection">

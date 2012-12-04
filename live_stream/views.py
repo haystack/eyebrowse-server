@@ -16,7 +16,7 @@ def home(request):
     
     subnav = "subnav_" + request.GET.get('filter', "following")
 
-    return _template_values(request, page_title="Live Stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream)
+    return _template_values(request, page_title="Live Stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, ping=request.GET.get('page', 1))
 
 @ajax_request
 def ping(request):

@@ -16,6 +16,7 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
         'ping' : {
             'timestamp' : get_dict.get('timestamp', None),
             'type' : 'ping',
+            'limit' : 15,
         },
     }
     
@@ -33,11 +34,11 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     for h_item in history:
         h_item.follows = str(h_item.user.profile in following)
 
-    return history_renderer(req_user, history, return_type,  get_dict.get('template'), get_dict.get('page',1))
+    return history_renderer(req_user, history, return_type,  get_dict.get('template'), get_param=search_params.get('filter'), page=get_dict.get('page',1))
 
 
 
-def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=15, username=None):
+def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=None, username=None):
 
     history = EyeHistory.objects.all()
     try:
