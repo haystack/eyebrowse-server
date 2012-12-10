@@ -6,18 +6,16 @@ from django.conf import settings
 
 from annoying.fields import AutoOneToOneField
 
-from common.admin import email_templates, utils
+from api.models import EyeHistory
 
 from datetime import datetime, timedelta
 
-import sha
-import random
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     #other fields here
 
-    follows = models.ManyToManyField('UserProfile', related_name='followed_by', symmetrical=False)
+    follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False)
     activation_key = models.CharField(max_length=40, default='')
     pic_url = models.CharField(max_length=1000, default="/static/common/img/placeholder.png")
     use_tour = models.BooleanField(default=True)
@@ -27,6 +25,20 @@ class UserProfile(models.Model):
         email = Email(user=self, email=email)
         email.send_confirm_email();
         email.save()
+
+    def get_following_history(self, history=None):
+        following = self.follows.all()
+        if not history:
+            history = EyeHistory.objects.all()
+        
+        query_set = history.filter(user__in=following)
+        return query_set
+
+    def get_full_name(self):
+        fullname = self.user.get_full_name()
+        if fullname:
+            return fullname
+        return self.user.username
 
     def __unicode__(self):
           return "%s's profile" % self.user

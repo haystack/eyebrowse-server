@@ -2,7 +2,6 @@
 import os
 import sys
 import django
-import urllib
 
 from os import environ as env
 from registration_defaults.settings import *
@@ -11,6 +10,7 @@ from registration_defaults.settings import *
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 DEBUG = (not env['DEBUG'] == 'False') #convert from string to bool
+
 BASE_URL = 'http://www.eyebrowse.herokuapp.com'
 BASE_URL_DEV = 'http://localhost:5000'
 
@@ -70,7 +70,7 @@ MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = '/media'
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -147,6 +147,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     "registration_defaults",
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
@@ -165,6 +166,7 @@ INSTALLED_APPS = (
     'accounts',
     'common',
     'api',
+    'live_stream',
 )
 
 APPEND_SLASH = False
@@ -261,6 +263,9 @@ if DEBUG:
     # and each different deploy location has a differnt
     # settings override that is specified by environment 
     # variable or hard code.
+    
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
     try:
         local_settings_file = open('eyebrowse/local_settings.py', 'r')
         local_settings_script = local_settings_file.read()

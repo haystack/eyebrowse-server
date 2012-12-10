@@ -81,3 +81,16 @@ ul.errorlist {
 .top-margin {
     margin-top:29px;
 }
+
+.empty-search {
+    text-align: center;
+}
+
+.favicon {
+    width:19px;
+    height:19px;
+}
+
+.load-new-background {
+    background-color:#49afcd !important;
+}

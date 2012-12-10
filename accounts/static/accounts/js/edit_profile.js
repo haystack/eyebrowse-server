@@ -2,11 +2,6 @@ function removeInput(e, d){
     $(e.target).closest('p').remove();
 }
 
-function addEmailInput(){
-    var template = '<p><input type="email" class="rm-margin" placeholder="Alternate email" name="email"><a class="btn remove-input"><i class="icon-minus"></i></a></p>'
-    $('#add-email').closest('p').before(template);
-}
-
 function switchTab(e) {
     $('.tab').closest('li').removeClass("active");
     $(e.target).closest('li').addClass("active");
@@ -17,7 +12,7 @@ function switchTab(e) {
 }
 
 function addFilterlist(res, type){
-    if (res.success) {
+    if (res.success && type == 'whitelist') {
         $('.rm-margin').val('')
         var data = res.data;
         data['type'] = type;
@@ -25,7 +20,6 @@ function addFilterlist(res, type){
     }
     addTableTemplate(type, template)
 }
-
 
 function rmFilterListItem(e) {
     var $target = $(e.currentTarget);
@@ -44,12 +38,10 @@ function setupFilterList() {
     setupTemplateValues(whitelist_filterset, addFilterlist, 'whitelist')
 }
 
-
 // custom css expression for a case-insensitive contains()
 $.expr[':'].Contains = function(a,i,m){
   return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
 };
-
 
 function listFilter(list) {
 
@@ -71,22 +63,39 @@ function listFilter(list) {
     });
 }
 
+function checkboxValue(e){
+    $target = $(e.target);
+    if (e.target.checked) {
+        $target.val('True')
+    } else {
+        $target.val('False')
+    }
+}
+
 $(function(){
+    //tab functions
     $('.tab').on('click', switchTab);;
-
     $('.edit').submit(submitForm);
-
     $('.edit').on('formRes', handleFormResponse);
-
-    $(".whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
-
-    $(document).on('click', '.remove-input', removeInput);
-
-    $(document).on('click', '#add-email', addEmailInput);
     
-    $('#add-email').click();
-    $('#whitelist-tab').click();
-
+    //whitelist
+    $(".whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
     setupFilterList();
     listFilter($(".whitelist-body"));
+
+    //account info
+    $("#account-info").on('click', '.checkbox', checkboxValue);
+    $('#upload').click(getImg);
+    setTips('.tip');
+
+    //following tab
+    $('#following').on('click', '.connection', follow)
+    listFilter($(".following-body"));
+
+    //followers tab
+    $('#followers').on('click', '.connection', follow)
+    listFilter($(".followers-body"));
+
+    //init first tab
+    $('#following-tab').click();
 });

@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     url(r'^users/(?P<username>.+)$', 'accounts.views.profile'),
 
     url(r'^accounts/', include('accounts.urls')),
+    url(r'^live_stream/', include('live_stream.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^api/', include(v1_api.urls)),
 )

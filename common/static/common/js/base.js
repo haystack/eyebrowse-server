@@ -19,7 +19,6 @@ function navToUser(val){
 }
 
 function submitForm(e, d){
-    debugger
     e.preventDefault();
     var $form = $(e.target);
     var id = $form.attr('id');
@@ -116,8 +115,10 @@ function addTableTemplate(type, template) {
     $toAdd[addFunc](template);
 }
 
-//defaults to placing right and focus trigger if 
-//no values given.
+/*
+defaults to placing right and focus trigger if 
+no values given.
+*/
 function makeTip(selector, title, placement, trigger) {
     placement = placement || 'right';
     trigger = trigger || 'focus'
@@ -126,6 +127,38 @@ function makeTip(selector, title, placement, trigger) {
         "title" : title,
         "trigger" : trigger,
     });
+}
+
+/*
+Set multiple tips to a class
+*/
+function setTips(targetClass, position, trigger) {
+    var $targets = $(targetClass);
+    position = position || 'right';
+    trigger = trigger || 'hover';
+    $.each($targets, function(index, target) {
+        $target = $(target);
+        makeTip($target, $target.data('content'), position, trigger);
+    });
+    
+}
+
+/* 
+filepicker image upload for registration/edit_profile page
+*/
+function getImg() {
+    filepicker.setKey('ANeTsQ3iXQHK45sOxgjDnz')
+    filepicker.getFile("image/*",{
+        'modal': true, 
+        'multiple' : false,
+        'services' : filepicker_services(),
+        },
+        function(url, metadata){
+            $('#pic').find('.btn[type=submit]').removeAttr('disabled').removeClass('disabled');
+            $('#profile_pic').attr("src", url);
+            $('#id_pic_url').attr("value", url);
+        }
+     );
 }
 
 //helper function for fomatting numbers with commas
@@ -178,7 +211,12 @@ function follow(e) {
     var type = $icon.data('type');
     $.post('/accounts/connect', $icon.data(), function(res){
         if(res.success){
-            swapFollowClass($icon, type);
+            $.each($('.connection'), function(index, item){
+                $item = $(item).children();
+                if ($item.data('user') == $icon.data('user')){
+                    swapFollowClass($item, type);
+                }
+            });
         }
     });
 }
@@ -223,10 +261,57 @@ function date_ms(dateString) {
     dateString = dateString.replace('a.m.', 'AM').replace('p.m.', 'PM');
     return (new moment(dateString).unix())*1000
 }
- 
+
+/*
+Ajax CSRF protection
+*/
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+function sameOrigin(url) {
+    // test that a given url is a same-origin URL
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+}
+
+function getURLParameter(name) {
+    var res =  decodeURI(
+        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    );
+    if (res == 'null'){
+        res = null
+    }
+
+    return res
+}
+
+function nullFilter(filter){
+    return null
+}
+
 $(function(){
+    var csrftoken = $.cookie('csrftoken');
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
     TEMPLATE_BASE = "api/js_templates/";
-    $(document).on('click', '#submit_feedback', submitFeedBack);
+    $("#account_dropdown").on('click', '#submit_feedback', submitFeedBack);
 
     typeahead()
 }); 

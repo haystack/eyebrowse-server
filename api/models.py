@@ -41,6 +41,5 @@ class EyeHistory(models.Model):
     total_time = models.IntegerField() # store in ms
     humanize_time = models.CharField(max_length=200, default='') # store as human readable according to moment.js library: http://momentjs.com/docs/#/displaying/humanize-duration/
 
-
     def __unicode__(self):
           return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
