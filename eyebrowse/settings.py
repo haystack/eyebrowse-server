@@ -254,7 +254,7 @@ LOGGING = {
     },
 }
 
-
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 if DEBUG:
     # allowing for local_settings overides
     # how this should ultimately be set up
