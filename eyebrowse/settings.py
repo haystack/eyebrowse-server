@@ -235,7 +235,7 @@ if DEBUG:
     # settings override that is specified by environment 
     # variable or hard code.
     
-    # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
     try:
         local_settings_file = open('eyebrowse/local_settings.py', 'r')
