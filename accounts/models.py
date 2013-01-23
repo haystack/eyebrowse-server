@@ -21,11 +21,6 @@ class UserProfile(models.Model):
     use_tour = models.BooleanField(default=True)
     anon_email =models.BooleanField(default=False)
 
-    def add_email(self, email):
-        email = Email(user=self, email=email)
-        email.send_confirm_email();
-        email.save()
-
     def get_following_history(self, history=None):
         following = self.follows.all()
         if not history:
