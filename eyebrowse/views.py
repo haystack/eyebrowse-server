@@ -10,7 +10,7 @@ from annoying.decorators import render_to, ajax_request
 
 from accounts.models import *
 
-from common.admin import email_templates, utils
+from common.admin import email_templates
 from common.view_helpers import _template_values
 
 @render_to('common/home.html')
