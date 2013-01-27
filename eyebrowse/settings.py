@@ -124,7 +124,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'common.middleware.profiler.ProfileMiddleware',
-     'common.middleware.crossdomainxhr.XsSharing'
+    'common.middleware.crossdomainxhr.XsSharing'
 )
 
 ROOT_URLCONF = 'eyebrowse.urls'
