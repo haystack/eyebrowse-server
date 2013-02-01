@@ -15,13 +15,13 @@ Wiki Pages:
 ## Authors
 
 **Josh Blum**
-+ joshblum@mit.edu
-+ @blumua
++ [joshblum@mit.edu](mailto:joshblum@mit.edu)
++ [@blumua](https://twitter.com/blumua)
 
 **Scott Greenwald**
-+ swgreen@mit.edu
-+ @swgreen_mit
++ [swgreen@mit.edu](mailto:swgreen@mit.edu)
++ [@swgreen_mit](https://twitter.com/blumua)
 
 **Jason Hu**
 
-+ mjhu@MIT.EDU
++ [mjhu@mit.edu](mailto:mjhu@mit.edu)
