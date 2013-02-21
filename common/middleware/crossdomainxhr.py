@@ -1,17 +1,12 @@
 from django import http
+from django.conf import settings
 
-try:
-    from django.conf import settings
-    XS_SHARING_ALLOWED_ORIGINS = settings.XS_SHARING_ALLOWED_ORIGINS
-    XS_SHARING_ALLOWED_METHODS = settings.XS_SHARING_ALLOWED_METHODS
-    XS_SHARING_ALLOWED_HEADERS = settings.XS_SHARING_ALLOWED_HEADERS
-    XS_SHARING_ALLOWED_CREDENTIALS = settings.XS_SHARING_ALLOWED_CREDENTIALS
-except AttributeError:
-    XS_SHARING_ALLOWED_ORIGINS = '*'
-    XS_SHARING_ALLOWED_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE']
-    XS_SHARING_ALLOWED_HEADERS = ['Content-Type', '*']
-    XS_SHARING_ALLOWED_CREDENTIALS = 'true'
+XS_SHARING_ALLOWED_ORIGINS = getattr(settings, 'XS_SHARING_ALLOWED_ORIGINS', '*')
+XS_SHARING_ALLOWED_HEADERS = getattr(settings, 'XS_SHARING_ALLOWED_HEADERS', ['Content-type'])
 
+XS_SHARING_ALLOWED_METHODS = getattr(settings, 'XS_SHARING_ALLOWED_METHODS', ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'])
+
+XS_SHARING_ALLOWED_CREDENTIALS = getattr(settings, 'XS_ALLOW_CREDENTIALS', True)
 
 class XsSharing(object):
     """
@@ -24,19 +19,18 @@ class XsSharing(object):
     """
     def process_request(self, request):
         if 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' in request.META:
-            response = http.HttpResponse()
-            response['Access-Control-Allow-Origin']  = XS_SHARING_ALLOWED_ORIGINS 
-            response['Access-Control-Allow-Methods'] = ",".join( XS_SHARING_ALLOWED_METHODS ) 
-            response['Access-Control-Allow-Headers'] = ",".join( XS_SHARING_ALLOWED_HEADERS )
-            response['Access-Control-Allow-Credentials'] = XS_SHARING_ALLOWED_CREDENTIALS
-            return response
+            return self.fill_response()
 
         return None
 
     def process_response(self, request, response):
-        response['Access-Control-Allow-Origin']  = XS_SHARING_ALLOWED_ORIGINS 
-        response['Access-Control-Allow-Methods'] = ",".join( XS_SHARING_ALLOWED_METHODS )
-        response['Access-Control-Allow-Headers'] = ",".join( XS_SHARING_ALLOWED_HEADERS )
-        response['Access-Control-Allow-Credentials'] = XS_SHARING_ALLOWED_CREDENTIALS
+        return self.fill_response(response)
 
+    def fill_response(self, response=None):
+        if not response:
+            response = http.HttpResponse()
+        response['Access-Control-Allow-Origin']  = XS_SHARING_ALLOWED_ORIGINS 
+        response['Access-Control-Allow-Methods'] = ", ".join( XS_SHARING_ALLOWED_METHODS )
+        response['Access-Control-Allow-Headers'] = ", ".join( XS_SHARING_ALLOWED_HEADERS )
+        response['Access-Control-Allow-Credentials'] = XS_SHARING_ALLOWED_CREDENTIALS
         return response

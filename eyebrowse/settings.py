@@ -124,7 +124,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'common.middleware.profiler.ProfileMiddleware',
-    'common.middleware.crossdomainxhr.XsSharing'
+    'common.middleware.crossdomainxhr.XsSharing',
 )
 
 ROOT_URLCONF = 'eyebrowse.urls'
@@ -161,7 +161,7 @@ INSTALLED_APPS = (
     'tastypie',
     'pagination',
 
-    #eyebrowse
+    # eyebrowse
     'accounts',
     'common',
     'api',
@@ -170,7 +170,7 @@ INSTALLED_APPS = (
 
 APPEND_SLASH = False
 
-#email settings from sendgrid.com
+# email settings from sendgrid.com
 EMAIL_HOST = env['EMAIL_HOST']
 EMAIL_HOST_USER = env['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = env['PASSWORD']
@@ -180,22 +180,21 @@ EMAIL_USE_TLS = env['EMAIL_USE_TLS']
 ACCOUNT_ACTIVATION_DAYS = 14 # Two-week activation window;
 
 
-##Tastypie settings:
+# Tastypie settings:
 
-API_LIMIT_PER_PAGE = 0 #no default
+API_LIMIT_PER_PAGE = 0 # no default
 TASTYPIE_FULL_DEBUG = DEBUG
 TASTYPIE_ALLOW_MISSING_SLASH = True
 
-XS_SHARING_ALLOWED_ORIGINS = "http://localhost:5000"
 
-XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
-
-TASTYPIE_ALLOW_MISSING_SLASH = True
-
-
-#gravatar settings
+# gravatar settings
 GRAVATAR_IMG_CLASS = "img-polaroid"
 
+
+# cross domain sharing
+XS_SHARING_ALLOWED_HEADERS = [
+    "x-csrftoken",
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
