@@ -1,9 +1,10 @@
+from tastypie.serializers import Serializer
 from api.models import *
 
-from urlparse import urlparse
+import urlparse
 
 def split_url(url):
-    parsed = urlparse(url)
+    parsed = urlparse.urlparse(url)
     domain = parsed.netloc
     protocol = parsed.scheme
     return domain, protocol
@@ -42,3 +43,23 @@ def get_username(bundle):
         return bundle.data['user'].split('/')[-1]
     except:
         return None
+
+class urlencodeSerializer(Serializer):
+    formats = ['json', 'jsonp', 'xml', 'yaml', 'html', 'plist', 'urlencode']
+    content_types = {
+        'json': 'application/json',
+        'jsonp': 'text/javascript',
+        'xml': 'application/xml',
+        'yaml': 'text/yaml',
+        'html': 'text/html',
+        'plist': 'application/x-plist',
+        'urlencode': 'application/x-www-form-urlencoded',
+        }
+    def from_urlencode(self, data,options=None):
+        """ handles basic formencoded url posts """
+        qs = dict((k, v if len(v)>1 else v[0] )
+            for k, v in urlparse.parse_qs(data).iteritems())
+        return qs
+
+    def to_urlencode(self,content): 
+        pass

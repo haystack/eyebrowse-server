@@ -33,6 +33,8 @@ urlpatterns = patterns('',
     url(r'^live_stream/', include('live_stream.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^api/', include(v1_api.urls)),
+
+    url(r'^ext/', include("extension.urls")),
 )
 
 urlpatterns += patterns('eyebrowse.views',

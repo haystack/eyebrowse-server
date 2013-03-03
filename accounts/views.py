@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
@@ -39,7 +38,7 @@ def profile(request, username=None):
 
     history_items = EyeHistory.objects.filter(user=profile_user).order_by('-end_time')
     history_items = paginator(page, history_items)
-    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, history_items=history_items, empty_search_msg=empty_search_msg, ping=page,follows=str(follows))
+    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, history_items=history_items, empty_search_msg=empty_search_msg, ping=page, follows=str(follows))
 
 @login_required
 @render_to('accounts/edit_profile.html')

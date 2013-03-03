@@ -27,7 +27,7 @@ class BlackListItem(FilterListItem):
 class EyeHistory(models.Model):
     user = models.ForeignKey(User)
 
-    tabId = models.CharField(max_length=40, default='')
+    src = models.CharField(max_length=40, default='')
     url = models.URLField(max_length=2000, default='')
     favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=40, default='')

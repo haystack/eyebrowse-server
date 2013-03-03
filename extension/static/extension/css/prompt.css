@@ -1,0 +1,25 @@
+{% load staticfiles %}
+
+body {
+    background:url({% static "extension/img/bg-trans.gif" %});
+}
+
+#popup {
+    width: 200px;
+    height: 100px;
+    position: absolute;
+    top: 0px;
+    left: 70px;
+    text-align: center;
+    margin: 3px;
+    border-radius: 25px;
+    background-color: #e8e7e5;
+}
+
+.btn-container {
+    margin-left:100px !important;
+}
+
+.gritter-title {
+    text-align: center
+}

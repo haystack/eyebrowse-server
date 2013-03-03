@@ -34,6 +34,7 @@ class BaseMeta:
     """
     authentication = MyBasicAuthentication()
     authorization = DjangoAuthorization()
+    serializer = urlencodeSerializer()
 
 class BaseResource(ModelResource):
     """
@@ -96,8 +97,7 @@ class FilterSetItemResource(BaseResource):
 class WhiteListItemResource(FilterSetItemResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
-
-        username = bundle.data['user'].split('/')[-1]
+        username = get_username(bundle)
         url = bundle.data['url']
         
         blacklist_item = get_BlackListItem(url) #check to see if this exists
@@ -160,11 +160,11 @@ class EyeHistoryResource(BaseResource):
         url = bundle.data['url']
         title = bundle.data['title']
         total_time = bundle.data['total_time']
-        tabId = bundle.data['tabId']
+        src = bundle.data['src']
         if not in_Whitelist(url):
             return bundle
         try:
-            obj = EyeHistory.objects.get(user__username=username, url=url, title=title, total_time=total_time, tabId=tabId)
+            obj = EyeHistory.objects.get(user__username=username, url=url, title=title, total_time=total_time, src=src)
         
         except EyeHistory.DoesNotExist:
             return super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)

@@ -166,6 +166,7 @@ INSTALLED_APPS = (
     'common',
     'api',
     'live_stream',
+    'extension',
 )
 
 APPEND_SLASH = False
