@@ -152,7 +152,7 @@
         {% include 'common/send_feedback.html' %}
 
         <!--  javascript -->
-        
+        {% compress js %}
         {% include_script 'common/js/jquery-1.8.2.min' %}
 
         <!--  helpers -->
@@ -174,8 +174,9 @@
         {% include_script 'common/js/base' %}
 
         {% block scripts %}
-
         {% endblock %}
+        
+        {% endcompress %}
         <script type="text/javascript">
             var username = "{{user.username}}";
             {% if user.profile.use_tour %}
