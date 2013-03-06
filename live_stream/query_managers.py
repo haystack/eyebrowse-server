@@ -42,7 +42,7 @@ def history_search(req_user, timestamp=None, query=None, filter='following', typ
 
     history = EyeHistory.objects.all()
     try:
-        #ping data with latest id and see if new id is present
+        #ping data with latest time and see if time is present
         if type == 'ping' and timestamp:
             history = history.filter(start_time__gt=timestamp)
 
