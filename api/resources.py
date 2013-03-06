@@ -22,6 +22,7 @@ class MyBasicAuthentication(BasicAuthentication):
             s = Session.objects.filter(pk=request.COOKIES['sessionid'])
             if s.exists():
                 s = s[0]
+                print s.get_decoded()
                 if '_auth_user_id' in s.get_decoded():
                     u = User.objects.get(id=s.get_decoded()['_auth_user_id'])
                     request.user = u

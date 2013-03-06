@@ -94,3 +94,7 @@ ul.errorlist {
 .load-new-background {
     background-color:#49afcd !important;
 }
+
+.disabled {
+    cursor: not-allowed !important;
+}
