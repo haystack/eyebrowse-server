@@ -18,6 +18,7 @@
     {% include_style "extension/css/prompt" %}
 
     {% endcompress %}
+
 </head>
 <body>
 
@@ -42,8 +43,11 @@
     </div>
 
     <!--  javascript -->
-        
+    {% compress js %}
+
     {% include_script 'common/js/jquery-1.8.2.min' %}
     {% include_script 'extension/js/prompt' %}
+
+    {% endcompress %}
 </body>
 </html>

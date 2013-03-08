@@ -44,4 +44,4 @@
         after: 5000,
         interval: 100
     };
-}(jQuery));
+})(jQuery);

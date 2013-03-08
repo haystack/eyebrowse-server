@@ -152,7 +152,7 @@
         {% include 'common/send_feedback.html' %}
 
         <!--  javascript -->
-        
+        {% compress js %}
         {% include_script 'common/js/jquery-1.8.2.min' %}
 
         <!--  helpers -->
@@ -164,8 +164,8 @@
         {% include_script 'common/js/sprintf-0.7-beta1' %}
         {% include_script 'common/js/jquery.cookie' %}
         {% include_script 'common/js/bootstrap-tour' %}
-        {% include_script 'common/js/stupidtable.min' %}
         {% include_script 'common/js/jquery.idle' %}
+        {% include_script 'common/js/stupidtable.min' %}
         {% include_script 'live_stream/js/live-stream-ping' %}
         
         <!--  bootstrap -->
@@ -174,8 +174,9 @@
         {% include_script 'common/js/base' %}
 
         {% block scripts %}
-
         {% endblock %}
+        
+        {% endcompress %}
         <script type="text/javascript">
             var username = "{{user.username}}";
             {% if user.profile.use_tour %}

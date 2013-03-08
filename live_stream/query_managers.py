@@ -9,7 +9,6 @@ from django.db.models import Q
 import itertools
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
-
     valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction','filter', 'ping', 'req_user', 'username', 'limit']
 
     valid_types = {
@@ -28,11 +27,12 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
     history = history_search(req_user, **search_params)
     
-    #convert followers to dictionary
-    following = dict(itertools.izip_longest(*[iter(req_user.profile.follows.all())] * 2, fillvalue=""))
+    if req_user.is_authenticated():
+        #convert followers to dictionary
+        following = dict(itertools.izip_longest(*[iter(req_user.profile.follows.all())] * 2, fillvalue=""))
     
-    for h_item in history:
-        h_item.follows = str(h_item.user.profile in following)
+        for h_item in history:
+            h_item.follows = str(h_item.user.profile in following)
 
     return history_renderer(req_user, history, return_type,  get_dict.get('template'), get_param=search_params.get('filter'), page=get_dict.get('page',1))
 

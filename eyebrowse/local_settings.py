@@ -11,3 +11,5 @@ DATABASES['default'] = {
    'PASSWORD': env['MYSQL_PASSWORD_LOCAL'],
    'PORT': ''
 }
+
+
