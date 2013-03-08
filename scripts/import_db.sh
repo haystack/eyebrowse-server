@@ -6,14 +6,19 @@
 echo "Starting"
 
 echo "Exporting data..."
-mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_NAME > dumpfile.sql
+mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_NAME > dumpfile.sql;
 
 echo "Dropping old data"
 mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -e DROP DATABASE $MYSQL_NAME_DEV; 
 mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -e CREATE DATABASE $MYSQL_NAME_DEV;
 
 echo "Importing data..."
+
+echo "Import to dev..."
 mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_NAME_DEV < dumpfile.sql;
+
+echo "Importing to local..."
+mysql -h $MYSQL_HOST_LOCAL -u $MYSQL_USER_LOCAL -p$MYSQL_PASSWORD_LOCAL $MYSQL_NAME_LOCAL < dumpfile.sql;
 
 echo "Cleaning up..."
 rm dumpfile.sql
