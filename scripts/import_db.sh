@@ -28,7 +28,7 @@ echo "Importing data locally..."
 mysql -h $MYSQL_HOST_LOCAL -u $MYSQL_USER_LOCAL -p$MYSQL_PASSWORD_LOCAL $MYSQL_NAME_LOCAL < dumpfile.sql;
 
 echo "Cleaning up..."
-# rm dumpfile.sql
+rm dumpfile.sql
 
 echo "Removing user access to dev site..."
 python manage.py set_users_inactive
