@@ -1,8 +1,8 @@
-<div class="row">
+<div class="hidden row">
     <ul class="pager">
         {% if objs.has_previous %}
         <li class="previous"> 
-            <a href="?page={{ objs.previous_page_number }}{{ link_mod }}">
+            <a class="prev-link" href="?page={{ objs.previous_page_number }}{{ link_mod }}">
                 &larr; previous
             </a>
         </li>
@@ -10,7 +10,7 @@
 
         {% if objs.has_next %}
         <li class="next">
-            <a href="?page={{ objs.next_page_number }}{{ link_mod }}">
+            <a class="next-link" href="?page={{ objs.next_page_number }}{{ link_mod }}">
                 next &rarr; 
             </a>
         </li>
