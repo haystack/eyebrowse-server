@@ -109,36 +109,36 @@
                 </div>
             </div>
         </div>
-        <!-- Part 1: Wrap all page content here -->
-        <div class="wrap">
 
-            <!-- Begin page content -->
-            <div class="container">
-                {% block content %} {% endblock%}
-            </div>
-
-          <div class="push"></div>
+        <!-- Begin page content -->
+        <div class="container">
+            {% block content %} {% endblock%}
         </div>
+
+        <div class="push"></div>
 
         <div class="footer">
             <div class="navbar">
                 <div class="navbar-inner nav-bg">
-                    <div class="container">
+                    <div>
                             <ul class="nav pull-right">
                                 <li>
                                     <a href="http://github.com/joshblum/eyebrowse-server">
-                                        GitHub Project
+                                        <img class="icon" src="https://github.com/favicon.ico">
+                                        github
                                     </a>
                                 </li>
                                 <li> <a>|</a> </li>
                                 <li>
                                     <a data-toggle="modal" href="#send-feedback-modal">
-                                        Contact
+                                        <i class="icon-envelope"></i>
+                                        contact
                                     </a>
                                 </li>
                                 <li> <a>|</a> </li>
                                 <li>
                                     <a href="http://www.twitter.com/eyebrowse_proj">
+                                        <img src="https://si0.twimg.com/favicons/favicon.ico">
                                         @eyebrowse_proj
                                     </a>
                                 </li>
@@ -166,7 +166,6 @@
         {% include_script 'common/js/jquery.cookie' %}
         {% include_script 'common/js/bootstrap-tour' %}
         {% include_script 'common/js/jquery.idle' %}
-        {% include_script 'common/js/stupidtable.min' %}
         {% include_script 'live_stream/js/live-stream-ping' %}
         
         <!--  bootstrap -->
