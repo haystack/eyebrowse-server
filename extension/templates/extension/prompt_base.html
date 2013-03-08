@@ -1,0 +1,46 @@
+{% load filters %}
+{% load staticfiles %}
+{% load compress %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <!--  styles -->
+    {% compress css %}
+    
+    {% include_style "common/css/bootstrap" %}
+    {% include_style "extension/css/jquery.gritter" %}
+    {% include_style "extension/css/prompt" %}
+
+    {% endcompress %}
+
+</head>
+<body>
+
+    <div id="gritter-notice-wrapper" class="popup">
+        <div id="gritter-item-1" class="gritter-item-wrapper">
+            <div class="gritter-top"></div>
+            <div class="gritter-item">
+                <div class="gritter-without-image">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+                <div style="clear:both"></div>
+            </div>
+            <div class="gritter-bottom"></div>
+        </div>
+    </div>
+
+    <!--  javascript -->
+    {% compress js %}
+
+    {% include_script 'common/js/jquery-1.8.2.min' %}
+    {% include_script 'extension/js/prompt' %}
+    
+    {% endcompress %}
+</body>
+</html>

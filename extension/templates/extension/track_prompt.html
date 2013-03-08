@@ -1,0 +1,12 @@
+{% extends "extension/prompt_base.html" %}
+
+{% block content%}
+
+ <span class="gritter-title">Track activity from
+        <p class="site"> {{ site }} </p>
+</span> 
+<p class="track-container">
+    <input id="allow-btn" type="button" value="Yes" data-msg="whitelist" class=" btn btn-small btn-success">
+    <input id="deny-btn" type="button" value="No" data-msg="blacklist" class="btn btn-small btn-warning">
+<p>
+{% endblock %}
