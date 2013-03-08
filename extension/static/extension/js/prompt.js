@@ -44,6 +44,7 @@ function clickHandle(e){
     var action = $(e.target).data("action");
     var type = $(e.target).data("type");
     passMessage(action, type);
+    passMessage("fade"); //remove iframe on btn click
 }
 
 $(document).ready(function(){

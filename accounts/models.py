@@ -25,7 +25,7 @@ class UserProfile(models.Model):
         following = self.follows.all()
         if not history:
             history = EyeHistory.objects.all()
-        
+                 
         query_set = history.filter(user__in=following)
         return query_set
 

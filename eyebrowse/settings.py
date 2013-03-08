@@ -11,8 +11,9 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 DEBUG = (not env['DEBUG'] == 'False') #convert from string to bool
 
-BASE_URL = 'http://eyebrowse.herokuapp.com'
+BASE_URL_PROD = 'http://eyebrowse.herokuapp.com'
 BASE_URL_DEV = 'http://localhost:5000'
+BASE_URL = BASE_URL_PROD
 
 TEMPLATE_DEBUG = DEBUG
 
