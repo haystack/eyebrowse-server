@@ -1,10 +1,10 @@
 #! /bin/bash
 
 echo "Starting..."
-echo "Pulling staging"
-git pull staging
-echo "Pushing staging"
-git push staging
+echo "Pulling staging master"
+git pull staging master
+echo "Pushing staging master"
+git push staging master
 
 echo "Push production?(y/n) \c"
 read  MASTER
