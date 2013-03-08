@@ -6,7 +6,7 @@
         <p class="site"> {{ site }} </p>
 </span> 
 <p class="track-container">
-    <input id="allow-btn" type="button" value="Yes" data-msg="whitelist" class=" btn btn-small btn-success">
-    <input id="deny-btn" type="button" value="No" data-msg="blacklist" class="btn btn-small btn-warning">
+    <input id="allow-btn" type="button" value="Yes" data-action="filterlist" data-type="whitelist" class=" btn btn-small btn-success">
+    <input id="deny-btn" type="button" value="No" data-action="filterlist" data-type="blacklist" class="btn btn-small btn-warning">
 <p>
 {% endblock %}

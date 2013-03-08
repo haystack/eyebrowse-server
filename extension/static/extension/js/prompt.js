@@ -20,10 +20,11 @@ function setFade() {
     });
 }
 
-function passMessage(action){
+function passMessage(action, type){
     $(".popup").remove();
     var message = {
-        "type": action,
+        "action" : action,
+        "type": type,
     };
     window.parent.postMessage(JSON.stringify(message), "*")
 }
@@ -35,17 +36,18 @@ function fade(el) {
         $popup.animate({
             "top": $(".popup").css("top") -120
         }, 500);
-        passMessage("remove");
+        passMessage("fade");
     });
 }
 
 function clickHandle(e){
-    var msg = $(e.target).data("msg");
-    passMessage(msg);
+    var action = $(e.target).data("action");
+    var type = $(e.target).data("type");
+    passMessage(action, type);
 }
 
 $(document).ready(function(){
-    // setFade();
+    setFade();
     $("#allow-btn").click(clickHandle);
     $("#deny-btn").click(clickHandle);
 });

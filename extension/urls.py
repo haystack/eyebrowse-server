@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('extension.views',
-    url(r'^prompt$', 'prompt'),
-    url(r'^login$', 'login'),
+    url(r'^trackPrompt$', 'prompt'),
+    url(r'^loginPrompt$', 'login'),
 )
