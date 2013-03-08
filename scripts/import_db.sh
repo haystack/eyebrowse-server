@@ -6,7 +6,7 @@
 echo "Starting"
 
 echo "Exporting data..."
-mysqldump -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_NAME > dumpfile.sql
+mysqldump -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_NAME --set-gtid-purged=OFF > dumpfile.sql
 
 echo "Dropping old data"
 
@@ -31,6 +31,6 @@ echo "Cleaning up..."
 # rm dumpfile.sql
 
 echo "Removing user access to dev site..."
-# python manage.py set_users_inactive
+python manage.py set_users_inactive
 
 echo "Done."
