@@ -16,6 +16,7 @@ function setFade() {
     $popup.mouseleave(function() {
         fadePopup = setTimeout(function() {
             fade($popup)
+            passMessage("remove")
         }, fadeTime);
     });
 }

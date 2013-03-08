@@ -6,3 +6,4 @@ eyebrowse/static/CACHE
 .env
 venv
 *.db
+local_settigs.py
