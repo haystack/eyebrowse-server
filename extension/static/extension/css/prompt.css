@@ -16,8 +16,12 @@ body {
     background-color: #e8e7e5;
 }
 
-.btn-container {
+.track-container {
     margin-left:100px !important;
+}
+
+.login-container {
+    margin-left:90px !important;
 }
 
 .gritter-title {

@@ -39,8 +39,13 @@ function fade(el) {
     });
 }
 
+function clickHandle(e){
+    var msg = $(e.target).data("msg");
+    passMessage(msg);
+}
+
 $(document).ready(function(){
-    setFade();
-    $("#allow-btn").click(function(){passMessage("whitelist")});
-    $("#deny-btn").click(function(){passMessage("blacklist")});
+    // setFade();
+    $("#allow-btn").click(clickHandle);
+    $("#deny-btn").click(clickHandle);
 });
