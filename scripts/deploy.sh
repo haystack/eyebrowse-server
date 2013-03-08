@@ -14,6 +14,4 @@ if [ $MASTER == "y" ] ; then
     git push origin master --force
 fi
 
-git checkout staging
-
 echo "Done!"
