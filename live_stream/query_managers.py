@@ -30,9 +30,8 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     history = history_search(req_user, **search_params)
     
     if req_user.is_authenticated():
-        #convert followers to dictionary
-        following = dict(itertools.izip_longest(*[iter(req_user.profile.follows.all())] * 2, fillvalue=""))
-    
+        following = set(req_user.profile.follows.all())
+
         for h_item in history:
             h_item.follows = str(h_item.user.profile in following)
 
@@ -41,16 +40,13 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
 
 def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=None, username=None):
-    # print timestamp, query, filter, type, direction, orderBy, limit, username 
     history = EyeHistory.objects.all()
     try:
 
         if query:
-            print "query limit", query
             history = history.filter(Q(title__contains=query) | Q(url__contains=query))
 
         if filter == 'following':
-            print "following limit"
             history = req_user.profile.get_following_history(history=history)
         
         if username:

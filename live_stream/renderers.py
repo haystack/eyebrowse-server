@@ -20,7 +20,6 @@ def history_renderer(user, history, return_type, template, get_param=None, page=
 
         if get_param:
             template_values['link_mod'] = "&filter=" + get_param
-
         return render_to_string('live_stream/timeline.html',template_values)
 
     elif return_type == "list":
