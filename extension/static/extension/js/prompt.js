@@ -15,20 +15,17 @@ function setFade() {
     
     $popup.mouseleave(function() {
         fadePopup = setTimeout(function() {
-            fade($popup)
-            passMessage("remove")
+            fade($popup);
         }, fadeTime);
     });
 }
 
 function passMessage(action){
-    return function(){
-        $(".popup").remove()
-        var message = {
-            "type": action,
-        };
-        window.parent.postMessage(JSON.stringify(message), "*")
-    }
+    $(".popup").remove();
+    var message = {
+        "type": action,
+    };
+    window.parent.postMessage(JSON.stringify(message), "*")
 }
 
 
@@ -38,12 +35,12 @@ function fade(el) {
         $popup.animate({
             "top": $(".popup").css("top") -120
         }, 500);
-    $("body").css("z-index", -1)
+        passMessage("remove");
     });
 }
 
 $(document).ready(function(){
     setFade();
-    $("#allow-btn").click(passMessage("whitelist"));
-    $("#deny-btn").click(passMessage("blacklist"));
+    $("#allow-btn").click(function(){passMessage("whitelist")});
+    $("#deny-btn").click(function(){passMessage("blacklist")});
 });
