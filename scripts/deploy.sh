@@ -10,7 +10,7 @@ echo "Push production?(y/n) \c"
 read  MASTER
 
 if [ $MASTER == "y" ] ; then
-    echo "Pushing to origin master"
+    echo "Pushing to heroku master"
     git push heroku master --force
 fi
 

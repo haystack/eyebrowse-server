@@ -143,11 +143,29 @@ function setTips(targetClass, position, trigger) {
     
 }
 
+/*
+    Detects if the user is on a mobile browser. Uses helper file lib/mobile_detection.js. Changes filepicker.SERVICES to only facebook and dropbox for mobile
+    */
+function filepicker_services(){
+    if ($.browser.mobile) {
+        return [
+            filepicker.SERVICES.FACEBOOK,
+            filepicker.SERVICES.DROPBOX,
+        ]
+    }
+    return [
+            filepicker.SERVICES.WEBCAM,
+            filepicker.SERVICES.COMPUTER,
+            filepicker.SERVICES.FACEBOOK,
+            filepicker.SERVICES.DROPBOX,
+        ]
+}
+
 /* 
 filepicker image upload for registration/edit_profile page
 */
 function getImg() {
-    filepicker.setKey('ANeTsQ3iXQHK45sOxgjDnz')
+    filepicker.setKey('AHNm9wyVITvGdef4AyBUIz')
     filepicker.getFile("image/*",{
         'modal': true, 
         'multiple' : false,
@@ -298,6 +316,10 @@ function nullFilter(filter){
     return null
 }
 
+function filePicker(){
+    (function(a){if(window.filepicker){return}var b=a.createElement("script");b.type="text/javascript";b.async=!0;b.src=("https:"===a.location.protocol?"https:":"http:")+"//api.filepicker.io/v1/filepicker.js";var c=a.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c);var d={};d._queue=[];var e="pick,pickMultiple,pickAndStore,read,write,writeUrl,export,convert,store,storeUrl,remove,stat,setKey,constructWidget,makeDropPane".split(",");var f=function(a,b){return function(){b.push([a,arguments])}};for(var g=0;g<e.length;g++){d[e[g]]=f(e[g],d._queue)}window.filepicker=d})(document); 
+}
+
 $(function(){
     var csrftoken = $.cookie('csrftoken');
     $.ajaxSetup({
@@ -313,5 +335,6 @@ $(function(){
     TEMPLATE_BASE = "api/js_templates/";
     $("#account_dropdown").on('click', '#submit_feedback', submitFeedBack);
 
-    typeahead()
+    typeahead();
+    filePicker()
 }); 

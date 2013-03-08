@@ -38,6 +38,7 @@ class UserProfile(models.Model):
     def __unicode__(self):
           return "%s's profile" % self.user
 
+
 User.profile = property(lambda u: u.get_profile())
 
 import signals
