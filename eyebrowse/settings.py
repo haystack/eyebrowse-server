@@ -11,7 +11,7 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 DEBUG = (not env['DEBUG'] == 'False') #convert from string to bool
 
-BASE_URL = 'http://www.eyebrowse.herokuapp.com'
+BASE_URL = 'http://eyebrowse.herokuapp.com'
 BASE_URL_DEV = 'http://localhost:5000'
 
 TEMPLATE_DEBUG = DEBUG
@@ -193,6 +193,7 @@ TASTYPIE_ALLOW_MISSING_SLASH = True
 
 # gravatar settings
 GRAVATAR_IMG_CLASS = "img-polaroid"
+DEFAULT_IMG = "/static/common/img/placeholder.png"
 
 
 # cross domain sharing
@@ -237,8 +238,6 @@ if DEBUG:
     # and each different deploy location has a differnt
     # settings override that is specified by environment 
     # variable or hard code.
-    
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
     try:
         local_settings_file = open('eyebrowse/local_settings.py', 'r')
