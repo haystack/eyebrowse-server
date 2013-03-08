@@ -316,7 +316,14 @@ function nullFilter(filter){
     return null
 }
 
-function infiniteScroll(infiniteSel, itemSel){    
+
+/*
+    Apply infinite scroll to the givin selector. itemSel specifies what the data will be appended to.
+    defalts to .live-stream-container (auto update on live stream) and .infinite-scroll (applied to all live streams)
+*/
+function infiniteScroll(infiniteSel, itemSel){  
+    infiniteSel = infiniteSel || '.live-stream-container';
+    itemSel = itemSel || '.infinite-scroll';
     // infinitescroll() is called on the element that surrounds 
     // the items you will be loading more of
     $(infiniteSel).infinitescroll({
@@ -344,4 +351,6 @@ $(function(){
     $("#account_dropdown").on('click', '#submit_feedback', submitFeedBack);
 
     typeahead();
+
+    infiniteScroll();
 }); 

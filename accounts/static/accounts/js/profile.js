@@ -33,6 +33,5 @@ $(function(){
         'username' : $('.user-info').data('username'),
         'template' : 'history_row',
         }, updateTemplate);
-    $('.history-data').stupidtable();
     $('.history-body').on('click', '.rm-history', 'history-data', rmEyeHistoryItem);
 }); 

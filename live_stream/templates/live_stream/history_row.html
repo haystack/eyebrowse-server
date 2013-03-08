@@ -1,6 +1,6 @@
 {% load filters %}
 
-<tr class="history-row">
+<tr class="history-row infinite-scroll">
     <td>
         <a href="{{ item.url }}" target="_blank" data-content="{{ item.url }}" class="cut-content pointer">
         <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
