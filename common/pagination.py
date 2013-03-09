@@ -15,5 +15,5 @@ def paginator(page, object_list, per_page=30):
         objects = paginator.page(1)
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
-        objects = paginator.page(paginator.num_pages)
+        objects = []
     return objects

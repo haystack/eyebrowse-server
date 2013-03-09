@@ -12,16 +12,22 @@ from live_stream.query_managers import *
 
 @render_to('live_stream/home.html')
 def home(request):
-    history_stream = live_stream_query_manager(request.GET, request.user)
+    get_dict = dict(request.GET)
+    if not request.user.is_authenticated() or not len(request.user.profile.follows.all()):
+        get_dict["filter"] = "firehose" #default for firehose
     
-    subnav = "subnav_" + request.GET.get('filter', "following")
+    history_stream = live_stream_query_manager(get_dict, request.user)
+    
+    subnav = "subnav_" + get_dict.get('filter', "following")
 
     return _template_values(request, page_title="Live Stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, ping=request.GET.get('page', 1))
 
 @ajax_request
 def ping(request):
     history = live_stream_query_manager(request.GET, request.user, return_type="list")
-    return {'history' : history}
+    return {
+        'history' : history
+    }
 
 def search(request):
     return home(request)

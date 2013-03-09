@@ -46,7 +46,7 @@ def history_search(req_user, timestamp=None, query=None, filter='following', typ
         if query:
             history = history.filter(Q(title__contains=query) | Q(url__contains=query))
 
-        if filter == 'following':
+        if filter == 'following' and req_user.is_authenticated():
             history = req_user.profile.get_following_history(history=history)
         
         if username:
