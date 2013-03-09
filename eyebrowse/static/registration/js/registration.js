@@ -13,8 +13,6 @@ function login() {
 function register() {
     $("#id_username").attr("placeholder", "Username");
     $("#id_email").attr("placeholder", "Email");
-    $("#id_first_name").attr("placeholder", "First Name");
-    $("#id_last_name").attr("placeholder", "Last Name");
     $("#id_password1").attr("placeholder", "Password");
     $("#id_password2").attr("placeholder", "Password (again)");
     $("th").remove()
