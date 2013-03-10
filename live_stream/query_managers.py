@@ -12,7 +12,7 @@ import itertools
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
     valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction','filter', 'ping', 'req_user', 'username', 'limit']
-    print "TIMESTAMP", get_dict.get('timestamp', datetime.now())
+    
     valid_types = {
         'ping' : {
             'timestamp' : get_dict.get('timestamp', datetime.now()),
