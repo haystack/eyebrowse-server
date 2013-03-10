@@ -9,7 +9,7 @@
         </a>
 
         <div class="connection-container pull-right">
-            {% if user.username != item.user.username %} 
+            {% if user.username != item.user.username and user.is_authenticated %} 
                 <a class="btn btn-info connection">
                     {% include 'common/snippets/follow-btn.html' with follows=item.follows username=item.user.username %}
                 </a>
