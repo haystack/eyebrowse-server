@@ -15,7 +15,7 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
     this.history = [];
     this.canPing = true;
     this.$container = $('.live-stream-container');
-    this.pingIntervalValue = 2500;
+    this.pingIntervalValue = 3500;
     this.searchParams = searchParams;
     this.updateTemplate = updateTemplate || "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>";
 
