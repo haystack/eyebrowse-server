@@ -24,8 +24,11 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
         this.setupIdle();
         this.first();
         
-        $(document).on('ping-new', $.proxy(this.showNotification, this));
-        this.$container.on('click', '.load-new', $.proxy(this.insertHistoryItems, this));
+        //lets display results automatically
+        // $(document).on('ping-new', $.proxy(this.showNotification, this));
+        // this.$container.on('click', '.load-new', $.proxy(this.insertHistoryItems, this));
+
+        $(document).on('ping-new', $.proxy(this.insertHistoryItems, this));
     }
 
     this.setupIdle = function() {
@@ -56,6 +59,7 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
             payload[attrname] = this.searchParams[attrname]; 
         }
         var that = this;
+        console.log("pingload", payload)
         $.getJSON('/live_stream/ping/', payload, function(res){
                 that.history = res.history;
                 if (callback){
@@ -85,19 +89,14 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
         var that = this;
         $.each(that.history.reverse(), function(index, item){
             var $toAdd = $(item);
-
             $toAdd.hide();
-            $toAdd.css('opacity', 0);
-
             that.$container.prepend($toAdd);
 
-            $toAdd.slideDown(function(){
-                $toAdd.animate({opacity:1}, 150);
-            });
-            if (index == that.history.length -1){
+            $toAdd.fadeIn(750);
+            if (index === that.history.length -1){
                 $toAdd.addClass('first');
             }
-        })
+        });
 
         this.history = [];
         $loadNew.remove();

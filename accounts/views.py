@@ -15,6 +15,7 @@ from common.pagination import paginator
 from common.helpers import put_profile_pic
 from common.constants import *
 
+@login_required
 @render_to('accounts/profile.html')
 def profile(request, username=None):
     """

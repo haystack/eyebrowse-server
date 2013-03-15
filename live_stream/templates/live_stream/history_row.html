@@ -12,7 +12,7 @@
     <td>
         {{ item.humanize_time }}
     </td>
-    <td class='date'>
+    <td class='date' data-timestamp="{{item.start_time|date_fmt}}">
         {{ item.start_time }}
     </td>
     <td class="hidden edit">

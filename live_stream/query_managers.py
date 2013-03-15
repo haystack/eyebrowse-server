@@ -39,36 +39,38 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
 
 
-def history_search(req_user, timestamp=None, query=None, filter='firehose', type=None, direction='hl', orderBy="start_time", limit=None, username=None):
+def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=None, username=None):
     history = EyeHistory.objects.all()
     try:
-
+        
         if query:
             history = history.filter(Q(title__contains=query) | Q(url__contains=query))
-
+        
         if filter == 'following' and req_user.is_authenticated():
             history = req_user.profile.get_following_history(history=history)
         
         if username:
             history = history.filter(user__username=username)
-
+        
         orderBy = "-" + orderBy
         if direction == 'lh':
             orderBy = orderBy[1:]
         history = history.order_by(orderBy)
-
+        
+        print "history_start", history[0].start_time
+        print "timestamp", timestamp
         #ping data with latest time and see if time is present
         ## must be last
         if type == 'ping' and timestamp:
             history = history.filter(start_time__gt=timestamp)
-
+        
         history.select_related()
 
         if limit:
             history = history[:limit]
             
     except Exception as e:
-        print e
-        history = EyeHistory.objects.all()
+        print "EXCEPTION", e
+        history = []
 
     return history
