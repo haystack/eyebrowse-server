@@ -1,7 +1,7 @@
 {% load filters %}
 {% load gravatar %}
 
-<div id="history_item_{{item.id}}" class='row history-container' data-id="{{ item.id }}">
+<div id="history_item_{{item.id}}" class='row history-container infinite-scroll' data-id="{{ item.id }}">
     <div class="author-container">
         <a class="author-name" href="/users/{{ item.user.username }}">
             <img class="author-pic img-polaroid" src="{% gravatar_for_user item.user %}"/>
@@ -9,7 +9,7 @@
         </a>
 
         <div class="connection-container pull-right">
-            {% if user.username != item.user.username %} 
+            {% if user.username != item.user.username and user.is_authenticated %} 
                 <a class="btn btn-info connection">
                     {% include 'common/snippets/follow-btn.html' with follows=item.follows username=item.user.username %}
                 </a>

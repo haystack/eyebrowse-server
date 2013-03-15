@@ -3,6 +3,7 @@ gunicorn==0.17.2
 MySQL-python==1.2.4
 django-annoying==0.7.6
 django-registration==0.8
+django-admin-bootstrapped==0.3.2
 django-registration-defaults==0.3
 django-appconf==0.5
 django-pagination==1.0.7

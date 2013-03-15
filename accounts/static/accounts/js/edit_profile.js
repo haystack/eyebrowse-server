@@ -97,5 +97,5 @@ $(function(){
     listFilter($(".followers-body"));
 
     //init first tab
-    $('#following-tab').click();
+    $('#info-tab').click();
 });

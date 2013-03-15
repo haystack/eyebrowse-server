@@ -55,8 +55,8 @@ def gravatar_for_email(email, size=None, rating=None, img_url=None):
     """
     gravatar_url = "%savatar/%s" % (GRAVATAR_URL_PREFIX,
             _get_gravatar_id(email))
-    if img_url:
-        img_url = "http://eyebrowse.herokuapp.com"  + img_url
+    if img_url == settings.DEFAULT_IMG:
+        img_url = settings.BASE_URL_PROD + img_url
     parameters = [p for p in (
         ('d', img_url or GRAVATAR_DEFAULT_IMAGE),
         ('s', size or GRAVATAR_DEFAULT_SIZE),

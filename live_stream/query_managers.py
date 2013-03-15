@@ -6,6 +6,8 @@ from accounts.models import *
 
 from django.db.models import Q
 
+from datetime import datetime
+
 import itertools
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
@@ -13,7 +15,7 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
     valid_types = {
         'ping' : {
-            'timestamp' : get_dict.get('timestamp', None),
+            'timestamp' : get_dict.get('timestamp', datetime.now()),
             'type' : 'ping',
             'limit' : 15,
         },
@@ -28,9 +30,8 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     history = history_search(req_user, **search_params)
     
     if req_user.is_authenticated():
-        #convert followers to dictionary
-        following = dict(itertools.izip_longest(*[iter(req_user.profile.follows.all())] * 2, fillvalue=""))
-    
+        following = set(req_user.profile.follows.all())
+
         for h_item in history:
             h_item.follows = str(h_item.user.profile in following)
 
@@ -39,32 +40,37 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
 
 def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=None, username=None):
-
     history = EyeHistory.objects.all()
     try:
-        #ping data with latest time and see if time is present
-        if type == 'ping' and timestamp:
-            history = history.filter(start_time__gt=timestamp)
-
+        
         if query:
             history = history.filter(Q(title__contains=query) | Q(url__contains=query))
-
-        if filter == 'following':
+        
+        if filter == 'following' and req_user.is_authenticated():
             history = req_user.profile.get_following_history(history=history)
+        
         if username:
             history = history.filter(user__username=username)
-
+        
         orderBy = "-" + orderBy
         if direction == 'lh':
             orderBy = orderBy[1:]
         history = history.order_by(orderBy)
+        
+        print "history_start", history[0].start_time
+        print "timestamp", timestamp
+        #ping data with latest time and see if time is present
+        ## must be last
+        if type == 'ping' and timestamp:
+            history = history.filter(start_time__gt=timestamp)
+        
+        history.select_related()
 
         if limit:
             history = history[:limit]
             
     except Exception as e:
-        #raise Exception(e)
-        print str(e)
-        history = EyeHistory.objects.all()
+        print "EXCEPTION", e
+        history = []
 
-    return history.select_related()
+    return history

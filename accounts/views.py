@@ -15,6 +15,7 @@ from common.pagination import paginator
 from common.helpers import put_profile_pic
 from common.constants import *
 
+@login_required
 @render_to('accounts/profile.html')
 def profile(request, username=None):
     """
@@ -75,6 +76,16 @@ def edit_profile(request):
             user.profile.save()
 
             success = "User info updated!"
+
+        elif type == 'pic':
+            pic_url = request.POST.get('pic_url')
+            pic_url = put_profile_pic(pic_url, user.profile) #download and upload to our S3
+            if pic_url: #no errors/less than 1mb #patlsotw
+                user.profile.pic_url = pic_url
+                user.profile.save()
+                success = "Profile picture changed!"
+            else:
+                errors['pic'] = ['Oops -- something went wrong.']
 
         resp = {
             'success' : success,

@@ -15,20 +15,18 @@ function setFade() {
     
     $popup.mouseleave(function() {
         fadePopup = setTimeout(function() {
-            fade($popup)
-            passMessage("remove")
+            fade($popup);
         }, fadeTime);
     });
 }
 
-function passMessage(action){
-    return function(){
-        $(".popup").remove()
-        var message = {
-            "type": action,
-        };
-        window.parent.postMessage(JSON.stringify(message), "*")
-    }
+function passMessage(action, type){
+    $(".popup").remove();
+    var message = {
+        "action" : action,
+        "type": type,
+    };
+    window.parent.postMessage(JSON.stringify(message), "*")
 }
 
 
@@ -38,12 +36,19 @@ function fade(el) {
         $popup.animate({
             "top": $(".popup").css("top") -120
         }, 500);
-    $("body").css("z-index", -1)
+        passMessage("fade");
     });
+}
+
+function clickHandle(e){
+    var action = $(e.target).data("action");
+    var type = $(e.target).data("type");
+    passMessage(action, type);
+    passMessage("fade"); //remove iframe on btn click
 }
 
 $(document).ready(function(){
     setFade();
-    $("#allow-btn").click(passMessage("whitelist"));
-    $("#deny-btn").click(passMessage("blacklist"));
+    $("#allow-btn").click(clickHandle);
+    $("#deny-btn").click(clickHandle);
 });

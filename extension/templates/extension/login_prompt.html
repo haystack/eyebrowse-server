@@ -1,0 +1,19 @@
+{% extends "extension/prompt_base.html" %}
+
+{% block content%}
+
+ <p class="gritter-title">
+    You've been logged out of Eyebrowse
+</p> 
+{% if src == "firefox"%}
+<p class="firefox-msg">
+        Log back in through the add-on bar
+</p>
+{% endif %}
+<p class="login-container {{src}}">
+    {% if src == "chrome" %}
+    <input id="allow-btn" type="button" value="Login" data-action="login" class=" btn btn-small btn-success">
+    {% endif %}
+    <input id="deny-btn" type="button" value="Ignore" data-action="ignore" class="btn btn-small btn-warning">
+<p>
+{% endblock %}

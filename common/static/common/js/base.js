@@ -143,11 +143,29 @@ function setTips(targetClass, position, trigger) {
     
 }
 
+/*
+    Detects if the user is on a mobile browser. Uses helper file lib/mobile_detection.js. Changes filepicker.SERVICES to only facebook and dropbox for mobile
+    */
+function filepicker_services(){
+    if ($.browser.mobile) {
+        return [
+            filepicker.SERVICES.FACEBOOK,
+            filepicker.SERVICES.DROPBOX,
+        ]
+    }
+    return [
+            filepicker.SERVICES.WEBCAM,
+            filepicker.SERVICES.COMPUTER,
+            filepicker.SERVICES.FACEBOOK,
+            filepicker.SERVICES.DROPBOX,
+        ]
+}
+
 /* 
 filepicker image upload for registration/edit_profile page
 */
 function getImg() {
-    filepicker.setKey('ANeTsQ3iXQHK45sOxgjDnz')
+    filepicker.setKey('AHNm9wyVITvGdef4AyBUIz')
     filepicker.getFile("image/*",{
         'modal': true, 
         'multiple' : false,
@@ -298,6 +316,25 @@ function nullFilter(filter){
     return null
 }
 
+
+/*
+    Apply infinite scroll to the givin selector. itemSel specifies what the data will be appended to.
+    defalts to .live-stream-container (auto update on live stream) and .infinite-scroll (applied to all live streams)
+*/
+function infiniteScroll(infiniteSel, itemSel){  
+    infiniteSel = infiniteSel || '.live-stream-container';
+    itemSel = itemSel || '.infinite-scroll';
+    // infinitescroll() is called on the element that surrounds 
+    // the items you will be loading more of
+    $(infiniteSel).infinitescroll({
+ 
+        navSelector  : ".pager", // selector for the paged navigation (it will be hidden)
+        nextSelector : ".pager .next .next-link", // selector for the NEXT link (to page 2)
+        itemSelector : itemSel, // selector for all items you'll retrieve
+    });
+         
+}
+
 $(function(){
     var csrftoken = $.cookie('csrftoken');
     $.ajaxSetup({
@@ -313,5 +350,7 @@ $(function(){
     TEMPLATE_BASE = "api/js_templates/";
     $("#account_dropdown").on('click', '#submit_feedback', submitFeedBack);
 
-    typeahead()
+    typeahead();
+
+    infiniteScroll();
 }); 

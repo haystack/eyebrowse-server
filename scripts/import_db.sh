@@ -8,6 +8,8 @@ echo "Starting"
 echo "Exporting data..."
 mysqldump -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_NAME --set-gtid-purged=OFF > dumpfile.sql
 
+mysqldump -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_NAME > dumpfile.sql
+
 echo "Importing data..."
 
 echo "Importing data to dev..."

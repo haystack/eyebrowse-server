@@ -13,33 +13,40 @@ updateTemplate is a html string to show when new data is available. Defaults to 
 */
 function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate){
     this.history = [];
+    this.canPing = true;
     this.$container = $('.live-stream-container');
-    this.pingIntervalValue = 2500;
-    this.searchParams = searchParams
-    this.updateTemplate = updateTemplate || "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>"
+    this.pingIntervalValue = 3500;
+    this.searchParams = searchParams;
+    this.updateTemplate = updateTemplate || "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>";
 
     this.setup = function() {
         this.pingInterval = setInterval($.proxy(this.ping, this), this.pingIntervalValue);
         this.setupIdle();
         this.first();
         
-        $(document).on('ping-new', $.proxy(this.showNotification, this));
-        this.$container.on('click', '.load-new', $.proxy(this.insertHistoryItems, this));
+        //lets display results automatically
+        // $(document).on('ping-new', $.proxy(this.showNotification, this));
+        // this.$container.on('click', '.load-new', $.proxy(this.insertHistoryItems, this));
+
+        $(document).on('ping-new', $.proxy(this.insertHistoryItems, this));
     }
 
     this.setupIdle = function() {
         var that = this;
         $(window).idle(
             function() {
+                that.canPing = false; // cheap insurance
                 clearInterval(that.pingInterval);
             },
             function() {
+                that.canPing = true;
                 that.pingInterval = setInterval($.proxy(that.ping, that), that.pingIntervalValue);
             }
         );
     }
 
     this.ping = function(callback){
+        if (!this.canPing) return;
         var filter = filterFunc('filter') || defaultFilter;
         var timestamp = $('.first .date').data('timestamp');
         var payload =  {
@@ -52,6 +59,7 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
             payload[attrname] = this.searchParams[attrname]; 
         }
         var that = this;
+        console.log("pingload", payload)
         $.getJSON('/live_stream/ping/', payload, function(res){
                 that.history = res.history;
                 if (callback){
@@ -74,32 +82,28 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
     }
 
     this.insertHistoryItems = function (e){
+        $('.empty-search').remove();
         $('.first').removeClass('first');
-        var $loadNew = $('.load-new')
+        var $loadNew = $('.load-new');
         $loadNew.fadeOut();
         var that = this;
         $.each(that.history.reverse(), function(index, item){
             var $toAdd = $(item);
-
             $toAdd.hide();
-            $toAdd.css('opacity', 0);
-
             that.$container.prepend($toAdd);
 
-            $toAdd.slideDown(function(){
-                $toAdd.animate({opacity:1}, 150);
-            });
-            if (index == that.history.length -1){
+            $toAdd.fadeIn(750);
+            if (index === that.history.length -1){
                 $toAdd.addClass('first');
             }
-        })
+        });
 
         this.history = [];
         $loadNew.remove();
     }
-    if (ping != undefined && ping === true){
+
+    if (ping !== undefined && ping === true){
         this.setup()    
     }
-    
     return this
 }

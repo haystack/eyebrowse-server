@@ -11,7 +11,6 @@
     
     <!--  styles -->
     {% compress css %}
-
     
     {% include_style "common/css/bootstrap" %}
     {% include_style "extension/css/jquery.gritter" %}
@@ -27,14 +26,8 @@
             <div class="gritter-top"></div>
             <div class="gritter-item">
                 <div class="gritter-without-image">
-                    <span class="gritter-title">
-                        Track activity from
-                        <p class="site"> {{ site }} </p>
-                    </span> 
-                    <p class="btn-container">
-                        <input id="allow-btn" type="button" value="Yes" class=" btn btn-small btn-success">
-                        <input id="deny-btn" type="button" value="No" class="btn btn-small btn-warning">
-                    <p>  
+                    {% block content %}
+                    {% endblock %}
                 </div>
                 <div style="clear:both"></div>
             </div>
@@ -47,7 +40,7 @@
 
     {% include_script 'common/js/jquery-1.8.2.min' %}
     {% include_script 'extension/js/prompt' %}
-
+    
     {% endcompress %}
 </body>
 </html>

@@ -32,7 +32,8 @@ def put_profile_pic(url, profile):
         k.key = md5.new(profile.user.username + "resize").hexdigest()
         k.set_contents_from_filename(resize_filename) 
         k.set_acl('public-read')
-    except:
+    except Exception as e:
+        print e
         return False
     #update user profile
     return "http://s3.amazonaws.com/%s/%s"% (env['AWS_BUCK'], k.key)
