@@ -13,4 +13,7 @@ def prompt(request):
 @xframe_options_exempt
 @render_to("extension/login_prompt.html")
 def login(request):
-    return {}
+    src = request.GET.get("src", "chrome")
+    return {
+        'src' : src
+    }

@@ -20,10 +20,19 @@ body {
     margin-left:100px !important;
 }
 
-.login-container {
-    margin-left:90px !important;
-}
-
 .gritter-title {
     text-align: center
+}
+
+.firefox-msg{
+    text-align: center;
+    font-size: 12px;
+}
+
+.firefox {
+    margin-left:110px !important;
+}
+
+.chrome {
+    margin-left:90px !important;
 }
