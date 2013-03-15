@@ -64,9 +64,11 @@ ul.errorlist {
     margin:0px !important;
 }
 
+/*
 .table td, .table th {
    text-align: center;   
 }
+*/
 
 .title-offset {
     padding-bottom: 25px;
