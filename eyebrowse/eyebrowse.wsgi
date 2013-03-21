@@ -15,17 +15,16 @@ framework.
 """
 import os
 import sys
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'eyebrowse.settings'
-
 import django.core.handlers.wsgi
-application = django.core.handlers.wsgi.WSGIHandler()
 
 path = '/eyebrowse-server/eyebrowse'
 if path not in sys.path:
     sys.path.append(path)
 
-open("/tmp/asdf.txt", "w")
+os.environ['DJANGO_SETTINGS_MODULE'] = 'eyebrowse.settings'
+
+application = django.core.handlers.wsgi.WSGIHandler()
+
 
 # import os
 # import sys  
