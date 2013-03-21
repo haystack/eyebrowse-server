@@ -3,13 +3,18 @@ import os
 import sys
 import django
 
-from os import environ as env
 from registration_defaults.settings import *
+
+
+try:
+    config_file = open('config.py')
+    config_script = config_file.read()
+    exec config_script
+except IOError:
+    print "Unable to open configuration file!"
 
 #custom auth
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
-
-DEBUG = (not env['DEBUG'] == 'False') #convert from string to bool
 
 BASE_URL_PROD = 'http://eyebrowse.herokuapp.com'
 BASE_URL_DEV = 'http://localhost:5000'
@@ -35,10 +40,10 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': env['MYSQL_NAME'],# Or path to database file if using sqlite3.
-        'USER': env['MYSQL_USER'], # Not used with sqlite3.
-        'PASSWORD': env['MYSQL_PASSWORD'],# Not used with sqlite3.
-        'HOST': env['MYSQL_HOST'], # Set to empty string for localhost. Not used with sqlite3.
+        'NAME': MYSQL["NAME"],# Or path to database file if using sqlite3.
+        'USER': MYSQL["USER"], # Not used with sqlite3.
+        'PASSWORD': MYSQL["PASSWORD"],# Not used with sqlite3.
+        'HOST': MYSQL["HOST"], # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '', # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -109,7 +114,7 @@ COMPRESS_CSS_FILTERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = env['SECRET_KEY']
+#SECRET_KEY is loaded in by config.py
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -177,11 +182,11 @@ INSTALLED_APPS = (
 APPEND_SLASH = False
 
 # email settings from sendgrid.com
-EMAIL_HOST = env['EMAIL_HOST']
-EMAIL_HOST_USER = env['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = env['PASSWORD']
-EMAIL_PORT = env['EMAIL_PORT']
-EMAIL_USE_TLS = env['EMAIL_USE_TLS']
+EMAIL_HOST = EMAIL["EMAIL_HOST"]
+EMAIL_HOST_USER = EMAIL["EMAIL_HOST_USER"]
+EMAIL_HOST_PASSWORD = EMAIL["EMAIL_HOST_PASSWORD"]
+EMAIL_PORT = EMAIL["EMAIL_PORT"]
+EMAIL_USE_TLS = EMAIL["EMAIL_USE_TLS"]
 
 ACCOUNT_ACTIVATION_DAYS = 14 # Two-week activation window;
 
@@ -242,7 +247,7 @@ if DEBUG:
     # variable or hard code.
 
     try:
-        local_settings_file = open('eyebrowse/local_settings.py', 'r')
+        local_settings_file = open('eyebrowse/local_settings.py')
         local_settings_script = local_settings_file.read()
         exec local_settings_script
     except IOError:
