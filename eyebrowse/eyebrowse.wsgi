@@ -17,10 +17,11 @@ import os
 import sys
 import django.core.handlers.wsgi
 
-path = '/eyebrowse-server/eyebrowse'
+path = '/eyebrowse-server'
 if path not in sys.path:
     sys.path.append(path)
 
+print path
 os.environ['DJANGO_SETTINGS_MODULE'] = 'eyebrowse.settings'
 
 application = django.core.handlers.wsgi.WSGIHandler()
