@@ -25,7 +25,7 @@ path = '/eyebrowse-server/eyebrowse'
 if path not in sys.path:
     sys.path.append(path)
 
-open("tmp", "w")
+open("/tmp/asdf.txt", "w")
 
 # import os
 # import sys  
