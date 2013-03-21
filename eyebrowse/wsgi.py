@@ -13,19 +13,26 @@ middleware here, or combine a Django application with an application of another
 framework.
 
 """
+
 import os
-import sys
+import sys  
+sys.path.append('~/public_html/domain1.com/')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'MyTestProject.settings'
+import django.core.handlers.wsgi
+application = django.core.handlers.wsgi.WSGIHandler()
+# import os
+# import sys
 
-sys.path.append('/eyebrowse-server')
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "eyebrowse.settings")
+# sys.path.append('/eyebrowse-server')
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "eyebrowse.settings")
 
-# This application object is used by any WSGI server configured to use this
-# file. This includes Django's development server, if the WSGI_APPLICATION
-# setting points here.
-from django.core.wsgi import get_wsgi_application
+# # This application object is used by any WSGI server configured to use this
+# # file. This includes Django's development server, if the WSGI_APPLICATION
+# # setting points here.
+# from django.core.wsgi import get_wsgi_application
 
-application = get_wsgi_application()
+# application = get_wsgi_application()
 
-# Apply WSGI middleware here.
-# from helloworld.wsgi import HelloWorldApplication
-# application = HelloWorldApplication(application)
+# # Apply WSGI middleware here.
+# # from helloworld.wsgi import HelloWorldApplication
+# # application = HelloWorldApplication(application)
