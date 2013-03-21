@@ -64,12 +64,6 @@ ul.errorlist {
     margin:0px !important;
 }
 
-/*
-.table td, .table th {
-   text-align: center;   
-}
-*/
-
 .title-offset {
     padding-bottom: 25px;
 }
@@ -102,4 +96,12 @@ ul.errorlist {
 
 .disabled {
     cursor: not-allowed !important;
+}
+
+.nav-prof-img {
+    height:24px;
+    width:24px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
