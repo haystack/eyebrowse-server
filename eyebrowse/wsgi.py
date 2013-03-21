@@ -13,18 +13,27 @@ middleware here, or combine a Django application with an application of another
 framework.
 
 """
-
 import os
-import sys  
-sys.path.append('/eyebrowse-server/')
+import sys
+
 os.environ['DJANGO_SETTINGS_MODULE'] = 'eyebrowse.settings'
+
 import django.core.handlers.wsgi
 application = django.core.handlers.wsgi.WSGIHandler()
-# import os
-# import sys
 
-# sys.path.append('/eyebrowse-server')
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "eyebrowse.settings")
+path = '/eyebrowse-server/eyebrowse'
+if path not in sys.path:
+    sys.path.append(path)
+
+
+# import os
+# import sys  
+# sys.path.append('/eyebrowse-server/eyebrowse')
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'eyebrowse.settings'
+# import django.core.handlers.wsgi
+# application = django.core.handlers.wsgi.WSGIHandler()
+# import os
+
 
 # # This application object is used by any WSGI server configured to use this
 # # file. This includes Django's development server, if the WSGI_APPLICATION
