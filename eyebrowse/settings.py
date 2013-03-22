@@ -5,9 +5,11 @@ import django
 
 from registration_defaults.settings import *
 
+DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 try:
-    config_file = open('config.py')
+    config_file = open(SITE_ROOT + 'config.py')
     config_script = config_file.read()
     exec config_script
 except IOError:
@@ -21,9 +23,6 @@ BASE_URL_DEV = 'http://localhost:5000'
 BASE_URL = BASE_URL_PROD
 
 TEMPLATE_DEBUG = DEBUG
-
-DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 DEFAULT_EMAIL = "eyebrowse@mit.edu"
 DEFAULT_FROM_EMAIL = DEFAULT_EMAIL
