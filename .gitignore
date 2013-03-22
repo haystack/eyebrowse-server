@@ -1,6 +1,6 @@
 .DS_Store
 .dropbox
-eyebrowse/static/CACHE
+eyebrowse/static/
 *.pyc
 *.log
 .env
