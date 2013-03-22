@@ -21,7 +21,10 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
         },
     }
     
-    search_params = {k : v for k, v in get_dict.items() if k in valid_params}
+    search_params = {}
+    for k, v in get_dict.items():
+        if k in valid_params:
+            search_params[k] = v
     
     type = get_dict.get('type', None)
     if type in valid_types:
@@ -57,8 +60,7 @@ def history_search(req_user, timestamp=None, query=None, filter='following', typ
             orderBy = orderBy[1:]
         history = history.order_by(orderBy)
         
-        print "history_start", history[0].start_time
-        print "timestamp", timestamp
+
         #ping data with latest time and see if time is present
         ## must be last
         if type == 'ping' and timestamp:
