@@ -43,15 +43,12 @@ def profile(request, username=None):
 
 @login_required
 @render_to('accounts/edit_profile.html')
-def edit_profile(request, username=None):
+def edit_profile(request):
     """
     Edit profile page
     """
 
     user = request.user
-    if not username: #viewing own profile
-        username = user.username 
-    profile_user = get_object_or_404(User, username=username)
 
     if request.POST and request.is_ajax():
         success = False
@@ -108,7 +105,7 @@ def edit_profile(request, username=None):
     rendered_followers = connection_table_renderer(followers, 'followers', following)
 
 
-    return _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist, rendered_following=rendered_following, rendered_followers=rendered_followers, profile_user=profile_user)
+    return _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist, rendered_following=rendered_following, rendered_followers=rendered_followers)
 
 @login_required
 @ajax_request

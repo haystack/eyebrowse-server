@@ -3,7 +3,6 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
 
 from annoying.decorators import render_to, ajax_request
 
@@ -13,18 +12,14 @@ from live_stream.query_managers import *
 
 @login_required
 @render_to('live_stream/home.html')
-def home(request, username=None):
+def home(request):
 
     user = request.user
-    if not username: #viewing own profile
-        username = user.username
- 
-    profile_user = get_object_or_404(User, username=username)
     
     history_stream = live_stream_query_manager(request.GET, request.user)
 
     subnav = "subnav_" + request.GET.get('filter', "following")
-    return _template_values(request, page_title="Live Stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, ping=request.GET.get('page', 1), profile_user=profile_user)
+    return _template_values(request, page_title="Live Stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, ping=request.GET.get('page', 1))
 
 @login_required
 @ajax_request
