@@ -9,7 +9,7 @@ DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 try:
-    config_file = open(SITE_ROOT + 'config.py')
+    config_file = open(SITE_ROOT + '/../config.py')
     config_script = config_file.read()
     exec config_script
 except IOError:
@@ -246,7 +246,7 @@ if DEBUG:
     # variable or hard code.
 
     try:
-        local_settings_file = open('eyebrowse/local_settings.py')
+        local_settings_file = open(SITE_ROOT + '/../eyebrowse/local_settings.py')
         local_settings_script = local_settings_file.read()
         exec local_settings_script
     except IOError:
