@@ -22,8 +22,8 @@ def put_profile_pic(url, profile):
 
         filename, headers = urlretrieve(url + "/resize?w=600&h=600")
         resize_filename, headers = urlretrieve(url + "/resize?w=40&h=40") # store profile sized picture (40x40px)
-        conn = S3Connection(settings.AWS.["AWS_ACCESS_KEY_ID"], settings.AWS.["AWS_SECRET_ACCESS_KEY"])
-        b = conn.get_bucket(settings.AWS.["BUCKET"])
+        conn = S3Connection(settings.AWS["AWS_ACCESS_KEY_ID"], settings.AWS["AWS_SECRET_ACCESS_KEY"])
+        b = conn.get_bucket(settings.AWS["BUCKET"])
         k = Key(b)
         k.key = md5.new(profile.user.username).hexdigest()
         k.set_contents_from_filename(filename) 
@@ -37,5 +37,5 @@ def put_profile_pic(url, profile):
         print e
         return False
     #update user profile
-    return "http://s3.amazonaws.com/%s/%s"% (settings.AWS.["BUCKET"], k.key)
+    return "http://s3.amazonaws.com/%s/%s"% (settings.AWS["BUCKET"], k.key)
 
