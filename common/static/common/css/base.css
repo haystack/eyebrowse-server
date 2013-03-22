@@ -23,7 +23,7 @@ body {
 }
 
 body {
-    background: url({% static "common/img/bg-body.png" %}) repeat top left;
+    background: url(http://eyebrowse.csail.mit.edu/static/common/img/bg-body.png) repeat top left;
 }
 
 .container {
@@ -44,7 +44,7 @@ body {
 }
 
 .nav-bg {
-    background: url({% static "common/img/bg-nav.png" %})  repeat top left;
+    background: url(http://eyebrowse.csail.mit.edu/static/common/img/bg-nav.png)  repeat top left;
 }
 
 .icon {
