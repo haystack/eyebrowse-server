@@ -6,7 +6,8 @@ from accounts.models import *
 from django.conf import settings
 from urllib import urlretrieve
 
-import md5, os, requests
+import hashlib
+import requests
 
 
 def put_profile_pic(url, profile):
@@ -25,12 +26,13 @@ def put_profile_pic(url, profile):
         conn = S3Connection(settings.AWS["AWS_ACCESS_KEY_ID"], settings.AWS["AWS_SECRET_ACCESS_KEY"])
         b = conn.get_bucket(settings.AWS["BUCKET"])
         k = Key(b)
-        k.key = md5.new(profile.user.username).hexdigest()
+
+        k.key = hashlib.new("md5").update(profile.user.username).hexdigest()
         k.set_contents_from_filename(filename) 
         k.set_acl('public-read')
 
         k = Key(b)
-        k.key = md5.new(profile.user.username + "resize").hexdigest()
+        k.key = hashlib.new("md5").update(profile.user.username + "resize").hexdigest()
         k.set_contents_from_filename(resize_filename) 
         k.set_acl('public-read')
     except Exception as e:

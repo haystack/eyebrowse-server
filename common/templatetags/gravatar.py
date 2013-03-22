@@ -33,7 +33,8 @@ def _get_user(user):
         try:
             user = User.objects.get(username=user)
         except User.DoesNotExist:
-            raise Exception("Bad user for gravatar.")
+            # raise Exception("Bad user for gravatar.")
+            return None
     return user
 
 def _get_gravatar_id(email):
@@ -56,7 +57,7 @@ def gravatar_for_email(email, size=None, rating=None, img_url=None):
     gravatar_url = "%savatar/%s" % (GRAVATAR_URL_PREFIX,
             _get_gravatar_id(email))
     #if we have an image uploaded for them
-    if img_url != settings.DEFAULT_IMG:
+    if img_url != settings.DEFAULT_IMG or email == "":
         return img_url
 
     img_url = settings.BASE_URL_PROD + img_url
@@ -87,8 +88,13 @@ def gravatar_for_user(user, size=None, rating=None, default_url=None):
         {% gravatar_for_user 'jtauber' 48 pg %}
     """
     user = _get_user(user)
-    default_url = user.profile.pic_url or default_url
-    return gravatar_for_email(user.email, size, rating, default_url)
+    if user:
+        email = user.email
+        img_url = user.profile.pic_url or default_url
+    else:
+        email = ""
+        img_url = settings.DEFAULT_IMG
+    return gravatar_for_email(email, size, rating, img_url)
 
 
 @register.simple_tag
@@ -159,4 +165,8 @@ def gravatar_profile_for_user(user):
         {% gravatar_profile_for_user 'jtauber' %}
     """
     user = _get_user(user)
-    return gravatar_profile_for_email(user.email)
+    if user:
+        email = user.email
+    else:
+        email = ""
+    return gravatar_profile_for_email(email)
