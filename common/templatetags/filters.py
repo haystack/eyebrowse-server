@@ -24,7 +24,6 @@ def date_ms(dt):
 
 @register.filter
 def date_fmt(dt):
-    print "date", dt
     return str(dt)
 
 @register.simple_tag
