@@ -59,7 +59,7 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
             payload[attrname] = this.searchParams[attrname]; 
         }
         var that = this;
-        console.log("pingload", payload)
+        // console.log("pingload", payload)
         $.getJSON('/live_stream/ping/', payload, function(res){
                 that.history = res.history;
                 if (callback){

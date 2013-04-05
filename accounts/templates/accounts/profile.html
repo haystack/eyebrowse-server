@@ -9,14 +9,14 @@
         <a href="/users/{{profile_user.username}}">
             {% gravatar_img_for_user profile_user 80 %}
         </a> 
-        {{profile_user.username|capfirst}}'s Eyebrowse History  
-        <a class="btn btn-info pull-right top-margin btn-prof-header connection">
-            {% if profile_user == user %}
-            <i class="icon-white icon-wrench edit-history"></i> Edit 
-            {% else %}
-                {% include 'common/snippets/follow-btn.html' with follows=follows username=profile_user.username %}
-            {% endif %}   
+        {{profile_user.username|capfirst}}'s Eyebrowse History 
+
+        {% if profile_user != user %}
+        <a class="btn btn-info pull-right top-margin btn-prof-header connection">                
+            {% include 'common/snippets/follow-btn.html' with follows=follows username=profile_user.username %}
+            
         </a> 
+        {% endif %}   
     </h2>
 </div>
 

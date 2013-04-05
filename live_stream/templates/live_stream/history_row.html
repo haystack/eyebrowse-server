@@ -6,7 +6,7 @@
         <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
         </a>
     </td>
-    <td class="cut-content pointer" >
+    <td class="cut-content pointer" data-content="{{ item.title}}">
         {{ item.title|truncatechars:30 }}
     </td>
     <td>
@@ -14,10 +14,5 @@
     </td>
     <td class='date' data-timestamp="{{item.start_time|date_fmt}}">
         {{ item.start_time }}
-    </td>
-    <td class="hidden edit">
-        <a class="btn btn-danger btn-small rm-history" data-id="{{ item.id }}">
-            <i class="icon-remove icon-white"></i>
-        </a>
     </td>
 </tr>
