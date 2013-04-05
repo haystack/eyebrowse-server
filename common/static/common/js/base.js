@@ -347,10 +347,13 @@ $(function(){
             }
         }
     });
+
     TEMPLATE_BASE = "api/js_templates/";
+
     $("#account_dropdown").on('click', '#submit_feedback', submitFeedBack);
 
     typeahead();
 
     infiniteScroll();
+
 }); 

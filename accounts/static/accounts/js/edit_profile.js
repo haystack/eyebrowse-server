@@ -79,7 +79,8 @@ $(function(){
     $('.edit').on('formRes', handleFormResponse);
     
     //whitelist
-    $(".whitelist").on("click", ".rm-whitelist", 'whitelist',rmFilterListItem);
+    $(".whitelist-row").on("click", ".rm-whitelist", function(e){console.log(e)});
+
     setupFilterList();
     listFilter($(".whitelist-body"));
 
@@ -97,5 +98,5 @@ $(function(){
     listFilter($(".followers-body"));
 
     //init first tab
-    $('#info-tab').click();
+    $('#whitelist-tab').click();
 });

@@ -3,22 +3,13 @@
 
 <div id="history_item_{{item.id}}" class='row history-container infinite-scroll' data-id="{{ item.id }}">
     <div class="author-container">
-        <a class="author-name" href="/users/{{ item.user.username }}">
+        <a class="author-name" href="/users/{{ item.user.username }}" title="Add connection" data-content="">
             <img class="author-pic img-polaroid" src="{% gravatar_for_user item.user %}"/>
             {{ item.user.profile.get_full_name }} 
         </a>
 
         <div class="connection-container pull-right">
-            {% if user.username != item.user.username and user.is_authenticated %} 
-                <a class="btn btn-info connection"> 
-                    {% if h_item.user.profile in following %}
-                        {% include 'common/snippets/follow-btn.html' with follows="True" username=item.user.username %}
-                    {% else %}
-                        {% include 'common/snippets/follow-btn.html' with username=item.user.username %}
-                    {% endif %}
-                    
-                </a>
-            {% endif %}
+            {% include 'common/snippets/follow-popover.html' with item=item %}
         </div>
     </div>
     <div id="history_item_{{ item.id }}_content" class="history-content">
