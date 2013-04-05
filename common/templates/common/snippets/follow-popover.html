@@ -1,0 +1,9 @@
+{% if user.username != item.user.username and user.is_authenticated %} 
+    <a class="btn btn-info connection"> 
+        {% if item.user.profile in following %}
+            {% include 'common/snippets/follow-btn.html' with follows="True" username=item.user.username %}
+        {% else %}
+            {% include 'common/snippets/follow-btn.html' with username=item.user.username %}
+        {% endif %}
+    </a>
+{% endif %}
