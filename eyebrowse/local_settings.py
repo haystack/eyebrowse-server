@@ -14,4 +14,4 @@ DATABASES['default'] = {
    'PORT': ''
 }
 
-# DATABASES["default"]["NAME"] = settings.MYSQL["DEV_NAME"]
+# DATABASES["default"]["NAME"] = settings.MYSQL["NAME"]

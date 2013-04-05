@@ -42,7 +42,8 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
 
 
-def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=None, username=None):
+def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=30, username=None):
+
     history = EyeHistory.objects.all()
     try:
         
@@ -65,8 +66,6 @@ def history_search(req_user, timestamp=None, query=None, filter='following', typ
         ## must be last
         if type == 'ping' and timestamp:
             history = history.filter(start_time__gt=timestamp)
-        
-        history.select_related()
 
         if limit:
             history = history[:limit]
@@ -74,5 +73,7 @@ def history_search(req_user, timestamp=None, query=None, filter='following', typ
     except Exception as e:
         print "EXCEPTION", e
         history = []
+    
+    print history.query
 
-    return history
+    return history.select_related()
