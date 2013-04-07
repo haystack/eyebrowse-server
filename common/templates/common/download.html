@@ -1,0 +1,34 @@
+{% extends 'common/base.html' %}
+{% load staticfiles %}
+{% load filters %}
+
+{% block styles %} 
+{% include_style "common/css/download" %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="span8 offset2">
+        <div class="hero-unit top-pad download-unit">
+            <div class="row offset1 heading clearfix">
+                <img src="{% static "common/img/logo.png" %}">
+                <h1>eyebrowse</h1>
+                <h2>Share your browsing history</h2>
+            </div>
+            <div class="row offset1 downloads">
+                {% include "common/snippets/download_links.html" %}
+            </div>
+            <div class="share">
+                <div class="subshare">
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-url="http://eyebrowse.csail.mit.edu" data-text="Download the #eyebrowse extension."></a>
+
+                    <div class="g-plusone" data-size="medium" data-annotation="bubble"></div>
+
+                    <div class="fb-like" data-href="http://eyebrowse.csail.mit.edu" data-send="false" data-layout="button_count" data-width="300" data-show-faces="true" data-font="arial" data-action="like"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

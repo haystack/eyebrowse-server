@@ -18,6 +18,11 @@ def home(request):
     if not request.user.is_authenticated():
         return _template_values(request, page_title="home", navbar='nav_home')
     return redirect('/live_stream/home/')
+
+
+@render_to('common/download.html')
+def download(request):
+    return _template_values(request, page_title="downloads", navbar='nav_home')
     
 
 @login_required

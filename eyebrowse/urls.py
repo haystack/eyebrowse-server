@@ -41,4 +41,5 @@ urlpatterns += patterns('eyebrowse.views',
     url(r'^googlead6c3c617c310b08.html$', 'google_verify'),
     url(r'^feedback$', 'feedback'),
     url(r'^$', 'home'),
+    url(r'^download$', 'download'),
 )

@@ -13,15 +13,8 @@
         <p>
             <a class="btn btn-primary btn-large" <a href="{% url django.contrib.auth.views.login %}">Login</a>
         </p> 
-    <div class="row offset2">
-        <div class="pull-left">
-            <img class="ext-icon" src='{% static "common/img/chrome-logo.png" %}'>
-            <a class="btn btn-large" href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">Get it for Chrome &raquo;</a> 
-        </div>
-        <div class="pull-left offset1">
-            <img class="ext-icon" src='{% static "common/img/firefox-logo.png" %}'>
-            <a class="btn btn-large" target="_blank" href="https://addons.mozilla.org/en-US/firefox/addon/eyebrowse/">Get it for Firefox &raquo;</a>
-        </div>
+    <div class="row offset2 ">
+        {% include "common/snippets/download_links.html" %}
     </div>
 </div>
 
