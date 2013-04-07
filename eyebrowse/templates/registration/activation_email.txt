@@ -2,7 +2,9 @@ Thanks for registering for {{ site.name }}. If this wasn't you, please ignore th
 
 To activate this account, please click the following link within the next {{ expiration_days }} days:
 
-http://{{site.domain}}{% url registration_activate activation_key %}
+{{site.domain}}{% url registration_activate activation_key %}
+
+To download the extension at our {{site.domain}}/download
 
 Sincerely,
 
