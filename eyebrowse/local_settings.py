@@ -1,6 +1,6 @@
 from django.conf import settings
 
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 BASE_URL = settings.BASE_URL_DEV
 
 settings.AWS["BUCKET"] = settings.AWS["BUCKET_DEV"]
