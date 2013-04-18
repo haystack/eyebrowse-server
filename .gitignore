@@ -7,4 +7,3 @@ eyebrowse/static/
 venv
 *.db
 config.py
-local_settings.py
