@@ -1,8 +1,6 @@
 # Django settings for eyebrowse project.
 import os
-import sys
 import django
-from os import environ as env
 
 from registration_defaults.settings import *
 
