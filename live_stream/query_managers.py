@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.db.models import Sum
 
 from api.models import *
 
@@ -9,6 +10,10 @@ from accounts.models import *
 from common.pagination import paginator
 
 from datetime import datetime, timedelta
+
+from common.templatetags.filters import url_domain
+
+import operator
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
@@ -80,13 +85,74 @@ def history_search(req_user, timestamp=None, query=None, filter='following', typ
 
     return history.select_related()
 
+def profile_stat_gen(profile_user, url=None):
+    """
+        Helper to calculate total time spent for a given user.
+        If a url is present, the queryset is filtered to reduce the set to only this url
+    """
+ 
+    history_items = history_search(profile_user, filter="", username=profile_user.username)
+
+    if url:
+        history_items = history_items.filter(url=url)
+
+    history_items = history_items.annotate(total=Sum('total_time'))
+
+    tot_time = 0
+    for item in history_items:
+        tot_time += item.total_time
+
+
+    return tot_time, history_items.count()
+
+def fav_site_calc(profile_user):
+    """
+        Helper to compute what the most commonly used
+        site is for a given set of history items.
+        Returns a url (domain) that is computed to be the favorite and the associated favicon
+    """
+
+    item_meta = {}
+
+    history_items = history_search(profile_user, filter="",username=profile_user.username)
+    
+    for item in history_items:
+
+        domain = url_domain(item.url)
+
+        if domain in item_meta:
+            data = item_meta[domain] 
+            data["count"] +=1
+            data["total_time"] += item.total_time
+            item_meta[domain] = data
+        else:
+            item_meta[domain] = {
+                "fav_icon" : item.favIconUrl,
+                "count" : 1,
+                "total_time" : item.total_time,
+                "domain" : domain
+            }
+    
+    max_count = 0
+    max_dict = {}
+    for k, v in item_meta.items():
+        print k,v 
+        if v["count"] > max_count:
+            max_count = v["count"]
+            max_dict = v
+
+    return max_dict
+
+
+
 def online_user_count():
     """
         Computes all of the users from the history items from the last 5 minutes
     """
     timestamp =  datetime.now() - timedelta(minutes=5)
-    
-    history = EyeHistory.objects.filter(start_time__gt=timestamp)
+
+    history = EyeHistory.objects.filter(start_time__gt=timestamp).select_related()
+
     users = set()
     for h in history:
         if not h.user in users:

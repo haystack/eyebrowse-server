@@ -1,0 +1,15 @@
+{% extends 'accounts/profile_base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% load gravatar %}
+
+{% block profile_content %}
+
+{% include 'live_stream/history_table.html' with history_items=history_items %}
+
+
+{% endblock %}
+
+{% block scripts %} 
+{% include_script 'accounts/js/profile_data' %}
+{% endblock %}

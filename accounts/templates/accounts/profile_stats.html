@@ -1,0 +1,44 @@
+{% extends 'accounts/profile_base.html' %}
+{% load filters %}
+
+{% block styles %}
+    
+    {{ block.super }}
+    {% include_style 'accounts/css/profile_stats' %}
+
+{% endblock %}
+
+{% block profile_content %}
+<div class="offset1 span10 row">
+
+        <div class="profile-statbox light-well">
+            <div class="header">history item count</div>
+            <div class="content">{{ item_count }}</div>
+        </div>
+        <div class="profile-statbox light-well">
+            <div class="header">total time logged</div>
+            <div class="content time-stat" data-time={{ tot_time }}></div>
+        </div>
+
+        <div class="profile-statbox light-well">
+            <div class="content small-content">
+                <p>
+                    <a href="http://{{ fav_site }}" target="_blank" data-content="{{ fav_site }}" class="pointer">
+                        <img class="favicon" src="{{ fav_favicon }}"> {{ fav_site }} ({{ fav_count }})
+                    </a>
+                </p>
+            </div>
+            <div class="stat-footer">favorite site (visits) </div>
+        </div>
+        <div class="profile-statbox light-well">
+            <div class="content time-stat" data-time="{{ fav_time }}"></div>
+            <div class="stat-footer">favorite site time spent</div>
+        </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {% include_script "accounts/js/profile_stats" %}
+{% endblock %}
