@@ -115,6 +115,14 @@ def fav_site_calc(profile_user):
     item_meta = {}
 
     history_items = history_search(profile_user, filter="",username=profile_user.username)
+
+    if not history_items:
+        return {
+                "fav_icon" : "",
+                "count" : 0,
+                "total_time" : "",
+                "domain" : ""
+            }
     
     for item in history_items:
 
@@ -136,7 +144,6 @@ def fav_site_calc(profile_user):
     max_count = 0
     max_dict = {}
     for k, v in item_meta.items():
-        print k,v 
         if v["count"] > max_count:
             max_count = v["count"]
             max_dict = v

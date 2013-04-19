@@ -10,7 +10,10 @@
 
 {% block profile_content %}
 <div class="offset1 span10 row">
-
+        {% if  item_count == 0 %}
+            {% include "common/snippets/empty_search.html" with msg=empty_search_msg %}
+        {% else %}
+        
         <div class="profile-statbox light-well">
             <div class="header">history item count</div>
             <div class="content">{{ item_count }}</div>
@@ -21,7 +24,7 @@
         </div>
 
         <div class="profile-statbox light-well">
-            <div class="content small-content">
+            <div class="content">
                 <p>
                     <a href="http://{{ fav_site }}" target="_blank" data-content="{{ fav_site }}" class="pointer">
                         <img class="favicon" src="{{ fav_favicon }}"> {{ fav_site }} ({{ fav_count }})
@@ -34,7 +37,7 @@
             <div class="content time-stat" data-time="{{ fav_time }}"></div>
             <div class="stat-footer">favorite site time spent</div>
         </div>
-
+    {% endif %}
 </div>
 
 {% endblock %}

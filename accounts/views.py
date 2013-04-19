@@ -53,7 +53,7 @@ def profile_stats(request, username=None):
     fav_data = fav_site_calc(profile_user)
 
 
-    return _template_values(request, page_title="Profile", navbar='nav_profile', sub_navbar="subnav_stats", profile_user=profile_user, follows=str(follows), tot_time=tot_time, item_count=item_count, fav_site=fav_data["domain"], fav_favicon=fav_data["fav_icon"], fav_time=fav_data["total_time"], fav_count=fav_data["count"])
+    return _template_values(request, page_title="Profile", navbar='nav_profile', sub_navbar="subnav_stats", profile_user=profile_user, empty_search_msg=empty_search_msg, follows=str(follows), tot_time=tot_time, item_count=item_count, fav_site=fav_data["domain"], fav_favicon=fav_data["fav_icon"], fav_time=fav_data["total_time"], fav_count=fav_data["count"])
 
 def _profile_info(user, username=None):
     """
