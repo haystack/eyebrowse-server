@@ -8,7 +8,7 @@ from accounts.models import *
 
 from common.pagination import paginator
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
@@ -79,3 +79,16 @@ def history_search(req_user, timestamp=None, query=None, filter='following', typ
         history = []
 
     return history.select_related()
+
+def online_user_count():
+    """
+        Computes all of the users from the history items from the last 5 minutes
+    """
+    timestamp =  datetime.now() - timedelta(minutes=5)
+    
+    history = EyeHistory.objects.filter(start_time__gt=timestamp)
+    users = set()
+    for h in history:
+        if not h.user in users:
+            users.add(h.user)
+    return len(users)

@@ -11,13 +11,14 @@ searchParams is a dictionary of additional search params to ping the server with
 updateTemplate is a html string to show when new data is available. Defaults to history container code
 
 */
-function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate){
+function liveStreamPing(args, callback){
     this.history = [];
     this.canPing = true;
     this.$container = $('.live-stream-container');
     this.pingIntervalValue = 3500;
-    this.searchParams = searchParams;
-    this.updateTemplate = updateTemplate || "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>";
+    this.searchParams = args.searchParams;
+    this.updateTemplate = args.updateTemplate || "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>";
+    this.callback = callback;
 
     this.setup = function() {
         this.pingInterval = setInterval($.proxy(this.ping, this), this.pingIntervalValue);
@@ -45,9 +46,9 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
         );
     }
 
-    this.ping = function(callback){
+    this.ping = function(){
         if (!this.canPing) return;
-        var filter = filterFunc('filter') || defaultFilter;
+        var filter = args.filterFunc('filter') || args.defaultFilter;
         var timestamp = $('.first .date').data('timestamp');
         var payload =  {
             'filter' : filter, 
@@ -62,8 +63,9 @@ function liveStreamPing(filterFunc, defaultFilter, searchParams, updateTemplate)
         // console.log("pingload", payload)
         $.getJSON('/live_stream/ping/', payload, function(res){
                 that.history = res.history;
-                if (callback){
-                    callback(res);
+                that.callback(res);
+                if (that.callback != undefined){
+                    that.callback(res);
                 }
                 if (that.history.length) {
                     $(document).trigger('ping-new');

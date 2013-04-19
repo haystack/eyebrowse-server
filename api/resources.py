@@ -161,6 +161,7 @@ class EyeHistoryResource(BaseResource):
         title = bundle.data['title']
         total_time = bundle.data['total_time']
         src = bundle.data['src']
+        
         if not in_Whitelist(url):
             return bundle
         try:
