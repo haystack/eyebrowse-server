@@ -16,6 +16,8 @@ function liveStreamPing(args, callback){
     this.canPing = true;
     this.$container = $('.live-stream-container');
     this.pingIntervalValue = 3500;
+    this.filterFunc = args.filterFunc;
+    this.defaultFilter = args.defaultFilter;
     this.searchParams = args.searchParams;
     this.updateTemplate = args.updateTemplate || "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>";
     this.callback = callback;
@@ -48,7 +50,7 @@ function liveStreamPing(args, callback){
 
     this.ping = function(){
         if (!this.canPing) return;
-        var filter = args.filterFunc('filter') || args.defaultFilter;
+        var filter = this.filterFunc('filter') || this.defaultFilter;
         var timestamp = $('.first .date').data('timestamp');
         var payload =  {
             'filter' : filter, 
@@ -63,8 +65,8 @@ function liveStreamPing(args, callback){
         // console.log("pingload", payload)
         $.getJSON('/live_stream/ping/', payload, function(res){
                 that.history = res.history;
-                that.callback(res);
-                if (that.callback != undefined){
+
+                if (that.callback){
                     that.callback(res);
                 }
                 if (that.history.length) {
