@@ -1,0 +1,58 @@
+########## Django settings ###########
+
+ADMIN_INFO = (
+    ('Joshua Blum', 'joshblum@mit.edu'),
+    ('Max Kanter', 'kanter@mit.edu'),
+)
+
+SECRET_KEY='d@_#g)+3ctjzwwig*5=9fx_zxtbbd$5#0_(5r4(+6_%214u^s*'
+
+PASSWORD = "e-proj-pass"
+
+
+######## MYSQL #########
+
+MYSQL = {
+    'NAME' : 'mjhu+eyebrowse_prod',
+    'DEV_NAME' : 'mjhu+eyebrowse_dev',
+    'USER' : 'mjhu',
+    'PASSWORD' : "and77asd",
+    'HOST' : 'sql.mit.edu',
+}
+
+MYSQL_LOCAL = {
+    'NAME' : 'django_db',
+    'USER' : 'djangouser',
+    'PASSWORD' : "mypassword",
+    'HOST' : 'localhost',
+}
+
+
+########## SENDGRID ###############
+
+EMAIL = {
+    'EMAIL_HOST': 'smtp.sendgrid.net',
+    'EMAIL_HOST_USER': 'eyebrowse',
+    'EMAIL_HOST_PASSWORD': PASSWORD,
+    'EMAIL_PORT': 587,
+    'EMAIL_USE_TLS': True,
+}
+
+
+###### Filepicker.io ##########
+
+FILEPICKER = {
+    'API_KEY' : 'AHNm9wyVITvGdef4AyBUIz',
+}
+
+############# AWS ################
+## setup instructions http://aws.amazon.com/articles/3998?_encoding=UTF8&jiveRedirect=1
+
+AWS = {
+    'AWS_ACCESS_KEY_ID' : 'AKIAIJ5BONOWGWS32ALQ',
+    'AWS_SECRET_ACCESS_KEY' : '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',
+    'BUCKET' : 'eyebrowse',
+    'BUCKET_DEV' : 'eyebrowse-dev',
+}
+
+DEBUG = False
