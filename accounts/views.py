@@ -34,7 +34,7 @@ def profile_data(request, username=None):
     history_items = paginator(page, history_items)
     
 
-    return _template_values(request, page_title="Profile", navbar='nav_profile', sub_navbar="subnav_data", profile_user=profile_user, history_items=history_items, empty_search_msg=empty_search_msg, ping=page, follows=str(follows))
+    return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", profile_user=profile_user, history_items=history_items, empty_search_msg=empty_search_msg, ping=page, follows=str(follows))
 
 @login_required
 @render_to('accounts/profile_stats.html')
@@ -53,7 +53,7 @@ def profile_stats(request, username=None):
     fav_data = fav_site_calc(profile_user)
 
 
-    return _template_values(request, page_title="Profile", navbar='nav_profile', sub_navbar="subnav_stats", profile_user=profile_user, empty_search_msg=empty_search_msg, follows=str(follows), tot_time=tot_time, item_count=item_count, fav_site=fav_data["domain"], fav_favicon=fav_data["fav_icon"], fav_time=fav_data["total_time"], fav_count=fav_data["count"])
+    return _template_values(request, page_title="profile stats", navbar='nav_profile', sub_navbar="subnav_stats", profile_user=profile_user, empty_search_msg=empty_search_msg, follows=str(follows), tot_time=tot_time, item_count=item_count, fav_site=fav_data["domain"], fav_favicon=fav_data["fav_icon"], fav_time=fav_data["total_time"], fav_count=fav_data["count"])
 
 def _profile_info(user, username=None):
     """
