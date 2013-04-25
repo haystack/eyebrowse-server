@@ -4,6 +4,8 @@ urlpatterns = patterns('accounts.views',
 
     url(r'', include('registration.urls')),
     
-    url(r'^profile/edit$', 'edit_profile'),
+    url(r'^profile/whitelist$', 'whitelist'),
+    url(r'^profile/account$', 'account'),
+    url(r'^profile/connections$', 'connections'),
     url(r'^connect$', 'connect')
 )

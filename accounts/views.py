@@ -11,10 +11,22 @@ from common.view_helpers import _template_values, JSONResponse
 from common.helpers import put_profile_pic
 
 @login_required
-@render_to('accounts/edit_profile.html')
-def edit_profile(request):
+@render_to('accounts/whitelist.html')
+def whitelist(request):
     """
-    Edit profile page
+        Edit whitelist entries 
+    """
+
+    whitelist = WhiteListItem.objects.filter(user=request.user)
+
+
+    return _template_values(request, page_title="edit whitelist", header="whitelist" navbar='nav_account', sub_navbar="subnav_whitelist", vwhitelist=whitelist)
+
+@login_required
+@render_to('accounts/account.html')
+def account(request):
+    """
+        Edit account info 
     """
 
     user = request.user
@@ -25,22 +37,14 @@ def edit_profile(request):
         data = None
         type = request.POST.get('form_type', None)
 
-        if type == 'pic':
-            pic_url = request.POST.get('pic_url')
-            pic_url = put_profile_pic(pic_url, user.profile) #download and upload to our S3
-            if pic_url: #no errors/less than 1mb #patlsotw
-                user.profile.pic_url = pic_url
-                user.profile.save()
-                success = "Profile picture changed!"
-            else:
-                errors['pic'] = ['Oops -- something went wrong.']
-        elif type == 'account-info':
+        if type == 'account-info':
             first_name = request.POST.get('first_name', '')
             last_name = request.POST.get('last_name', '')
             anon_email = request.POST.get('anon_checkbox', False) == 'True'
             user.first_name = first_name
             user.last_name = last_name
             user.save()
+            
             user.profile.anon_email = anon_email
             user.profile.save()
 
@@ -65,16 +69,22 @@ def edit_profile(request):
 
         return JSONResponse(resp)
 
-    #not post request
-    whitelist = WhiteListItem.objects.filter(user=user)
-    blacklist = BlackListItem.objects.filter(user=user)
+    return _template_values(request, page_title="edit whitelist", header="account info", navbar='nav_account', sub_navbar="subnav_account_info")
+
+@login_required
+@render_to('accounts/connections.html')
+def connections(request):
+    """
+        Edit connection (following/followers)
+    """
+
     following = user.profile.follows.all()
     followers = user.profile.followed_by.all()
     rendered_following = connection_table_renderer(following, 'following', following)
     rendered_followers = connection_table_renderer(followers, 'followers', following)
 
 
-    return _template_values(request, page_title="Edit Profile", navbar='nav_account', whitelist=whitelist, blacklist=blacklist, rendered_following=rendered_following, rendered_followers=rendered_followers)
+    return _template_values(request, page_title="edit connections", header="connections", navbar='nav_account', sub_navbar="subnav_connections", rendered_following=rendered_following, rendered_followers=rendered_followers)
 
 @login_required
 @ajax_request
