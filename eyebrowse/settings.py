@@ -15,7 +15,6 @@ except IOError:
     print "Unable to open configuration file!"
 
 #custom auth
-DEBUG = True
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 BASE_URL_PROD = 'http://eyebrowse.herokuapp.com'
