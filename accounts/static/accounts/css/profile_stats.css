@@ -1,4 +1,4 @@
-.profile-statbox{
+.profile-statbox {
     height: 250px;
     width: 44%;
     float:left;
@@ -21,8 +21,14 @@
 }
 
 .profile-statbox .content{
-    font-size: 2.53em;
+    font-size: 5.53em;
     font-weight: bolder;
     text-align: center;
     margin-top: 90px;
+    height:50px;
+}
+
+.fav-icon {
+    height:50px;
+    width:50px;
 }

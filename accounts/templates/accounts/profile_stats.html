@@ -25,16 +25,14 @@
 
         <div class="profile-statbox light-well">
             <div class="content">
-                <p>
-                    <a href="http://{{ fav_site }}" target="_blank" data-content="{{ fav_site }}" class="pointer">
-                        <img class="favicon" src="{{ fav_favicon }}"> {{ fav_site }} ({{ fav_count }})
-                    </a>
-                </p>
+                    <a href="http://{{ fav_site }}" target="_blank" data-content="{{ fav_site }}" class="pointer fav-site"><img class="fav-icon" src="{{ fav_favicon }}"></a>
+                    {{ fav_count }} visits                
             </div>
-            <div class="stat-footer">favorite site (visits) </div>
+            <div class="stat-footer">favorite site</div>
         </div>
         <div class="profile-statbox light-well">
-            <div class="content time-stat" data-time="{{ fav_time }}"></div>
+            <div class="content time-stat" data-time="{{ fav_time }}"> 
+            </div>
             <div class="stat-footer">favorite site time spent</div>
         </div>
     {% endif %}
