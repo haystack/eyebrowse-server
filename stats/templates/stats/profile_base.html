@@ -4,7 +4,7 @@
 {% load gravatar %}
 
 {% block content %}
-<div class="rowspan10 user-info" data-username="{{profile_user.username}}">
+<div class="row span10 user-info" data-username="{{profile_user.username}}">
 
     {% include 'stats/profile_subnav.html' %}
     <h2 class="offset3"> 
@@ -16,7 +16,7 @@
             {% include 'common/snippets/follow-btn.html' with follows=follows username=profile_user.username %}
             
         </a> 
-        {% endif %}   
+        {% endif %}
     </h2>
 </div>
 

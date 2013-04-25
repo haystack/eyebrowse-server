@@ -98,9 +98,6 @@ ul.errorlist {
 .nav-prof-img {
     height:24px;
     width:24px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
 }
 
 .centered {
