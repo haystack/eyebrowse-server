@@ -134,3 +134,8 @@ ul.errorlist {
 .home-statbox .big {
     font-size: 3em;
 }
+
+.search-nav {
+    padding-right:30px;
+    padding-left:30px;
+}

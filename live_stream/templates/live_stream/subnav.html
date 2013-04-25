@@ -1,19 +1,21 @@
 {% load humanize %}
 
 <!-- Desktop display -->
-<div class="span3 offset1 search-nav hidden-phone">
-    <ul class="nav nav-list well">
-    {% include 'live_stream/subnav_content.html' %}
-    </ul>
+<div class="span3 search-nav hidden-phone">
+    <div class="span3" data-spy="affix">
+        <ul class="nav nav-list well">
+        {% include 'live_stream/subnav_content.html' %}
+        </ul>
 
-    <div class="home-statbox light-well" id="tot_history">
-        <div class="content big centered">{{ num_history|intcomma }}</div>
-        <div class="statbox-footer centered">history items collected</div>
-    </div>
+        <div class="home-statbox light-well" id="tot_history">
+            <div class="content big centered">{{ num_history|intcomma }}</div>
+            <div class="statbox-footer centered">history items collected</div>
+        </div>
 
-    <div class="home-statbox light-well" id="tot_online">
-        <div class="content big centered">{{ num_online|intcomma }}</div>
-        <div class="statbox-footer centered">total users online</div>
+        <div class="home-statbox light-well" id="tot_online">
+            <div class="content big centered">{{ num_online|intcomma }}</div>
+            <div class="statbox-footer centered">total users online</div>
+        </div>
     </div>
 </div>
 
