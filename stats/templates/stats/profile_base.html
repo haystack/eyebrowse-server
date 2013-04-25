@@ -6,7 +6,7 @@
 {% block content %}
 <div class="rowspan10 user-info" data-username="{{profile_user.username}}">
 
-    {% include 'accounts/profile_subnav.html' %}
+    {% include 'stats/profile_subnav.html' %}
     <h2 class="offset3"> 
         <a href="/users/{{profile_user.username}}">{% gravatar_img_for_user profile_user 80 %}</a> 
         {{profile_user.username}}'s eyebrowse history 
@@ -28,5 +28,5 @@
 {% endblock %}
 
 {% block scripts %} 
-{% include_script 'accounts/js/profile_base' %}
+{% include_script 'stats/js/profile_base' %}
 {% endblock %}

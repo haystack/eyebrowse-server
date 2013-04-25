@@ -59,7 +59,7 @@
                             </li>
 
                             <li class={{ nav_profile }}>
-                                <a id="user_prof" href="/accounts/profile/">Profile</a>
+                                <a id="user_prof" href="/users/{{profile_user.username}}">Profile</a>
                             </li>
                             <li>
                                 <form id="navbar-search" class="navbar-search">
@@ -75,7 +75,7 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="/accounts/profile/">
+                                        <a href="/users/{{profile_user.username}}">
                                             <i class="icon-user"></i>
                                             My Activity
                                         </a>

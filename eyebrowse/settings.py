@@ -175,6 +175,7 @@ INSTALLED_APPS = (
     'common',
     'api',
     'live_stream',
+    'stats',
     'extension',
 )
 

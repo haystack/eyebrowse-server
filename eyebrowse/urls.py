@@ -29,9 +29,9 @@ urlpatterns = patterns('',
     url(r'^users/(?P<username>.+)/stats$', 'stats.views.profile_stats'),
     url(r'^users/(?P<username>.+)$', 'stats.views.profile_data'),
 
-
     url(r'^accounts/', include('accounts.urls')),
     url(r'^live_stream/', include('live_stream.urls')),
+    url(r'^stats/', include('stats.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^api/', include(v1_api.urls)),
 

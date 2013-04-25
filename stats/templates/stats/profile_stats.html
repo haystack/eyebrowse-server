@@ -1,10 +1,10 @@
-{% extends 'accounts/profile_base.html' %}
+{% extends 'stats/profile_base.html' %}
 {% load filters %}
 
 {% block styles %}
     
     {{ block.super }}
-    {% include_style 'accounts/css/profile_stats' %}
+    {% include_style 'stats/css/profile_stats' %}
 
 {% endblock %}
 
@@ -41,5 +41,5 @@
 {% endblock %}
 
 {% block scripts %}
-    {% include_script "accounts/js/profile_stats" %}
+    {% include_script "stats/js/profile_stats" %}
 {% endblock %}
