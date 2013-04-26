@@ -2,9 +2,7 @@
 {% load filters %}
 
 {% block styles %}
-    
     {{ block.super }}
-
 {% endblock %}
 
 {% block account_content %}
@@ -16,4 +14,5 @@
 
 {% block scripts %}
     {{ block.super }}
+    {% include_script "accounts/js/connections" %}
 {% endblock %}
