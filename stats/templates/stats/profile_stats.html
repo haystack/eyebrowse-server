@@ -41,5 +41,6 @@
 {% endblock %}
 
 {% block scripts %}
+    {{ block.super }}
     {% include_script "stats/js/profile_stats" %}
 {% endblock %}
