@@ -59,14 +59,14 @@ def _process(request):
             val = ''
             for (key,value) in json.loads(res['response']).items():
                 if key == 'sessionid':
-                    print "FOUND KEY",key,"VALUE",value
+                    # print "FOUND KEY",key,"VALUE",value
                     val = value
-            print "SETTING SESSIONID"
+            # print "SETTING SESSIONID"
             response.set_cookie('sessionid',val)
-            print "SESSIONID SET"
+            # print "SESSIONID SET"
         #for (key,value) in request.META.items():
         #    response.__setitem__(key,value)
-        print "HEADER SET"
+        # print "HEADER SET"
         return response
 
     # print "LETTING IT GO TO VIEW: CHROME"
