@@ -29,10 +29,12 @@ class ProxyMiddleware(object):
 
 def _process(request):
     params = request.GET
-    proxy_url = params.get("proxy_url")
-    method = request.method
+    proxy_url = None
+    if len(params) > 0:
+        proxy_url = params.get("proxy_url")
     
     if proxy_url:
+        method = request.method
         # print "FIREFOX EXTENSION"
         netloc = urlparse(proxy_url).netloc
         
@@ -48,11 +50,11 @@ def _process(request):
                 "error" : "Invalid request method type" + method
                 }
         request_dict = _pack_request(request)
+        request.COOKIES = request_dict['cookies']
+        request.META['allow_redirects'] = True
         res = REQUEST_MAP[method](proxy_url, **request_dict)
         res = _pack_response(res)
         response = HttpResponse(res['response'])
-        response['content_type'] = res['content_type']
-
         if "login" in proxy_url:
             for (key,value) in json.loads(res['response']).items():
                 response.set_cookie(key,value)
