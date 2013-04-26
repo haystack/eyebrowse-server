@@ -1,9 +1,7 @@
 from django.db import models
-from django.utils import simplejson as json
 from django.contrib.auth.models import User
 
 from datetime import datetime
-from urlparse import urlparse
 
 class FilterListItem(models.Model):
     user = models.ForeignKey(User)
@@ -28,6 +26,7 @@ class EyeHistory(models.Model):
 
     src = models.CharField(max_length=40, default='')
     url = models.URLField(max_length=2000, default='')
+    domain = models.URLField(max_length=2000, default='')
     favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=2000, default='')
 
@@ -38,7 +37,8 @@ class EyeHistory(models.Model):
     end_time = models.DateTimeField()
 
     total_time = models.IntegerField() # store in ms
-    humanize_time = models.CharField(max_length=200, default='') # store as human readable according to moment.js library: http://momentjs.com/docs/#/displaying/humanize-duration/
-
+    
+    # store as human readable according to moment.js library: http://momentjs.com/docs/#/displaying/humanize-duration/
+    humanize_time = models.CharField(max_length=200, default='') 
     def __unicode__(self):
           return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)

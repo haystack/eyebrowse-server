@@ -12,6 +12,8 @@ from accounts.models import UserProfile
 from api.models import *
 from resource_helpers import *
 
+from common.templatetags.filters import url_domain
+
 
 class MyBasicAuthentication(BasicAuthentication):
     def __init__(self, *args, **kwargs):
@@ -155,6 +157,10 @@ class EyeHistoryResource(BaseResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
         url = bundle.data['url']
+        domain = url_domain(url)
+        
+        bundle.data["domain"] = domain
+
         title = bundle.data['title']
         total_time = bundle.data['total_time']
         src = bundle.data['src']
@@ -162,7 +168,7 @@ class EyeHistoryResource(BaseResource):
         if not in_Whitelist(url):
             return bundle
         try:
-            obj = EyeHistory.objects.get(user=request.user, url=url, title=title, total_time=total_time, src=src)
+            obj = EyeHistory.objects.get(user=request.user, url=url, domain=domain, title=title, total_time=total_time, src=src)
         
         except EyeHistory.DoesNotExist:
             return super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
