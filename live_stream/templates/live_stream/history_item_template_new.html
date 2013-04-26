@@ -1,0 +1,35 @@
+{% load filters %}
+{% load gravatar %}
+
+<div id="history_item_{{item.id}}" class='row history-container infinite-scroll' data-id="{{ item.id }}">
+    <!-- <div class="author-container">
+        <a class="author-name" href="/users/{{ item.user.username }}" title="Add connection" data-content="">
+            <img class="author-pic img-polaroid" src="{% gravatar_for_user item.user %}"/>
+            {{ item.user.profile.get_full_name }} 
+        </a>
+
+        <div class="connection-container pull-right">
+            {% include 'common/snippets/follow-popover.html' with item=item %}
+        </div> 
+    </div> --> 
+    <div id="history_item_{{ item.id }}_content" class="history-content">
+        <span>
+            <a href="{{ item.url }}" target="_blank" data-content="{{ url }}" class="pointer">
+             <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
+            </a> {{ item.title }} 
+        </span> <!-- | -->
+        <span class="pull-right span3"> 
+            <!-- <strong> Total Time: </strong>--> <span class='start-time' data-content="{{ item.humanize_time }}">{{item.start_time}}</span>
+           <span class="pull-right"> <img class="author-pic" data-content="{{ item.user }}" src="{% gravatar_for_user item.user %}"/> </span>
+        </span>
+    </div>
+    <!--
+    <hr class='rm-margin'>
+    <div class="history-footer">
+        <span class="date" data-timestamp="{{item.start_time|date_fmt}}"> {{ item.start_time }} </span>
+    </div>
+    -->
+
+</div>
+
+{% include_script "live_stream/js/history-tips" %}
