@@ -1,0 +1,78 @@
+{% extends 'accounts/edit_profile_base.html' %}
+{% load filters %}
+{% load gravatar %}
+
+{% block styles %}
+    
+    {{ block.super }}
+
+{% endblock %}
+
+{% block account_content %}
+
+    <div id="info" class="edit span6">
+        <form id="pic" data-url="/accounts/profile/account">
+            {% csrf_token %}
+            {% include 'common/snippets/alert_box.html' %}
+            <input type="hidden" name="form_type" value="pic">
+
+            <input type='hidden' name='pic_url' value="{{ user.profile.pic_url }}" id='id_pic_url'>
+            <img id="profile_pic" class="author-pic img-polaroid" width='80' height='80' src="{% gravatar_for_user user %}">
+
+            <input class="btn" name="upload" id="upload" type="button" value="Edit profile picture"/>
+            <input class="btn btn-primary disabled" disabled type="submit" value="Save" data-loading-text="Saving..." id="profile-pic-save"/>
+        </form>
+        <hr>
+        <form id="account-info" class="form-horizontal" data-url="/accounts/profile/account">
+            {% csrf_token %}
+            {% include 'common/snippets/alert_box.html' %}
+            <input type="hidden" name="form_type" value="account-info">
+
+            <fieldset class="control-group">
+                <label class="control-label" for="first_name"> First Name</label> 
+
+                <div class="controls">
+                    <input type='text' name='first_name' value="{{ user.first_name }}" id='first_name'>
+
+                </div>
+                <label class="control-label" for="last_name"> Last Name</label>
+                <div class="controls">
+                    <input type='text' name='last_name' value="{{ user.last_name }}" id='last_name'>
+                </div>
+            </fieldset>
+
+            <fieldset class="control-group">
+                <label class="control-label" for="location">Location</label>
+                <div class="controls">
+                    <input id="location" name="location" type="text" value="{{user.location}}">
+                </div>
+            </fieldset>
+
+            <fieldset class="control-group">
+                <label class="control-label" for="url">Website</label>
+                <div class="controls">
+                <input id="url" name="url" size="30" type="text" value="{{user.url}}">
+                </div>
+            </fieldset>
+            
+            <fieldset class="control-group">
+                <label class="control-label" for="blurb">Bio</label>
+                <div id="user_description_box" class="controls">
+                    <textarea class="input-xlarge" id="blurb" name="blurb">{{user.blurb}}</textarea>
+                </div>
+            </fieldset>
+
+            <label class="checkbox">
+                <input {% if user.profile.anon_email %} checked {% endif %} type="checkbox" name='anon_checkbox' class='checkbox tip' data-content="Anonymize your email address from user searches."> Anonymous Email?
+            </label>
+
+            <input class="btn btn-primary" type="submit" value="Save" data-loading-text="Saving..." id="account-info-save"/>
+        </form>
+
+    </div>
+{% endblock %}
+
+{% block scripts %}
+
+    {{ block.super }}
+{% endblock %}

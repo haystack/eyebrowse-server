@@ -19,8 +19,7 @@ def whitelist(request):
 
     whitelist = WhiteListItem.objects.filter(user=request.user)
 
-
-    return _template_values(request, page_title="edit whitelist", header="whitelist" navbar='nav_account', sub_navbar="subnav_whitelist", vwhitelist=whitelist)
+    return _template_values(request, page_title="edit whitelist", header="whitelist", navbar='nav_account', sub_navbar="subnav_whitelist", whitelist=whitelist)
 
 @login_required
 @render_to('accounts/account.html')
@@ -78,8 +77,8 @@ def connections(request):
         Edit connection (following/followers)
     """
 
-    following = user.profile.follows.all()
-    followers = user.profile.followed_by.all()
+    following = request.user.profile.follows.all()
+    followers = request.user.profile.followed_by.all()
     rendered_following = connection_table_renderer(following, 'following', following)
     rendered_followers = connection_table_renderer(followers, 'followers', following)
 

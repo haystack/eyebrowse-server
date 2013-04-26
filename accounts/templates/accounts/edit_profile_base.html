@@ -4,27 +4,19 @@
 
 {% block styles %} 
     {% include_style "accounts/css/edit_profile" %}
-{% endblock%}
-
-{% block content %}
-<div class="row span10 user-info">
-    {% include 'accounts/accounts_subnav.html' %}
-    
-</div>
-
-{% block account_content %}
-    
 {% endblock %}
 
-<div class="span4 offset4">
-
-{% include 'accounts/edit_filterset.html' with items=whitelist type="whitelist" %}
-{% include 'accounts/edit_account_info.html' %}
-{{ rendered_following }}
-{{ rendered_followers }}
-
+{% block content %}
+<div class="row user-info">
+    {% include 'accounts/accounts_subnav.html' %}
+    
+    {% block account_content %}
+    
+    {% endblock %}
 </div>
-{%  endblock %}
+
+{% endblock %}
+
 
 {% block scripts %} 
     {% include_script 'accounts/js/edit_profile' %}

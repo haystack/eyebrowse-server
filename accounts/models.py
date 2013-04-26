@@ -10,7 +10,6 @@ from api.models import EyeHistory
 
 from datetime import datetime, timedelta
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     #other fields here

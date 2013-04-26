@@ -136,3 +136,11 @@ ul.errorlist {
     padding-right:30px;
     padding-left:30px;
 }
+
+.response_text > p {
+    margin: 0px !important;
+}
+
+tr > .center {
+    text-align: center;
+}

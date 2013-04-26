@@ -1,36 +1,44 @@
 {% load jstemplate %}
 
-<form id="{{type}}" class="hidden edit" data-url="/api/{{type}}/add/" >
-        {% include 'common/snippets/alert_box.html' %}
-        {% csrf_token %}
-        
-        <p>
-            <input class="rm-margin" placeholder="Add {{type}} URL" type="text" name="{{type}}" >
-            <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Add " id="{{type}}-save"/>
-        </p> <br>
+<div class="span6">
+    <form id="{{type}}" class="edit" data-url="/api/{{type}}/add/">
 
-        <input type="hidden" name="form_type" value="{{type}}">
-        <input class="filter-input" type="text" placeholder="Filter Whitelist">
-        <div class="filterset-container">
-            <table class="table table-condensed table-striped table-bordered">
-                <thead class='hidden'>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody class="{{type}}-body">
-                </tbody>
-            </table>
-        </div>
-        {% include_ichtemplate 'api/js_templates/filterset_row.html' %}
-        <script type="text/javascript">
-            var {{type}}_filterset = []
-            {% for item in items %}
-                {{type}}_filterset.push({
-                    'id' : "{{item.id}}",
-                    'url' : "{{item.url}}",
-                });
-            {% endfor %}
-        </script>
-</form>
+            {% include 'common/snippets/alert_box.html' %}
+            {% csrf_token %}
+            
+            <div class="controls offset1">
+                <div class="controls-wrap">
+                    <input class="add-url rm-margin" placeholder="Add {{type}} URL" type="text" name="{{type}}" >
+                    <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Add " id="{{type}}-save"/>
+                </div>
+                <div class="controls-wrap">
+                    <input type="hidden" name="form_type" value="{{type}}">
+                    <input class="filter-input" type="text" placeholder="Filter whitelist">
+                </div>
+            </div>
+            
+            <div class="filterset-container">
+                <table class="table table-condensed table-striped table-bordered">
+                    <thead class='hidden'>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="{{type}}-body {{type}}">
+                    </tbody>
+                </table>
+
+            </div>
+            {% include_ichtemplate 'api/js_templates/filterset_row.html' %}
+            <script type="text/javascript">
+                var {{type}}_filterset = []
+                {% for item in items %}
+                    {{type}}_filterset.push({
+                        'id' : "{{item.id}}",
+                        'url' : "{{item.url}}",
+                    });
+                {% endfor %}
+            </script>
+    </form>
+</div>

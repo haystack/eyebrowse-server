@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import simplejson as json
 from django.contrib.auth.models import User
-from accounts.models import *
 
 from datetime import datetime
 from urlparse import urlparse

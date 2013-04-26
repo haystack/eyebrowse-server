@@ -200,12 +200,12 @@ function getApiURL(resource, id, params) {
 /*
 Deletes a resource, requires data of resource type and the id of the item to be in the item triggering the event.
 */
-function rmItem(e) {
+function rmItem(e, filterset) {
     var $target = $(e.currentTarget);
     var id = $target.data('id');
     $target.closest('tr').remove()
     $.ajax({
-        url: getApiURL(e.data, id),
+        url: getApiURL(filterset, id),
         type: 'DELETE',
     });
 }
@@ -318,7 +318,7 @@ function nullFilter(filter){
 
 
 /*
-    Apply infinite scroll to the givin selector. itemSel specifies what the data will be appended to.
+    Apply infinite scroll to the givin selector. infiniteSel specifies what the data will be appended to.
     defalts to .live-stream-container (auto update on live stream) and .infinite-scroll (applied to all live streams)
 */
 function infiniteScroll(infiniteSel, itemSel){  

@@ -97,7 +97,6 @@ class FilterSetItemResource(BaseResource):
 class WhiteListItemResource(FilterSetItemResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
-        username = get_username(bundle)
         url = bundle.data['url']
         
         blacklist_item = get_BlackListItem(url) #check to see if this exists
@@ -105,7 +104,7 @@ class WhiteListItemResource(FilterSetItemResource):
             blacklist_item.delete()
 
         try:
-            obj = WhiteListItem.objects.get(user__username=username, url=url)
+            obj = WhiteListItem.objects.get(user=request.user, url=url)
         except WhiteListItem.DoesNotExist:
             return super(WhiteListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
         return bundle
@@ -119,14 +118,13 @@ class BlackListItemResource(FilterSetItemResource):
     
     def obj_create(self, bundle, request=None, **kwargs):
 
-        username = get_username(bundle)
         url = bundle.data['url']
 
         whitelist_item = get_WhiteListItem(url) #check to see if this exists
         if whitelist_item:
             whitelist_item.delete()
         try:
-            obj = BlackListItem.objects.get(user__username=username, url=url)
+            obj = BlackListItem.objects.get(user=request.user, url=url)
         except BlackListItem.DoesNotExist:
             return super(BlackListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
         return bundle
@@ -156,7 +154,6 @@ class EyeHistoryResource(BaseResource):
         }
 
     def obj_create(self, bundle, request=None, **kwargs):
-        username = get_username(bundle)
         url = bundle.data['url']
         title = bundle.data['title']
         total_time = bundle.data['total_time']
@@ -165,7 +162,7 @@ class EyeHistoryResource(BaseResource):
         if not in_Whitelist(url):
             return bundle
         try:
-            obj = EyeHistory.objects.get(user__username=username, url=url, title=title, total_time=total_time, src=src)
+            obj = EyeHistory.objects.get(user=request.user, url=url, title=title, total_time=total_time, src=src)
         
         except EyeHistory.DoesNotExist:
             return super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
