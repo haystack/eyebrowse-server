@@ -16,7 +16,7 @@ COOKIE_KEYS = ["csrftoken", "sessionid"]
 HEADER_KEYS = ["Content-Type"]
 IGNORED_ARGS = set(["proxy_url"] + COOKIE_KEYS + HEADER_KEYS)
 IGNORE_HEADERS = ["Origin", "User-Agent", "Host"]
-PROD_NETLOC = "eyebrowse.csail.mit.com"
+PROD_NETLOC = "eyebrowse-staging.csail.mit.edu"
 DEV_NETLOC = "localhost:5000"
 
 class ProxyMiddleware(object):
@@ -35,10 +35,10 @@ def _process(request):
     
     if proxy_url:
         method = request.method
-        # print "FIREFOX EXTENSION"
+        print "FIREFOX EXTENSION"
         netloc = urlparse(proxy_url).netloc
         
-        # print netloc
+        print netloc
         if netloc != PROD_NETLOC and netloc != DEV_NETLOC:
             # print "NOT ALLOWED NETLOC"
             return {
@@ -49,17 +49,27 @@ def _process(request):
             return {
                 "error" : "Invalid request method type" + method
                 }
+        print "packing request"
         request_dict = _pack_request(request)
-        request.COOKIES = request_dict['cookies']
-        request.META['allow_redirects'] = True
+        print "request packed"
         res = REQUEST_MAP[method](proxy_url, **request_dict)
+        print "request made"
         res = _pack_response(res)
+        print "response packed"
         response = HttpResponse(res['response'])
+        print "response made"
         if "login" in proxy_url:
+            val = ''
             for (key,value) in json.loads(res['response']).items():
-                response.set_cookie(key,value)
-        for (key,value) in request.META.items():
-            response.__setitem__(key,value)
+                if key == 'sessionid':
+                    print "FOUND KEY",key,"VALUE",value
+                    val = value
+            print "SETTING SESSIONID"
+            response.set_cookie('sessionid',val)
+            print "SESSIONID SET"
+        #for (key,value) in request.META.items():
+        #    response.__setitem__(key,value)
+        print "HEADER SET"
         return response
 
     # print "LETTING IT GO TO VIEW: CHROME"
