@@ -12,10 +12,10 @@ REQUEST_MAP = {
     "DELETE" : requests.delete
 }
 
-COOKIE_KEYS = {"csrftoken", "sessionid"}
-HEADER_KEYS = {"Content-Type"}
-IGNORED_ARGS = {"proxy_url"}.union(COOKIE_KEYS).union(HEADER_KEYS)
-IGNORE_HEADERS = {"Origin", "User-Agent", "Host"}
+COOKIE_KEYS = ["csrftoken", "sessionid"]
+HEADER_KEYS = ["Content-Type"]
+IGNORED_ARGS = set(["proxy_url"] + COOKIE_KEYS + HEADER_KEYS)
+IGNORE_HEADERS = ["Origin", "User-Agent", "Host"]
 PROD_NETLOC = "eyebrowse.csail.mit.com"
 DEV_NETLOC = "localhost:5000"
 

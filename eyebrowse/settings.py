@@ -17,9 +17,10 @@ except IOError:
 #custom auth
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
-BASE_URL_PROD = 'http://eyebrowse.herokuapp.com'
+BASE_URL_PROD = 'http://eyebrowse.csail.mit.edu'
 BASE_URL_DEV = 'http://localhost:5000'
 BASE_URL = BASE_URL_PROD
+LOGIN_REDIRECT_URL = "/"
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -124,7 +125,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'common.middleware.crossdomainxhr.XsSharing',
-#    'common.middleware.proxy.ProxyMiddleware',
+    'common.middleware.proxy.ProxyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
