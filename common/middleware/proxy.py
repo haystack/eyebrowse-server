@@ -16,7 +16,8 @@ COOKIE_KEYS = ["csrftoken", "sessionid"]
 HEADER_KEYS = ["Content-Type"]
 IGNORED_ARGS = set(["proxy_url"] + COOKIE_KEYS + HEADER_KEYS)
 IGNORE_HEADERS = ["Origin", "User-Agent", "Host"]
-PROD_NETLOC = "eyebrowse-staging.csail.mit.edu"
+PROD_NETLOC = "eyebrowse.csail.mit.edu"
+STAGING_NETLOC = "eyebrowse-staging.csail.mit.edu"
 DEV_NETLOC = "localhost:5000"
 
 class ProxyMiddleware(object):
@@ -39,7 +40,7 @@ def _process(request):
         netloc = urlparse(proxy_url).netloc
         
         print netloc
-        if netloc != PROD_NETLOC and netloc != DEV_NETLOC:
+        if netloc != PROD_NETLOC and netloc != DEV_NETLOC and netloc != STAGING_NETLOC:
             # print "NOT ALLOWED NETLOC"
             return {
                 "error" : "Invalid proxy url provided, must foward to eyebrowse."
