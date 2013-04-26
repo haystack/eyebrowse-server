@@ -9,6 +9,7 @@ body {
     padding: 0;
     min-height: 100%;
     position: relative;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 .push {
@@ -64,10 +65,6 @@ ul.errorlist {
     margin:0px !important;
 }
 
-.title-offset {
-    padding-bottom: 25px;
-}
-
 .pointer {
     cursor: pointer;
 }
@@ -101,7 +98,41 @@ ul.errorlist {
 .nav-prof-img {
     height:24px;
     width:24px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+}
+
+.centered {
+    text-align: center;
+}
+
+.light-well {
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+}
+
+.home-statbox{
+    border-radius: 3px;
+    padding: 5px 0;
+    margin: 5px 0;
+}
+
+.home-statbox .header{
+    font-weight: bolder;
+}
+
+.home-statbox .statbox-footer{
+    font-weight: bolder;
+}
+
+.home-statbox .content{
+    margin: 10px 0;
+    font-weight: bolder;
+}
+
+.home-statbox .big {
+    font-size: 3em;
+}
+
+.search-nav {
+    padding-right:30px;
+    padding-left:30px;
 }

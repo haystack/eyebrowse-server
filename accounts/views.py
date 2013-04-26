@@ -1,47 +1,14 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
-from django.shortcuts import get_object_or_404
 
 from annoying.decorators import render_to, ajax_request
 
-from accounts.models import *
 from accounts.renderers import *
 
 from api.models import *
 
-from common.view_helpers import _template_values, JSONResponse, validateEmail
-from common.pagination import paginator
+from common.view_helpers import _template_values, JSONResponse
 from common.helpers import put_profile_pic
-from common.constants import *
-
-@login_required
-@render_to('accounts/profile.html')
-def profile(request, username=None):
-    """
-    Own profile page
-    """
-    user = request.user
-    follows = False
-    if not username: #viewing own profile
-        username = user.username
-        msg_type = 'self_profile_stream'
-    
-    else:
-        follows = user.profile.follows.filter(user__username=username).exists()
-        msg_type = 'profile_stream'
-        
-    empty_search_msg = EMPTY_SEARCH_MSG[msg_type]
-
-    profile_user = get_object_or_404(User, username=username)
-
-    page = request.GET.get('page', 1)
-
-    history_items = EyeHistory.objects.filter(user=profile_user).order_by('-end_time')
-
-    history_items = paginator(page, history_items)
-    
-    return _template_values(request, page_title="Profile", navbar='nav_profile', profile_user=profile_user, history_items=history_items, empty_search_msg=empty_search_msg, ping=page, follows=str(follows))
 
 @login_required
 @render_to('accounts/edit_profile.html')

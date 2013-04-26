@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
 from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.conf import settings
@@ -43,5 +42,6 @@ def feedback(request):
     send_mail(subject, content, from_email=user.email, recipient_list=admin_emails)
     return {'res':'success'}
 
+@render_to('googlead6c3c617c310b08.html')
 def google_verify(request):
-    return render_to_response('googlead6c3c617c310b08.html')
+    return {}

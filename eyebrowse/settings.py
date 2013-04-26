@@ -1,8 +1,6 @@
 # Django settings for eyebrowse project.
 import os
-import sys
 import django
-from os import environ as env
 
 from registration_defaults.settings import *
 
@@ -17,7 +15,6 @@ except IOError:
     print "Unable to open configuration file!"
 
 #custom auth
-DEBUG = True
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 BASE_URL_PROD = 'http://eyebrowse.herokuapp.com'
@@ -127,7 +124,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'common.middleware.crossdomainxhr.XsSharing',
-    'common.middleware.proxy.ProxyMiddleware',
+#    'common.middleware.proxy.ProxyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -178,6 +175,7 @@ INSTALLED_APPS = (
     'common',
     'api',
     'live_stream',
+    'stats',
     'extension',
 )
 

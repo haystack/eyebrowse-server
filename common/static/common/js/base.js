@@ -14,8 +14,8 @@ function dropitemSelected (e, v) {
 }
 
 function navToUser(val){
-    //var username = user_dict[val];
-    //window.location = '/users/' + username
+    var username = user_dict[val];
+    window.location = '/users/' + username
 }
 
 function submitForm(e, d){

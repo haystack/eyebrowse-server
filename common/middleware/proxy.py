@@ -1,5 +1,4 @@
-import simplejson as json
-import flask
+from django.utils import simplejson as json
 import os
 import requests
 from django.http import HttpResponse
@@ -25,7 +24,7 @@ class ProxyMiddleware(object):
     Takes cookie and sessionid values of request and creates actual django cookies
     """
     def process_request(self, request):
-        print "PROCESS REQUEST"
+        # print "PROCESS REQUEST"
         return _process(request)
 
 def _process(request):
@@ -34,17 +33,17 @@ def _process(request):
     method = request.method
     
     if proxy_url:
-        print "FIREFOX EXTENSION"
+        # print "FIREFOX EXTENSION"
         netloc = urlparse(proxy_url).netloc
         
-        print netloc
+        # print netloc
         if netloc != PROD_NETLOC and netloc != DEV_NETLOC:
-            print "NOT ALLOWED NETLOC"
+            # print "NOT ALLOWED NETLOC"
             return {
                 "error" : "Invalid proxy url provided, must foward to eyebrowse."
             }
         elif method not in REQUEST_MAP:
-            print "NOT METHOD"
+            # print "NOT METHOD"
             return {
                 "error" : "Invalid request method type" + method
                 }
@@ -61,11 +60,7 @@ def _process(request):
             response.__setitem__(key,value)
         return response
 
-        # response = flask.Response(**res)
-        # print "YEA",response
-        # return response
-
-    print "LETTING IT GO TO VIEW: CHROME"
+    # print "LETTING IT GO TO VIEW: CHROME"
     return None
 
 def _pack_request(request):

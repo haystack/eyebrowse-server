@@ -1,0 +1,32 @@
+{% extends 'common/base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% load gravatar %}
+
+{% block content %}
+<div class="row span10 user-info" data-username="{{profile_user.username}}">
+
+    {% include 'stats/profile_subnav.html' %}
+    <h2 class="offset3"> 
+        <a href="/users/{{profile_user.username}}">{% gravatar_img_for_user profile_user 80 %}</a> 
+        {{profile_user.username}}'s eyebrowse history 
+
+        {% if profile_user != user %}
+        <a class="btn btn-info btn-prof-header connection">                
+            {% include 'common/snippets/follow-btn.html' with follows=follows username=profile_user.username %}
+            
+        </a> 
+        {% endif %}
+    </h2>
+</div>
+
+{% block profile_content %}
+    
+{% endblock %}
+
+
+{% endblock %}
+
+{% block scripts %} 
+{% include_script 'stats/js/profile_base' %}
+{% endblock %}
