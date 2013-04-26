@@ -33,7 +33,7 @@ def _process(request):
     method = request.method
     
     if proxy_url:
-        print "FIREFOX EXTENSION"
+        # print "FIREFOX EXTENSION"
         netloc = urlparse(proxy_url).netloc
         
         # print netloc
@@ -49,10 +49,10 @@ def _process(request):
                 }
         request_dict = _pack_request(request)
         res = REQUEST_MAP[method](proxy_url, **request_dict)
+        status_code = res.status_code
         res = _pack_response(res)
         response = HttpResponse(res['response'])
-        response['content_type'] = res['content_type']
-
+        response.status_code = status_code
         if "login" in proxy_url:
             for (key,value) in json.loads(res['response']).items():
                 response.set_cookie(key,value)
