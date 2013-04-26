@@ -1,0 +1,18 @@
+.user-name{
+    font-size: 30px;
+    line-height: 40px;
+    margin: 10px 0;
+    font-family: inherit;
+    font-weight: bold;
+    color: inherit;
+    text-rendering: optimizelegibility;
+}
+
+.user-metadata{
+    text-align: center;
+    margin-top: -32px;
+}
+
+.btn-prof-header{
+    margin-top: -10px;
+}
