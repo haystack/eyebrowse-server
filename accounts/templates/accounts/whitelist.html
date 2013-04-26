@@ -1,0 +1,15 @@
+{% extends 'accounts/edit_profile_base.html' %}
+{% load filters %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+    {% include 'accounts/edit_filterset.html' with items=whitelist type="whitelist" %}
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% include_script "accounts/js/whitelist" %}
+{% endblock %}

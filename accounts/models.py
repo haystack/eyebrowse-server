@@ -10,7 +10,6 @@ from api.models import EyeHistory
 
 from datetime import datetime, timedelta
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     #other fields here
@@ -19,7 +18,11 @@ class UserProfile(models.Model):
     activation_key = models.CharField(max_length=40, default='')
     pic_url = models.CharField(max_length=1000, default=settings.DEFAULT_IMG)
     use_tour = models.BooleanField(default=True)
-    anon_email =models.BooleanField(default=False)
+    anon_email = models.BooleanField(default=False)
+    
+    location = models.CharField(max_length=1000, default='')
+    website = models.CharField(max_length=1000, default='')
+    bio = models.CharField(max_length=1000, default='')
 
     def get_following_history(self, history=None):
         following = self.follows.all()

@@ -6,11 +6,13 @@ from django.contrib.contenttypes.models import ContentType
 
 from common.defaults import DEFAULT_WHITELIST, DEFAULT_BLACKLIST
 from accounts.models import *
-from api.models import *
+from api.models import WhiteListItem, BlackListItem
+from stats.models import FavData
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:  
        profile, created = UserProfile.objects.get_or_create(user=instance)
+       fav_data = FavData.objects.get_or_create(user=instance)
        set_user_perms(instance)
 
 def set_user_perms(user):

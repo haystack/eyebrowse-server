@@ -133,6 +133,17 @@ ul.errorlist {
 }
 
 .search-nav {
-    padding-right:30px;
+    padding-left:0px;
+}
+
+.response_text > p {
+    margin: 0px !important;
+}
+
+tr > .center {
+    text-align: center;
+}
+
+.history-timeline-container {
     padding-left:30px;
 }

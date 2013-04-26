@@ -1,6 +1,4 @@
-<!-- {% load filters %} -->
-
-<div class="history-timeline-container live-stream-container well">
+<div class="history-timeline-container live-stream-container offset3">
     {% for h_item in history %}
         {% include "live_stream/history_item_template_new.html" with item=h_item user=user follows=follows %}
     {% endfor %}
@@ -8,8 +6,6 @@
         {% include "common/snippets/empty_search.html" with msg=empty_search_msg %}
     {% endif %}
 
-{% include 'common/snippets/pagination.html' with objs=history link_mod=link_mod %}
-
-<!-- {% include_script "live_stream/js/history-tips" %} -->
+    {% include 'common/snippets/pagination.html' with objs=history link_mod=link_mod %}
 
 </div>

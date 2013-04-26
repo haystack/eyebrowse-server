@@ -1,0 +1,18 @@
+{% extends 'accounts/edit_profile_base.html' %}
+{% load filters %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+    
+    {{ rendered_following }}
+    {{ rendered_followers }}
+
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% include_script "accounts/js/connections" %}
+{% endblock %}

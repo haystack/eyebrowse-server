@@ -3,7 +3,9 @@ from django.shortcuts import get_object_or_404
 
 from annoying.decorators import render_to
 
-from api.models import *
+from api.models import EyeHistory
+
+from stats.models import FavData
 
 from live_stream.query_managers import *
 
@@ -41,13 +43,9 @@ def profile_stats(request, username=None):
 
     tot_time, item_count = profile_stat_gen(profile_user)
 
-    print tot_time, item_count
+    fav_data = FavData.objects.get(user=profile_user)
 
-
-    fav_data = fav_site_calc(profile_user)
-
-
-    return _template_values(request, page_title="profile stats", navbar='nav_profile', sub_navbar="subnav_stats", profile_user=profile_user, empty_search_msg=empty_search_msg, follows=str(follows), tot_time=tot_time, item_count=item_count, fav_site=fav_data["domain"], fav_favicon=fav_data["fav_icon"], fav_time=fav_data["total_time"], fav_count=fav_data["count"])
+    return _template_values(request, page_title="profile stats", navbar='nav_profile', sub_navbar="subnav_stats", profile_user=profile_user, empty_search_msg=empty_search_msg, follows=str(follows), tot_time=tot_time, item_count=item_count, fav_data=fav_data)
 
 def _profile_info(user, username=None):
     """

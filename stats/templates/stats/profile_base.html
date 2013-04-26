@@ -3,21 +3,42 @@
 {% load filters %}
 {% load gravatar %}
 
+{% block styles %}
+    {% include_style "stats/css/profile_base" %}
+{% endblock %}
+
 {% block content %}
-<div class="row span10 user-info" data-username="{{profile_user.username}}">
+<div class="row span12 user-info" data-username="{{profile_user.username}}">
 
     {% include 'stats/profile_subnav.html' %}
-    <h2 class="offset3"> 
-        <a href="/users/{{profile_user.username}}">{% gravatar_img_for_user profile_user 80 %}</a> 
-        {{profile_user.username}}'s eyebrowse history 
-
-        {% if profile_user != user %}
+    <div class="span8 well">
+        <a class="offset1" href="/users/{{profile_user.username}}">{% gravatar_img_for_user profile_user 80 %}</a>
+        <span class="user-name">
+            {{profile_user.username}}'s eyebrowse history 
+        </span>
+    {% if profile_user != user %}
         <a class="btn btn-info btn-prof-header connection">                
             {% include 'common/snippets/follow-btn.html' with follows=follows username=profile_user.username %}
             
         </a> 
-        {% endif %}
-    </h2>
+    {% endif %}
+    <div class="user-metadata">
+        <div class="bio">
+            <strong>{{ profile_user.profile.bio }}</strong>
+        </div>
+        <span class="location profile-field">
+            {{ profile_user.profile.location }}
+        </span>
+        <span class="divider">·</span>
+        <span class="profile-field">
+            <a target="_blank" href="{{ profile_user.profile.website }}">
+            {{ profile_user.profile.website }}
+            </a>
+
+        </span>
+    </div>
+        
+    </div>
 </div>
 
 {% block profile_content %}
@@ -28,5 +49,5 @@
 {% endblock %}
 
 {% block scripts %} 
-{% include_script 'stats/js/profile_base' %}
+    {% include_script 'stats/js/profile_base' %}
 {% endblock %}

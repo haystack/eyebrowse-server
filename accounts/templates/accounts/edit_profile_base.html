@@ -1,0 +1,23 @@
+{% extends 'common/base.html' %}
+{% load staticfiles %}
+{% load filters %}
+
+{% block styles %} 
+    {% include_style "accounts/css/edit_profile" %}
+{% endblock %}
+
+{% block content %}
+<div class="row user-info">
+    {% include 'accounts/accounts_subnav.html' %}
+    
+    {% block account_content %}
+    
+    {% endblock %}
+</div>
+
+{% endblock %}
+
+
+{% block scripts %} 
+    {% include_script 'accounts/js/edit_profile' %}
+{% endblock %}

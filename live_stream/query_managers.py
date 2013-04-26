@@ -96,60 +96,9 @@ def profile_stat_gen(profile_user, url=None):
     if url:
         history_items = history_items.filter(url=url)
 
-    history_items = history_items.annotate(total=Sum('total_time'))
+    total_time = history_items.aggregate(total=Sum('total_time'))
 
-    tot_time = 0
-    for item in history_items:
-        tot_time += item.total_time
-
-
-    return tot_time, history_items.count()
-
-def fav_site_calc(profile_user):
-    """
-        Helper to compute what the most commonly used
-        site is for a given set of history items.
-        Returns a url (domain) that is computed to be the favorite and the associated favicon
-    """
-
-    item_meta = {}
-
-    history_items = history_search(profile_user, filter="",username=profile_user.username)
-
-    if not history_items:
-        return {
-                "fav_icon" : "",
-                "count" : 0,
-                "total_time" : "",
-                "domain" : ""
-            }
-    
-    for item in history_items:
-
-        domain = url_domain(item.url)
-
-        if domain in item_meta:
-            data = item_meta[domain] 
-            data["count"] +=1
-            data["total_time"] += item.total_time
-            item_meta[domain] = data
-        else:
-            item_meta[domain] = {
-                "fav_icon" : item.favIconUrl,
-                "count" : 1,
-                "total_time" : item.total_time,
-                "domain" : domain
-            }
-    
-    max_count = 0
-    max_dict = {}
-    for k, v in item_meta.items():
-        if v["count"] > max_count:
-            max_count = v["count"]
-            max_dict = v
-
-    return max_dict
-
+    return total_time["total"], history_items.count()
 
 
 def online_user_count():

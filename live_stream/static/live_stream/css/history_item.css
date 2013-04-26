@@ -20,13 +20,9 @@
     font-weight:normal;
 }
 
-/* border-radius was 4px */
 .history-container .author-pic {
-    width: 20px; /* 50px; */
-    height: 20px; /* 50px; */
-    -webkit-border-radius: 0px!important;
-    -moz-border-radius: 0px!important;
-    border-radius: 0px!important;
+    width: 20px;
+    height: 20px;
 }
 
 .history-container .history-content {
@@ -51,4 +47,8 @@
 
 .connection-container {
     margin-top:20px;
+}
+
+.author-container{
+    width:200px;
 }

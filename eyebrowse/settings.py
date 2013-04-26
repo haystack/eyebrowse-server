@@ -170,6 +170,7 @@ INSTALLED_APPS = (
     'registration',
     'tastypie',
     'pagination',
+    'kronos',
 
     # eyebrowse
     'accounts',

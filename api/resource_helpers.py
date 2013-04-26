@@ -34,15 +34,6 @@ def get_FilterSetItem(set_type, url):
             return item_set[0]
     return None
 
-def get_username(bundle):
-    """
-    Requires a bundle object from obj_create
-    Returns None if no user data is present in the bundle
-    """
-    try:
-        return bundle.data['user'].split('/')[-1]
-    except:
-        return None
 
 class urlencodeSerializer(Serializer):
     formats = ['json', 'jsonp', 'xml', 'yaml', 'html', 'plist', 'urlencode']
