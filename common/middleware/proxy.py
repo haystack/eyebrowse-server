@@ -12,10 +12,10 @@ REQUEST_MAP = {
     "DELETE" : requests.delete
 }
 
-COOKIE_KEYS = {"csrftoken", "sessionid"}
-HEADER_KEYS = {"Content-Type"}
-IGNORED_ARGS = {"proxy_url"}.union(COOKIE_KEYS).union(HEADER_KEYS)
-IGNORE_HEADERS = {"Origin", "User-Agent", "Host"}
+COOKIE_KEYS = ["csrftoken", "sessionid"]
+HEADER_KEYS = ["Content-Type"]
+IGNORED_ARGS = set(["proxy_url"] + COOKIE_KEYS + HEADER_KEYS)
+IGNORE_HEADERS = ["Origin", "User-Agent", "Host"]
 PROD_NETLOC = "eyebrowse.csail.mit.com"
 DEV_NETLOC = "localhost:5000"
 
@@ -51,8 +51,6 @@ def _process(request):
         res = REQUEST_MAP[method](proxy_url, **request_dict)
         res = _pack_response(res)
         response = HttpResponse(res['response'])
-        response['content_type'] = res['content_type']
-
         if "login" in proxy_url:
             for (key,value) in json.loads(res['response']).items():
                 response.set_cookie(key,value)
