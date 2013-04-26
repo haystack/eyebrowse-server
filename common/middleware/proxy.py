@@ -56,10 +56,17 @@ def _process(request):
         res = _pack_response(res)
         response = HttpResponse(res['response'])
         if "login" in proxy_url:
+            val = ''
             for (key,value) in json.loads(res['response']).items():
-                response.set_cookie(key,value)
-        for (key,value) in request.META.items():
-            response.__setitem__(key,value)
+                if key == 'sessionid':
+                    print "FOUND KEY",key,"VALUE",value
+                    val = value
+            print "SETTING SESSIONID"
+            response.set_cookie('sessionid',val)
+            print "SESSIONID SET"
+        #for (key,value) in request.META.items():
+        #    response.__setitem__(key,value)
+        print "HEADER SET"
         return response
 
     # print "LETTING IT GO TO VIEW: CHROME"
