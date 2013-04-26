@@ -123,9 +123,9 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'common.middleware.proxy.ProxyMiddleware',
     'django.middleware.common.CommonMiddleware',
     'common.middleware.crossdomainxhr.XsSharing',
+    'common.middleware.proxy.ProxyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
