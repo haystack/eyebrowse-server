@@ -35,17 +35,25 @@ def account(request):
         errors = {}
         data = None
         type = request.POST.get('form_type', None)
-
+        print request.POST  
         if type == 'account-info':
             first_name = request.POST.get('first_name', '')
             last_name = request.POST.get('last_name', '')
             anon_email = request.POST.get('anon_checkbox', False) == 'True'
+            location = request.POST.get('location', '')
+            website = request.POST.get('website', '')
+            bio = request.POST.get('bio', '')
+            
             user.first_name = first_name
             user.last_name = last_name
             user.save()
             
-            user.profile.anon_email = anon_email
-            user.profile.save()
+            profile = user.profile
+            profile.anon_email = anon_email
+            profile.location = location
+            profile.website = website
+            profile.bio = bio
+            profile.save()
 
             success = "User info updated!"
 

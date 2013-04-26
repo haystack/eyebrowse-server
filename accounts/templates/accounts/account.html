@@ -11,7 +11,7 @@
 {% block account_content %}
 
     <div id="info" class="edit span6">
-        <form id="pic" data-url="/accounts/profile/account">
+        <form id="pic" class="offset1" data-url="/accounts/profile/account">
             {% csrf_token %}
             {% include 'common/snippets/alert_box.html' %}
             <input type="hidden" name="form_type" value="pic">
@@ -35,38 +35,47 @@
                     <input type='text' name='first_name' value="{{ user.first_name }}" id='first_name'>
 
                 </div>
+
+            </fieldset>
+
+            <fieldset class="control-group">
                 <label class="control-label" for="last_name"> Last Name</label>
                 <div class="controls">
                     <input type='text' name='last_name' value="{{ user.last_name }}" id='last_name'>
                 </div>
             </fieldset>
 
+
             <fieldset class="control-group">
                 <label class="control-label" for="location">Location</label>
                 <div class="controls">
-                    <input id="location" name="location" type="text" value="{{user.location}}">
+                    <input id="location" name="location" type="text" value="{{user.profile.location}}">
                 </div>
             </fieldset>
 
             <fieldset class="control-group">
-                <label class="control-label" for="url">Website</label>
+                <label class="control-label" for="website">Website</label>
                 <div class="controls">
-                <input id="url" name="url" size="30" type="text" value="{{user.url}}">
+                <input id="website" name="website" size="30" type="text" value="{{user.profile.website}}">
                 </div>
             </fieldset>
             
             <fieldset class="control-group">
-                <label class="control-label" for="blurb">Bio</label>
-                <div id="user_description_box" class="controls">
-                    <textarea class="input-xlarge" id="blurb" name="blurb">{{user.blurb}}</textarea>
+                <label class="control-label" for="bio">Bio</label>
+                <div class="controls">
+                    <textarea id="bio" name="bio">{{user.profile.bio}}</textarea>
                 </div>
             </fieldset>
 
-            <label class="checkbox">
-                <input {% if user.profile.anon_email %} checked {% endif %} type="checkbox" name='anon_checkbox' class='checkbox tip' data-content="Anonymize your email address from user searches."> Anonymous Email?
-            </label>
+            <fieldset class="control-group">
+                <label class="control-label checkbox" for="anon_checkbox">Anonymous Email?</label>
+                <div class="controls">
+                    <input {% if user.profile.anon_email %} checked {% endif %} type="checkbox" id="anon_checkbox" name='anon_checkbox' class='checkbox tip' data-content="Anonymize your email address from user searches.">
+                </div>
+            </fieldset>
 
-            <input class="btn btn-primary" type="submit" value="Save" data-loading-text="Saving..." id="account-info-save"/>
+            <input class="btn btn-primary offset3" type="submit" value="Save" data-loading-text="Saving..." id="account-info-save"/>
+
         </form>
 
     </div>
