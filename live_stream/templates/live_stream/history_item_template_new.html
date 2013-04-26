@@ -1,7 +1,7 @@
 {% load filters %}
 {% load gravatar %}
 
-<div id="history_item_{{item.id}}" class='row history-container infinite-scroll' data-id="{{ item.id }}">
+<div id="history_item_{{item.id}}" class='row history-container infinite-scroll span8' data-id="{{ item.id }}">
     <!-- <div class="author-container">
         <a class="author-name" href="/users/{{ item.user.username }}" title="Add connection" data-content="">
             <img class="author-pic img-polaroid" src="{% gravatar_for_user item.user %}"/>
@@ -14,13 +14,16 @@
     </div> --> 
     <div id="history_item_{{ item.id }}_content" class="history-content">
         <span>
-            <a href="{{ item.url }}" target="_blank" data-content="{{ url }}" class="pointer">
-             <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
-            </a> {{ item.title }} 
+            <a href="{{ item.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.url }}">
+                <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
+            </a> 
+            | <span class="cut-content pointer" data-content="{{ item.title}}"> 
+                {{ item.title|truncatechars:40 }} 
+            </span>
         </span> <!-- | -->
-        <span class="pull-right span3"> 
-            <!-- <strong> Total Time: </strong>--> <span class='start-time' data-content="{{ item.humanize_time }}">{{item.start_time}}</span>
-           <span class="pull-right"> <img class="author-pic" data-content="{{ item.user }}" src="{% gravatar_for_user item.user %}"/> </span>
+        <span class="pull-right author-container"> 
+            
+           <span><a href="/users/{{ item.user.username }}"><img class="author-pic img-rounded" data-content="{{ item.user }}" src="{% gravatar_for_user item.user %}"/> </a></span><span class='start-time pointer' data-content="{{ item.humanize_time }}">{{item.start_time}}</span>
         </span>
     </div>
     <!--
@@ -31,5 +34,3 @@
     -->
 
 </div>
-
-{% include_script "live_stream/js/history-tips" %}

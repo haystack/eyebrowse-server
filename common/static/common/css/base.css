@@ -133,8 +133,7 @@ ul.errorlist {
 }
 
 .search-nav {
-    padding-right:30px;
-    padding-left:30px;
+    padding-left:0px;
 }
 
 .response_text > p {
@@ -143,4 +142,8 @@ ul.errorlist {
 
 tr > .center {
     text-align: center;
+}
+
+.history-timeline-container {
+    padding-left:30px;
 }

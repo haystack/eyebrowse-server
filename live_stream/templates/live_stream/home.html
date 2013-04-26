@@ -3,14 +3,12 @@
 {% load staticfiles %}
 
 {% block styles %}
-
-{% include_style 'live_stream/css/history_item' %}
-
+    {% include_style 'live_stream/css/history_item' %}
 {% endblock %}
 
 {% block content %} 
 <div class="row">
-    {# include "live_stream/livestream_subnav.html" #}
+    {% include "live_stream/livestream_subnav.html" %}
 
     {{ history_stream }}
 </div>
@@ -18,6 +16,6 @@
 {% endblock %}
 
 {% block scripts %}
-{% include_script "live_stream/js/live-stream" %}
-{% include_script "live_stream/js/history-tips" %}
+    {% include_script "live_stream/js/live-stream" %}
+    {% include_script "live_stream/js/history-tips" %}
 {% endblock %}
