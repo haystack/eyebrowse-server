@@ -33,7 +33,7 @@ def _process(request):
     method = request.method
     
     if proxy_url:
-        # print "FIREFOX EXTENSION"
+        print "FIREFOX EXTENSION"
         netloc = urlparse(proxy_url).netloc
         
         # print netloc
