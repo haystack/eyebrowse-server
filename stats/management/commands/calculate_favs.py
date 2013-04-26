@@ -56,8 +56,6 @@ class Command(NoArgsCommand):
 
         self.stdout.write('Updated user %s, favorite: %s\n' % (user.username, max_dict["domain"]))
 
-        self.stdout.write(str(max_dict))
-
         fav_data, created = FavData.objects.get_or_create(user=user)
         fav_data.domain = max_dict["domain"]
         fav_data.favIconUrl = max_dict["fav_icon"]
