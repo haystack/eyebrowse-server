@@ -13,6 +13,7 @@ from api.models import *
 from resource_helpers import *
 
 from common.templatetags.filters import url_domain
+from django.core.management import call_command
 
 
 class MyBasicAuthentication(BasicAuthentication):
@@ -109,6 +110,9 @@ class WhiteListItemResource(FilterSetItemResource):
             obj = WhiteListItem.objects.get(user=request.user, url=url)
         except WhiteListItem.DoesNotExist:
             return super(WhiteListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+        except MultipleObjectsReturned: 
+            #multiple items created, delete duplicates
+            call_command("remove_duplicate_filtersets")
         return bundle
 
     class Meta(FilterSetItemResource.Meta):
@@ -128,7 +132,10 @@ class BlackListItemResource(FilterSetItemResource):
         try:
             obj = BlackListItem.objects.get(user=request.user, url=url)
         except BlackListItem.DoesNotExist:
-            return super(BlackListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+            return super(BlackListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)        
+        except MultipleObjectsReturned: 
+            #multiple items created, delete duplicates
+            call_command("remove_duplicate_filtersets")
         return bundle
 
     class Meta(FilterSetItemResource.Meta):
