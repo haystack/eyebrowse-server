@@ -133,7 +133,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'common.middleware.profiler.ProfileMiddleware',
+    #'common.middleware.profiler.ProfileMiddleware',
 )
 
 ROOT_URLCONF = 'eyebrowse.urls'
