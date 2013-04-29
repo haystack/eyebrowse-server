@@ -19,8 +19,8 @@ def home(request):
     return redirect('/live_stream/home/')
 
 
-@render_to('common/download.html')
-def download(request):
+@render_to('common/downloads.html')
+def downloads(request):
     return _template_values(request, page_title="downloads", navbar='nav_home')
     
 

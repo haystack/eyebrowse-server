@@ -4,8 +4,8 @@ To activate this account, please click the following link within the next {{ exp
 
 {{site.domain}}{% url registration_activate activation_key %}
 
-To download the extension at our {{site.domain}}/download
+To download the extension at our {{site.domain}}/downloads
 
 Sincerely,
 
-The Eyebrowse Team
+- the eyebrowse team

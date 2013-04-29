@@ -1,4 +1,4 @@
-SIGNATURE = "- The Eyebrowse Team"
+SIGNATURE = "- the eyebrowse team"
 
 alt_email = {
 	'subject': 'Confirm your alternate email',
@@ -14,7 +14,7 @@ alt_email = {
 
 
 feedback = {
-	'subject': 'Feedback for commerical production',
+	'subject': 'Feedback for eyebrowse',
 	'content': """
 		'Feedback received from: %s <br><br> %s'
 	"""
