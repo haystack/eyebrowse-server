@@ -1,6 +1,8 @@
 from django.contrib.sessions.models import Session
 from django.contrib.auth.models import User
 from django.conf.urls import url
+from django.core.exceptions import MultipleObjectsReturned
+from django.core.management import call_command
 
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.authorization import Authorization
@@ -13,8 +15,6 @@ from api.models import *
 from resource_helpers import *
 
 from common.templatetags.filters import url_domain
-from django.core.management import call_command
-
 
 class MyBasicAuthentication(BasicAuthentication):
     def __init__(self, *args, **kwargs):
