@@ -85,13 +85,15 @@ def history_search(req_user, timestamp=None, query=None, filter='following', typ
 
     return history.select_related()
 
-def profile_stat_gen(profile_user, url=None):
+def profile_stat_gen(profile_user, username=None, url=None):
     """
         Helper to calculate total time spent for a given user.
         If a url is present, the queryset is filtered to reduce the set to only this url
     """
- 
-    history_items = history_search(profile_user, filter="", username=profile_user.username)
+    if username is None:
+        username = profile_user.username
+
+    history_items = history_search(profile_user, filter="", username=username)
 
     if url:
         history_items = history_items.filter(url=url)

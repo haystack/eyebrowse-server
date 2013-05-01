@@ -18,13 +18,13 @@ def home(request):
     
     history_stream = live_stream_query_manager(request.GET, request.user)
 
-    num_history = EyeHistory.objects.all().count()
+    tot_time, num_history = profile_stat_gen(user, username="")
 
     num_online = online_user_count()
 
     subnav = "subnav_" + request.GET.get('filter', "following")
 
-    return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, num_history=num_history, num_online=num_online)
+    return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, tot_time=tot_time, num_history=num_history, num_online=num_online)
 
 @login_required
 @ajax_request

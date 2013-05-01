@@ -342,6 +342,15 @@ function updateStats(history_data) {
     $("#is_online .content").html(numberWithCommas(history_data.is_online));
 }
 
+//humanize the timestamps passed down
+function calculateStats() {
+    $.each($(".time-stat"), function(i, v){
+        v = $(v);
+        v.text(moment.humanizeDuration(v.data('time')));
+    });
+}
+
+
 $(function(){
     var csrftoken = $.cookie('csrftoken');
     $.ajaxSetup({
