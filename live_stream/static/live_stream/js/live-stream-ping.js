@@ -105,9 +105,7 @@ function liveStreamPing(args, callback){
         this.history = [];
         $loadNew.remove();
     }
-
-    if (ping !== undefined && ping === true){
-        this.setup()    
-    }
+    
+    this.setup();
     return this
 }
