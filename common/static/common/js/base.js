@@ -335,6 +335,13 @@ function infiniteScroll(infiniteSel, itemSel){
          
 }
 
+//generic update stats function
+function updateStats(history_data) {
+    $("#tot_history .content").html(numberWithCommas(history_data.num_history));
+    $("#tot_online .content").html(numberWithCommas(history_data.num_online));
+    $("#is_online .content").html(numberWithCommas(history_data.is_online));
+}
+
 $(function(){
     var csrftoken = $.cookie('csrftoken');
     $.ajaxSetup({

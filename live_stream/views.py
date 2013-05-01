@@ -20,12 +20,11 @@ def home(request):
 
     num_history = EyeHistory.objects.all().count()
 
-
     num_online = online_user_count()
 
     subnav = "subnav_" + request.GET.get('filter', "following")
 
-    return _template_values(request, page_title="Live Stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, num_history=num_history, num_online=num_online, ping=request.GET.get('page', 1))
+    return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, num_history=num_history, num_online=num_online)
 
 @login_required
 @ajax_request
@@ -37,6 +36,7 @@ def ping(request):
         'history' : history,
         'num_history' : EyeHistory.objects.all().count(),
         'num_online' : online_user_count(),
+        'is_online' : online_user(request.GET.get("username", ""))
     }
 
 @login_required

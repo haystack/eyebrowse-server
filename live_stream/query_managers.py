@@ -17,7 +17,7 @@ import operator
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
-    valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction','filter', 'ping', 'req_user', 'username', 'limit']
+    valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction','filter', 'ping', 'req_user', 'username', 'limit', 'orderBy']
 
     valid_types = {
         'ping' : {
@@ -101,7 +101,21 @@ def profile_stat_gen(profile_user, url=None):
     return total_time["total"], history_items.count()
 
 
-def online_user_count():
+def online_user_count(filter_user=None):
+    """
+        Returns the number of users online
+    """
+    return len(_online_users())
+
+
+def online_user(user):
+    """
+        Returns boolean if a user is online
+    """
+    return user in _online_users()
+
+
+def _online_users():
     """
         Computes all of the users from the history items from the last 5 minutes
     """
@@ -113,4 +127,4 @@ def online_user_count():
     for h in history:
         if not h.user in users:
             users.add(h.user)
-    return len(users)
+    return users

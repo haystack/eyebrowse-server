@@ -26,7 +26,6 @@ urlpatterns = patterns('',
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
     url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 
-    url(r'^users/(?P<username>.+)/stats$', 'stats.views.profile_stats'),
     url(r'^users/(?P<username>.+)$', 'stats.views.profile_data'),
 
     url(r'^accounts/', include('accounts.urls')),

@@ -1,12 +1,52 @@
-<ul class="nav nav-pills nav-stacked span2 well">
-    <li class={{ subnav_data }}>
-        <a href="/users/{{profile_user.username}}">
-            <i class="icon-th-list"></i> History Items 
-        </a>
-    </li>
-    <li class={{ subnav_stats }}>
-        <a href="/users/{{profile_user.username}}/stats">
-            <i class="icon-th-large"></i> Stats 
-        </a>
-    </li>
-</ul>
+{% load humanize %}
+
+<!-- Desktop display -->
+<div class="span3 search-nav hidden-phone">
+    <div class="span3 affix-nav" data-spy="affix">
+
+        <div class="home-statbox light-well" id="tot_history">
+            <div class="content big centered">
+                {{ num_history|intcomma }}
+            </div>
+            <div class="statbox-footer centered">
+                history items collected
+            </div>
+        </div> 
+
+        <div class="home-statbox light-well" id="tot_time">
+            <div class="statbox-header centered">
+                total time spent
+            </div>
+            <div class="content big centered time-stat" data-time="{{ tot_time }}"></div>
+        </div>
+
+        <div class="home-statbox light-well" id="fav_site">
+
+            <div class="content big centered">
+                <a href="http://{{ fav_data.domain }}" target="_blank" data-content="{{ fav_data.domain }}" class="pointer fav-site"><img class="fav-icon" src="{{ fav_data.favIconUrl }}"></a>
+                {{ fav_data.visit_count }} visits 
+            </div>
+            <div class="statbox-footer centered">
+                favorite site visits
+            </div>
+        </div>
+
+        <div class="home-statbox light-well" id="fav_time">
+            <div class="statbox-header centered">
+                favorite site time spent
+            </div>
+            <div class="content big centered time-stat" data-time="{{ fav_data.total_time }}"></div>
+        </div>
+
+        <div class="home-statbox light-well" id="is_online">
+            <div class="content med centered">
+                {% if is_online %}
+                    <span class="green"> online now</span>
+                {% else %}
+                    <span class="red"> not online </span>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>

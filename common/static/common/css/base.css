@@ -115,11 +115,7 @@ ul.errorlist {
     margin: 5px 0;
 }
 
-.home-statbox .header{
-    font-weight: bolder;
-}
-
-.home-statbox .statbox-footer{
+.home-statbox .statbox-footer, .home-statbox .statbox-header{
     font-weight: bolder;
 }
 
@@ -130,6 +126,10 @@ ul.errorlist {
 
 .home-statbox .big {
     font-size: 3em;
+}
+
+.home-statbox .med {
+    font-size: 2em;
 }
 
 .search-nav {
@@ -146,4 +146,16 @@ tr > .center {
 
 .history-timeline-container {
     padding-left:30px;
+}
+
+.green {
+    color:#3cb371;
+}
+
+.red {
+    color:#CD5C5C;
+}
+
+.affix-nav {
+    margin-left:-30px;
 }

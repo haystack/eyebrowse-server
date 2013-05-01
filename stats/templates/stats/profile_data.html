@@ -3,9 +3,14 @@
 {% load filters %}
 {% load gravatar %}
 
+{% block styles %}
+    {{ block.super }}
+    {% include_style 'live_stream/css/history_item' %}
+{% endblock %}
+
 {% block profile_content %}
 
-{% include 'live_stream/history_table.html' with history_items=history_items %}
+{{ history_stream }}
 
 {% endblock %}
 
