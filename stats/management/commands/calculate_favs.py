@@ -27,6 +27,8 @@ class Command(NoArgsCommand):
         history_items = history_search(user, filter="",username=user.username)
 
         if not history_items:
+            fav_data, created = FavData.objects.get_or_create(user=user)
+            self.stdout.write('Updated user %s, no history.\n' % user.username)
             return
         
         for item in history_items:
