@@ -23,7 +23,7 @@
         </span> <!-- | -->
         <span class="pull-right author-container"> 
             
-           <span><a href="/users/{{ item.user.username }}"><img class="author-pic img-rounded" data-content="{{ item.user }}" src="{% gravatar_for_user item.user %}"/> </a></span><span class='time-ago pointer' data-content="For {{ item.humanize_time }}, on {{item.start_time}}" data-time-ago="{{item.start_time}}"></span>
+           <span><a href="/users/{{ item.user.username }}"><img class="author-pic img-rounded" data-content="{{ item.user }}" src="{% gravatar_for_user item.user %}"/> </a></span><span class='time-ago pointer' data-content="For {{ item.humanize_time }}, on {{item.start_time}}" data-time-ago="{{item.start_time|date_fmt}}"></span>
         </span>
     </div>
     <!--

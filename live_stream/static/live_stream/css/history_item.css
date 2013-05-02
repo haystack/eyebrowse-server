@@ -15,11 +15,6 @@
     border-radius: 5px!important;
 }
 
-.history-container .author-container {
-    margin-bottom: 5px;
-    font-weight:normal;
-}
-
 .history-container .author-pic {
     width: 20px;
     height: 20px;
@@ -27,7 +22,6 @@
 
 .history-container .history-content {
     color:#000;
-     /*margin: 8px 10px 0px 10px; */
     font-size: 1.1em;
 }
 
@@ -50,5 +44,5 @@
 }
 
 .author-container{
-    width:200px;
+    width:155px;
 }

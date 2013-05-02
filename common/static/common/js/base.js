@@ -378,11 +378,31 @@ function setTimeAgo(){
     $.each($(".time-ago"), function(i, v){
         v = $(v);
         var time = v.data('time-ago');
-        time = time.replace("p.m.", "PM");
-        time = time.replace("a.m.", "AM");
         v.text(moment(time).fromNow());
     });
 }
+
+function submitSearch(e) {
+    if (e.which !== 1 && e.which !== 13) return
+    var query = $(".search-bar").val();
+    var date = $(".date-search-bar").val();
+    var filter = getURLParameter("filter");
+    var url = sprintf("/live_stream/?query=%s&date=%s&filter=%s", query, date, filter);
+    document.location = url;
+}
+
+//init search listeners and tooltips
+function setupSearch() {
+    $('.search-btn').click(submitSearch);
+    $('.date-search-bar').keypress(submitSearch);
+    $('.search-bar').keypress(submitSearch);
+
+    var searchTip = sprintf("Search with the %s filter", getURLParameter("filter"));
+
+    makeTip(".search-bar", searchTip, "right", "hover");
+    makeTip(".date-search-bar", "Limit search by date.", "bottom", "hover");
+}
+
 
 $(function(){
     var csrftoken = $.cookie('csrftoken');
@@ -407,5 +427,7 @@ $(function(){
 
     setTimeAgo(); //init
     setInterval(setTimeAgo, 3600);
+
+    setupSearch();
 
 });
