@@ -14,4 +14,4 @@ $(function(){
             'filter' : '',
         },
     }, updateStats);
-}); 
+});

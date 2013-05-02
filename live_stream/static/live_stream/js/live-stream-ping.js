@@ -27,7 +27,7 @@ function liveStreamPing(args, callback){
         this.setupIdle();
         this.first();
         
-        //lets display results automatically
+        //lets display results automatically instead
         // $(document).on('ping-new', $.proxy(this.showNotification, this));
         // this.$container.on('click', '.load-new', $.proxy(this.insertHistoryItems, this));
 
