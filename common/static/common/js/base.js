@@ -337,9 +337,13 @@ function infiniteScroll(infiniteSel, itemSel){
 
 //generic update stats function
 function updateStats(history_data) {
-    $("#tot_history .content").html(numberWithCommas(history_data.num_history));
-    $("#tot_online .content").html(numberWithCommas(history_data.num_online));
-    $("#is_online .content").html(numberWithCommas(history_data.is_online));
+    $("#tot_history .content").text(numberWithCommas(history_data.num_history));
+    $("#tot_online .content").text(numberWithCommas(history_data.num_online));
+    if (history_data.is_online) {
+        $("#is_online .content").html("<span class='green'> online now</span>");
+    } else {
+        $("#is_online .content").html("<span class='red'> not online </span>")
+    }
 }
 
 //humanize the timestamps passed down

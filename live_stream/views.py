@@ -31,12 +31,19 @@ def home(request):
 def ping(request):
 
     history = live_stream_query_manager(request.GET, request.user, return_type="list")
-    
+    username = request.GET.get("username", "")
+
+    if username:
+        objs = EyeHistory.objects.filter(user__username=username)
+    else:
+        objs = EyeHistory.objects.all()
+
+
     return {
         'history' : history,
-        'num_history' : EyeHistory.objects.all().count(),
+        'num_history' : objs.count(),
         'num_online' : online_user_count(),
-        'is_online' : online_user(request.GET.get("username", ""))
+        'is_online' : online_user(username)
     }
 
 @login_required
