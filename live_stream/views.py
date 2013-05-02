@@ -68,7 +68,6 @@ def search(request):
         "end_time": end_time,
     }
 
-    print "\n\n\n\nGETDICT", get_dict, "\n\n\n\n"
 
     history_stream = live_stream_query_manager(get_dict, user)
 
