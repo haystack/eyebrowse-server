@@ -16,11 +16,9 @@ def home(request):
 
     user = request.user
     
-    history_stream = live_stream_query_manager(request.GET, request.user)
+    history_stream = live_stream_query_manager(request.GET, user)
 
-    tot_time, num_history = profile_stat_gen(user, username="")
-
-    num_online = online_user_count()
+    tot_time, num_history, num_online = _get_stats(user)
 
     subnav = "subnav_" + request.GET.get('filter', "following")
 
@@ -47,5 +45,22 @@ def ping(request):
     }
 
 @login_required
+@render_to('live_stream/home.html')
 def search(request):
-    return home(request)
+    
+    tot_time, num_history, num_online = _get_stats(user)
+
+    
+
+    return _template_values(request, page_title="search", navbar="nav_home", sub_navbar="subnav_search", history_stream=history_stream, tot_time=tot_time, num_history=num_history, num_online=num_online)
+
+def _get_stats(user):
+    """
+        Helper to _get_stats
+    """
+    tot_time, num_history = profile_stat_gen(user, username="")
+
+    num_online = online_user_count()
+
+    return tot_time, num_history, num_online
+
