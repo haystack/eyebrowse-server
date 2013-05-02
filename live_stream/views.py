@@ -12,18 +12,27 @@ from common.npl.date_parser import DateRangeParser
 from live_stream.query_managers import *
 
 @login_required
-@render_to('live_stream/home.html')
-def home(request):
+@render_to('live_stream/live_stream.html')
+def live_stream(request):
 
     user = request.user
-    
-    history_stream = live_stream_query_manager(request.GET, user)
 
     tot_time, num_history, num_online = _get_stats(user)
 
-    subnav = _get_subnav(request)
+    get_dict, query, date = _get_query(request)
 
-    return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, tot_time=tot_time, num_history=num_history, num_online=num_online)
+    history_stream = live_stream_query_manager(get_dict, user)
+
+    template_dict = {
+        'query' : query,
+        'date' : date,
+        'history_stream' : history_stream,
+        'tot_time' : tot_time,
+        'num_history' : num_history,
+        'num_online' : num_online,
+    }
+
+    return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=_get_subnav(request), **template_dict)
 
 @login_required
 @ajax_request
@@ -45,36 +54,6 @@ def ping(request):
         'is_online' : online_user(username)
     }
 
-@login_required
-@render_to('live_stream/home.html')
-def search(request):
-    
-    user = request.user
-
-    tot_time, num_history, num_online = _get_stats(user)
-
-    query = request.GET.get("query", "")
-    date = request.GET.get("date", "")
-    start_time = None
-    end_time = None
-    
-    if date:
-        start_time, end_time = DateRangeParser().parse(date)
-
-    get_dict = {
-        "query" : query,
-        "filter" : request.GET.get("filter", "following"),
-        "start_time" : start_time,
-        "end_time": end_time,
-    }
-
-
-    history_stream = live_stream_query_manager(get_dict, user)
-
-    subnav = _get_subnav(request)
-
-    return _template_values(request, page_title="search", navbar="nav_home", sub_navbar=subnav, query=query, date=date, history_stream=history_stream, tot_time=tot_time, num_history=num_history, num_online=num_online)
-
 def _get_stats(user):
     """
         Helper to _get_stats
@@ -90,4 +69,25 @@ def _get_subnav(request):
         Give proper active state to obj
     """
     return "subnav_" + request.GET.get('filter', "following")
+
+def _get_query(request):
+    """
+        Get query parameters if search is used
+    """
+    query = request.GET.get("query", "")
+    date = request.GET.get("date", "")
+    start_time = None
+    end_time = None
+    
+    if date:
+        start_time, end_time = DateRangeParser().parse(date)
+
+    get_dict = {
+        "query" : query,
+        "filter" : request.GET.get("filter", "following"),
+        "start_time" : start_time,
+        "end_time": end_time,
+    }
+    
+    return get_dict, query, date
 

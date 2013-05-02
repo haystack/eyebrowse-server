@@ -44,7 +44,19 @@ def profile_data(request, username=None):
     is_online = online_user(user=profile_user)
     
 
-    return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", profile_user=profile_user, history_stream=history_stream, empty_search_msg=empty_search_msg, follows=str(follows), is_online=is_online, num_history=num_history, tot_time=tot_time, item_count=item_count, fav_data=fav_data)
+    template_dict = {
+        "profile_user" : profile_user,
+        "history_stream" : history_stream,
+        "empty_search_msg" : empty_search_msg,
+        "follows" : follows, 
+        "is_online" : is_online,
+        "num_history" : num_history,
+        "tot_time" : tot_time,
+        "item_count" : item_count,
+        "fav_data" : fav_data,
+    }
+
+    return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
 
 def _profile_info(user, username=None):
     """

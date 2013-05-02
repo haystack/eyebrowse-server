@@ -18,8 +18,9 @@ def JSONResponse(payload):
 def NotImplementedResponse():
     return JSONResponse({'error':"NotYetImplemented"})
 
-def _template_values(request, navbar='', sub_navbar='', **kwargs):
+def _template_values(request, page_title='', navbar='', sub_navbar='', **kwargs):
     template_values = {
+        'page_title' : page_title,
         navbar : 'active',
         sub_navbar : 'active',
         'user' : request.user,

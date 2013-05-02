@@ -90,8 +90,13 @@ def connections(request):
     rendered_following = connection_table_renderer(following, 'following', following)
     rendered_followers = connection_table_renderer(followers, 'followers', following)
 
+    template_dict = {
+        "rendered_followers" : rendered_followers,
+        "rendered_following" : rendered_following,
+        "header" : connections,
+    }
 
-    return _template_values(request, page_title="edit connections", header="connections", navbar='nav_account', sub_navbar="subnav_connections", rendered_following=rendered_following, rendered_followers=rendered_followers)
+    return _template_values(request, page_title="edit connections", navbar='nav_account', sub_navbar="subnav_connections", **template_dict)
 
 @login_required
 @ajax_request

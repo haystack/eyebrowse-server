@@ -3,7 +3,7 @@ function submitSearch(e) {
     var query = $(".search-bar").val();
     var date = $(".date-search-bar").val();
     var filter = getURLParameter("filter");
-    var url = sprintf("/live_stream/search/?query=%s&date=%s&filter=%s", query, date, filter);
+    var url = sprintf("/live_stream/?query=%s&date=%s&filter=%s", query, date, filter);
     document.location = url;
 }
 
