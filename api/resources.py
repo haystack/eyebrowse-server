@@ -133,7 +133,7 @@ class BlackListItemResource(FilterSetItemResource):
             obj = BlackListItem.objects.get(user=request.user, url=url)
         except BlackListItem.DoesNotExist:
             return super(BlackListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)        
-        except MultipleObjectsReturned: 
+        except MultipleObjectsReturned:
             #multiple items created, delete duplicates
             call_command("remove_duplicate_filtersets")
         return bundle
@@ -174,10 +174,15 @@ class EyeHistoryResource(BaseResource):
         
         if not in_Whitelist(url):
             return bundle
+            
         try:
             obj = EyeHistory.objects.get(user=request.user, url=url, domain=domain, title=title, total_time=total_time, src=src)
         
         except EyeHistory.DoesNotExist:
             return super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+
+        except MultipleObjectsReturned:
+            #multiple items created, delete duplicates
+            call_command("remove_duplicate_history")
         
         return bundle
