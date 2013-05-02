@@ -159,3 +159,15 @@ tr > .center {
 .affix-nav {
     margin-left:-30px;
 }
+
+.search-bar-wrap {
+    margin-left:367px;
+}
+
+.search-bar {
+    width: 681px;
+}
+
+.search-btn {
+    margin-top:-8px;
+}

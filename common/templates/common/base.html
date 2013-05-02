@@ -55,7 +55,7 @@
                             {% endcomment %}
                         {% if user.is_authenticated %}
                             <li class={{ nav_home }}>
-                                <a href="/">Home</a>
+                                <a href="/live_stream/?filter=following">Home</a>
                             </li>
 
                             <li class={{ nav_profile }}>
@@ -181,11 +181,7 @@
         {# endcompress #}
         <script type="text/javascript">
             var username = "{{user.username}}";
-            {% if user.profile.use_tour %}
-                var use_tour = true;
-            {% else %}
-                var use_tour = false;
-            {% endif %}
+            var profile_username = "{{profile_user.username}}";
         </script>
     </body>
 </html>

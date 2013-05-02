@@ -387,7 +387,14 @@ function submitSearch(e) {
     var query = $(".search-bar").val();
     var date = $(".date-search-bar").val();
     var filter = getURLParameter("filter");
-    var url = sprintf("/live_stream/?query=%s&date=%s&filter=%s", query, date, filter);
+    var url = sprintf("?query=%s&date=%s&filter=%s", query, date, filter);
+
+    if (profile_username !== "") {
+        url = sprintf("/users/%s%s&username=%s", profile_username, url, profile_username);
+    } else {
+        url = /live_stream/ + url;
+    }
+
     document.location = url;
 }
 
@@ -396,9 +403,16 @@ function setupSearch() {
     $('.search-btn').click(submitSearch);
     $('.date-search-bar').keypress(submitSearch);
     $('.search-bar').keypress(submitSearch);
+    
+    var filter = getURLParameter("filter");
+    var searchTip;
 
-    var searchTip = sprintf("Search with the %s filter", getURLParameter("filter"));
-
+    if (filter !== null) {
+        searchTip = sprintf("Search with the %s filter", filter);
+    } else {
+        searchTip = sprintf("Search %s's history", profile_username)
+    }
+    
     makeTip(".search-bar", searchTip, "right", "hover");
     makeTip(".date-search-bar", "Limit search by date.", "bottom", "hover");
 }

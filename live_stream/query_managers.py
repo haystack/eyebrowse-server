@@ -89,7 +89,7 @@ def history_search(req_user, timestamp=None, query=None, filter="following", typ
             
     except Exception as e:
         print "EXCEPTION", e
-        history = []
+        history = EyeHistory.objects.none()
 
     return history.select_related()
 

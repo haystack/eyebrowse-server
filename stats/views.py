@@ -9,7 +9,7 @@ from stats.models import FavData
 
 from live_stream.query_managers import *
 
-from common.view_helpers import _template_values
+from common.view_helpers import _template_values, _get_query
 
 from common.pagination import paginator
 
@@ -23,16 +23,15 @@ def profile_data(request, username=None):
     """
     username, follows, profile_user, empty_search_msg = _profile_info(request.user, username)
 
-    #history
-    search_params = {
-        "orderBy": "end_time", 
-        "direction": "hl",
-        "filter" : "",
-        "page" : request.GET.get("page", 1),
-        "username" : profile_user.username,
-    }
+    get_dict, query, date = _get_query(request)
 
-    history_stream = live_stream_query_manager(search_params, profile_user)
+    get_dict["orderBy"] = "end_time"
+    get_dict["direction"] = "hl"
+    get_dict["filter"] = ""
+    get_dict["page"] = request.GET.get("page", 1)
+    get_dict["username"] = profile_user.username
+
+    history_stream = live_stream_query_manager(get_dict, profile_user)
 
     ## stats
     tot_time, item_count = profile_stat_gen(profile_user)
@@ -48,12 +47,14 @@ def profile_data(request, username=None):
         "profile_user" : profile_user,
         "history_stream" : history_stream,
         "empty_search_msg" : empty_search_msg,
-        "follows" : follows, 
+        "follows" : str(follows), 
         "is_online" : is_online,
         "num_history" : num_history,
         "tot_time" : tot_time,
         "item_count" : item_count,
         "fav_data" : fav_data,
+        "query" : query,
+        "date" : date,
     }
 
     return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)

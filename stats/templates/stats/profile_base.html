@@ -16,29 +16,32 @@
         <span class="user-name">
             {{profile_user.username}}'s eyebrowse history 
         </span>
-    {% if profile_user != user %}
-        <a class="btn btn-info btn-prof-header connection">                
-            {% include 'common/snippets/follow-btn.html' with follows=follows username=profile_user.username %}
-            
-        </a> 
-    {% endif %}
-    <div class="user-metadata">
-        <div class="bio">
-            <strong>{{ profile_user.profile.bio }}</strong>
-        </div>
-        <span class="location profile-field">
-            {{ profile_user.profile.location }}
-        </span>
-        <span class="divider">·</span>
-        <span class="profile-field">
-            <a target="_blank" href="{{ profile_user.profile.website }}">
-            {{ profile_user.profile.website }}
-            </a>
+        {% if profile_user != user %}
+            <a class="btn btn-info btn-prof-header connection">                
+                {% include 'common/snippets/follow-btn.html' with follows=follows username=profile_user.username %}
+                
+            </a> 
+        {% endif %}
+        <div class="user-metadata">
+            <div class="bio">
+                <strong>{{ profile_user.profile.bio }}</strong>
+            </div>
+            <span class="location profile-field">
+                {{ profile_user.profile.location }}
+            </span>
+            <span class="divider">·</span>
+            <span class="profile-field">
+                <a target="_blank" href="{{ profile_user.profile.website }}">
+                {{ profile_user.profile.website }}
+                </a>
 
-        </span>
-    </div>
+            </span>
+        </div>
         
     </div>
+    
+    {% include "live_stream/search_bar.html" %}
+
 </div>
 
 {% block profile_content %}

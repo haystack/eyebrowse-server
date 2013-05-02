@@ -49,6 +49,9 @@ function liveStreamPing(args, callback){
     }
 
     this.ping = function(){
+        if ($(".date-search-bar").val() !== "") {
+            this.canPing = false
+        }
         if (!this.canPing) return;
         var filter = this.filterFunc('filter') || this.defaultFilter;
         var timestamp = $('.first .date').data('timestamp');

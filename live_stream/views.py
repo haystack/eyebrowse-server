@@ -6,8 +6,7 @@ from django.shortcuts import redirect
 
 from annoying.decorators import render_to, ajax_request
 
-from common.view_helpers import _template_values
-from common.npl.date_parser import DateRangeParser
+from common.view_helpers import _template_values, _get_query
 
 from live_stream.query_managers import *
 
@@ -20,6 +19,8 @@ def live_stream(request):
     tot_time, num_history, num_online = _get_stats(user)
 
     get_dict, query, date = _get_query(request)
+
+    print get_dict
 
     history_stream = live_stream_query_manager(get_dict, user)
 
@@ -38,7 +39,10 @@ def live_stream(request):
 @ajax_request
 def ping(request):
 
-    history = live_stream_query_manager(request.GET, request.user, return_type="list")
+    get_dict, query, date = _get_query(request)
+
+    history = live_stream_query_manager(get_dict, request.user, return_type="list")
+
     username = request.GET.get("username", "")
 
     if username:
@@ -69,25 +73,3 @@ def _get_subnav(request):
         Give proper active state to obj
     """
     return "subnav_" + request.GET.get('filter', "following")
-
-def _get_query(request):
-    """
-        Get query parameters if search is used
-    """
-    query = request.GET.get("query", "")
-    date = request.GET.get("date", "")
-    start_time = None
-    end_time = None
-    
-    if date:
-        start_time, end_time = DateRangeParser().parse(date)
-
-    get_dict = {
-        "query" : query,
-        "filter" : request.GET.get("filter", "following"),
-        "start_time" : start_time,
-        "end_time": end_time,
-    }
-    
-    return get_dict, query, date
-
