@@ -1,5 +1,3 @@
-{% load humanize %}
-
 <!-- Desktop display -->
 <div class="span3 search-nav hidden-phone">
     <div class="span3" data-spy="affix">
@@ -7,30 +5,12 @@
         {% include 'live_stream/subnav_content.html' %}
         </ul>
 
-        <div class="home-statbox light-well" id="tot_history">
-            <div class="content big centered">
-                {{ num_history|intcomma }}
-            </div>
-            <div class="statbox-footer centered">
-                history items collected
-            </div>
-        </div>
+        {% include "stats/statboxes/tot_history.html" %}
+        
+        {% include "stats/statboxes/tot_time.html" %}
+        
+        {% include "stats/statboxes/tot_online.html" %}
 
-        <div class="home-statbox light-well" id="tot_time">
-            <div class="statbox-header centered">
-                total time spent
-            </div>
-            <div class="content big centered time-stat" data-time="{{ tot_time }}"></div>
-        </div>
-
-        <div class="home-statbox light-well" id="tot_online">
-            <div class="content big centered">
-                {{ num_online|intcomma }}
-            </div>
-            <div class="statbox-footer centered">
-                total users online
-            </div>
-        </div>
     </div>
 </div>
 
