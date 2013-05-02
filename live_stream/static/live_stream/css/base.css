@@ -5,3 +5,7 @@
 .search-bar {
     width: 681px;
 }
+
+.search-btn {
+    margin-top:-8px;
+}

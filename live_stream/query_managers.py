@@ -17,12 +17,12 @@ import operator
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
-    valid_params = ['timestamp', 'query', 'following', 'firehose', 'search', 'direction','filter', 'ping', 'req_user', 'username', 'limit', 'orderBy']
+    valid_params = ["timestamp", "query", "following", "firehose", "direction", "filter", "ping", "req_user", "username", "limit", "orderBy", "start_time", "end_time"]
 
     valid_types = {
-        'ping' : {
-            'timestamp' : get_dict.get('timestamp', datetime.now()),
-            'type' : 'ping',
+        "ping" : {
+            "timestamp" : get_dict.get("timestamp", datetime.now()),
+            "type" : "ping",
         },
     }
     
@@ -31,13 +31,13 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
         if k in valid_params:
             search_params[k] = v
     
-    type = get_dict.get('type', None)
+    type = get_dict.get("type", None)
     if type in valid_types:
         search_params = dict(search_params, **valid_types[type])
 
     history = history_search(req_user, **search_params)
     
-    page = get_dict.get('page', 1)
+    page = get_dict.get("page", 1)
 
     history = paginator(page, history)
 
@@ -47,37 +47,45 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     else:
         following = set([])
 
-    return history_renderer(req_user, history, return_type,  get_dict.get('template'), get_param=search_params.get('filter'), following=following)
+    return history_renderer(req_user, history, return_type,  get_dict.get("template"), get_param=search_params.get("filter"), following=following)
 
 
 
-def history_search(req_user, timestamp=None, query=None, filter='following', type=None, direction='hl', orderBy="start_time", limit=None, username=None):
+def history_search(req_user, timestamp=None, query=None, filter="following", type=None, direction="hl", orderBy="start_time", limit=None, username=None, start_time=None, end_time=None):
 
     history = EyeHistory.objects.all()
     try:
         
         if query:
             history = history.filter(Q(title__contains=query) | Q(url__contains=query))
+            # print history.count(), "query"
         
-        if filter == 'following' and req_user.is_authenticated():
+        if filter == "following" and req_user.is_authenticated():
             history = req_user.profile.get_following_history(history=history)
+            # print history.count(), "filter"
         
         if username:
             history = history.filter(user__username=username)
+            # print history.count(), "username"
         
         orderBy = "-" + orderBy
-        if direction == 'lh':
+        if direction == "lh":
             orderBy = orderBy[1:]
         history = history.order_by(orderBy)
-        
 
+        if start_time and end_time:
+            history = history.filter(start_time__gt=start_time, end_time__lt=end_time)
+            # print history.count(), "start/end", start_time, end_time
+        
         #ping data with latest time and see if time is present
         ## must be last
-        if type == 'ping' and timestamp:
+        if type == "ping" and timestamp:
             history = history.filter(start_time__gt=timestamp)
+            # print history.count(), "ping"
 
         if limit:
             history = history[:limit]
+            # print history.count(), "limit"
             
     except Exception as e:
         print "EXCEPTION", e
@@ -98,7 +106,7 @@ def profile_stat_gen(profile_user, username=None, url=None):
     if url:
         history_items = history_items.filter(url=url)
 
-    total_time = history_items.aggregate(total=Sum('total_time'))
+    total_time = history_items.aggregate(total=Sum("total_time"))
 
     return total_time["total"], history_items.count()
 

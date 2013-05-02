@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from annoying.decorators import render_to, ajax_request
 
 from common.view_helpers import _template_values
+from common.npl.date_parser import DateRangeParser
 
 from live_stream.query_managers import *
 
@@ -20,7 +21,7 @@ def home(request):
 
     tot_time, num_history, num_online = _get_stats(user)
 
-    subnav = "subnav_" + request.GET.get('filter', "following")
+    subnav = _get_subnav(request)
 
     return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=subnav, history_stream=history_stream, tot_time=tot_time, num_history=num_history, num_online=num_online)
 
@@ -48,11 +49,32 @@ def ping(request):
 @render_to('live_stream/home.html')
 def search(request):
     
+    user = request.user
+
     tot_time, num_history, num_online = _get_stats(user)
 
+    query = request.GET.get("query", "")
+    date = request.GET.get("date", "")
+    start_time = None
+    end_time = None
     
+    if date:
+        start_time, end_time = DateRangeParser().parse(date)
 
-    return _template_values(request, page_title="search", navbar="nav_home", sub_navbar="subnav_search", history_stream=history_stream, tot_time=tot_time, num_history=num_history, num_online=num_online)
+    get_dict = {
+        "query" : query,
+        "filter" : request.GET.get("filter", "following"),
+        "start_time" : start_time,
+        "end_time": end_time,
+    }
+
+    print "\n\n\n\nGETDICT", get_dict, "\n\n\n\n"
+
+    history_stream = live_stream_query_manager(get_dict, user)
+
+    subnav = _get_subnav(request)
+
+    return _template_values(request, page_title="search", navbar="nav_home", sub_navbar=subnav, query=query, date=date, history_stream=history_stream, tot_time=tot_time, num_history=num_history, num_online=num_online)
 
 def _get_stats(user):
     """
@@ -63,4 +85,10 @@ def _get_stats(user):
     num_online = online_user_count()
 
     return tot_time, num_history, num_online
+
+def _get_subnav(request):
+    """
+        Give proper active state to obj
+    """
+    return "subnav_" + request.GET.get('filter', "following")
 

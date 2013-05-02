@@ -53,7 +53,7 @@ function typeahead(id) {
     id = '#' + id;
     $(id).typeahead({
         source: function (typeahead, query) {
-            return $.get('/api/typeahead/', {'query':query}, function(res) {
+            return $.get('/api/typeahead/', {'query': query}, function(res) {
                 if (res.success) {
                     return typeahead.process(res.users);
                 }
@@ -308,7 +308,6 @@ function getURLParameter(name) {
     if (res == 'null'){
         res = null
     }
-
     return res
 }
 
