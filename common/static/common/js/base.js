@@ -343,7 +343,24 @@ function updateStats(history_data) {
     } else {
         $("#is_online .content").html("<span class='red'> not online </span>")
     }
-    setTips('.cut-content');
+
+
+}
+
+//set tool tips for truncated data
+function setHistoryTips() {
+    setTips('.author-pic', 'left'); 
+    setTips('.time-ago');
+    setTips('.cut-content'); 
+    setTips('.cut-url', 'left'); 
+    setTimeAgo();
+}
+
+//generic callback for livestream ping
+//this should be called by any modifed functions
+function liveStreamCallback(history_data){
+    setHistoryTips();
+    updateStats(history_data);
 }
 
 //humanize the timestamps passed down
@@ -354,6 +371,18 @@ function calculateStats() {
     });
 }
 
+//find all objects that have a time-ago and update 
+//the humanzied time from when the event occurred.
+//runs on a 1 minute interval
+function setTimeAgo(){
+    $.each($(".time-ago"), function(i, v){
+        v = $(v);
+        var time = v.data('time-ago');
+        time = time.replace("p.m.", "PM");
+        time = time.replace("a.m.", "AM");
+        v.text(moment(time).fromNow());
+    });
+}
 
 $(function(){
     var csrftoken = $.cookie('csrftoken');
@@ -376,4 +405,7 @@ $(function(){
 
     infiniteScroll();
 
-}); 
+    setTimeAgo(); //init
+    setInterval(setTimeAgo, 3600);
+
+});

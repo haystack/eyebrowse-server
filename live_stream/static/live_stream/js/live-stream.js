@@ -14,11 +14,11 @@ $(function(){
         'searchParams' : {
             'template':'history_item_template_new'
         },
-    }, updateStats);
+    }, liveStreamCallback);
 
     calculateStats();
 
-    makeTip(".date-search-bar", "Limit search by date", "bottom", "hover");
+    makeTip(".date-search-bar", "Limit search by date.", "bottom", "hover");
 
     $('.history-container').on('click', '.connection', follow);
     $('.search-btn').click(submitSearch);
