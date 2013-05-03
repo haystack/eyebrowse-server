@@ -41,6 +41,8 @@ def ping(request):
 
     get_dict, query, date = _get_query(request)
 
+    print get_dict
+
     history = live_stream_query_manager(get_dict, request.user, return_type="list")
 
     username = request.GET.get("username", "")

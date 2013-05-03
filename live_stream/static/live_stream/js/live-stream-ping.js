@@ -50,17 +50,17 @@ function liveStreamPing(args, callback){
 
     this.ping = function(){
         if ($(".date-search-bar").val() !== "") {
-            this.canPing = false
+            this.canPing = false;
         }
         if (!this.canPing) return;
         var filter = this.filterFunc('filter') || this.defaultFilter;
         var timestamp = $('.first .date').data('timestamp');
         var payload =  {
-            'filter' : filter, 
+            'filter' : filter,
             'timestamp' : timestamp,
             'return_type' : 'list',
             'type' : 'ping',
-            }
+        };
         for (var attrname in this.searchParams) { 
             payload[attrname] = this.searchParams[attrname]; 
         }

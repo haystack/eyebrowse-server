@@ -51,6 +51,7 @@ def _get_query(request):
         "orderBy" : request.GET.get("orderBy", "start_time"),
         "direction" : request.GET.get("direction", ""),
         "template" : request.GET.get("template", ""),
+        "type" : request.GET.get("type", ""),
     }
     
     return get_dict, query, date

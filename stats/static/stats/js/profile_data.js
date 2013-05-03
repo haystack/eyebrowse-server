@@ -15,5 +15,5 @@ $(function(){
             'query' :  $(".search-bar").val(),
             'date' :  $(".date-search-bar").val(),
         },
-    }, updateStats);
+    }, liveStreamCallback);
 });
