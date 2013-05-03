@@ -47,15 +47,21 @@ def ping(request):
 
     if username:
         objs = EyeHistory.objects.filter(user__username=username)
+
     else:
         objs = EyeHistory.objects.all()
 
+    try:
+        user = User.objects.get(username=username)
+
+    except User.DoesNotExist:
+        user = None
 
     return {
         'history' : history,
         'num_history' : objs.count(),
         'num_online' : online_user_count(),
-        'is_online' : online_user(username),
+        'is_online' : online_user(user),
     }
 
 def _get_stats(user):
