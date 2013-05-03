@@ -24,7 +24,7 @@ def date_ms(dt):
 
 @register.filter
 def date_fmt(dt):
-    return str(dt)
+    return str(dt).split("+")[0]
 
 @register.simple_tag
 def include_script(script_name):
