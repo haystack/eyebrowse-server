@@ -36,8 +36,8 @@ def _get_query(request):
     """
     query = request.GET.get("query", "")
     date = request.GET.get("date", "")
-    start_time = None
-    end_time = None
+    start_time = ''
+    end_time = ''
     
     if date:
         start_time, end_time = DateRangeParser().parse(date)
@@ -52,6 +52,7 @@ def _get_query(request):
         "direction" : request.GET.get("direction", ""),
         "template" : request.GET.get("template", ""),
         "type" : request.GET.get("type", ""),
+        "page" : request.GET.get("page", 1),
     }
     
     return get_dict, query, date

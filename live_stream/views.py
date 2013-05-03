@@ -41,8 +41,6 @@ def ping(request):
 
     get_dict, query, date = _get_query(request)
 
-    print get_dict
-
     history = live_stream_query_manager(get_dict, request.user, return_type="list")
 
     username = request.GET.get("username", "")
@@ -57,7 +55,7 @@ def ping(request):
         'history' : history,
         'num_history' : objs.count(),
         'num_online' : online_user_count(),
-        'is_online' : online_user(username)
+        'is_online' : online_user(username),
     }
 
 def _get_stats(user):

@@ -343,8 +343,6 @@ function updateStats(history_data) {
     } else {
         $("#is_online .content").html("<span class='red'> not online </span>")
     }
-
-
 }
 
 //set tool tips for truncated data

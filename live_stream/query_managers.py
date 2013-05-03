@@ -47,7 +47,7 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     else:
         following = set([])
 
-    return history_renderer(req_user, history, return_type,  get_dict.get("template"), get_param=search_params.get("filter"), following=following)
+    return history_renderer(req_user, history, return_type,  get_dict.get("template"), get_params=search_params, following=following)
 
 
 
@@ -58,15 +58,15 @@ def history_search(req_user, timestamp=None, query=None, filter="following", typ
         
         if query:
             history = history.filter(Q(title__contains=query) | Q(url__contains=query))
-            # print history.count(), "query"
+            print history.count(), "query"
         
         if filter == "following" and req_user.is_authenticated():
             history = req_user.profile.get_following_history(history=history)
-            # print history.count(), "filter"
+            print history.count(), "filter"
         
         if username:
             history = history.filter(user__username=username)
-            # print history.count(), "username"
+            print history.count(), "username"
         
         orderBy = "-" + orderBy
         if direction == "lh":
@@ -75,7 +75,7 @@ def history_search(req_user, timestamp=None, query=None, filter="following", typ
 
         if start_time and end_time:
             history = history.filter(start_time__gt=start_time, end_time__lt=end_time)
-            # print history.count(), "start/end", start_time, end_time
+            print history.count(), "start/end", start_time, end_time
         
         #ping data with latest time and see if time is present
         ## must be last
@@ -83,11 +83,11 @@ def history_search(req_user, timestamp=None, query=None, filter="following", typ
         print type, timestamp
         if type == "ping" and timestamp:
             history = history.filter(start_time__gt=timestamp)
-            print history.count(), "ping"
+            # print history.count(), "ping"
 
         if limit:
             history = history[:limit]
-            # print history.count(), "limit"
+            print history.count(), "limit"
             
     except Exception as e:
         print "EXCEPTION", e

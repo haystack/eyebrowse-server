@@ -3,11 +3,13 @@ from django.template.loader import render_to_string
 from common.pagination import paginator
 from common.constants import *
 
-def history_renderer(user, history, return_type, template, get_param=None, following=None):
+import urllib
+
+def history_renderer(user, history, return_type, template, get_params=None, following=None):
     """ 
-    Can render a history as html block or list of
-    html items. User is the user requesting the view.
-    History should be paginated before entering.
+        Can render a history as html block or list of
+        html items. User is the user requesting the view.
+        History should be paginated before entering.
     """
     if return_type == "html":
         
@@ -20,10 +22,8 @@ def history_renderer(user, history, return_type, template, get_param=None, follo
             'following' : following,
         }
 
-        if get_param:
-            if (get_param) == list:
-                get_param = get_param[0]
-            template_values['link_mod'] = "&filter=" + get_param
+        if get_params:
+            template_values['link_mod'] = "&" + urllib.urlencode(get_params)
         return render_to_string('live_stream/timeline.html',template_values)
 
     elif return_type == "list":
