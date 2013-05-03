@@ -35,7 +35,7 @@ def account(request):
         errors = {}
         data = None
         type = request.POST.get('form_type', None)
-        print request.POST  
+        
         if type == 'account-info':
             first_name = request.POST.get('first_name', '')
             last_name = request.POST.get('last_name', '')
