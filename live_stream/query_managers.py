@@ -9,10 +9,10 @@ from accounts.models import *
 
 from common.pagination import paginator
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from common.templatetags.filters import url_domain
-
+from django.utils import timezone
 import operator
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
@@ -21,7 +21,7 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
     valid_types = {
         "ping" : {
-            "timestamp" : get_dict.get("timestamp", datetime.now()),
+            "timestamp" : get_dict.get("timestamp", timezone.now()),
             "type" : "ping",
         },
     }
@@ -131,7 +131,7 @@ def _online_users():
     """
         Computes all of the users from the history items from the last 5 minutes
     """
-    timestamp =  datetime.now() - timedelta(minutes=5)
+    timestamp =  timezone.now() - timedelta(minutes=5)
 
     history = EyeHistory.objects.filter(start_time__gt=timestamp).select_related()
 
