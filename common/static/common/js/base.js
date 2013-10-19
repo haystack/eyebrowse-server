@@ -53,18 +53,58 @@ function typeahead(id) {
     id = '#' + id;
     $(id).typeahead({
         source: function (typeahead, query) {
-            return $.get('/api/typeahead/', {'query': query}, function(res) {
+            return $.getJSON('/api/typeahead/', {'query': query}, function(res) {
                 if (res.success) {
-                    return typeahead.process(res.users);
+                	var arr = [];
+                    $.each(res.users, function (index, value) {
+                    	var res_item = { username: value.username, fullname: value.fullname, email: value.email, gravatar: value.gravatar};
+                    	arr.push(JSON.stringify(res_item));
+                    });
+                    console.log(arr)
+                    return typeahead.process(arr);
                 }
             });
         },
         // typeahead calls this function when a object is selected, and passes an object or string depending on what you processed, in this case a string
         onselect: function (obj) {
+        	var item = JSON.parse(obj);
             $(id).blur();
-            window.location = $(obj).children().attr("href");
+            window.location = '/users/'+item.username
         },
+        highlighter: function(obj) {
+        	var item = JSON.parse(obj);
+        	
+        	var regex = new RegExp('(' + this.query + ')', 'ig')
+        	var func = function ($1, match) { return '<strong>' + match + '</strong>'}
+        	
+        	username = item.username.replace(regex, func)
+        	fullname = item.fullname.replace(regex, func)
+        	html = '<li><a href="/users/'+item.username+'">'+item.gravatar;
+        	html += '<span class="fullname">'+fullname+'</span> ';
+        	html += '<span class="username">'+username+'</span></a></li>';
+			return html;
+        },
+        matcher: function (obj) {
+        	var item = JSON.parse(obj);
+        	return item.username.toLowerCase().indexOf(this.query.toLowerCase()) > -1 || item.fullname.toLowerCase().indexOf(this.query.toLowerCase()) > -1 || item.email.toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+		},
+		sorter: function(items) {
+		    var beginswith = []
+				, caseSensitive = []
+				, caseInsensitive = []
+		    	, aitem;
+		    	
+		    while (aitem = items.shift()) {
+		    	var item = JSON.parse(aitem);
 
+        		if (!item.username.toLowerCase().indexOf(this.query.toLowerCase())) beginswith.push(aitem)
+        		else if (!item.fullname.toLowerCase().indexOf(this.query.toLowerCase())) beginswith.push(aitem)
+        		else if (item.username.indexOf(this.query)) caseSensitive.push(aitem)
+        		else if (item.fullname.indexOf(this.query)) caseSensitive.push(aitem)
+        		else caseInsensitive.push(aitem)
+      		}
+      		return beginswith.concat(caseSensitive, caseInsensitive)
+		},
     });
 }
 
