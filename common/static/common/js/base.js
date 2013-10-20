@@ -78,9 +78,9 @@ function typeahead(id) {
         	
         	username = item.username.replace(regex, func)
         	fullname = item.fullname.replace(regex, func)
-        	html = '<li><a href="/users/'+item.username+'">'+item.gravatar;
+        	html = '<a href="/users/'+item.username+'"><li>'+item.gravatar;
         	html += '<span class="fullname">'+fullname+'</span> ';
-        	html += '<span class="username">'+username+'</span></a></li>';
+        	html += '<span class="username">'+username+'</span></li></a>';
 			return html;
         },
         matcher: function (obj) {
