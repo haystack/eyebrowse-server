@@ -60,7 +60,6 @@ function typeahead(id) {
                     	var res_item = { username: value.username, fullname: value.fullname, email: value.email, gravatar: value.gravatar};
                     	arr.push(JSON.stringify(res_item));
                     });
-                    console.log(arr)
                     return typeahead.process(arr);
                 }
             });
