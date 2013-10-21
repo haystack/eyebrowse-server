@@ -3,14 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from django.template.loader import render_to_string
 
 from annoying.decorators import ajax_request
 
 from accounts.models import *
 from api.models import *
 from common.view_helpers import _template_values, JSONResponse, NotImplementedResponse
-
+from common.templatetags.gravatar import gravatar_img_for_user
 from common.view_helpers import validate_url
 
 @login_required
@@ -62,10 +61,10 @@ def typeahead(request):
     
     if query:
         users = User.objects.filter(
-            Q(username__startswith=query) | Q(email__startswith=query, userprofile__anon_email=False)
+            Q(username__istartswith=query) | Q(email__istartswith=query, userprofile__anon_email=False)
         )
         if users.exists():
-            users = [render_to_string('api/typeahead_row.html', {'user' : user}) for user in users]
+            users = [{'username': user.username, 'fullname': user.get_full_name(), 'email': user.email, 'gravatar': gravatar_img_for_user(user,24)} for user in users]
             errors = None
             success = True
         else:
