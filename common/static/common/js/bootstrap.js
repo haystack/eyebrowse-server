@@ -1668,7 +1668,7 @@
         , text
 
       if (!this.strings) text = val[this.options.property]
-      else text = val
+      else text = val['username']
 
       this.$element.val(text)
 
