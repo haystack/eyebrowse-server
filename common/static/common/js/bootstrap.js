@@ -1824,6 +1824,7 @@
       this.$menu
         .on('click', $.proxy(this.click, this))
         .on('mouseenter', 'li', $.proxy(this.mouseenter, this))
+        .on('mouseleave', 'li', $.proxy(this.mouseleave, this))
     }
 
   , keyup: function (e) {
@@ -1888,10 +1889,13 @@
     }
 
   , mouseenter: function (e) {
-      this.$menu.find('.active').removeClass('active')
       $(e.currentTarget).addClass('active')
     }
-
+    
+  , mouseleave: function() {
+  	  this.$menu.find('.active').removeClass('active')
+	}
+	
   }
 
 
