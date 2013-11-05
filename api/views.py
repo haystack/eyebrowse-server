@@ -60,16 +60,25 @@ def typeahead(request):
     users = None
     
     if query:
-        users = User.objects.filter(
-            Q(username__istartswith=query) | Q(email__istartswith=query, userprofile__anon_email=False)
-        )
-        if users.exists():
-            users = [{'username': user.username, 'fullname': user.get_full_name(), 'email': user.email, 'gravatar': gravatar_img_for_user(user,24)} for user in users]
-            errors = None
-            success = True
-        else:
+        users = []
+        terms = query.split()
+        for term in terms:
+            filtered_users = User.objects.filter(
+                Q(username__istartswith=term) | Q(email__istartswith=term, userprofile__anon_email=False) | 
+                Q(first_name__istartswith=term) | Q(last_name__istartswith=term)
+            )
+            if filtered_users.exists():
+                users.extend([{'username': user.username, 
+                               'fullname': user.get_full_name(), 
+                               'email': user.email, 
+                               'gravatar': gravatar_img_for_user(user,24)} 
+                              for user in filtered_users])
+        if len(users) == 0:
             errors = 'no match. query: %s' % query
             users = None
+        else:
+            errors = None
+            success = True
     res =  {
         'success' : success,
         'errors' : errors,
