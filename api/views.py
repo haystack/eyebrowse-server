@@ -57,10 +57,9 @@ def typeahead(request):
     query = request.GET.get('query', None)
     success =  False
     errors = "no query"
-    users = None
+    users = []
     
     if query:
-        users = []
         terms = query.split()
         for term in terms:
             filtered_users = User.objects.filter(
@@ -73,12 +72,12 @@ def typeahead(request):
                                'email': user.email, 
                                'gravatar': gravatar_img_for_user(user,24)} 
                               for user in filtered_users])
-        if len(users) == 0:
+        if not len(users):
             errors = 'no match. query: %s' % query
-            users = None
         else:
             errors = None
             success = True
+    
     res =  {
         'success' : success,
         'errors' : errors,
@@ -86,4 +85,3 @@ def typeahead(request):
     }
 
     return res
-                
