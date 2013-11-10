@@ -4,7 +4,9 @@ def getURL(domain, https=False, http=False, www=False):
         protocol +='s'
     return "%s://%s.com"%(protocol, domain)
 
-
+"""
+If adding values to this list, must run resource_helpers.wipe_blacklist() in shell
+"""
 DEFAULT_BLACKLIST = [
     getURL('google', https=True),
     getURL('google'),
