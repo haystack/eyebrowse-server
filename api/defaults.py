@@ -1,8 +1,15 @@
 def getURL(domain, https=False, http=False, www=False):
-    protocol = 'http'
-    if https:
-        protocol +='s'
-    return "%s://%s.com"%(protocol, domain)
+    assert not (https and http)
+    if http:
+        protocol = 'http://'
+    elif https:
+        protocol = 'https://'
+    else:
+        protocol = ''
+    if www:
+        return "%swww.%s.com" % (protocol, domain)
+    else:
+        return "%s%s.com" % (protocol, domain)
 
 """
 If adding values to this list, must run resource_helpers.wipe_blacklist() in shell
@@ -25,3 +32,5 @@ DEFAULT_BLACKLIST = [
     getURL('duckduckgo'),
     
 ]
+
+print DEFAULT_BLACKLIST

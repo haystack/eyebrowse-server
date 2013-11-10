@@ -31,11 +31,12 @@ def whitelist_add(request):
             url = request.POST.get('whitelist')
             errors['whitelist'] = []
             data = {'url' : url}
-            if not validate_url(url):
+            
+            if url in DEFAULT_BLACKLIST:
+                errors['whitelist'].append("Cannot whitelist this url.")
+            elif not validate_url(url):
                 if url.strip() == "":
                     errors['whitelist'].append("Enter a url!")
-                elif url in DEFAULT_BLACKLIST:
-                    errors['whitelist'].append("Cannot whitelist this url.")
                 else:
                     errors['whitelist'].append(url + " is not a valid url.")
 
