@@ -22,16 +22,10 @@ def set_user_perms(user):
     [user.user_permissions.add(perm) for perm in to_add]
     user.save()
 
-def set_default_filterset(sender, instance, created, **kwargs):
-    if created:
-        add_defaults(instance, DEFAULT_WHITELIST, WhiteListItem)
-        add_defaults(instance, DEFAULT_BLACKLIST, BlackListItem)
-
 def add_defaults(user, default_list, filter_set_item):
     for url in default_list:
         item = filter_set_item(user=user, url=url)
         item.save()
 
 def setup():
-    post_save.connect(create_user_profile, sender=User) 
-    post_save.connect(set_default_filterset, sender=User)
+    post_save.connect(create_user_profile, sender=User)
