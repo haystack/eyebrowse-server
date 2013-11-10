@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
-from common.defaults import DEFAULT_WHITELIST, DEFAULT_BLACKLIST
 from accounts.models import *
 from api.models import WhiteListItem, BlackListItem
 from stats.models import FavData
