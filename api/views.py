@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
 from annoying.decorators import ajax_request
+from api.defaults import DEFAULT_BLACKLIST
 
 from accounts.models import *
 from api.models import *
@@ -33,17 +34,19 @@ def whitelist_add(request):
             if not validate_url(url):
                 if url.strip() == "":
                     errors['whitelist'].append("Enter a url!")
+                elif url in DEFAULT_BLACKLIST:
+                    errors['whitelist'].append("Cannot whitelist this url.")
                 else:
-                    errors['whitelist'].append(url + ' is not a valid url.')
+                    errors['whitelist'].append(url + " is not a valid url.")
 
             elif WhiteListItem.objects.filter(url=url, user=user).exists():
-                    errors['whitelist'].append('You already registered the whitelist item %s'%url)
+                    errors['whitelist'].append("You already registered the whitelist item %s" % url)
 
             if not len(errors['whitelist']):
                 whitelist_item = WhiteListItem(url=url, user=user)
                 whitelist_item.save()
                 data['id'] = whitelist_item.id
-                success = "Added %s"%url
+                success = "Added %s" % url
 
     return {
         'success' : success,

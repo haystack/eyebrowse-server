@@ -10,6 +10,7 @@ from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
 
+from api.defaults import DEFAULT_BLACKLIST
 from accounts.models import UserProfile
 from api.models import *
 from resource_helpers import *
@@ -105,6 +106,10 @@ class WhiteListItemResource(FilterSetItemResource):
         blacklist_item = get_BlackListItem(url) #check to see if this exists
         if blacklist_item:
             blacklist_item.delete()
+
+        #do not create if it is a default blacklist url
+        if url in DEFAULT_BLACKLIST:
+            return bundle
 
         try:
             obj = WhiteListItem.objects.get(user=request.user, url=url)
