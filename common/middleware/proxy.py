@@ -1,9 +1,9 @@
 from django.utils import simplejson as json
-import os
-import requests
 from django.http import HttpResponse
-
 from urlparse import urlparse
+
+import requests
+import os
 
 REQUEST_MAP = {
     "GET" : requests.get,
@@ -16,64 +16,51 @@ COOKIE_KEYS = ["csrftoken", "sessionid"]
 HEADER_KEYS = ["Content-Type"]
 IGNORED_ARGS = set(["proxy_url"] + COOKIE_KEYS + HEADER_KEYS)
 IGNORE_HEADERS = ["Origin", "User-Agent", "Host"]
-PROD_NETLOC = "eyebrowse.csail.mit.edu"
-STAGING_NETLOC = "eyebrowse-staging.csail.mit.edu"
-DEV_NETLOC = "localhost:5000"
+ALLOWED_NETLOC = set(["eyebrowse.csail.mit.edu", "eyebrowse-staging.csail.mit.edu", "localhost:5000"])
+LOGIN = "login"
 
 class ProxyMiddleware(object):
     """
     Takes cookie and sessionid values of request and creates actual django cookies
     """
     def process_request(self, request):
-        # print "PROCESS REQUEST"
         return _process(request)
 
 def _process(request):
     params = request.GET
     proxy_url = None
+    
     if len(params) > 0:
         proxy_url = params.get("proxy_url")
     
     if proxy_url:
         method = request.method
-        print "FIREFOX EXTENSION"
         netloc = urlparse(proxy_url).netloc
         
-        print netloc
-        if netloc != PROD_NETLOC and netloc != DEV_NETLOC and netloc != STAGING_NETLOC:
-            # print "NOT ALLOWED NETLOC"
-            return {
-                "error" : "Invalid proxy url provided, must foward to eyebrowse."
-            }
-        elif method not in REQUEST_MAP:
-            # print "NOT METHOD"
-            return {
-                "error" : "Invalid request method type" + method
-                }
-        print "packing request"
+        if netloc not in ALLOWED_NETLOC:
+            return _err_response("Invalid proxy url provided, must foward to eyebrowse.")
+
+        if method not in REQUEST_MAP:
+            return _err_response("Invalid request method type %s" % method)
+
         request_dict = _pack_request(request)
-        print "request packed"
         res = REQUEST_MAP[method](proxy_url, **request_dict)
-        print "request made"
         res = _pack_response(res)
-        print "response packed"
         response = HttpResponse(res['response'])
-        print "response made"
-        if "login" in proxy_url:
+        
+        if LOGIN in proxy_url:
             val = ''
-            for (key,value) in json.loads(res['response']).items():
+            try:
+                json_res = json.loads(res['response'])
+            except:
+                return _err_response("JSON decode error.")
+
+            for key, value in json_res.iteritems():
                 if key == 'sessionid':
-                    # print "FOUND KEY",key,"VALUE",value
                     val = value
-            # print "SETTING SESSIONID"
-            response.set_cookie('sessionid',val)
-            # print "SESSIONID SET"
-        #for (key,value) in request.META.items():
-        #    response.__setitem__(key,value)
-        # print "HEADER SET"
+            response.set_cookie('sessionid', val)
         return response
 
-    # print "LETTING IT GO TO VIEW: CHROME"
     return None
 
 def _pack_request(request):
@@ -96,8 +83,14 @@ def _pack_request(request):
         "allow_redirects" : True
     }
 
+def _err_response(err_msg):
+    return {
+        'error' : err_msg
+    }
+
 def _extract_cookies(args):
     return _extract_args(args, COOKIE_KEYS)
+
 def _extract_headers(args):
     return _extract_args(args, HEADER_KEYS)
 
@@ -113,7 +106,7 @@ def _clean_args(arg_dict):
         Take out the proxy args
     """
     clean_args = {}
-    for k, v in arg_dict.items():
+    for k, v in arg_dict.iteritems():
         if not k in IGNORED_ARGS:
             clean_args[k] = v    
     return clean_args
