@@ -23,11 +23,11 @@ def whitelist_add(request):
     success = False
     errors = {}
     data = None
-    type = request.POST.get('form_type', None)
+    _type = request.POST.get('form_type', None)
     
     if request.POST and request.is_ajax():
         
-        if type == "whitelist":
+        if _type == "whitelist":
             url = request.POST.get('whitelist')
             errors['whitelist'] = []
             data = {'url' : url}
@@ -38,7 +38,7 @@ def whitelist_add(request):
                 if url.strip() == "":
                     errors['whitelist'].append("Enter a url!")
                 else:
-                    errors['whitelist'].append(url + " is not a valid url.")
+                    errors['whitelist'].append("%s is not a valid url." % url)
 
             elif WhiteListItem.objects.filter(url=url, user=user).exists():
                     errors['whitelist'].append("You already registered the whitelist item %s" % url)
@@ -52,7 +52,7 @@ def whitelist_add(request):
     return {
         'success' : success,
         'errors': errors,
-        'type' : type,
+        'type' : _type,
         'data' : data,
     }
 

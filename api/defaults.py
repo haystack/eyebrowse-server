@@ -1,36 +1,36 @@
-def getURL(domain, https=False, http=False, www=False):
-    assert not (https and http)
-    if http:
-        protocol = 'http://'
-    elif https:
-        protocol = 'https://'
-    else:
-        protocol = ''
+PROTOCALS = ('http://', 'https://', '')
+
+def get_urls(domain, www=False):
+    
+    urls = ["%s%s.com"]
+    
     if www:
-        return "%swww.%s.com" % (protocol, domain)
-    else:
-        return "%s%s.com" % (protocol, domain)
+        urls.append("%swww.%s.com")
+
+    return flatten(map(lambda url: map(lambda protocol: 
+        url % (protocol, domain), PROTOCALS), urls))
+
+def flatten(l):
+    return [item for sublist in l for item in sublist]
 
 """
 If adding values to this list, must run resource_helpers.wipe_blacklist() in shell
 """
-DEFAULT_BLACKLIST = [
-    getURL('google', https=True),
-    getURL('google'),
-    getURL('maps.google'),
-    'localhost',
-    'chrome',
-    'chrome-devtools',
-    getURL('mail.google', https=True),
-    getURL('mail.google'),
-    getURL('facebook', www=True),
-    getURL('facebook', www=True, https=True),
-    getURL('hotmail'),
-    getURL('mail.yahoo'),
-    getURL('search.yahoo'),
-    getURL('bing'),
-    getURL('duckduckgo'),
-    
-]
-
-print DEFAULT_BLACKLIST
+DEFAULT_BLACKLIST = set(flatten([
+    get_urls('google', www=True),
+    get_urls('maps.google'),
+    get_urls('mail.google'),
+    get_urls('plus.google'),
+    get_urls('drive.google'),
+    get_urls('docs.google'),
+    get_urls('images.google'),
+    get_urls('bing'),
+    get_urls('mail.yahoo'),
+    get_urls('search.yahoo'),
+    get_urls('duckduckgo'),
+    get_urls('hotmail'),
+    get_urls('facebook', www=True),
+    ('chrome-devtools',),
+    ('chrome',),
+    ('localhost',),
+]))

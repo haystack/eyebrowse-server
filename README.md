@@ -19,6 +19,9 @@ The project [eyebrowse-server](https://github.com/haystack/eyebrowse-server) aim
 + [joshblum@mit.edu](mailto:joshblum@mit.edu)
 + [@blumua](https://twitter.com/blumua)
 
+**Amy Zhang**
++ [amy.xian.zhang@gmail.com](mailto:amy.xian.zhang@gmail.com)
+
 **Scott Greenwald**
 + [swgreen@mit.edu](mailto:swgreen@mit.edu)
 + [@swgreen_mit](https://twitter.com/swgreen_mit)
