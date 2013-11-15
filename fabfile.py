@@ -1,10 +1,12 @@
 from fabric.api import *
-from fabric.contrib.project import rsync_project
+
+def amy():
+    env.user = 'axz'
 
 def staging():
     env.hosts = ['eyebrowse-staging.csail.mit.edu']
     env.server_path = '/eyebrowse-server'
-    env.python_path = '/eyebrowse-server'
+    env.python_path = '/eyebrowse-virtualenv/bin'
     env.graceful = True
     return
 
@@ -16,13 +18,19 @@ def prod():
     return
     
 def deploy():
-    rsync_project(remote_dir=env.server_path, local_dir='.',
-                  exclude=["*.pyc", "*.git/", "fabfile.py"], delete=True)
+   
+    sudo("rm -rf %s/*" % env.server_path)
+    local('zip -r code.zip * -x "*.pyc" "*.git"')
+    put("code.zip", "%s/" % env.server_path, use_sudo=True)
+    sudo("cd %s; unzip -o code.zip" % env.server_path)
+    sudo("cd %s; rm -f code.zip" % env.server_path)
+    local("rm -f code.zip")
+    
     install_reqs()
     
 
 def install_reqs():
-    run('%s/pip install -r %s/requirements.txt' % (env.python_path, env.server_path))
+    sudo('%s/pip install -r %s/requirements.txt' % (env.python_path, env.server_path))
     
 def restart_apache():
     if env.graceful:
