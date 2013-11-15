@@ -8,3 +8,5 @@ venv
 venv26
 *.db
 config.py
+.project
+.pydevproject
