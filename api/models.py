@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from api.utils import humanize_time
 from datetime import datetime
 
 class FilterListItem(models.Model):
