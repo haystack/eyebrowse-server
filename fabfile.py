@@ -13,7 +13,7 @@ def staging():
 def prod():
     env.hosts = ['eyebrowse.csail.mit.edu']
     env.server_path = '/eyebrowse-server'
-    env.python_path = '/eyebrowse-server'
+    env.python_path = '/eyebrowse-virtualenv/bin'
     env.graceful = True
     return
     
