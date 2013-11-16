@@ -40,5 +40,31 @@ class EyeHistory(models.Model):
     
     # store as human readable according to moment.js library: http://momentjs.com/docs/#/displaying/humanize-duration/
     humanize_time = models.CharField(max_length=200, default='') 
+    
     def __unicode__(self):
-          return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
+        return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
+    
+    def _merge_histories(self, dup_histories):
+        earliest_start = datetime.datetime.now()
+        earliest_eyehist = None
+        for hist in dup_histories:
+            if hist.start_time < earliest_start:
+                earliest_start = hist.start_time
+                earliest_eyehist = hist
+
+        self.start_event = earliest_eyehist.start_event
+        self.start_time = earliest_eyehist.start_time
+
+        elapsed_time = self.end_time - self.start_time
+        self.total_time = (elapsed_time.microseconds / 1.0E6)
+        self.humanize_time = humanize_time(self.total_time)
+        
+        dup_histories.delete()
+    
+    def save(self, *args, **kwargs):
+        dup_histories = EyeHistory.objects.filter(user=self.user, url=self.url, title=self.title, end_time__gt=self.start_time-datetime.timedelta(minutes=5))
+        if dup_histories.count() > 0:
+            self._merge_histories(dup_histories)
+        super(EyeHistory, self).save(*args, **kwargs)
+            
+            
