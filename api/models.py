@@ -13,13 +13,13 @@ class WhiteListItem(FilterListItem):
     type = models.CharField(max_length=40, default='whitelist')
 
     def __unicode__(self):
-          return "Whitelist item %s for %s" % (self.url, self.user.username)
+        return "Whitelist item %s for %s" % (self.url, self.user.username)
 
 class BlackListItem(FilterListItem):
     type = models.CharField(max_length=40, default='blacklist')
     
     def __unicode__(self):
-          return "Blacklist item %s for %s" % (self.url, self.user.username)
+        return "Blacklist item %s for %s" % (self.url, self.user.username)
 
 class EyeHistory(models.Model):
     user = models.ForeignKey(User)
