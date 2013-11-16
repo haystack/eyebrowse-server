@@ -7,23 +7,53 @@ from registration_defaults.settings import *
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
+_ENV_FILE_PATH = '/opt/eyebrowse/env'
+_DEBUG_FILE_PATH = '/opt/eyebrowse/debug'
+
+def _get_env():
+    f = open(_ENV_FILE_PATH)
+    env = f.read()
+
+    if env[-1] == '\n':
+        env = env[:-1]
+    
+    f.close()
+    return env
+ENV = _get_env() 
+
+def _get_debug():
+    f = open(_DEBUG_FILE_PATH)
+    debug = f.read()
+
+    if debug[-1] == '\n':
+        debug = debug[:-1]
+    
+    f.close()
+    if debug == 'true':
+        return True
+    else:
+        return False
+DEBUG = _get_debug() 
+
 try:
-    config_file = open(SITE_ROOT + '/../config.py')
-    config_script = config_file.read()
-    exec config_script
+    execfile(SITE_ROOT + '/../config.py')
 except IOError:
     print "Unable to open configuration file!"
+
+if ENV == 'prod':
+    BASE_URL = 'http://eyebrowse.csail.mit.edu'
+else:
+    BASE_URL = 'http://localhost:5000'
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" 
+    AWS["BUCKET"] = AWS["BUCKET_DEV"]
+    MYSQL = MYSQL_LOCAL
+
+TEMPLATE_DEBUG = DEBUG
 
 #custom auth
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
-BASE_URL_PROD = 'http://eyebrowse.csail.mit.edu'
-BASE_URL_DEV = 'http://localhost:5000'
-BASE_URL = BASE_URL_PROD
 LOGIN_REDIRECT_URL = "/"
-
-TEMPLATE_DEBUG = DEBUG
-
 DEFAULT_EMAIL = "eyebrowse@mit.edu"
 DEFAULT_FROM_EMAIL = DEFAULT_EMAIL
 
@@ -239,18 +269,4 @@ LOGGING = {
     }
 }
 
-if DEBUG:
-    # allowing for local_settings overides
-    # how this should ultimately be set up
-    # (if this is the pattern we follow)
-    # is that common or default settings go in here,
-    # and each different deploy location has a differnt
-    # settings override that is specified by environment 
-    # variable or hard code.
 
-    try:
-        local_settings_file = open(SITE_ROOT + '/../eyebrowse/local_settings.py')
-        local_settings_script = local_settings_file.read()
-        exec local_settings_script
-    except IOError:
-        print "Unable to open local settings!"
