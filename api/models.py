@@ -1,13 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+
 from api.utils import humanize_time
-from datetime import datetime
+import datetime
 
 class FilterListItem(models.Model):
     user = models.ForeignKey(User)
 
     url = models.URLField(max_length=2000, default='')
-    date_created = models.DateTimeField(auto_now=True, default=datetime.now())
+    date_created = models.DateTimeField(auto_now=True, default=datetime.datetime.now())
     
 class WhiteListItem(FilterListItem):
     type = models.CharField(max_length=40, default='whitelist')
@@ -45,7 +47,7 @@ class EyeHistory(models.Model):
         return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
     
     def _merge_histories(self, dup_histories):
-        earliest_start = datetime.datetime.now()
+        earliest_start = timezone.now()
         earliest_eyehist = None
         for hist in dup_histories:
             if hist.start_time < earliest_start:
@@ -56,8 +58,8 @@ class EyeHistory(models.Model):
         self.start_time = earliest_eyehist.start_time
 
         elapsed_time = self.end_time - self.start_time
-        self.total_time = (elapsed_time.microseconds / 1.0E6)
-        self.humanize_time = humanize_time(self.total_time)
+        self.total_time = int(round((elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
+        self.humanize_time = humanize_time(elapsed_time)
         
         dup_histories.delete()
     
