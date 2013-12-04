@@ -205,6 +205,7 @@ INSTALLED_APPS = (
     'registration',
     'tastypie',
     'kronos',
+    'south',
 
     # eyebrowse
     'accounts',
