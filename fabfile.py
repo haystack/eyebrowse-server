@@ -26,13 +26,13 @@ def deploy():
     sudo("cd %s; rm -f code.zip" % env.server_path)
     local("rm -f code.zip")
     
-    deploy_static()
-    
     install_reqs()
+    
+    deploy_static()
     
 def deploy_static():
     with cd(env.server_path):
-        sudo('./manage.py collectstatic -v0 --noinput')
+        sudo('%s/python manage.py collectstatic -v0 --noinput' % (env.python_path))
 
 def install_reqs():
     sudo('%s/pip install -r %s/requirements.txt' % (env.python_path, env.server_path))
