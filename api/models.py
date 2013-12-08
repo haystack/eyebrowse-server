@@ -3,6 +3,13 @@ from django.contrib.auth.models import User
 
 from datetime import datetime
 
+
+class FilterListItemCopy(models.Model):
+    user = models.ForeignKey(User)
+    
+    url = models.URLField(max_length=2000, default='')
+    date_created = models.DateTimeField()
+
 class FilterListItem(models.Model):
     user = models.ForeignKey(User)
 
