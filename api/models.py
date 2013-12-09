@@ -3,30 +3,26 @@ from django.contrib.auth.models import User
 
 from datetime import datetime
 
-
-class FilterListItemCopy(models.Model):
-    user = models.ForeignKey(User)
-    
-    url = models.URLField(max_length=2000, default='')
-    date_created = models.DateTimeField()
-
 class FilterListItem(models.Model):
     user = models.ForeignKey(User)
 
     url = models.URLField(max_length=2000, default='')
-    date_created = models.DateTimeField(auto_now=True, default=datetime.now())
+    date_created = models.DateTimeField(default=datetime.utcnow())
+    
+    class Meta:
+        abstract = True
     
 class WhiteListItem(FilterListItem):
     type = models.CharField(max_length=40, default='whitelist')
 
     def __unicode__(self):
-          return "Whitelist item %s for %s" % (self.url, self.user.username)
+        return "Whitelist item %s for %s" % (self.url, self.user.username)
 
 class BlackListItem(FilterListItem):
     type = models.CharField(max_length=40, default='blacklist')
     
     def __unicode__(self):
-          return "Blacklist item %s for %s" % (self.url, self.user.username)
+        return "Blacklist item %s for %s" % (self.url, self.user.username)
 
 class EyeHistory(models.Model):
     user = models.ForeignKey(User)
@@ -48,4 +44,4 @@ class EyeHistory(models.Model):
     # store as human readable according to moment.js library: http://momentjs.com/docs/#/displaying/humanize-duration/
     humanize_time = models.CharField(max_length=200, default='') 
     def __unicode__(self):
-          return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
+        return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
