@@ -5,7 +5,7 @@ from datetime import datetime
 
 class FilterListItem(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
-    url = models.URLField(max_length=2000, null=False, blank=False)
+    url = models.URLField(max_length=500, null=False, blank=False)
     date_created = models.DateTimeField(default=datetime.utcnow())
     
     class Meta:
