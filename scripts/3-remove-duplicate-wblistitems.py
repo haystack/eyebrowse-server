@@ -17,11 +17,15 @@ def remove_duplicates(model, unique_fields):
     print duplicates
  
     for duplicate in duplicates:
-        (model.objects.filter(**{x: duplicate[x] for x in unique_fields})
+        dup = {}
+        for x in unique_fields:
+            dup[x] = duplicate[x]
+        
+        (model.objects.filter(**dup)
                         .exclude(id=duplicate['max_id'])
                         .delete())
     
 if __name__ == '__main__':
 
-    remove_duplicates(WhiteListItem, ['user', 'url', 'type'])
-    remove_duplicates(BlackListItem, ['user', 'url', 'type'])
+    remove_duplicates(WhiteListItem, ['user', 'url'])
+    remove_duplicates(BlackListItem, ['user', 'url'])
