@@ -5,26 +5,24 @@ from datetime import datetime
 
 class FilterListItem(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
-    url = models.URLField(max_length=500, null=False, blank=False)
+    url = models.URLField(max_length=200, null=False, blank=False)
     date_created = models.DateTimeField(default=datetime.utcnow())
     
     class Meta:
         abstract = True
     
 class WhiteListItem(FilterListItem):
-    type = models.CharField(max_length=40, default='whitelist')
     
     class Meta:
-        unique_together = ('user','url','type')
+        unique_together = ('user','url')
 
     def __unicode__(self):
         return "Whitelist item %s for %s" % (self.url, self.user.username)
 
 class BlackListItem(FilterListItem):
-    type = models.CharField(max_length=40, default='blacklist')
     
     class Meta:
-        unique_together = ('user','url','type')
+        unique_together = ('user','url')
     
     def __unicode__(self):
         return "Blacklist item %s for %s" % (self.url, self.user.username)
