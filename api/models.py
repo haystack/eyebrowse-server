@@ -8,7 +8,7 @@ import datetime
 class FilterListItem(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     url = models.URLField(max_length=200, null=False, blank=False)
-    date_created = models.DateTimeField(default=datetime.utcnow())
+    date_created = models.DateTimeField(default=datetime.datetime.utcnow())
     
     class Meta:
         abstract = True
@@ -92,21 +92,22 @@ class EyeHistory(models.Model):
         
         dup_histories.delete()
     
-    def save(self, *args, **kwargs):
+    def save(self, save_raw=True, *args, **kwargs):
         
         #save raw eyehistory
-        raw, created = EyeHistoryRaw.objects.get_or_create(user=self.user, 
-                                    url=self.url, 
-                                    title=self.title, 
-                                    start_event=self.start_event, 
-                                    end_event=self.end_event,
-                                    start_time=self.start_time,
-                                    end_time=self.end_time,
-                                    src=self.src,
-                                    domain=self.domain,
-                                    favIconUrl=self.favIconUrl,
-                                    total_time=self.total_time,
-                                    humanize_time=self.humanize_time)
+        if save_raw:
+            raw, created = EyeHistoryRaw.objects.get_or_create(user=self.user, 
+                                        url=self.url, 
+                                        title=self.title, 
+                                        start_event=self.start_event, 
+                                        end_event=self.end_event,
+                                        start_time=self.start_time,
+                                        end_time=self.end_time,
+                                        src=self.src,
+                                        domain=self.domain,
+                                        favIconUrl=self.favIconUrl,
+                                        total_time=self.total_time,
+                                        humanize_time=self.humanize_time)
         
         dup_histories = EyeHistory.objects.filter(user=self.user, url=self.url, title=self.title, end_time__gt=self.start_time-datetime.timedelta(minutes=5))
         if dup_histories.count() > 0:

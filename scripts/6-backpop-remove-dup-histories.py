@@ -1,6 +1,7 @@
 import setup_django
 from django.contrib.auth.models import User
 from api.models import EyeHistory
+from api.utils import humanize_time
 import datetime
 
 def merge_histories(histories):
@@ -20,12 +21,13 @@ def merge_histories(histories):
                 hist1.total_time = int(round((elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
                 hist1.humanize_time = humanize_time(elapsed_time)
                 hist2.delete()
-                hist1.save()
+                hist1.save(save_raw=False)
                 print 'deleting %s' % (hist2)
                 j+=1
             else:
                 i = j
                 break
+        i = j
 
 def run():
     for u in User.objects.all():
