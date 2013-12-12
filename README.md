@@ -20,7 +20,8 @@ The project [eyebrowse-server](https://github.com/haystack/eyebrowse-server) aim
 + [@blumua](https://twitter.com/blumua)
 
 **Amy Zhang**
-+ [amy.xian.zhang@gmail.com](mailto:amy.xian.zhang@gmail.com)
++ [axz@mit.edu](mailto:axz@mit.edu)
++ [@amyxzh](https://twitter.com/amyxzh)
 
 **Scott Greenwald**
 + [swgreen@mit.edu](mailto:swgreen@mit.edu)
