@@ -71,3 +71,18 @@ class EyeHistory(models.Model):
     humanize_time = models.CharField(max_length=200, default='') 
     def __unicode__(self):
         return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
+    
+    def save(self, *args, **kwargs):
+        raw = EyeHistoryRaw.objects.get_or_create(user=self.user, 
+                                            url=self.url, 
+                                            title=self.title, 
+                                            start_event=self.start_event, 
+                                            end_event=self.end_event,
+                                            start_time=self.start_time,
+                                            end_time=self.end_time,
+                                            src=self.src,
+                                            domain=self.domain,
+                                            favIconUrl=self.favIconUrl,
+                                            total_time=self.total_time,
+                                            humanize_time=self.humanize_time)
+        super(EyeHistory, self).save(*args, **kwargs)
