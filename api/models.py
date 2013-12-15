@@ -84,6 +84,8 @@ class EyeHistory(models.Model):
                 earliest_eyehist = hist
             if self.favIconUrl == '' and hist.favIconUrl != '':
                 self.favIconUrl = hist.favIconUrl
+        if earliest_eyehist == None:
+            earliest_eyehist = dup_histories[0]
 
         self.start_event = earliest_eyehist.start_event
         self.start_time = earliest_eyehist.start_time
