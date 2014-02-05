@@ -29,10 +29,15 @@ def deploy():
     install_reqs()
     
     deploy_static()
+    compress_static()
     
 def deploy_static():
     with cd(env.server_path):
         sudo('%s/python manage.py collectstatic -v0 --noinput' % (env.python_path))
+        
+def compress_static():
+    with cd(env.server_path):
+        sudo('%s/python manage.py compress --force' % (env.python_path))
 
 def install_reqs():
     sudo('%s/pip install -r %s/requirements.txt' % (env.python_path, env.server_path))
