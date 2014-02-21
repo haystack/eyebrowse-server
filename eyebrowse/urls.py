@@ -13,6 +13,8 @@ v1_api.register(UserProfileResource())
 v1_api.register(WhiteListItemResource())
 v1_api.register(BlackListItemResource())
 v1_api.register(EyeHistoryResource())
+v1_api.register(EyeHistoryMessageResource())
+v1_api.register(ChatMessageResource())
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
