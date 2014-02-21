@@ -280,12 +280,9 @@ class ChatMessageResource(ModelResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
         try:
-            from eyebrowse.log import logger
             
             bundle.data['date'] = datetime.datetime.strptime(bundle.data['date']['_d'], '%Y-%m-%dT%H:%M:%S.%fZ')
             bundle.data['read'] = bool(bundle.data['read'])
-            
-            logger.info(bundle.data)
 
             val = super(ChatMessageResource, self).obj_create(bundle, request, **kwargs)
         except Exception, e:
