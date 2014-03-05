@@ -14,7 +14,7 @@ def flatten(l):
     return [item for sublist in l for item in sublist]
 
 """
-If adding values to this list, must run resource_helpers.wipe_blacklist() in shell
+If adding values to this list, must run resource_helpers.wipe_blacklists() in shell
 """
 DEFAULT_BLACKLIST = set(flatten([
     get_urls('google', www=True),

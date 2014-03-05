@@ -40,7 +40,9 @@ def wipe_blacklists():
         bad_filters = WhiteListItem.objects.filter(url=url)
         if bad_filters.exists():
             for f in bad_filters:
+                print 'deleting filter %s' % f
                 f.delete()
+                
 
 class urlencodeSerializer(Serializer):
     formats = ['json', 'jsonp', 'xml', 'yaml', 'html', 'plist', 'urlencode']
