@@ -15,6 +15,8 @@ from api.defaults import DEFAULT_BLACKLIST
 from accounts.models import UserProfile
 from api.models import *
 from resource_helpers import *
+from defaults import DEFAULT_BLACKLIST
+from eyebrowse.log import logger
 
 from common.templatetags.filters import url_domain
 
@@ -187,11 +189,7 @@ class EyeHistoryResource(BaseResource):
 
 
     def obj_create(self, bundle, request=None, **kwargs):
-        
-        from eyebrowse.log import logger
-        logger.info(bundle.data)
-        
-        
+
         url = bundle.data['url']
         domain = url_domain(url)
           
@@ -220,7 +218,6 @@ class EyeHistoryResource(BaseResource):
                     eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=obj, message=message)
             except EyeHistory.DoesNotExist:
                 bundle_res = super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
-                logger.info(bundle_res)
                 if message:
                     eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=bundle_res.obj, message=message)
                 return bundle_res;
