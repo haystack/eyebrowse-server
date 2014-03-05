@@ -16,7 +16,7 @@ COOKIE_KEYS = ["csrftoken", "sessionid"]
 HEADER_KEYS = ["Content-Type"]
 IGNORED_ARGS = set(["proxy_url"] + COOKIE_KEYS + HEADER_KEYS)
 IGNORE_HEADERS = ["Origin", "User-Agent", "Host"]
-ALLOWED_NETLOC = set(["eyebrowse.csail.mit.edu", "eyebrowse-staging.csail.mit.edu", "localhost:5000"])
+ALLOWED_NETLOC = set(["eyebrowse.csail.mit.edu", "eyebrowse-staging.csail.mit.edu", "localhost:8000"])
 LOGIN = "login"
 
 class ProxyMiddleware(object):

@@ -11,6 +11,10 @@ def history_renderer(user, history, return_type, template, get_params=None, foll
         html items. User is the user requesting the view.
         History should be paginated before entering.
     """
+    
+    for hist in history:
+        hist.messages = hist.eyehistorymessage_set.all()
+        
     if return_type == "html":
         
         empty_search_msg = EMPTY_SEARCH_MSG['home_stream']
@@ -30,7 +34,7 @@ def history_renderer(user, history, return_type, template, get_params=None, foll
         history_list = []
 
         for h_item in history:
-           history_list.append(render_to_string('live_stream/%s.html'% template, 
+            history_list.append(render_to_string('live_stream/%s.html'% template, 
                 {
                     'item' : h_item,
                     'user' : user,

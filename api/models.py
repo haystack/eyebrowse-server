@@ -5,6 +5,18 @@ from django.utils import timezone
 from api.utils import humanize_time
 import datetime
 
+class ChatMessage(models.Model):
+    from_user = models.ForeignKey(User, related_name='from_user', null=False, blank=False)
+    to_user = models.ForeignKey(User, related_name='to_user', null=False, blank=False)
+    message = models.CharField(max_length=2000, blank=False, null=False)
+    date = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+    url = models.URLField(max_length=300, blank=False, null=False)
+    
+    def __unicode__(self):
+        return "Message item on %s from %s to %s" % (self.date, self.from_user, self.to_user)
+
+
 class FilterListItem(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     url = models.URLField(max_length=200, null=False, blank=False)
@@ -84,6 +96,12 @@ class EyeHistory(models.Model):
                 earliest_eyehist = hist
             if self.favIconUrl == '' and hist.favIconUrl != '':
                 self.favIconUrl = hist.favIconUrl
+            
+            messages = EyeHistoryMessage.objects.filter(eyehistory=hist)
+            for message in messages:
+                message.eyehistory = self
+                message.save()
+                
         if earliest_eyehist == None:
             earliest_eyehist = dup_histories[0]
 
@@ -117,4 +135,11 @@ class EyeHistory(models.Model):
         if dup_histories.count() > 0:
             self._merge_histories(dup_histories)
         super(EyeHistory, self).save(*args, **kwargs)
+        
+        
+class EyeHistoryMessage(models.Model):
+    message = models.CharField(max_length=300, default='')
+    eyehistory = models.ForeignKey(EyeHistory)
 
+    def __unicode__(self):
+        return "Message %s for %s" % (self.message, self.eyehistory)

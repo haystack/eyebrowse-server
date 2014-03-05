@@ -41,7 +41,6 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
     history = paginator(page, history)
 
-
     if req_user.is_authenticated():
         following = set(req_user.profile.follows.all())
     else:

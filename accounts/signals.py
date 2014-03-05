@@ -10,14 +10,14 @@ from stats.models import FavData
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:  
-       profile, created = UserProfile.objects.get_or_create(user=instance)
-       fav_data = FavData.objects.get_or_create(user=instance)
-       set_user_perms(instance)
+        profile, created = UserProfile.objects.get_or_create(user=instance)
+        fav_data = FavData.objects.get_or_create(user=instance)
+        set_user_perms(instance)
 
 def set_user_perms(user):
-    content_types = ['whitelistitem', 'blacklistitem', 'eyehistory']
+    content_types = ['whitelistitem', 'blacklistitem', 'eyehistory', 'chatmessage']
     mod_types = ['add', 'change', 'delete']
-    to_add = [Permission.objects.get(codename="%s_%s"%(mod_type, content)) for mod_type in mod_types for content in content_types]
+    to_add = [Permission.objects.filter(codename="%s_%s"%(mod_type, content))[0] for mod_type in mod_types for content in content_types]
     [user.user_permissions.add(perm) for perm in to_add]
     user.save()
 

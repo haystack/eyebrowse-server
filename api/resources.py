@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.conf.urls import url
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.management import call_command
+from django.db.models import Q
 
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.authorization import Authorization
@@ -149,11 +150,24 @@ class BlackListItemResource(FilterSetItemResource):
         resource_name = 'blacklist'
 
 
+class EyeHistoryMessageResource(ModelResource):
+    
+    def apply_authorization_limits(self, request, object_list):
+        return object_list.filter(eyehistory__user=request.user) 
+    
+    class Meta(BaseMeta):
+        queryset = EyeHistoryMessage.objects.all()
+        resource_name = 'history-message'
+        
+        list_allowed_methods = ['get']
+        detail_allowed_methods = ['get']
+
 class EyeHistoryResource(BaseResource):
     user = fields.ForeignKey(UserResource, 'user')
+    message = fields.ToManyField(EyeHistoryMessageResource, 'eyehistorymessage_set', null=True, blank=True, full=True)
 
     class Meta(BaseMeta):
-        queryset = EyeHistory.objects.select_related().all()
+        queryset = EyeHistory.objects.select_related().all().order_by('-start_time')
         resource_name = 'history-data'
 
         list_allowed_methods = ['get', 'post']
@@ -166,28 +180,112 @@ class EyeHistoryResource(BaseResource):
             'end_time' : ALL,
             'total_time' : ALL,
         }
+        
+    def dehydrate(self, bundle):
+        bundle.data['username'] = bundle.obj.user.username
+        return bundle
+
 
     def obj_create(self, bundle, request=None, **kwargs):
+        
+        from eyebrowse.log import logger
+        logger.info(bundle.data)
+        
+        
         url = bundle.data['url']
         domain = url_domain(url)
-        
+          
         bundle.data["domain"] = domain
-
+  
         title = bundle.data['title']
         total_time = bundle.data['total_time']
+        
         src = bundle.data['src']
         
+        message = bundle.data.get('message')
+        
+        if message and message.strip() == '':
+            message = None
+            
+        if message:
+            bundle.data.pop('message', None)
+          
         if not in_Whitelist(url):
             return bundle
-            
+              
         try:
-            obj = EyeHistory.objects.get(user=request.user, url=url, domain=domain, title=title, total_time=total_time, src=src)
-        
-        except EyeHistory.DoesNotExist:
-            return super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
-
+            try:
+                obj = EyeHistory.objects.get(user=request.user, url=url, domain=domain, title=title, total_time=total_time, src=src)
+                if message:
+                    eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=obj, message=message)
+            except EyeHistory.DoesNotExist:
+                bundle_res = super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+                logger.info(bundle_res)
+                if message:
+                    eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=bundle_res.obj, message=message)
+                return bundle_res;
+        except Exception, e:
+            logger.exception(e)
+  
         except MultipleObjectsReturned:
             #multiple items created, delete duplicates
             call_command("remove_duplicate_history")
-        
+         
         return bundle
+
+
+
+class ChatMessageResource(ModelResource):
+    from_user = fields.ForeignKey(UserResource, 'from_user')
+    to_user = fields.ForeignKey(UserResource, 'to_user')
+    
+    def apply_authorization_limits(self, request, object_list):
+        return object_list.filter(Q(from_user=request.user) | Q(to_user=request.user) ) 
+    
+    def dehydrate(self, bundle):
+        bundle.data['from_user'] = bundle.obj.from_user.username
+        bundle.data['to_user'] = bundle.obj.to_user.username
+        
+        message = bundle.obj
+        if message.read == False:
+            message.read = True
+            message.save()
+        return bundle
+
+    class Meta(BaseMeta):
+        queryset = ChatMessage.objects.select_related().all()
+        resource_name = 'chatmessages'
+
+        list_allowed_methods = ['get', 'post']
+        detail_allowed_methods = ['get', 'post', 'put', 'delete']
+        excludes = ['id']
+        filtering = {
+            'from_user': ALL_WITH_RELATIONS,
+            'to_user': ALL_WITH_RELATIONS,
+            'url' : ALL,
+            'read' : ALL,
+            'date' : ALL,
+            'messages': ALL,
+        }
+
+    def apply_filters(self, request, applicable_filters):
+        base_object_list = super(ChatMessageResource, self).apply_filters(request, applicable_filters)
+        
+        user1 = request.GET.get('username1', None)
+        user2 = request.GET.get('username2', None)
+        if user1 and user2:
+            qset = (Q(from_user__username=user1,to_user__username=user2) | Q(from_user__username=user2,to_user__username=user1))
+            base_object_list = base_object_list.filter(qset).distinct()
+        return base_object_list
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        try:
+            
+            bundle.data['date'] = datetime.datetime.strptime(bundle.data['date']['_d'], '%Y-%m-%dT%H:%M:%S.%fZ')
+            bundle.data['read'] = bool(bundle.data['read'])
+
+            val = super(ChatMessageResource, self).obj_create(bundle, request, **kwargs)
+        except Exception, e:
+            logger.exception(e)
+        return val
+    
