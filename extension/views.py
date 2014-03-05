@@ -29,19 +29,10 @@ def login(request):
 def active(request):
     url = request.GET.get("url", '')
     my_user = request.user
-    
-    
+
     timestamp =  timezone.now() - datetime.timedelta(minutes=5)
-    
-    from eyebrowse.log import logger
-    
 
-    
-  #  active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
-
-    active_users = User.objects.all()[0:3]
-
-    logger.info(active_users)
+    active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
 
     res = []
     

@@ -42,6 +42,6 @@ def feedback(request):
     send_mail(subject, content, from_email=user.email, recipient_list=admin_emails)
     return {'res':'success'}
 
-@render_to('googlead6c3c617c310b08.html')
+@render_to('google3a0cf4e7f8daa91b.html')
 def google_verify(request):
     return {}
