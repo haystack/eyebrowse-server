@@ -37,12 +37,13 @@ def active(request):
     res = []
     
     for user in active_users:
-        message_num = ChatMessage.objects.filter(from_user=user, to_user=my_user, read=False, url=url).count()
-        res.append({'username': user.username,
-                    'pic_url': user.userprofile.pic_url,
-                    'resourceURI': '/api/v1/user/%s/' % user.username,
-                    'unread_messages': message_num,
-                    })
+        if user != my_user:
+            message_num = ChatMessage.objects.filter(from_user=user, to_user=my_user, read=False, url=url).count()
+            res.append({'username': user.username,
+                        'pic_url': user.userprofile.pic_url,
+                        'resourceURI': '/api/v1/user/%s/' % user.username,
+                        'unread_messages': message_num,
+                        })
     
     return {'result': res}
 
