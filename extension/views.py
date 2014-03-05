@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from common.view_helpers import JSONResponse
 from api.models import ChatMessage
+from common.templatetags.gravatar import gravatar_for_user
 
 from django.utils import timezone
 import datetime
@@ -40,7 +41,7 @@ def active(request):
         if user != my_user:
             message_num = ChatMessage.objects.filter(from_user=user, to_user=my_user, read=False, url=url).count()
             res.append({'username': user.username,
-                        'pic_url': user.userprofile.pic_url,
+                        'pic_url': gravatar_for_user(user),
                         'resourceURI': '/api/v1/user/%s/' % user.username,
                         'unread_messages': message_num,
                         })
