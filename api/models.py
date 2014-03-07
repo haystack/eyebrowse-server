@@ -139,7 +139,12 @@ class EyeHistory(models.Model):
         
 class EyeHistoryMessage(models.Model):
     message = models.CharField(max_length=300, default='')
+    post_time = models.DateTimeField(auto_now_add=True)
     eyehistory = models.ForeignKey(EyeHistory)
+
+    
+    class Meta:
+        ordering = ['-post_time']
 
     def __unicode__(self):
         return "Message %s for %s" % (self.message, self.eyehistory)
