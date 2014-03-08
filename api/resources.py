@@ -164,7 +164,7 @@ class EyeHistoryMessageResource(ModelResource):
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get']
 
-class EyeHistoryResource(BaseResource):
+class EyeHistoryResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user')
     message = fields.ToManyField(EyeHistoryMessageResource, 'eyehistorymessage_set', null=True, blank=True, full=True)
 
