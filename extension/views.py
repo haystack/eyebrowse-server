@@ -52,43 +52,38 @@ def active(request):
     return {'result': res}
 
 
+def get_stats(visits):
+    count = visits.count()
+    if count == 1:
+        count_text = '1 visit'
+    else:
+        count_text = '%s visits' % (count)
+    if count == 0:
+        time = '0 seconds'
+    else:
+        time = humanize_time(datetime.timedelta(milliseconds=visits.aggregate(Sum('total_time'))['total_time__sum']))
+        
+    return count_text, time
+
     
 @ajax_request
 def stats(request):
     url = request.GET.get("url", '')
     my_user = request.user
 
+    
     my_visits = EyeHistory.objects.filter(user=my_user, url=url)
-    my_count = my_visits.count()
-    if my_count == 0:
-        my_time = '0 seconds'
-    else:
-        my_time = humanize_time(datetime.timedelta(milliseconds=my_visits.aggregate(Sum('total_time'))['total_time__sum']))
+    my_count, my_time = get_stats(my_visits)
     
     total_visits = EyeHistory.objects.filter(url=url)
-    total_count = total_visits.count()
-    if total_count == 0:
-        total_time = '0 seconds'
-    else:
-        total_time = humanize_time(datetime.timedelta(milliseconds=total_visits.aggregate(Sum('total_time'))['total_time__sum']))
-    
+    total_count, total_time = get_stats(total_visits)
     
     domain = url_domain(url)
-    
     my_dvisits = EyeHistory.objects.filter(user=my_user, domain=domain)
-    my_dcount = my_dvisits.count()
-    if my_dcount == 0:
-        my_dtime = '0 seconds'
-    else:
-        my_dtime = humanize_time(datetime.timedelta(milliseconds=my_dvisits.aggregate(Sum('total_time'))['total_time__sum']))
+    my_dcount, my_dtime = get_stats(my_dvisits)
     
-
     total_dvisits = EyeHistory.objects.filter(domain=domain)
-    total_dcount = total_dvisits.count()
-    if total_dcount == 0:
-        total_dtime = '0 seconds'
-    else:
-        total_dtime = humanize_time(datetime.timedelta(milliseconds=total_dvisits.aggregate(Sum('total_time'))['total_time__sum']))
+    total_dcount, total_dtime = get_stats(total_dvisits)
     
 
     res = {'my_count': my_count,
