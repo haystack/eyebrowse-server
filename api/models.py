@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from api.utils import humanize_time
 import datetime
+import urllib
 
 class ChatMessage(models.Model):
     from_user = models.ForeignKey(User, related_name='from_user', null=False, blank=False)
@@ -134,6 +135,9 @@ class EyeHistory(models.Model):
         dup_histories = EyeHistory.objects.filter(user=self.user, url=self.url, title=self.title, end_time__gt=self.start_time-datetime.timedelta(minutes=5))
         if dup_histories.count() > 0:
             self._merge_histories(dup_histories)
+        
+        if self.favIconUrl.strip() == '':
+            self.favIconUrl = "http://www.google.com/s2/favicons?domain_url=" + urllib.quote(self.url)
         super(EyeHistory, self).save(*args, **kwargs)
         
         
