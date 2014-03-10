@@ -415,7 +415,6 @@ function setTimeAgo(){
     $.each($(".time-ago"), function(i, v){
         v = $(v);
         var time = new Date(v.data('time-ago') + ' UTC');
-        time = time.toString()
         v.text(moment(time).fromNow());
     });
 }
