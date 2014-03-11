@@ -32,12 +32,17 @@ def login(request):
 @ajax_request
 def active(request):
     url = request.GET.get("url", '')
+    
+    domain = url_domain(url)
+    
     my_user = request.user
 
     timestamp =  timezone.now() - datetime.timedelta(minutes=5)
 
     active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
-
+    
+    active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    
     res = []
     
     for user in active_users:
@@ -48,8 +53,23 @@ def active(request):
                         'resourceURI': '/api/v1/user/%s/' % user.username,
                         'unread_messages': message_num,
                         })
+            
+    dres = []
     
-    return {'result': res}
+    for user in active_dusers:
+        if user != my_user and user not in active_users:
+            message_num = ChatMessage.objects.filter(from_user=user, to_user=my_user, read=False, url=domain).count()
+            dres.append({'username': user.username,
+                        'pic_url': gravatar_for_user(user),
+                        'resourceURI': '/api/v1/user/%s/' % user.username,
+                        'unread_messages': message_num,
+                        })
+    
+    return {'result': {
+                       'page': res,
+                       'domain': dres
+                       }
+            }
 
 
 def get_stats(visits):
