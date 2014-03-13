@@ -6,11 +6,27 @@
     font-weight: bold;
     color: inherit;
     text-rendering: optimizelegibility;
+    display:table;
+	margin:0 auto;
+}
+
+.upper-header{
+    align: center;
+    display:table-cell;
+    text-align: center;
+    display: block;
+}
+
+.lower-header{
+	display:table-cell;
+    align: center;
+    display: block;
+    text-align: center;
 }
 
 .user-metadata{
     text-align: center;
-    margin-top: -32px;
+    align: center;
 }
 
 .btn-prof-header{
