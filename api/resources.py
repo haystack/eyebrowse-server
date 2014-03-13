@@ -196,7 +196,8 @@ class EyeHistoryResource(ModelResource):
         bundle.data["domain"] = domain
   
         title = bundle.data['title']
-        total_time = bundle.data['total_time']
+        start_time = bundle.data['start_time']
+        end_time = bundle.data['end_time']
         
         src = bundle.data['src']
         
@@ -210,7 +211,7 @@ class EyeHistoryResource(ModelResource):
               
         try:
             try:
-                obj = EyeHistory.objects.get(user=request.user, url=url, domain=domain, title=title, total_time=total_time, src=src)
+                obj = EyeHistory.objects.get(user=request.user, url=url, domain=domain, title=title, start_time=start_time, end_time=end_time, src=src)
                 if message:
                     eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=obj, message=message)
             except EyeHistory.DoesNotExist:
