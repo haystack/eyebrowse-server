@@ -207,9 +207,6 @@ class EyeHistoryResource(ModelResource):
             
         if message:
             bundle.data.pop('message', None)
-          
-        if not in_Whitelist(url):
-            return bundle
               
         try:
             try:

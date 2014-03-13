@@ -24,7 +24,6 @@ DEFAULT_BLACKLIST = set(flatten([
     get_urls('drive.google'),
     get_urls('docs.google'),
     get_urls('images.google'),
-    get_urls('eyebrowse.csail.mit.edu'),
     get_urls('bing'),
     get_urls('mail.yahoo'),
     get_urls('search.yahoo'),

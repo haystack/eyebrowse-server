@@ -5,4 +5,5 @@ urlpatterns = patterns('extension.views',
     url(r'^loginPrompt$', 'login'),
     url(r'^getActiveUsers$', 'active'),
     url(r'^getStats$', 'stats'),
+    url(r'^profilepic', 'profilepic')
 )

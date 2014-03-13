@@ -12,6 +12,8 @@ import datetime
 from django.db.models.aggregates import Sum
 from common.templatetags.filters import url_domain
 from api.utils import humanize_time
+from django.contrib.auth.views import redirect_to_login
+from django.views.generic.simple import redirect_to
 
 @xframe_options_exempt
 @render_to("extension/track_prompt.html")
@@ -29,6 +31,10 @@ def login(request):
         'src' : src
     }
     
+@ajax_request 
+def profilepic(request):
+    return redirect_to(request, gravatar_for_user(request.user));
+    
 @ajax_request
 def active(request):
     url = request.GET.get("url", '')
@@ -42,7 +48,7 @@ def active(request):
     active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
     
     active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
-    
+
     res = []
     
     for user in active_users:
