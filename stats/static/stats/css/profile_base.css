@@ -25,6 +25,8 @@
 }
 
 .user-metadata{
+	position: relative;
+	top: 8px;
     text-align: center;
     align: center;
 }
@@ -35,4 +37,9 @@
 
 .search-bar-wrap {
     margin-left:337px;
+}
+
+.followlink {
+	position: relative;
+	top: 8px;
 }
