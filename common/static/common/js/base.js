@@ -190,21 +190,20 @@ function filepicker_services(){
         return [
             'FACEBOOK',
             'DROPBOX'
-        ]
+        ];
     }
     return [
             'WEBCAM',
             'COMPUTER',
             'FACEBOOK',
             'GMAIL',
-        ]
+        ];
 }
 
 /* 
 filepicker image upload for registration/edit_profile page
 */
 function getImg() {
-	console.log('hi!');
     filepicker.setKey('ABDI6UIw6SzCfmtCVzEI3z');
     filepicker.pick({
     	mimetypes: ['image/*'],
@@ -212,7 +211,6 @@ function getImg() {
     	services: filepicker_services(),
     },
     function(InkBlob) {
-    	console.log(JSON.stringify(InkBlob));
     	$('#pic').find('.btn[type=submit]').removeAttr('disabled').removeClass('disabled');
         $('#profile_pic').attr("src", InkBlob.url);
         $('#id_pic_url').attr("value", InkBlob.url);
