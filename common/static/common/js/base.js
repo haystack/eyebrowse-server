@@ -188,15 +188,15 @@ function setTips(targetClass, position, trigger) {
 function filepicker_services(){
     if ($.browser.mobile) {
         return [
-            filepicker.SERVICES.FACEBOOK,
-            filepicker.SERVICES.DROPBOX,
+            'FACEBOOK',
+            'DROPBOX'
         ]
     }
     return [
-            filepicker.SERVICES.WEBCAM,
-            filepicker.SERVICES.COMPUTER,
-            filepicker.SERVICES.FACEBOOK,
-            filepicker.SERVICES.DROPBOX,
+            'WEBCAM',
+            'COMPUTER',
+            'FACEBOOK',
+            'GMAIL',
         ]
 }
 
@@ -204,19 +204,21 @@ function filepicker_services(){
 filepicker image upload for registration/edit_profile page
 */
 function getImg() {
-    filepicker.setKey('AHNm9wyVITvGdef4AyBUIz')
-    filepicker.getFile("image/*",{
-        'modal': true, 
-        'multiple' : false,
-        'services' : filepicker_services(),
-        },
-        function(url, metadata){
-            $('#pic').find('.btn[type=submit]').removeAttr('disabled').removeClass('disabled');
-            $('#profile_pic').attr("src", url);
-            $('#id_pic_url').attr("value", url);
-        }
-     );
+	console.log('hi!');
+    filepicker.setKey('ABDI6UIw6SzCfmtCVzEI3z');
+    filepicker.pick({
+    	mimetypes: ['image/*'],
+    	container: 'modal',
+    	services: filepicker_services(),
+    },
+    function(InkBlob) {
+    	console.log(JSON.stringify(InkBlob));
+    	$('#pic').find('.btn[type=submit]').removeAttr('disabled').removeClass('disabled');
+        $('#profile_pic').attr("src", InkBlob.url);
+        $('#id_pic_url').attr("value", InkBlob.url);
+    });
 }
+
 
 //helper function for fomatting numbers with commas
 function numberWithCommas(x) {
