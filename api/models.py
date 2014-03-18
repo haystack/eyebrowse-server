@@ -91,6 +91,8 @@ class EyeHistory(models.Model):
     def _merge_histories(self, dup_histories):
         earliest_start = timezone.now()
         earliest_eyehist = None
+        total_messages = []
+        
         for hist in dup_histories:
             if hist.start_time < earliest_start:
                 earliest_start = hist.start_time
@@ -99,9 +101,7 @@ class EyeHistory(models.Model):
                 self.favIconUrl = hist.favIconUrl
             
             messages = EyeHistoryMessage.objects.filter(eyehistory=hist)
-            for message in messages:
-                message.eyehistory = self
-                message.save()
+            total_messages.extend(list(messages))
                 
         if earliest_eyehist == None:
             earliest_eyehist = dup_histories[0]
@@ -114,6 +114,8 @@ class EyeHistory(models.Model):
         self.humanize_time = humanize_time(elapsed_time)
         
         dup_histories.delete()
+        
+        return total_messages
     
     def save(self, save_raw=True, *args, **kwargs):
         
@@ -133,18 +135,27 @@ class EyeHistory(models.Model):
                                         humanize_time=self.humanize_time)
         
         dup_histories = EyeHistory.objects.filter(user=self.user, url=self.url, title=self.title, end_time__gt=self.start_time-datetime.timedelta(minutes=5))
+        
+        messages = []
         if dup_histories.count() > 0:
-            self._merge_histories(dup_histories)
+            messages = self._merge_histories(dup_histories)
         
         if self.favIconUrl.strip() == '':
             self.favIconUrl = "http://www.google.com/s2/favicons?domain_url=" + urllib.quote(self.url)
         super(EyeHistory, self).save(*args, **kwargs)
         
+        ih = EyeHistory.objects.get(id=self.id)
+        
+        for message in messages:
+            message.eyehistory = ih
+            message.save()
+            
+        
         
 class EyeHistoryMessage(models.Model):
     message = models.CharField(max_length=300, default='')
     post_time = models.DateTimeField(auto_now_add=True)
-    eyehistory = models.ForeignKey(EyeHistory)
+    eyehistory = models.ForeignKey(EyeHistory, blank=True, null=True, on_delete=models.SET_NULL)
 
     
     class Meta:
