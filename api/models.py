@@ -88,67 +88,11 @@ class EyeHistory(models.Model):
     def __unicode__(self):
         return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
 
-    def _merge_histories(self, dup_histories):
-        earliest_start = timezone.now()
-        earliest_eyehist = None
-        total_messages = []
-        
-        for hist in dup_histories:
-            if hist.start_time < earliest_start:
-                earliest_start = hist.start_time
-                earliest_eyehist = hist
-            if self.favIconUrl == '' and hist.favIconUrl != '':
-                self.favIconUrl = hist.favIconUrl
-            
-            messages = EyeHistoryMessage.objects.filter(eyehistory=hist)
-            total_messages.extend(list(messages))
-                
-        if earliest_eyehist == None:
-            earliest_eyehist = dup_histories[0]
-
-        self.start_event = earliest_eyehist.start_event
-        self.start_time = earliest_eyehist.start_time
-
-        elapsed_time = self.end_time - self.start_time
-        self.total_time = int(round((elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
-        self.humanize_time = humanize_time(elapsed_time)
-        
-        dup_histories.delete()
-        
-        return total_messages
     
     def save(self, save_raw=True, *args, **kwargs):
-        
-        #save raw eyehistory
-        if save_raw:
-            raw, created = EyeHistoryRaw.objects.get_or_create(user=self.user, 
-                                        url=self.url, 
-                                        title=self.title, 
-                                        start_event=self.start_event, 
-                                        end_event=self.end_event,
-                                        start_time=self.start_time,
-                                        end_time=self.end_time,
-                                        src=self.src,
-                                        domain=self.domain,
-                                        favIconUrl=self.favIconUrl,
-                                        total_time=self.total_time,
-                                        humanize_time=self.humanize_time)
-        
-        dup_histories = EyeHistory.objects.filter(user=self.user, url=self.url, title=self.title, end_time__gt=self.start_time-datetime.timedelta(minutes=5))
-        
-        messages = []
-        if dup_histories.count() > 0:
-            messages = self._merge_histories(dup_histories)
-        
         if self.favIconUrl.strip() == '':
             self.favIconUrl = "http://www.google.com/s2/favicons?domain_url=" + urllib.quote(self.url)
         super(EyeHistory, self).save(*args, **kwargs)
-        
-        ih = EyeHistory.objects.get(id=self.id)
-        
-        for message in messages:
-            message.eyehistory = ih
-            message.save()
             
         
         
@@ -162,4 +106,62 @@ class EyeHistoryMessage(models.Model):
         ordering = ['-post_time']
 
     def __unicode__(self):
-        return "Message %s for %s" % (self.message, self.eyehistory)
+        return "Message %s on %s" % (self.message, self.post_time)
+    
+    
+def save_raw_eyehistory(user, url, title, start_event, end_event, start_time, end_time, src, domain, favIconUrl):
+    elapsed_time = end_time - start_time
+    total_time = int(round((elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
+    hum_time = humanize_time(elapsed_time)
+    
+    if favIconUrl == None:
+        favIconUrl = "http://www.google.com/s2/favicons?domain_url=" + urllib.quote(url)
+    
+    raw, created = EyeHistoryRaw.objects.get_or_create(user=user, 
+                            url=url, 
+                            title=title, 
+                            start_event=start_event, 
+                            end_event=end_event,
+                            start_time=start_time,
+                            end_time=end_time,
+                            src=src,
+                            domain=domain,
+                            favIconUrl=favIconUrl,
+                            total_time=total_time,
+                            humanize_time=hum_time)
+    
+def merge_histories(dup_histories, end_time, end_event):
+    earliest_start = timezone.now()
+    earliest_eyehist = None
+    dup_histories = list(dup_histories)
+    
+    for hist in dup_histories:
+        if hist.start_time < earliest_start:
+            earliest_start = hist.start_time
+            earliest_eyehist = hist
+            
+    if earliest_eyehist == None:
+        earliest_eyehist = dup_histories[0]
+
+    earliest_eyehist.end_time = end_time
+    earliest_eyehist.end_event = end_event
+    
+    elapsed_time = earliest_eyehist.end_time - earliest_eyehist.start_time
+    earliest_eyehist.total_time = int(round((elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
+    earliest_eyehist.humanize_time = humanize_time(elapsed_time)
+    
+    if earliest_eyehist.favIconUrl.strip() == '':
+        earliest_eyehist.favIconUrl = "http://www.google.com/s2/favicons?domain_url=" + urllib.quote(earliest_eyehist.url)
+    
+    earliest_eyehist.save()
+    
+    if len(dup_histories) > 1:
+        for item in dup_histories:
+            if item != earliest_eyehist:
+                messages = EyeHistoryMessage.objects.filter(eyehistory=item)
+                for message in messages:
+                    message.eyehistory = earliest_eyehist
+                    message.save()
+                item.delete()
+            
+    return earliest_eyehist

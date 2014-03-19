@@ -18,6 +18,8 @@ from resource_helpers import *
 from defaults import DEFAULT_BLACKLIST
 from eyebrowse.log import logger
 
+import pytz
+
 from common.templatetags.filters import url_domain
 
 class MyBasicAuthentication(BasicAuthentication):
@@ -197,9 +199,14 @@ class EyeHistoryResource(ModelResource):
   
         title = bundle.data['title']
         start_time = bundle.data['start_time']
+        start_event = bundle.data['start_event']
         end_time = bundle.data['end_time']
-        
+        end_event = bundle.data['end_event']
+        favIconUrl = bundle.data.get('favIconUrl')
         src = bundle.data['src']
+        
+        end_time = datetime.datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
+        start_time = datetime.datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
         
         message = bundle.data.get('message')
         
@@ -208,13 +215,15 @@ class EyeHistoryResource(ModelResource):
             
         if message:
             bundle.data.pop('message', None)
-              
+
         try:
-            try:
-                obj = EyeHistory.objects.get(user=request.user, url=url, domain=domain, title=title, start_time=start_time, end_time=end_time, src=src)
+            save_raw_eyehistory(request.user, url, title, start_event, end_event, start_time, end_time, src, domain, favIconUrl)
+            dup_histories = EyeHistory.objects.filter(user=request.user, url=url, title=title, end_time__gt=start_time-datetime.timedelta(minutes=5))
+            if dup_histories.count() > 0:
+                obj = merge_histories(dup_histories, end_time, end_event)
                 if message:
                     eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=obj, message=message)
-            except EyeHistory.DoesNotExist:
+            else:
                 bundle_res = super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
                 if message:
                     eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=bundle_res.obj, message=message)
