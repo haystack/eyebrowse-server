@@ -63,10 +63,7 @@ DEFAULT_FROM_EMAIL = DEFAULT_EMAIL
 
 ADMINS = (
     ('eyebrowse-admins', DEFAULT_EMAIL),
-    ('joshblum', 'joshblum@mit.edu'),
-    ('swgreen', 'swgreen@mit.edu'),
-    ('jason', 'mjhu@mit.edu'),
-    ('amy', 'amy.xian.zhang@gmail.com'),
+    ('amy', 'axz@mit.edu'),
 )
 
 MANAGERS = ADMINS
