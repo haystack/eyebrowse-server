@@ -81,7 +81,8 @@ def history_search(req_user, timestamp=None, query=None, filter="following", typ
 
         print type, timestamp
         if type == "ping" and timestamp:
-            history = history.filter(start_time__gt=timestamp)
+            later_time = timestamp + timedelta(seconds=4)
+            history = history.filter(start_time__gt=timestamp, end_time__lt=later_time)
             # print history.count(), "ping"
 
         if limit:
