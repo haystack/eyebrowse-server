@@ -208,12 +208,6 @@ class EyeHistoryResource(ModelResource):
         end_time = datetime.datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
         start_time = datetime.datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
         
-        now_utc = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-        if end_time > now_utc:
-            end_time = now_utc
-            diff_time = end_time - now_utc
-            start_time = start_time - diff_time
-        
         message = bundle.data.get('message')
         
         if message and message.strip() == '':
