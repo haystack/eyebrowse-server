@@ -10,6 +10,7 @@ from tastypie.authorization import Authorization
 from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
+from tastypie.paginator import Paginator
 
 from api.defaults import DEFAULT_BLACKLIST
 from accounts.models import UserProfile
@@ -184,6 +185,7 @@ class EyeHistoryResource(ModelResource):
             'end_time' : ALL,
             'total_time' : ALL,
         }
+        paginator_class = Paginator
         
     def dehydrate(self, bundle):
         bundle.data['username'] = bundle.obj.user.username
