@@ -22,6 +22,7 @@ from eyebrowse.log import logger
 import pytz
 
 from common.templatetags.filters import url_domain
+from common.templatetags.gravatar import gravatar_for_user
 
 class MyBasicAuthentication(BasicAuthentication):
     def __init__(self, *args, **kwargs):
@@ -189,6 +190,7 @@ class EyeHistoryResource(ModelResource):
         
     def dehydrate(self, bundle):
         bundle.data['username'] = bundle.obj.user.username
+        bundle.data['pic_url'] = gravatar_for_user(User.objects.get(username=bundle.obj.user.username))
         return bundle
 
 
@@ -242,20 +244,11 @@ class EyeHistoryResource(ModelResource):
 
 
 class ChatMessageResource(ModelResource):
-    from_user = fields.ForeignKey(UserResource, 'from_user')
-    to_user = fields.ForeignKey(UserResource, 'to_user')
     
-    def apply_authorization_limits(self, request, object_list):
-        return object_list.filter(Q(from_user=request.user) | Q(to_user=request.user) ) 
+    author = fields.ForeignKey(UserResource, 'author')
     
     def dehydrate(self, bundle):
-        bundle.data['from_user'] = bundle.obj.from_user.username
-        bundle.data['to_user'] = bundle.obj.to_user.username
-        
-        message = bundle.obj
-        if message.read == False:
-            message.read = True
-            message.save()
+        bundle.data['author'] = bundle.obj.author.username
         return bundle
 
     class Meta(BaseMeta):
@@ -266,30 +259,19 @@ class ChatMessageResource(ModelResource):
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         excludes = ['id']
         filtering = {
-            'from_user': ALL_WITH_RELATIONS,
-            'to_user': ALL_WITH_RELATIONS,
+            'author': ALL_WITH_RELATIONS,
             'url' : ALL,
-            'read' : ALL,
             'date' : ALL,
             'messages': ALL,
         }
 
     def apply_filters(self, request, applicable_filters):
         base_object_list = super(ChatMessageResource, self).apply_filters(request, applicable_filters)
-        
-        user1 = request.GET.get('username1', None)
-        user2 = request.GET.get('username2', None)
-        if user1 and user2:
-            qset = (Q(from_user__username=user1,to_user__username=user2) | Q(from_user__username=user2,to_user__username=user1))
-            base_object_list = base_object_list.filter(qset).distinct()
         return base_object_list
 
     def obj_create(self, bundle, request=None, **kwargs):
         try:
-            
             bundle.data['date'] = datetime.datetime.strptime(bundle.data['date']['_d'], '%Y-%m-%dT%H:%M:%S.%fZ')
-            bundle.data['read'] = bool(bundle.data['read'])
-
             val = super(ChatMessageResource, self).obj_create(bundle, request, **kwargs)
         except Exception, e:
             logger.exception(e)

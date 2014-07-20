@@ -45,30 +45,28 @@ def active(request):
 
     timestamp =  timezone.now() - datetime.timedelta(minutes=5)
 
-    active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    #active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    active_users = User.objects.all()[0:3]
     
-    active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    #active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    active_dusers = User.objects.all()[3:5]
 
     res = []
     
     for user in active_users:
         if user != my_user:
-            message_num = ChatMessage.objects.filter(from_user=user, to_user=my_user, read=False, url=url).count()
             res.append({'username': user.username,
                         'pic_url': gravatar_for_user(user),
                         'resourceURI': '/api/v1/user/%s/' % user.username,
-                        'unread_messages': message_num,
                         })
             
     dres = []
     
     for user in active_dusers:
         if user != my_user and user not in active_users:
-            message_num = ChatMessage.objects.filter(from_user=user, to_user=my_user, read=False, url=domain).count()
             dres.append({'username': user.username,
                         'pic_url': gravatar_for_user(user),
                         'resourceURI': '/api/v1/user/%s/' % user.username,
-                        'unread_messages': message_num,
                         })
     
     return {'result': {

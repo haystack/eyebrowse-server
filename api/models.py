@@ -7,15 +7,13 @@ import datetime
 import urllib
 
 class ChatMessage(models.Model):
-    from_user = models.ForeignKey(User, related_name='from_user', null=False, blank=False)
-    to_user = models.ForeignKey(User, related_name='to_user', null=False, blank=False)
+    author = models.ForeignKey(User, related_name='author', null=False, blank=False)
     message = models.CharField(max_length=2000, blank=False, null=False)
     date = models.DateTimeField(auto_now_add=True)
-    read = models.BooleanField(default=False)
     url = models.URLField(max_length=300, blank=False, null=False)
     
     def __unicode__(self):
-        return "Message item on %s from %s to %s" % (self.date, self.from_user, self.to_user)
+        return "Chat message item on %s by %s" % (self.date, self.author)
 
 
 class FilterListItem(models.Model):

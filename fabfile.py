@@ -1,9 +1,7 @@
 from fabric.api import *
 
-def amy():
-    env.user = 'axz'
-
 def staging():
+    env.user = 'ubuntu'
     env.hosts = ['eyebrowse-staging.csail.mit.edu']
     env.server_path = '/eyebrowse-server'
     env.python_path = '/eyebrowse-virtualenv/bin'
@@ -11,6 +9,7 @@ def staging():
     return
 
 def prod():
+    env.user = 'ubuntu'
     env.hosts = ['eyebrowse.csail.mit.edu']
     env.server_path = '/eyebrowse-server'
     env.python_path = '/eyebrowse-virtualenv/bin'
