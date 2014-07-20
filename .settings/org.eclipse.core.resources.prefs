@@ -7,3 +7,4 @@ encoding//api/migrations/0011_auto__chg_field_whitelistitem_id__chg_field_blackl
 encoding//api/migrations/0014_auto__del_field_whitelistitem_type__del_field_blacklistitem_type.py=utf-8
 encoding//api/migrations/0015_auto__chg_field_whitelistitem_url__chg_field_blacklistitem_url.py=utf-8
 encoding//api/migrations/0017_copy_eyehistory.py=utf-8
+encoding//api/migrations/0023_auto__del_field_chatmessage_to_user__del_field_chatmessage_read__del_f.py=utf-8

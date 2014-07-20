@@ -171,3 +171,14 @@ tr > .center {
 .search-btn {
     margin-top:-8px;
 }
+
+.stat-links {
+	font-size: 12px; 
+	font-weight: normal; 
+	align: left; 
+	margin-left: 20px;
+}
+
+.stat-links a:hover {
+	text-decoration: none;
+}

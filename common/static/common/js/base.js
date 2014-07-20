@@ -470,7 +470,7 @@ $(function(){
 
     TEMPLATE_BASE = "api/js_templates/";
 
-    $("#account_dropdown").on('click', '#submit_feedback', submitFeedBack);
+    $("#submit_feedback").on('click', submitFeedBack);
 
     typeahead();
 
