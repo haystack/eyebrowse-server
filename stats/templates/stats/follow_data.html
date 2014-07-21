@@ -1,0 +1,20 @@
+{% extends 'stats/profile_base_nosearch.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% load gravatar %}
+
+{% block styles %}
+    {{ block.super }}
+    {% include_style 'stats/css/follow_list' %}
+{% endblock %}
+
+{% block profile_content %}
+
+{{ follow_list }}
+
+{% endblock %}
+
+{% block scripts %} 
+    {{ block.super }}
+    {% include_script 'stats/js/profile_data' %}
+{% endblock %}

@@ -1,0 +1,36 @@
+{% load gravatar %}
+
+<div class="history-timeline-container live-stream-container offset3">
+    {% for user_p in following %}
+		
+		
+		<div class='row history-container infinite-scroll span8'>
+
+		    <div class="history-content">
+		        <span class="author-container"> 
+		            
+		           <span>
+		           	<a href="/users/{{ user_p.user.username }}">
+		           		<img class="author-pic img-rounded" data-content="{{ user_p }}" src="{% gravatar_for_user user_p.user %}"/> 
+		           		{{ user_p.user.username }}
+		           		
+		           		</a>
+		           	</span>
+		           	{% if user_p.bio|length != 0 %}
+			           	<BR />
+			           	<span class='bio'>
+			           	{{ user_p.bio }}
+			           	</span>
+		           	{% endif %}
+		        </span>
+		    </div>
+
+		
+		</div>
+        
+    {% endfor %}
+    {% if following|length == 0 %}
+        {% include "common/snippets/empty_search.html" with msg=empty_search_msg %}
+    {% endif %}
+
+</div>

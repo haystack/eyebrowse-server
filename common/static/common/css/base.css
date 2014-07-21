@@ -182,3 +182,8 @@ tr > .center {
 .stat-links a:hover {
 	text-decoration: none;
 }
+
+.follow-count {
+	font-weight: bold;
+	font-size: 16px;
+}

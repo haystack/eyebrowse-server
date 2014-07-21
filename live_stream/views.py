@@ -20,11 +20,18 @@ def live_stream(request):
 
     get_dict, query, date = _get_query(request)
 
-    print get_dict
-
     history_stream = live_stream_query_manager(get_dict, user)
+    
+    
+    following_count = user.profile.follows.count()
+    follower_count = UserProfile.objects.filter(follows=user.profile).count()
+    
+
 
     template_dict = {
+        'username': user.username,
+        'following_count': following_count,
+        'follower_count': follower_count,
         'query' : query,
         'date' : date,
         'history_stream' : history_stream,
