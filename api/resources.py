@@ -39,6 +39,14 @@ class MyBasicAuthentication(BasicAuthentication):
                     return True 
         return False
 
+class PublicGetAuthentication(MyBasicAuthentication):
+    def is_authenticated(self, request, **kwargs):
+
+        if request.method == "GET":
+            return True
+        else:
+            return super(PublicGetAuthentication, self).is_authenticated(request, **kwargs)
+
 class BaseMeta:
     """
         Abstract class to get basic authentication and authorization.
@@ -187,6 +195,7 @@ class EyeHistoryResource(ModelResource):
             'total_time' : ALL,
         }
         paginator_class = Paginator
+        authentication = PublicGetAuthentication()
         
     def dehydrate(self, bundle):
         bundle.data['username'] = bundle.obj.user.username

@@ -20,7 +20,6 @@ def about(request):
 def faq(request):
     return _template_values(request, page_title="home", navbar='nav_home')
 
-@login_required
 @render_to('common/api_docs.html')
 def api_docs(request):
     return _template_values(request, page_title="home", navbar='nav_home')
