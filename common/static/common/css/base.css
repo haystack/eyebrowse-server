@@ -187,3 +187,19 @@ tr > .center {
 	font-weight: bold;
 	font-size: 16px;
 }
+
+.home-table table, tr, td {
+	padding: 12px 12px 12px 12px;
+	margin: 10px 10px 10px 10px;
+}
+
+.rounded-logo {
+	padding: 15px 5px 5px 5px;
+	webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.footer {
+	z-index: -1;
+}

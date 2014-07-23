@@ -45,11 +45,9 @@ def active(request):
 
     timestamp =  timezone.now() - datetime.timedelta(minutes=5)
 
-    #active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
-    active_users = User.objects.all()[0:3]
-    
-    #active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
-    active_dusers = User.objects.all()[3:5]
+    active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
+
+    active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
 
     res = []
     

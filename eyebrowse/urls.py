@@ -6,6 +6,7 @@ from django.conf import settings
 
 from tastypie.api import Api
 from api.resources import *
+from eyebrowse.views import *
 
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
@@ -37,6 +38,10 @@ urlpatterns = patterns('',
     url(r'^stats/', include('stats.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^api/', include(v1_api.urls)),
+
+    url(r'^about', about),
+    url(r'^faq', faq),
+    url(r'^api_docs', api_docs),
 
     url(r'^ext/', include("extension.urls")),
 )

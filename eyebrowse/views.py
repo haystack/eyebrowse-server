@@ -12,6 +12,21 @@ from accounts.models import *
 from common.admin import email_templates
 from common.view_helpers import _template_values
 
+@render_to('common/about.html')
+def about(request):
+    return _template_values(request, page_title="home", navbar='nav_home')
+
+@render_to('common/faq.html')
+def faq(request):
+    return _template_values(request, page_title="home", navbar='nav_home')
+
+@login_required
+@render_to('common/api_docs.html')
+def api_docs(request):
+    return _template_values(request, page_title="home", navbar='nav_home')
+
+
+
 @render_to('common/home.html')
 def home(request):
     if not request.user.is_authenticated():

@@ -1,0 +1,51 @@
+{% extends 'common/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+ <div class="hero-unit well">
+        <h3>API Documentation</h3>
+
+<P>
+This page is still under construction. See below for some basic information about our API to get started.
+If you are using our API at all or analyzing or visualizing Eyebrowse data, please let us know at
+<a href="mailto:eyebrowse@mit.edu">eyebrowse@mit.edu</a>. We'd love to hear about what you are up to
+and to showcase your work!
+</p>
+
+ <h4>Eyebrowse History</h4>
+<P>
+
+ 
+The following returns all eyebrowse history events sorted by reverse chronological order. Scribble
+messages posted on any page are included in the results. Pagination is included
+so you can go through the data more easily:
+
+<BR/>
+<a href="http://eyebrowse.csail.mit.edu/api/v1/history-data?format=json&offset=0&limit=20">
+http://eyebrowse.csail.mit.edu/api/v1/history-data?format=json&offset=0&limit=20
+</a>
+</p>
+<P>
+You can find the eyebrowse data for a specific page:
+<BR/>
+<a href="http://eyebrowse.csail.mit.edu/api/v1/history-data?format=json&url=http://eyebrowse.csail.mit.edu/live_stream/?filter=following">
+http://eyebrowse.csail.mit.edu/api/v1/history-data?format=json&url=http://eyebrowse.csail.mit.edu/live_stream/?filter=following
+</a>
+</p>
+<P>
+or for a specific user:
+<BR/>
+<a href="http://eyebrowse.csail.mit.edu/api/v1/history-data?format=json&user__username=amyxzhang">
+http://eyebrowse.csail.mit.edu/api/v1/history-data?format=json&user__username=amyxzhang</a>
+</P>
+<P>
+You can also filter by start_time and end_time:
+<BR />
+<a href="http://eyebrowse.csail.mit.edu/api/v1/history-data?format=json&offset=0&limit=20&start_time__gt=2014-07-23">
+http://eyebrowse.csail.mit.edu/api/v1/history-data?format=json&offset=0&limit=20&start_time__gt=2014-07-23
+</a>
+</p>
+
+</div>
+
+{% endblock %}
