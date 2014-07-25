@@ -4,8 +4,141 @@
 {% block content %}
  <div class="hero-unit well">
         <h3>FAQ</h3>
-<p> Coming soon!
+<p>
+	<ul>
+		<li>
+			<a href="#what_is_eyebrowse">What is Eyebrowse?</a>
+		</li>
+		<li>
+			<a href="#why_eyebrowse">Why would I use Eyebrowse?</a>
+		</li>
+		<li>
+			<a href="#motivation">What's your motivation for building Eyebrowse?</a>
+		</li>
+		<li>
+			<a href="#how_much">How much of my browsing data does Eyebrowse collect?</a>
+		</li>
+		<li>
+			<a href="#public">Is the data I put on my Eyebrowse public?</a>
+		</li>
+		<li>
+			<a href="#anonymous">Is it possible for me to use Eyebrowse anonymously?</a>
+		</li>
+	</ul> 
 </p>
+
+<a name="what_is_eyebrowse">&nbsp;</a>
+<BR>
+<P>
+<h3> What is Eyebrowse? </h3>
+Eyebrowse is a social web browsing tool. It allows you to pick websites that you consider like 
+public spaces in real life and makes you publicly visible on them. Just like in real life,
+you can bump into friends, chat with others, and see what others are doing while browsing the web.
+The tool is made up of a website where you have a profile and you can view other people's eyebrowse history,
+as well as a Chrome browser plugin where you can see, while you're browsing the parts of the web
+you consider public, the other people
+that are on the same webpage as you and chat or leave comments on any pages.
+</p>
+
+<a name="why_eyebrowse">&nbsp;</a>
+<BR>
+<P>
+<h3> Why would I use Eyebrowse? </h3>
+There are a lot of fun and interesting uses and opportunities that Eyebrowse can provide.
+First, you can now have discussions and leave notes on any webpage, not just the ones that have
+those features enabled. You can get a picture of your own browsing habits as well as how other people
+in the world are browsing the web, all in real time. For instance, you could discover where crowds are
+congregating on the web or find some well-trodden paths. There are so many possibilities, which is why
+we have released an <a href="/api_docs">API</a> for you to use if you are interested. 
+You can download your own data or the
+entire Firehose and uncover interesting findings or build cool visualizations. You can even build a new app 
+that connects to the Eyebrowse API. An additional benefit to contributing your own data is that you
+help researchers working on important problems related to information retrieval, social
+computing, and human-computer interaction.
+
+</p>
+
+<a name="motivation">&nbsp;</a>
+<BR>
+<P>
+<h3> What's your motivation for building Eyebrowse? </h3>
+
+We have built Eyebrowse for many reasons. 
+
+<BR />
+<BR />
+First, we're really interested in the possibilities for social
+interaction, sharing, and content discovery that Eyebrowse can provide.
+We also think that there is a lot of opportunity in being able to visualize the paths and ebbs and flows of 
+traffic on the web.
+<BR />
+<BR />
+Second, in building this system, we wish to demonstrate that it is possible to have a system
+that asks users permission before tracking them instead of indiscriminately tracking all websites
+that users go to, including the ones that they prefer to keep private. We believe that there are some
+websites that users do not mind being tracked on and others where they do mind, but it is currently cumbersome
+or difficult for users to take control. This system is a proof-of-concept to show that browser tracking can be
+permission-based without being annoying or tiresome for users.
+<BR />
+<BR />
+Finally, we hope by releasing the data that Eyebrowse collects, we can help researchers, data scientists, builders,
+and designers learn and create interesting and useful things. We think that areas like quantified self, 
+information retrieval, social computing, and many more could benefit from the data we collect.
+
+</p>
+
+<a name="how_much">&nbsp;</a>
+<BR>
+<P>
+<h3> How much of my browsing data does Eyebrowse collect? </h3>
+
+Eyebrowse only collects data from the domains that you give it permission to collect. You give 
+Eyebrowse permission when you add a domain to your whitelist. After you've done that, anytime you
+visit a webpage that is a part of that domain, you will show up as present on that domain within
+the Eyebrowse Chrome plugin, and your Eyebrowse feed will register a visit to that webpage.
+
+</p>
+
+<a name="public">&nbsp;</a>
+<BR>
+<P>
+<h3> Is the data I put on my Eyebrowse feed public? </h3>
+
+Yes. At this moment, all the data that goes to your Eyebrowse is publicly available, as in any person
+can create an Eyebrowse account and see it. Likewise, your data will show up in the public API
+and in the link to the Eyebrowse firehose from your home page. Only add domains to your whitelist
+that you are comfortable sharing publicly.
+
+</p>
+
+
+<a name="anonymous">&nbsp;</a>
+<BR>
+<P>
+<h3> Is it possible for me to use Eyebrowse anonymously? </h3>
+
+It is possible for you to create an account and not use a username or profile image that links back to you or reveal
+your email. However, it is often easy to reveal your identity from your online traces without realizing it.
+Therefore, we can not guarantee that your anonymity will be preserved if you are whitelisting any domains.
+We recommend that you only whitelist the domains that you are comfortable associating with yourself.
+
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <p>
 Still have questions? Send an email to <a href="mailto:eyebrowse@mit.edu">eyebrowse@mit.edu</a>.
