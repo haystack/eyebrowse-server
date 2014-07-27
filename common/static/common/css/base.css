@@ -36,12 +36,14 @@ body {
 }
 
 .logo {
-    width:27px;
-    height:27px;
+	position: relative;
+	top: -3px;
+    width:45px;
+    height:45px;
 }
 
 .topbar {
-    margin-top:3px !important;
+    margin-top:11px !important;
 }
 
 .nav-bg {
