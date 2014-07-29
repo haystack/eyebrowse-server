@@ -2,7 +2,11 @@
 
     <div class="content med centered">
         <a href="http://{{ fav_data.domain }}" target="_blank" data-content="{{ fav_data.domain }}" class="pointer fav-site"><img class="fav-icon" src="{{ fav_data.favIconUrl }}"></a>
-        {{ fav_data.visit_count }} visits 
+        {% if fav_data.visit_count == None %}
+        	No visits 
+        {% else %}
+        	{{ fav_data.visit_count }} visits 
+        {% endif %}	
     </div>
     <div class="statbox-footer centered">
         favorite site visits
