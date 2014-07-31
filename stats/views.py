@@ -139,8 +139,8 @@ def profile_data(request, username=None):
     
 
     
-    today = datetime.now().date()
-    day_count = hist.filter(start_time__gte=today).annotate(num_urls=Count('url')).order_by('-num_urls')[:3]
+    today = datetime.now() - timedelta(hours=24)
+    day_count = hist.filter(start_time__gt=today).annotate(num_urls=Count('url')).order_by('-num_urls')[:3]
     
     last_week = today - timedelta(days=7)
     week_count = hist.filter(start_time__gt=last_week).annotate(num_urls=Count('url')).order_by('-num_urls')[:3]
