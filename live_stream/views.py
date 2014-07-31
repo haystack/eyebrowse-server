@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import redirect
+from django.db.models import Count
 
 from annoying.decorators import render_to, ajax_request
 
@@ -20,14 +21,18 @@ def live_stream(request):
 
     get_dict, query, date = _get_query(request)
 
-    history_stream = live_stream_query_manager(get_dict, user)
+    hist, history_stream = live_stream_query_manager(get_dict, user)
     
     
     following_count = user.profile.follows.count()
     follower_count = UserProfile.objects.filter(follows=user.profile).count()
+
+    today = datetime.now().date()
+    day_count = hist.filter(start_time__gte=today).annotate(num_urls=Count('url')).order_by('-num_urls')[:3]
     
-
-
+    last_week = today - timedelta(days=7)
+    week_count = hist.filter(start_time__gt=last_week).annotate(num_urls=Count('url')).order_by('-num_urls')[:3]
+ 
     template_dict = {
         'username': user.username,
         'following_count': following_count,
@@ -38,6 +43,8 @@ def live_stream(request):
         'tot_time' : tot_time,
         'num_history' : num_history,
         'num_online' : num_online,
+        'day_articles': day_count,
+        'week_articles': week_count
     }
 
     return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=_get_subnav(request), **template_dict)
@@ -48,7 +55,7 @@ def ping(request):
 
     get_dict, query, date = _get_query(request)
 
-    history = live_stream_query_manager(get_dict, request.user, return_type="list")
+    _, history = live_stream_query_manager(get_dict, request.user, return_type="list")
 
     username = request.GET.get("username", "")
 

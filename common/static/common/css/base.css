@@ -166,6 +166,22 @@ tr > .center {
     margin-left:367px;
 }
 
+.aggregate-stats {
+    margin-left:367px;
+}
+
+.aggregate-left {
+	display: block;
+    width: 50%;
+    float: left;
+}
+
+.aggregate-right {
+	display: block;
+    width: 50%;
+    float: right;
+}
+
 .search-bar {
     width: 681px;
 }

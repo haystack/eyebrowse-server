@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 
 from annoying.decorators import render_to
 
@@ -122,7 +123,7 @@ def profile_data(request, username=None):
     get_dict["page"] = request.GET.get("page", 1)
     get_dict["username"] = profile_user.username
 
-    history_stream = live_stream_query_manager(get_dict, profile_user)
+    hist, history_stream = live_stream_query_manager(get_dict, profile_user)
 
     ## stats
     tot_time, item_count = profile_stat_gen(profile_user)
@@ -136,6 +137,14 @@ def profile_data(request, username=None):
     following_count = profile_user.profile.follows.count()
     follower_count = UserProfile.objects.filter(follows=profile_user.profile).count()
     
+
+    
+    today = datetime.now().date()
+    day_count = hist.filter(start_time__gte=today).annotate(num_urls=Count('url')).order_by('-num_urls')[:3]
+    
+    last_week = today - timedelta(days=7)
+    week_count = hist.filter(start_time__gt=last_week).annotate(num_urls=Count('url')).order_by('-num_urls')[:3]
+ 
 
     template_dict = {
         'username': profile_user.username,
@@ -152,6 +161,8 @@ def profile_data(request, username=None):
         "fav_data" : fav_data,
         "query" : query,
         "date" : date,
+        'day_articles': day_count,
+        'week_articles': week_count
     }
 
     return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)

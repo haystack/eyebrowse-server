@@ -35,18 +35,18 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     if type in valid_types:
         search_params = dict(search_params, **valid_types[type])
 
-    history = history_search(req_user, **search_params)
+    hist = history_search(req_user, **search_params)
     
     page = get_dict.get("page", 1)
 
-    history = paginator(page, history)
+    history = paginator(page, hist)
 
     if req_user.is_authenticated():
         following = set(req_user.profile.follows.all())
     else:
         following = set([])
 
-    return history_renderer(req_user, history, return_type,  get_dict.get("template"), get_params=search_params, following=following)
+    return hist, history_renderer(req_user, history, return_type,  get_dict.get("template"), get_params=search_params, following=following)
 
 
 
