@@ -140,12 +140,11 @@ def profile_data(request, username=None):
 
     
     today = datetime.now() - timedelta(hours=24)
-    day_count = hist.filter(start_time__gt=today).annotate(num_urls=Count('url')).order_by('-num_urls')[:3]
+    day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
     
     last_week = today - timedelta(days=7)
-    week_count = hist.filter(start_time__gt=last_week).annotate(num_urls=Count('url')).order_by('-num_urls')[:3]
+    week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
  
-
     template_dict = {
         'username': profile_user.username,
         'following_count': following_count,
