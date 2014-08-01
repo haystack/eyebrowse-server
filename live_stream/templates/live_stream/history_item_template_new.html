@@ -20,11 +20,12 @@
     	</span>
     	
         <span>
-            <a href="{{ item.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.url }}">
+            <a href="{{ item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.url|url_domain }}">
                 <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
             </a> 
-            | <span class="cut-content pointer" data-content="{{ item.title}}"> 
+            | <a class="pointer" href="{{ item.url }}"><span class="cut-content pointer" data-content="{{ item.title}}">
                 {{ item.title|truncatechars:40 }} 
+               </a>
             </span>
         </span> <!-- | -->
         <span class="pull-right author-container"> 
