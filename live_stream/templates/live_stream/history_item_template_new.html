@@ -20,7 +20,7 @@
     	</span>
     	
         <span>
-            <a href="{{ item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.url|url_domain }}">
+            <a href="http://{{ item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.url|url_domain }}">
                 <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
             </a> 
             | <a class="pointer" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.url }}"><span class="cut-content pointer" data-content="{{ item.title}}">
