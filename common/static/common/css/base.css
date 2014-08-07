@@ -4,12 +4,20 @@ html {
     height: 100%;
 }
 
+.typeahead {
+	z-index: 1031;
+}
+
 body {
     margin: 0;
     padding: 0;
     min-height: 100%;
     position: relative;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.fullname {
+	font-weight: bold;
 }
 
 .push {
