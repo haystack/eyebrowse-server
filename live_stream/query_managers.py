@@ -79,11 +79,11 @@ def history_search(req_user, timestamp=None, query=None, filter="following", typ
         #ping data with latest time and see if time is present
         ## must be last
 
-        print type, timestamp
+        #print type, timestamp
+        
         if type == "ping" and timestamp:
-            later_time = timestamp + timedelta(seconds=4)
-            history = history.filter(start_time__gt=timestamp, end_time__lt=later_time)
-            # print history.count(), "ping"
+            history = history.filter(start_time__gt=timestamp)
+            #print history.count(), "ping"
 
         if limit:
             history = history[:limit]

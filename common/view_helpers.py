@@ -9,6 +9,11 @@ from django.core.validators import URLValidator
 
 from common.npl.date_parser import DateRangeParser
 
+from eyebrowse import settings
+
+from django.utils import timezone
+import datetime
+import pytz
 
 def JSONResponse(payload):
     """
@@ -36,6 +41,14 @@ def _get_query(request):
     """
     query = request.GET.get("query", "")
     date = request.GET.get("date", "")
+    timestamp = request.GET.get("timestamp", None)
+    
+    if timestamp:
+        t = datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+        timestamp = pytz.utc.localize(t)
+    else:
+        timestamp = timezone.now()
+    
     start_time = ''
     end_time = ''
     
@@ -53,6 +66,7 @@ def _get_query(request):
         "template" : request.GET.get("template", ""),
         "type" : request.GET.get("type", ""),
         "page" : request.GET.get("page", 1),
+        'timestamp' : timestamp,
     }
     
     return get_dict, query, date
