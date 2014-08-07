@@ -33,7 +33,8 @@ def _get_debug():
         return True
     else:
         return False
-DEBUG = _get_debug() 
+#DEBUG = _get_debug() 
+DEBUG = False
 
 try:
     execfile(SITE_ROOT + '/../config.py')

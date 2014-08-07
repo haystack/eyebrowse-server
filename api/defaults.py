@@ -28,9 +28,9 @@ DEFAULT_BLACKLIST = set(flatten([
     get_urls('mail.yahoo'),
     get_urls('search.yahoo'),
     get_urls('duckduckgo'),
+    get_urls('localhost'),
     get_urls('hotmail'),
     get_urls('facebook', www=True),
     ('chrome-devtools',),
     ('chrome',),
-    ('localhost',),
 ]))
