@@ -9,10 +9,8 @@ from django.core.validators import URLValidator
 
 from common.npl.date_parser import DateRangeParser
 
-from eyebrowse import settings
-
+from dateutil.parser import parse
 from django.utils import timezone
-import datetime
 import pytz
 
 def JSONResponse(payload):
@@ -44,7 +42,7 @@ def _get_query(request):
     timestamp = request.GET.get("timestamp", None)
     
     if timestamp:
-        t = datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+        t = parse(timestamp, ignoretz=True)
         timestamp = pytz.utc.localize(t)
     else:
         timestamp = timezone.now()
