@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.db.models import Count
 
 from annoying.decorators import render_to, ajax_request
-
+import json
 from common.view_helpers import _template_values, _get_query
 
 from live_stream.query_managers import *
@@ -30,10 +30,21 @@ def live_stream(request):
 
     today = datetime.now() - timedelta(hours=24)
     day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
+    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    
+    day_chart = {}
+    for domain in day_domains:
+        day_chart[domain['domain']] = domain['num_domains']
     
     last_week = today - timedelta(days=7)
     week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
- 
+    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    
+    week_chart = {}
+    for domain in week_domains:
+        week_chart[domain['domain']] = domain['num_domains']
+    
+    
     template_dict = {
         'username': user.username,
         'following_count': following_count,
@@ -45,7 +56,9 @@ def live_stream(request):
         'num_history' : num_history,
         'num_online' : num_online,
         'day_articles': day_count,
-        'week_articles': week_count
+        'week_articles': week_count,
+        'day_chart': json.dumps(day_chart),
+        'week_chart': json.dumps(week_chart),
     }
 
     return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=_get_subnav(request), **template_dict)

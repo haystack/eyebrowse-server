@@ -141,10 +141,20 @@ def profile_data(request, username=None):
     
     today = datetime.now() - timedelta(hours=24)
     day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
+    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    
+    day_chart = {}
+    for domain in day_domains:
+        day_chart[domain['domain']] = domain['num_domains']
     
     last_week = today - timedelta(days=7)
     week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
- 
+    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    
+    week_chart = {}
+    for domain in week_domains:
+        week_chart[domain['domain']] = domain['num_domains']
+    
     template_dict = {
         'username': profile_user.username,
         'following_count': following_count,
@@ -161,7 +171,9 @@ def profile_data(request, username=None):
         "query" : query,
         "date" : date,
         'day_articles': day_count,
-        'week_articles': week_count
+        'week_articles': week_count,
+        'day_chart': json.dumps(day_chart),
+        'week_chart': json.dumps(week_chart),
     }
 
     return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)

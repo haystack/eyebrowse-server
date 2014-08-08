@@ -1,7 +1,7 @@
 <div class="span8 well aggregate-stats">
-	<div class="title">Top articles in the last:</div>
-	
+	Top Articles
 	<div class="aggregate-left"><h4>Day</h4>
+		<div class="block-arts">
 		{% for art in day_articles %}
 			{% if art.num_urls == 1 %}
 				<P>{{ art.num_urls }} view | <a href="{{ art.url }}">{{ art.title|truncatechars:40 }}</a></p>
@@ -12,8 +12,13 @@
 		{% if not day_articles %}
 			None.
 		{% endif %}
+		</div>
+		Top Domains
+		 <div id="piechart1" style="width: 480px; height: 200px; left: -80px; visibility: hidden;">{{ day_chart }}</div>
+		
 	</div>
 	<div class="aggregate-right"><h4>Week</h4>
+		<div class="block-arts">
 		{% for art in week_articles %}
 			{% if art.num_urls == 1 %}
 				<P>{{ art.num_urls }} view | <a href="{{ art.url }}">{{ art.title|truncatechars:40 }}</a></p>
@@ -24,6 +29,10 @@
 		{% if not week_articles %}
 			None.
 		{% endif %}
+		</div>
+		<BR />
+		<div id="piechart2" style="width: 480px; height: 200px; left: -80px; visibility: hidden;">{{ week_chart }}</div>
+		
 	</div>
 
 </div>

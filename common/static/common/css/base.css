@@ -176,12 +176,22 @@ tr > .center {
 
 .aggregate-stats {
     margin-left:367px;
+    padding-bottom: 0px;
 }
 
 .aggregate-left {
 	display: block;
     width: 50%;
     float: left;
+}
+
+.block-arts {
+	display: block;
+	height: 69px;
+}
+
+.block-arts p{
+	margin-bottom: 3px;
 }
 
 .aggregate-right {
