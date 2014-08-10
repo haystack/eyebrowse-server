@@ -230,17 +230,29 @@ class EyeHistoryResource(ModelResource):
             bundle.data.pop('message', None)
 
         try:
-            save_raw_eyehistory(request.user, url, title, start_event, end_event, start_time, end_time, src, domain, favIconUrl)
-            dup_histories = EyeHistory.objects.filter(user=request.user, url=url, title=title, end_time__gt=start_time-datetime.timedelta(minutes=5))
-            if dup_histories.count() > 0:
-                obj = merge_histories(dup_histories, end_time, end_event)
+            exists = EyeHistory.objects.filter(user=request.user, url=url, title=title, src=src, favIconUrl=favIconUrl, start_time__gt=start_time-datetime.timedelta(minutes=1), start_event=start_event)
+            if exists.count() > 0:
+                eye_his = exists[0]
+                eye_his.end_time = end_time
+                eye_his.end_event = end_event
+                elapsed_time = end_time - start_time
+                eye_his.total_time = int(round((elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
+                eye_his.humanize_time = humanize_time(elapsed_time)
+                eye_his.save()
                 if message:
-                    eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=obj, message=message)
+                    eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=eye_his, message=message)
             else:
-                bundle_res = super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
-                if message:
-                    eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=bundle_res.obj, message=message)
-                return bundle_res;
+               # save_raw_eyehistory(request.user, url, title, start_event, end_event, start_time, end_time, src, domain, favIconUrl)
+                dup_histories = EyeHistory.objects.filter(user=request.user, url=url, title=title, end_time__gt=start_time-datetime.timedelta(minutes=5))
+                if dup_histories.count() > 0:
+                    obj = merge_histories(dup_histories, end_time, end_event)
+                    if message:
+                        eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=obj, message=message)
+                else:
+                    bundle_res = super(EyeHistoryResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+                    if message:
+                        eye_message, created = EyeHistoryMessage.objects.get_or_create(eyehistory=bundle_res.obj, message=message)
+                    return bundle_res;
         except Exception, e:
             logger.exception(e)
   
