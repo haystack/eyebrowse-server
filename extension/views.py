@@ -43,7 +43,7 @@ def active(request):
     
     my_user = request.user
 
-    timestamp =  timezone.now() - datetime.timedelta(minutes=5)
+    timestamp =  timezone.now() - datetime.timedelta(minutes=30)
 
     active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
 
