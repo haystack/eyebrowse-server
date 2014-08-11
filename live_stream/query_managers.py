@@ -37,14 +37,18 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
     hist = history_search(req_user, **search_params)
     
+    history_groups = group_history(hist)
+    
     page = get_dict.get("page", 1)
 
-    history = paginator(page, hist)
+    history = paginator(page, history_groups)
 
     if req_user.is_authenticated():
         following = set(req_user.profile.follows.all())
     else:
         following = set([])
+        
+    
 
     return hist, history_renderer(req_user, history, return_type,  get_dict.get("template"), get_params=search_params, following=following)
 
@@ -140,3 +144,50 @@ def _online_users():
         if not h.user in users:
             users.add(h.user)
     return users
+
+
+
+def group_history(history):
+    history = list(history)
+    history_groups = []
+    i = 0
+    while i < len(history):
+        group = GroupHistory(history[i])
+        j = i + 1
+        while j < len(history):
+            if group.domain == history[j].domain and group.user == history[j].user:
+                group.add_item(history[j])
+                j += 1
+            else:
+                i = j
+                break
+        i = j
+        history_groups.append(group)
+        
+    return history_groups
+
+
+    
+class GroupHistory(object):
+    def __init__(self, history_item):
+        self.id = history_item.id
+        self.domain = history_item.domain
+        history_item.messages = history_item.eyehistorymessage_set.all()
+        self.history_items = [history_item]
+        self.favIconUrl = history_item.favIconUrl
+        self.user = history_item.user
+    
+    def add_item(self, history_item):
+        history_item.messages = history_item.eyehistorymessage_set.all()
+        self.history_items.append(history_item)
+    
+    def get_items(self):
+        if len(self.history_items) == 1:
+            return []
+        else:
+            return self.history_items[1:]
+    
+    def first_item(self):
+        return self.history_items[0]
+    
+

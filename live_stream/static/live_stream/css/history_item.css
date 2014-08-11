@@ -46,3 +46,39 @@
 .author-container{
     width:155px;
 }
+
+.history-container .left {
+	width: auto;
+	overflow: hidden;
+	float: none;
+}
+
+.history-container .lower-item {
+	height: auto;
+	overflow: hidden;
+    color:#000;
+    padding-left:23px;
+    font-size: 1.1em;
+ }
+ 
+.history-container .history-message {
+	height: auto;
+	overflow: hidden;
+    color:#000;
+    padding-left: 43px;
+    padding-right: 43px;
+    font-size: 1.3em;
+    padding-top: 5px;
+    padding-bottom: 5px;
+ }
+ 
+ .history-container .history-message2 {
+	height: auto;
+	overflow: hidden;
+    color:#000;
+    padding-left: 43px;
+    padding-right: 43px;
+    font-size: 1.3em;
+    padding-top: 15px;
+    padding-bottom: 5px;
+ }

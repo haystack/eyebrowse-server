@@ -11,9 +11,6 @@ def history_renderer(user, history, return_type, template, get_params=None, foll
         html items. User is the user requesting the view.
         History should be paginated before entering.
     """
-    
-    for hist in history:
-        hist.messages = hist.eyehistorymessage_set.all()
         
     if return_type == "html":
         

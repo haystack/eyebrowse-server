@@ -13,26 +13,49 @@
         </div> 
     </div> --> 
     <div id="history_item_{{ item.id }}_content" class="history-content">
+    	
     	<span>
-    		{% for m in messages %}
-    			<div>{{ m.message }}</div>
+    		{% for m in item.first_item.messages %}
+    			<div class="history-message">{{ m.message }}</div>
     		{% endfor %}
     	</span>
     	
         <span>
-            <a href="http://{{ item.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.url }}">
-                <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }} 
+            <a href="http://{{ item.first_item.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.first_item.url }}">
+                <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.first_item.url|url_domain }} 
             </a> 
-            | <a class="pointer" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.url }}"><span class="cut-content pointer" data-content="{{ item.title}}">
-                {{ item.title|truncatechars:40 }} 
+            | <a class="pointer" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.first_item.url }}"><span class="cut-content pointer" data-content="{{ item.first_item.title}}">
+                {{ item.first_item.title|truncatechars:40 }} 
                </a>
             </span>
         </span> <!-- | -->
         <span class="pull-right author-container"> 
             
-           <span><a href="/users/{{ item.user.username }}"><img class="author-pic img-rounded" data-content="{{ item.user }}" src="{% gravatar_for_user item.user %}"/> </a></span><span class='time-ago pointer date' data-content="For {{ item.humanize_time }}, on {{item.start_time}}" data-time-ago="{{item.start_time|date_fmt}}" data-timestamp="{{item.start_time|date_fmt}}"></span>
+           <span><a href="/users/{{ item.user.username }}"><img class="author-pic img-rounded" data-content="{{ item.user }}" src="{% gravatar_for_user item.user %}"/> </a></span><span class='time-ago pointer date' data-content="For {{ item.first_item.humanize_time }}, on {{item.first_item.start_time}}" data-time-ago="{{item.first_item.start_time|date_fmt}}" data-timestamp="{{item.first_item.start_time|date_fmt}}"></span>
         </span>
     </div>
+    
+    		<div id="history_item_{{ item.id }}_lower">
+	        {% for h_item in item.get_items %}
+	            <span>
+		    		{% for m in h_item.messages %}
+		    			<div class="history-message2">{{ m.message }}</div>
+		    		{% endfor %}
+		    	</span>
+	        	<div id="history_item_{{ h_item.id }}_lower_item" class="lower-item">
+	        		<span class="pull-right author-container"> 
+		          	<span class='time-ago pointer date' data-content="For {{ h_item.humanize_time }}, on {{h_item.start_time}}" data-time-ago="{{h_item.start_time|date_fmt}}" data-timestamp="{{h_item.start_time|date_fmt}}"></span>
+		        	</span>
+		        	
+	        		<span class="left">
+		        	<span class="cut-content pointer" data-content="{{ h_item.title}}"> 
+		                	{{ h_item.title|truncatechars:80 }} 
+		                	</span>	
+		            </span>
+	
+		        </div>
+	       {% endfor %}
+	      </div>
     <!--
     <hr class='rm-margin'>
     <div class="history-footer">
