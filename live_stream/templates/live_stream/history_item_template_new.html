@@ -48,9 +48,11 @@
 		        	</span>
 		        	
 	        		<span class="left">
-		        	<span class="cut-content pointer" data-content="{{ h_item.title}}"> 
-		                	{{ h_item.title|truncatechars:70 }} 
-		                	</span>	
+	        			<a class="pointer" style="color:black; text-decoration:none;cursor:pointer" href="{{ h_item.url }}">
+				        	<span class="cut-content pointer" data-content="{{ h_item.title}}"> 
+				                	{{ h_item.title|truncatechars:70 }} 
+				            </span>	
+		                </a>
 		            </span>
 	
 		        </div>
