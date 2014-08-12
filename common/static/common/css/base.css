@@ -239,3 +239,21 @@ tr > .center {
 .footer {
 	z-index: -1;
 }
+
+.screenshot1 {
+	width: 350px;
+	height: 260px;
+	border: 0px solid #000000;
+	padding: 0px;
+	margin-right: 100px;
+	margin-left: 50px;
+}
+
+
+.screenshot2 {
+	width: 190px;
+	height: 250px;
+	border: 2px solid #c6c6c6;
+	padding: 0px;
+	margin-left: 100px;
+}
