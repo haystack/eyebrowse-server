@@ -37,17 +37,16 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
     hist = history_search(req_user, **search_params)
     
-    history_groups = group_history(hist)
-    
     page = get_dict.get("page", 1)
 
-    history = paginator(page, history_groups)
+    history = paginator(page, hist)
 
     if req_user.is_authenticated():
         following = set(req_user.profile.follows.all())
     else:
         following = set([])
-        
+    
+    history.object_list = group_history(history.object_list)
     
 
     return hist, history_renderer(req_user, history, return_type,  get_dict.get("template"), get_params=search_params, following=following)
