@@ -23,6 +23,9 @@
 			<a href="#public">Is the data I put on my Eyebrowse public?</a>
 		</li>
 		<li>
+			<a href="#exactly">Exactly what fields are collected with each visit?</a>
+		</li>
+		<li>
 			<a href="#anonymous">Is it possible for me to use Eyebrowse anonymously?</a>
 		</li>
 		<li>
@@ -42,7 +45,7 @@
 			<a href="#mark_visit">Can I mark a visit to a webpage without putting it on my whitelist?</a>
 		</li>
 		<li>
-			<a href="#how_incognito">How do I go incognito?</a>
+			<a href="#how_incognito">How do I temporarily turn off Eyebrowse?</a>
 		</li>
 		<li>
 			<a href="#difference">What's the difference between a Bulletin and a Chat and how do I post one?</a>
@@ -107,9 +110,9 @@ or difficult for users to take control. This system is a proof-of-concept to sho
 permission-based without being annoying or tiresome for users.
 <BR />
 <BR />
-Finally, we hope by releasing the data that Eyebrowse collects, we can help researchers, data scientists, builders,
+Finally, we hope by releasing the data that Eyebrowse collects, we can help researchers, data scientists, software engineers,
 and designers learn and create interesting and useful things. We think that areas like quantified self, 
-information retrieval, social computing, and many more could benefit from the data we collect.
+information retrieval, social computing, human-computer interaction, and many more could benefit from the data we collect.
 
 </p>
 
@@ -134,6 +137,19 @@ Yes. At this moment, all the data that goes to your Eyebrowse is publicly availa
 can create an Eyebrowse account and see it. Likewise, your data will show up in the public API
 and in the link to the Eyebrowse firehose from your home page. Only add domains to your whitelist
 that you are comfortable sharing publicly.
+
+</p>
+
+<a name="exactly">&nbsp;</a>
+<BR>
+<P>
+<h3> Exactly what fields are collected with each visit? </h3>
+
+From every visit that is collected from Eyebrowse, we collect the time you entered the page and the time
+you leave the page. From the webpage, we store the url, the domain, 
+the title, and the favIcon of the domain. Finally, the visit is associated with your Eyebrowse account.
+We don't store any other information such as IP address or referrer. We also don't track the clicks that you
+make while on a whitelisted domain.
 
 </p>
 
@@ -175,22 +191,25 @@ in real-time from our API may have already downloaded that data before we went a
 <P>
 <h3> How do I add a website to my whitelist? </h3>
 
+<img class="prompt-img" src="{% static "common/img/prompt.png" %}">
 There are several ways you can add a website to your whitelist. The first way is by simply browsing the
 web with the Eyebrowse Chrome extension on. Occasionally, the plugin will ask you via a small window in the top
 right of your browser window whether you would like to add the current domain you are on to your whitelist.
 If you click yes, that current visit and future visits to webpages within that domain will be logged to 
 Eyebrowse. If you click no, the extension will not ask you about that domain again.
 
+<BR />
+<BR />
+<img class="ext-links-img" src="{% static "common/img/ext-links.png" %}">
 If at any time you want to whitelist the domain you are currently on but you didn't receive a prompt,
 you can click on the Eyebrowse extension logo and then click "Whitelist this domain".
-
+<BR />
+<BR />
 Finally, you can go to Settings in the top right corner of the Eyebrowse website and then click on Whitelist.
 From here, you can add and delete items that are on your whitelist.
-
 </p>
 
-
-
+<img class="whitelist-img" src="{% static "common/img/whitelist.png" %}">
 <a name="how_whitelist_delete">&nbsp;</a>
 <BR>
 <P>
@@ -207,18 +226,18 @@ remove an item from your whitelist.
 <BR>
 <P>
 <h3> Can I mark a visit to a webpage without putting it on my whitelist? </h3>
-
 Yes, you can. If you are currently on a webpage that's not on your whitelist, but you want to mark your 
 current visit just this one time without putting the webpage onto your whitelist, simply click "Mark a 
 visit to this page" from within the Eyebrowse Chrome extension.
 
 </p>
 
+<img class="ext-links-img" src="{% static "common/img/ext-links.png" %}">
 
 <a name="how_incognito">&nbsp;</a>
 <BR>
 <P>
-<h3> How do I go incognito? </h3>
+<h3> How do I temporarily turn off Eyebrowse? </h3>
 
 If, while you're browsing the web, decide that you want to go incognito and stop Eyebrowse
 from logging any of your whitelists or showing you as online on Eyebrowse or any webpage, 
@@ -235,13 +254,14 @@ Don't forget to toggle Eyebrowse back on when you're ready to join the public!
 <BR>
 <P>
 <h3> What's the difference between a Bulletin and a Chat and how do I post one? </h3>
-
+<img class="bulletin-img" src="{% static "common/img/bulletin.png" %}">
 You can post either a Bulletin or a Chat anytime you are browsing the web. Simply click on the Eyebrowse
 Chrome extension icon, and there are input text fields for both. You can also see the previous Bulletins
 on the Bulletin Board and
 Chats in the Chat Room that were posted to that page before you. 
 Both Bulletins and Chats are publicly accessible
 to all Eyebrowse users.
+<img class="chat-img" src="{% static "common/img/chat.png" %}">
 When you publish a Bulletin to a webpage, it will appear both in 
 your feed on the Eyebrowse website as well as in the browser extension when you are on that webpage.
 When you post a Chat, it only posts to the webpage. 
