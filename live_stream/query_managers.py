@@ -46,7 +46,8 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     else:
         following = set([])
     
-    history.object_list = group_history(history.object_list)
+    if hasattr(history, 'object_list'):
+        history.object_list = group_history(history.object_list)
     
 
     return hist, history_renderer(req_user, history, return_type,  get_dict.get("template"), get_params=search_params, following=following)
