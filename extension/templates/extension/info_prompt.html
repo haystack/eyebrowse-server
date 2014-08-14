@@ -1,0 +1,9 @@
+{% extends "extension/prompt_base_info.html" %}
+
+{% block content%}
+
+{% for user in active_users %}
+	<a href="{{ user.url }}" target="_blank" title="{{ user.username }}"><img class="img-rounded small-pic" src="{{ user.pic_url }}"></a>
+{% endfor %}
+
+{% endblock %}

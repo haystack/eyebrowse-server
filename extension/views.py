@@ -7,6 +7,7 @@ from common.view_helpers import JSONResponse
 from api.models import ChatMessage, EyeHistory
 from common.templatetags.gravatar import gravatar_for_user
 
+from eyebrowse.settings import BASE_URL
 from django.utils import timezone
 import datetime
 from django.db.models.aggregates import Sum
@@ -29,6 +30,50 @@ def login(request):
     src = request.GET.get("src", "chrome")
     return {
         'src' : src
+    }
+   
+@xframe_options_exempt
+@render_to("extension/info_prompt.html") 
+def get_info(request):
+    url = request.GET.get("url")
+    
+    domain = url_domain(url)
+    my_user = request.user
+    
+    timestamp =  timezone.now() - datetime.timedelta(minutes=30)
+    
+    active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
+
+    active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    
+    res = []
+    
+    for user in active_users:
+        if user != my_user:
+            res.append({'username': user.username,
+                        'pic_url': gravatar_for_user(user),
+                        'url': '%s/users/%s' % (BASE_URL,user.username),
+                        })
+    dres = []
+    for user in active_dusers:
+        if user != my_user and user not in active_users:
+            dres.append({'username': user.username,
+                        'pic_url': gravatar_for_user(user),
+                        'url': '%s/users/%s' % (BASE_URL,user.username),
+                        })
+    
+    if len(res) + len(dres) > 6:
+        if len(res) < 3:
+            dres = dres[:6-len(res)]
+        elif len(dres) < 3:
+            res = res[:6-len(dres)]
+        else:
+            res = res[:3]
+            dres = dres[:3]
+    return {
+        'url' : url,
+        'active_users': res,
+        'active_dusers': dres,
     }
     
 @ajax_request 

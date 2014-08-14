@@ -1,0 +1,70 @@
+{% load staticfiles %}
+
+body {
+    background:url({% static "extension/img/bg-trans.gif" %});
+}
+
+.small-pic {
+	width: 20px;
+	height: 20px;
+	padding: 1px;
+	margin:0px;
+}
+
+.bubble 
+{
+	position: relative;
+	max-width: 190px;
+	min-width: 40px;
+	height: 25px;
+	position: absolute;
+	top: 12px;
+	right: 10px;
+	text-align: center;
+	padding: 0px;
+	padding-top: 2px;
+	padding-right: 4px;
+	padding-left: 4px;
+	background: #FFFFFF;
+	-webkit-border-radius: 13px;
+	-moz-border-radius: 13px;
+	border-radius: 13px;
+	border: #333333 solid 3px;
+}
+
+.bubble:after 
+{
+	content: '';
+	position: absolute;
+	border-style: solid;
+	border-width: 0 10px 10px;
+	border-color: #FFFFFF transparent;
+	display: block;
+	width: 0;
+	z-index: 1;
+	top: -7px;
+	right: 23px;
+}
+
+.bubble:before 
+{
+	content: '';
+	position: absolute;
+	border-style: solid;
+	border-width: 0 12px 12px;
+	border-color: #333333 transparent;
+	display: block;
+	width: 0;
+	z-index: 0;
+	top: -13px;
+	right: 21px;
+}
+
+.track-container {
+    margin-left:100px !important;
+}
+
+.gritter-title {
+    text-align: center
+}
+
