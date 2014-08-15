@@ -30,6 +30,7 @@ body {
 	-moz-border-radius: 13px;
 	border-radius: 13px;
 	border: #333333 solid 3px;
+	visibility: hidden;
 }
 
 .bubble:after 
