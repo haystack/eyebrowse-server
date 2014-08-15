@@ -15,6 +15,7 @@ from common.templatetags.filters import url_domain
 from api.utils import humanize_time
 from django.contrib.auth.views import redirect_to_login
 from django.views.generic.simple import redirect_to
+from django.db.models import Q
 
 @xframe_options_exempt
 @render_to("extension/track_prompt.html")
@@ -42,38 +43,59 @@ def get_info(request):
     
     timestamp =  timezone.now() - datetime.timedelta(minutes=30)
     
-    active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    active_users = []
+    
+    active_users.extend(list(User.objects.filter(eyehistory__url=url, 
+                                                 eyehistory__start_time__gt=timestamp).select_related().distinct().exclude(id=my_user.id)))
 
-    active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    if len(active_users) < 6:
+        active_users.extend(list(User.objects.filter(eyehistory__domain=domain, 
+                                                     eyehistory__start_time__gt=timestamp).select_related().distinct().exclude(id=my_user.id)))
+        active_users = list(set(active_users))
 
-    res = []
+    if len(active_users) >= 6:
+        active_users = active_users[0:6]
+    else:
+        older_users = []
+        allow = 6 - (len(active_users))
+        timestamp2 =  timestamp - datetime.timedelta(days=30)
+        older_users.extend(list(User.objects.filter(eyehistory__url=url, 
+                                                    eyehistory__start_time__gt=timestamp2, 
+                                                    eyehistory__start_time__lt=timestamp).select_related().distinct().exclude(id=my_user.id)))
+        
+        if len(older_users) < allow:
+            older_users.extend(list(User.objects.filter(eyehistory__domain=domain, 
+                                                        eyehistory__start_time__gt=timestamp2, 
+                                                        eyehistory__start_time__lt=timestamp).select_related().distinct().exclude(id=my_user.id)))
+            older_users = list(set(older_users))
+            
+        if len(older_users) > allow:
+            older_users = older_users[0:allow]
+        
+    active = []
     
     for user in active_users:
-        if user != my_user:
-            res.append({'username': user.username,
-                        'pic_url': gravatar_for_user(user),
-                        'url': '%s/users/%s' % (BASE_URL,user.username),
-                        })
-    dres = []
-    for user in active_dusers:
-        if user != my_user and user not in active_users:
-            dres.append({'username': user.username,
-                        'pic_url': gravatar_for_user(user),
-                        'url': '%s/users/%s' % (BASE_URL,user.username),
-                        })
+        e = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(user=user)).order_by('-end_time')[0]
+        active.append({'username': user.username,
+                    'pic_url': gravatar_for_user(user),
+                    'url': '%s/users/%s' % (BASE_URL,user.username),
+                    'time_ago': humanize_time(timezone.now()-e.end_time)
+                    })
+    older = []
     
-    if len(res) + len(dres) > 6:
-        if len(res) < 3:
-            dres = dres[:6-len(res)]
-        elif len(dres) < 3:
-            res = res[:6-len(dres)]
-        else:
-            res = res[:3]
-            dres = dres[:3]
+    for user in older_users:
+        e = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(user=user)).order_by('-end_time')[0]
+        older.append({'username': user.username,
+                    'pic_url': gravatar_for_user(user),
+                    'url': '%s/users/%s' % (BASE_URL,user.username),
+                    'time_ago': humanize_time(timezone.now()-e.end_time)
+                    })
+    
+    
     return {
         'url' : url,
-        'active_users': res,
-        'active_dusers': dres,
+        'active_users': active,
+        'older_users': older,
     }
     
 @ajax_request 

@@ -6,9 +6,11 @@
 	<a href="{{ user.url }}" target="_blank" title="{{ user.username }}"><img class="img-rounded small-pic" src="{{ user.pic_url }}"></a>
 {% endfor %}
 
-{% for user in active_dusers %}
-	<a href="{{ user.url }}" target="_blank" title="{{ user.username }}"><img class="img-rounded small-pic" src="{{ user.pic_url }}"></a>
+
+{% for user in older_users %}
+	<a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older" src="{{ user.pic_url }}"></a>
 {% endfor %}
+
 
 
 {% endblock %}

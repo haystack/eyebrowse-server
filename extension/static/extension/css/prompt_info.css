@@ -33,6 +33,11 @@ body {
 	visibility: hidden;
 }
 
+.older {
+	opacity: .5;
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+}
+
 .bubble:after 
 {
 	content: '';
