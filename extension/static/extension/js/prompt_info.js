@@ -50,7 +50,7 @@ function clickHandle(e){
 $(document).ready(function(){
 	var num_img = $("#info-box img").length;
 	if (num_img > 0) {
-		$(".bubble").css("visibility", "visible);
+		$(".bubble").css("visibility", "visible");
 	    setFade();
 	    var num = (num_img * 24) + 10;
 	    $("#info-box").css("width", num + 'px');
