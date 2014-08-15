@@ -3,14 +3,18 @@
 {% block content%}
 
 {% for user in active_users %}
-	<a href="{{ user.url }}" target="_blank" title="{{ user.username }}"><img class="img-rounded small-pic" src="{{ user.pic_url }}"></a>
+	{% if user.old_level == 0 %}
+		<a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older0" src="{{ user.pic_url }}"></a>
+	{% elif user.old_level == 1 %}
+		<a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older1" src="{{ user.pic_url }}"></a>
+	{% elif user.old_level == 2 %}
+		<a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older2" src="{{ user.pic_url }}"></a>
+	{% elif user.old_level == 3 %}
+		<a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older3" src="{{ user.pic_url }}"></a>
+	{% elif user.old_level == 4 %}
+		<a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older4" src="{{ user.pic_url }}"></a>
+	{% endif %}
 {% endfor %}
-
-
-{% for user in older_users %}
-	<a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older" src="{{ user.pic_url }}"></a>
-{% endfor %}
-
 
 
 {% endblock %}

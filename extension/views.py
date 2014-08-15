@@ -41,61 +41,40 @@ def get_info(request):
     domain = url_domain(url)
     my_user = request.user
     
-    timestamp =  timezone.now() - datetime.timedelta(minutes=30)
+    timestamp =  timezone.now() - datetime.timedelta(days=30)
     
-    active_users = []
+    used_users = []
     
-    active_users.extend(list(User.objects.filter(eyehistory__url=url, 
-                                                 eyehistory__start_time__gt=timestamp).select_related().distinct().exclude(id=my_user.id)))
-
-    if len(active_users) < 6:
-        active_users.extend(list(User.objects.filter(eyehistory__domain=domain, 
-                                                     eyehistory__start_time__gt=timestamp).select_related().distinct().exclude(id=my_user.id)))
-        active_users = list(set(active_users))
-
-    if len(active_users) >= 6:
-        active_users = active_users[0:6]
-    else:
-        older_users = []
-        allow = 6 - (len(active_users))
-        timestamp2 =  timestamp - datetime.timedelta(days=30)
-        older_users.extend(list(User.objects.filter(eyehistory__url=url, 
-                                                    eyehistory__start_time__gt=timestamp2, 
-                                                    eyehistory__start_time__lt=timestamp).select_related().distinct().exclude(id=my_user.id)))
-        
-        if len(older_users) < allow:
-            older_users.extend(list(User.objects.filter(eyehistory__domain=domain, 
-                                                        eyehistory__start_time__gt=timestamp2, 
-                                                        eyehistory__start_time__lt=timestamp).select_related().distinct().exclude(id=my_user.id)))
-            older_users = list(set(older_users))
-            
-        if len(older_users) > allow:
-            older_users = older_users[0:allow]
-        
     active = []
-    
-    for user in active_users:
-        e = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(user=user)).order_by('-end_time')[0]
-        active.append({'username': user.username,
-                    'pic_url': gravatar_for_user(user),
-                    'url': '%s/users/%s' % (BASE_URL,user.username),
-                    'time_ago': humanize_time(timezone.now()-e.end_time)
-                    })
-    older = []
-    
-    for user in older_users:
-        e = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(user=user)).order_by('-end_time')[0]
-        older.append({'username': user.username,
-                    'pic_url': gravatar_for_user(user),
-                    'url': '%s/users/%s' % (BASE_URL,user.username),
-                    'time_ago': humanize_time(timezone.now()-e.end_time)
-                    })
-    
+
+    eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user=request.user)).order_by('-end_time').select_related()
+
+    for eyehist in eyehists:
+        if len(active) > 6:
+            break
+        user = eyehist.user
+        if user not in used_users:
+            old_level = 4
+            if eyehist.end_time > (timezone.now() - datetime.timedelta(minutes=5)):
+                old_level = 0
+            if eyehist.end_time > (timezone.now() - datetime.timedelta(hours=1)):
+                old_level = 1
+            elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=24)):
+                old_level = 2
+            elif eyehist.end_time > (timezone.now() - datetime.timedelta(days=7)):
+                old_level = 3
+            
+            active.append({'username': user.username,
+                        'pic_url': gravatar_for_user(user),
+                        'url': '%s/users/%s' % (BASE_URL,user.username),
+                        'old_level': old_level,
+                        'time_ago': humanize_time(timezone.now()-eyehist.end_time)
+                        })
+            used_users.append(user)
     
     return {
         'url' : url,
         'active_users': active,
-        'older_users': older,
     }
     
 @ajax_request 

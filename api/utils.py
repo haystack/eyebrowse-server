@@ -22,9 +22,18 @@ def humanize_time(time_delta):
     if day_diff < 7:
         return str(day_diff) + " days"
     if day_diff < 31:
-        return str(day_diff/7) + " weeks"
+        if day_diff/7 == 1:
+            return "a week"
+        else:
+            return str(day_diff/7) + " weeks"
     if day_diff < 365:
-        return str(day_diff/30) + " months"
-    return str(day_diff/365) + " years"
+        if day_diff/30 == 1:
+            return "a month"
+        else:
+            return str(day_diff/30) + " months"
+    if day_diff/365 == 1:
+        return "a year"
+    else:
+        return str(day_diff/365) + " years"
 
             

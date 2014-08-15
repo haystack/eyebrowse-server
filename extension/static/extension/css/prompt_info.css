@@ -33,9 +33,28 @@ body {
 	visibility: hidden;
 }
 
-.older {
-	opacity: .5;
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+.older0 {
+	border: #ff8300 solid 1px;
+}
+
+.older1 {
+	opacity: .8;
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+}
+
+.older2 {
+	opacity: .6;
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+}
+
+.older3 {
+	opacity: .4;
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+}
+
+.older4 {
+	opacity: .2;
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
 }
 
 .bubble:after 
