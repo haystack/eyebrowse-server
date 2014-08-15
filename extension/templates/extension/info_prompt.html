@@ -6,4 +6,9 @@
 	<a href="{{ user.url }}" target="_blank" title="{{ user.username }}"><img class="img-rounded small-pic" src="{{ user.pic_url }}"></a>
 {% endfor %}
 
+{% for user in active_dusers %}
+	<a href="{{ user.url }}" target="_blank" title="{{ user.username }}"><img class="img-rounded small-pic" src="{{ user.pic_url }}"></a>
+{% endfor %}
+
+
 {% endblock %}

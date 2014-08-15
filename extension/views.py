@@ -45,7 +45,7 @@ def get_info(request):
     active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
 
     active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
-    
+
     res = []
     
     for user in active_users:
