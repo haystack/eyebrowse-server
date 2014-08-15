@@ -38,23 +38,19 @@ body {
 }
 
 .older1 {
-	opacity: .8;
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+	opacity: .9;
 }
 
 .older2 {
-	opacity: .6;
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+	opacity: .7;
 }
 
 .older3 {
 	opacity: .4;
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
 }
 
 .older4 {
-	opacity: .2;
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+	opacity: .1;
 }
 
 .bubble:after 
