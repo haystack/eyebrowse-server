@@ -47,7 +47,7 @@ def get_info(request):
     
     active = []
 
-    eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user=request.user)).order_by('-end_time').select_related()
+    eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user_id=request.user.id)).order_by('-end_time').select_related()
 
     for eyehist in eyehists:
         if len(active) > 6:
