@@ -11,6 +11,8 @@ function drawChart1() {
 		  	arr.push([key, 'http://' + key, obj[key]]);
 		  }
 		}
+		
+		$('#piechart1').text(''); 
 	
 	    var data = google.visualization.arrayToDataTable(arr);
 	    
@@ -55,6 +57,8 @@ function drawChart2() {
 		  	arr.push([key, 'http://' + key, obj[key]]);
 		  }
 		}
+		
+		$('#piechart2').text(''); 
 	
 	    var data = google.visualization.arrayToDataTable(arr);
 	    
