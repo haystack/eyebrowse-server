@@ -50,7 +50,7 @@ def get_info(request):
     eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user_id=request.user.id)).order_by('-end_time').select_related()
 
     for eyehist in eyehists:
-        if len(active) > 6:
+        if len(active) >= 6:
             break
         user = eyehist.user
         if user not in used_users:
@@ -105,42 +105,80 @@ def get_info(request):
 @ajax_request 
 def profilepic(request):
     return redirect_to(request, gravatar_for_user(request.user));
+  
+@ajax_request
+def get_messages(request): 
+    url = request.GET.get("url")
     
+    messages = EyeHistoryMessage.objects.filter(eyehistory__url=url).order_by('-post_time').select_related()
+
+    message_list = []
+    for message in messages:
+        eye_hist = message.eyehistory
+        message_list.append({'message': message.message,
+                            'post_time': str(message.post_time),
+                            'username': eye_hist.user.username,
+                            'pic_url': gravatar_for_user(eye_hist.user),
+                            'user_url': '%s/users/%s' % (BASE_URL,eye_hist.user.username),
+                            'hum_time': humanize_time(timezone.now() - message.post_time) + ' ago'
+                            })
+
+    return {'result': {
+                   'messages': message_list,
+                   }
+        }
+  
 @ajax_request
 def active(request):
     url = request.GET.get("url", '')
     
     domain = url_domain(url)
-    
-    my_user = request.user
 
-    timestamp =  timezone.now() - datetime.timedelta(minutes=30)
+    timestamp =  timezone.now() - datetime.timedelta(days=30)
 
-    active_users = User.objects.filter(eyehistory__url=url, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    used_users = []
+    active_users = []
+    active_dusers = []
 
-    active_dusers = User.objects.filter(eyehistory__domain=domain, eyehistory__start_time__gt=timestamp).select_related().distinct()
+    eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user_id=request.user.id)).order_by('-end_time').select_related()
 
-    res = []
-    
-    for user in active_users:
-        if user != my_user:
-            res.append({'username': user.username,
-                        'pic_url': gravatar_for_user(user),
-                        'resourceURI': '/api/v1/user/%s/' % user.username,
-                        })
+    for eyehist in eyehists:
+        if len(used_users) >= 6:
+            break
+        user = eyehist.user
+        if user not in used_users:
+            old_level = 4
+            if eyehist.end_time > (timezone.now() - datetime.timedelta(minutes=5)):
+                old_level = 0
+            elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=1)):
+                old_level = 1
+            elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=24)):
+                old_level = 2
+            elif eyehist.end_time > (timezone.now() - datetime.timedelta(days=7)):
+                old_level = 3
             
-    dres = []
-    
-    for user in active_dusers:
-        if user != my_user and user not in active_users:
-            dres.append({'username': user.username,
-                        'pic_url': gravatar_for_user(user),
-                        'resourceURI': '/api/v1/user/%s/' % user.username,
-                        })
+            if url == eyehist.url:
+                active_users.append({'username': user.username,
+                            'pic_url': gravatar_for_user(user),
+                            'resourceURI': '%s/users/%s' % (BASE_URL,user.username),
+                            'old_level': old_level,
+                            'time_ago': humanize_time(timezone.now()-eyehist.end_time)
+                            })
+            else:
+                active_dusers.append({'username': user.username,
+                            'pic_url': gravatar_for_user(user),
+                            'resourceURI': '%s/users/%s' % (BASE_URL,user.username),
+                            'old_level': old_level,
+                            'time_ago': humanize_time(timezone.now()-eyehist.end_time)
+                            })
+            used_users.append(user)
+
+
+
     
     return {'result': {
-                       'page': res,
-                       'domain': dres
+                       'page': active_users,
+                       'domain': active_dusers
                        }
             }
 
