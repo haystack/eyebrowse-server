@@ -4,7 +4,7 @@ def humanize_time(time_delta):
     day_diff = time_delta.days
 
     if day_diff < 0:
-        return ''
+        return "a few seconds"
 
     if day_diff == 0:
         if second_diff < 60:
