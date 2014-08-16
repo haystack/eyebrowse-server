@@ -57,7 +57,7 @@ def get_info(request):
             old_level = 4
             if eyehist.end_time > (timezone.now() - datetime.timedelta(minutes=5)):
                 old_level = 0
-            if eyehist.end_time > (timezone.now() - datetime.timedelta(hours=1)):
+            elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=1)):
                 old_level = 1
             elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=24)):
                 old_level = 2

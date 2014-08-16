@@ -7,8 +7,10 @@ body {
 .small-pic {
 	width: 20px;
 	height: 20px;
-	padding: 1px;
-	margin:0px;
+	margin: 0px;
+	border: #ffffff solid 2px;
+	padding: 0px;
+	z-index: 2;
 }
 
 .bubble 
@@ -16,7 +18,7 @@ body {
 	position: relative;
 	max-width: 190px;
 	min-width: 40px;
-	height: 25px;
+	height: 26px;
 	position: absolute;
 	top: 12px;
 	right: 10px;
@@ -34,7 +36,7 @@ body {
 }
 
 .older0 {
-	border: #ff8300 solid 1px;
+	border: #ffff00 solid 2px;
 }
 
 .older1 {
