@@ -4,7 +4,7 @@ from annoying.decorators import render_to, ajax_request
 from django.contrib.auth.models import User
 from django.db.models import Q
 from common.view_helpers import JSONResponse
-from api.models import ChatMessage, EyeHistory
+from api.models import ChatMessage, EyeHistory, EyeHistoryMessage
 from common.templatetags.gravatar import gravatar_for_user
 
 from eyebrowse.settings import BASE_URL
@@ -72,9 +72,34 @@ def get_info(request):
                         })
             used_users.append(user)
     
+    message = EyeHistoryMessage.objects.filter(eyehistory__url=url).select_related()
+    about_message = None
+    user_url = None
+    username = None
+    
+    if message:
+        about_message = humanize_time(timezone.now() - message[0].post_time) + ' ago'
+        message = message[0].message
+
+    if not about_message:
+        chat_message = ChatMessage.objects.filter(url=url).select_related()
+        if chat_message:
+            about_message = humanize_time(timezone.now() - chat_message[0].date) + ' ago'
+            message = '"%s"' % (chat_message[0].message)
+            user_url = '%s/users/%s' % (BASE_URL,chat_message[0].author.username)
+            username = chat_message[0].author.username
+    
+    if not about_message:
+        about_message = ''
+        message = ''
+    
     return {
         'url' : url,
         'active_users': active,
+        'message': message,
+        'about_message': about_message,
+        'user_url': user_url,
+        'username': username,
     }
     
 @ajax_request 

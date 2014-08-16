@@ -49,6 +49,8 @@ function clickHandle(e){
 
 $(document).ready(function(){
 	var num_img = $("#info-box img").length;
+	var text = $.trim($("#message").text());
+	
 	if (num_img > 0) {
 		$(".bubble").css("visibility", "visible");
 	    setFade();
@@ -56,6 +58,35 @@ $(document).ready(function(){
 	    $("#info-box").css("width", num + 'px');
 	    $("#allow-btn").click(clickHandle);
 	    $("#deny-btn").click(clickHandle);
+	    
+	    if (!(text === "")) {
+	    	$("#info-box").css("width", (num + 195) + 'px');
+	    	$("#messagebox").css("width", '190px');
+	    	$("#info-box").css("height", '35px');
+	    	$("#messageholder").css("width", '190px');
+	    	$("#messageholder").css("border-right", '#000000 solid 2px');
+	    	$("#messageholder").css("padding-right", '2px');
+	    	$('#messagebox').click(function(){
+			    passMessage("fade");
+			});
+	    } else {
+	    	$("#messageholder").css("display", "none");
+	    	$("#imgs").css("margin-top", '1px');
+	    	$("#imgs").css("float", 'none');
+	    	$("#imgs").css("display", 'inline-block');
+	    }
+	    
+	} else if (!(text === "")) {
+		$(".bubble").css("visibility", "visible");
+		setFade();
+		$("#info-box").css("width", '195px');
+		$("#messagebox").css("width", '190px');
+		$("#messageholder").css("width", '190px');
+		$("#imgs").css("display", "none");
+		$("#info-box").css("height", '35px');
+		$('#messagebox').click(function(){
+			passMessage("fade");
+		});
 	} else {
 		passMessage("fade");
 	}
