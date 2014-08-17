@@ -31,6 +31,10 @@ body {
     bottom:0px;
 }
 
+li {
+	margin-right: 5px;
+}
+
 body {
     background: url(http://eyebrowse.csail.mit.edu/static/common/img/bg-body.png) repeat top left;
 }
@@ -177,6 +181,10 @@ tr > .center {
 .aggregate-stats {
     margin-left:367px;
     padding-bottom: 0px;
+    position: relative;
+    top: -1px;
+    padding-left: 11px;
+	padding-right: 11px;
 }
 
 .aggregate-left {

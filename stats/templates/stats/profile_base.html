@@ -11,7 +11,7 @@
 <div class="row span12 user-info" data-username="{{profile_user.username}}">
 
     {% include 'stats/profile_subnav.html' %}
-    <div class="span8 well">
+    <div class="span8 well profile-header">
         <div class="upper-header">
         	{% if profile_user != user %}
         		{% gravatar_img_for_user profile_user 80 %}

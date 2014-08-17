@@ -6,4 +6,5 @@ EMPTY_SEARCH_MSG = {
     'following' : """This user isn't following anyone just yet.""",
     'followers' : """This user doesn't have any followers yet.""",
     'self_followers': """You don't have any followers yet. Would you like to invite friends to use eyebrowse?""",
+    'notifications': """No notifications!""",
 }

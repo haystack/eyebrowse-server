@@ -10,6 +10,26 @@
 	margin:0 auto;
 }
 
+.profile-header {
+	margin-left:7px;
+	padding-left: 11px;
+	padding-right: 11px;
+}
+
+.bulletin-color {
+	color: green;
+}
+
+.chat-color {
+	color: orange;
+}
+
+.you-visit {
+	float: right;
+	font-size: 10px;
+	color:#777777;
+}
+
 .upper-header{
     align: center;
     display:table-cell;
@@ -36,11 +56,23 @@
 }
 
 .search-bar-wrap {
-    margin-left:337px;
+    margin-left:307px;
+}
+
+.history-timeline-container {
+	padding-left: 3px;
+}
+
+.offset-set {
+	margin-left: 303px;
 }
 
 .aggregate-stats {
-    margin-left:337px;
+    margin-left:307px;
+    position: relative;
+    top: 0px;
+    padding-left: 11px;
+	padding-right: 11px;
 }
 
 .followlink {

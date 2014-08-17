@@ -32,6 +32,8 @@ urlpatterns = patterns('',
     url(r'^users/(?P<username>.+)$', 'stats.views.profile_data'),
     url(r'^following/(?P<username>.+)$', 'stats.views.following_data'),
     url(r'^followers/(?P<username>.+)$', 'stats.views.followers_data'),
+    
+    url(r'^notifications', 'stats.views.notifications'),
 
     url(r'^accounts/', include('accounts.urls')),
     url(r'^live_stream/', include('live_stream.urls')),

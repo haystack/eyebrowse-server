@@ -11,10 +11,13 @@
 <div class="row span12 user-info" data-username="{{profile_user.username}}">
 
     {% include 'stats/profile_subnav.html' %}
-    <div class="span8 well">
+    <div class="span8 well profile-header">
         <div class="upper-header">
-        <a href="/users/{{profile_user.username}}">{% gravatar_img_for_user profile_user 80 %}</a>
-        </div>
+            {% if profile_user != user %}
+        		{% gravatar_img_for_user profile_user 80 %}
+        	{% else %}
+        		<a href="/accounts/profile/account" title="Click here to change your profile picture">{% gravatar_img_for_user profile_user 80 %}</a>
+        	{% endif %}        </div>
         
         <div class="lower-header">
 	        <span class="user-name">

@@ -1,0 +1,61 @@
+{% load filters %}
+{% load gravatar %}
+
+<div class='row history-container span8'>
+    <div class="history-content">
+    			
+    	{% if item.type == "bulletin" or item.type == "chat" %}
+	    	<div class="you-visit">
+	    		You visited <a href="{{ item.url }}">{{ item.url }}</a> {{ item.visit_time }} ago.
+	    	</div>
+	    	<BR />
+	    	<div class="history-message">
+	    				"{{ item.message}}"
+	    			</div>
+	    	 <span>
+	    	 	<a href="/users/{{ item.author.username }}">
+	    	 	<img class="author-pic img-rounded" data-content="{{ item.author }}" src="{% gravatar_for_user item.author %}"/> 
+	    	 	</a>
+	    	 </span>
+	    <span>
+	    		<a href="/users/{{ item.author.username }}">{{ item.author.username }}</a> |  
+	    		<span class="{{ item.type }}-color">{{ item.type }} message </span> |
+	    		<a href="{{ item.url }}">{{ item.url }}</a> | {{ item.date_hum }} ago
+		{% else %}
+		
+			<div class="you-visit">
+	    		You visited <a href="{{ item.url }}">{{ item.url }}</a> {{ item.visit_time }} ago.
+	    	</div>
+			<BR />
+			<span>
+				{% if item.type == "bump page" %}
+					
+		    	 	<a href="/users/{{ item.author.username }}">
+		    	 	<img class="author-pic img-rounded" data-content="{{ item.author }}" src="{% gravatar_for_user item.author %}"/> 
+		    	 	{{ item.author.username }}
+		    	 	</a> bumped into you
+		    	 	|
+		    	 	<a href="{{ item.url }}">{{ item.url }}</a> | 
+		    	 	{{ item.visit_time }} ago
+		    	{% else %} 
+		    	 	<a href="/users/{{ item.author.username }}">
+		    	 	<img class="author-pic img-rounded" data-content="{{ item.author }}" src="{% gravatar_for_user item.author %}"/> 
+		    	 	{{ item.author.username }}
+		    	 	</a> visited <a href=="{{ item.their_url }}">{{ item.their_url }}</a> while you were on
+		    	 	<a href="{{ item.url|url_domain }}">{{ item.url|url_domain }}</a> |
+		    	 	{{ item.visit_time }} ago
+	    	 	{% endif %}
+	    	 
+	    	 </span>
+		
+		
+		{% endif %}
+
+ 
+    	</span>
+    	
+    	
+       
+    </div>
+
+</div>

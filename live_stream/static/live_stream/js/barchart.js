@@ -39,8 +39,6 @@ function drawChart1() {
         
 	} else {
 		$('#piechart1').remove();
-		$('.block-arts').css("height","24px");
-		$('.aggregate-stats').css("padding-bottom","19px");
 	}
 }
       
@@ -85,7 +83,5 @@ function drawChart2() {
         
 	} else {
 		$('#piechart2').remove();
-		$('.block-arts').css("height","24px");
-		$('.aggregate-stats').css("padding-bottom","19px");
 	}
 }

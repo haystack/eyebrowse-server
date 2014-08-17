@@ -1,0 +1,43 @@
+{% extends "common/base.html" %}
+{% load filters %}
+{% load staticfiles %}
+{% load gravatar %}
+
+{% block styles %}
+    {% include_style 'live_stream/css/history_item' %}
+    {% include_style "stats/css/profile_base" %}
+{% endblock %}
+
+{% block content %} 
+<div class="row span12 user-info">
+    {% include "stats/profile_subnav.html" %}
+
+    <div class="span8 well profile-header">
+        <div class="upper-header">
+        	<a href="/accounts/profile/account" title="Click here to change your profile picture">{% gravatar_img_for_user user 80 %}</a>
+        </div>
+        <div class="lower-header">
+	        <span class="user-name">
+	            {{username}}'s notifications 
+	        </span>
+	       
+        	<div class="user-metadata">
+	            <span class="location profile-field">
+	                Recent happenings on places you've visited in the last week.
+	            </span>
+           </div>
+        </div>
+        
+    </div>
+
+    {{ notifications }}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {% include_script "live_stream/js/live-stream" %}
+    {% include_script "live_stream/js/history-tips" %}
+    {% include_script "live_stream/js/jsapi" %}
+    {% include_script "live_stream/js/barchart" %}
+{% endblock %}
