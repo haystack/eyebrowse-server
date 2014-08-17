@@ -66,21 +66,14 @@ def notification_renderer(user, empty_search_msg):
     notification_list = []
     
     for url in url_list:
-        domain = url_domain(url)
-        print domain
-        visits = EyeHistory.objects.filter((Q(url=url) | 
-                                            Q(domain=domain)) & 
+        visits = EyeHistory.objects.filter(Q(url=url) &
                                            ~Q(user_id=user.id) & 
                                            (Q(start_time__lte=url_list[url][1]) & 
                                             Q(end_time__gte=url_list[url][0])))
         for visit in visits:
             tmp = {}
-            if visit.url != url:
-                tmp['type'] = 'bump domain'
-            else:
-                tmp['type'] = 'bump page'
+            tmp['type'] = 'bump domain'
             tmp['url'] = url
-            tmp['their_url'] = visit.url
             tmp['author'] = visit.user
             tmp['title'] = visit.title
             tmp['date'] = url_list[url][1]
