@@ -15,24 +15,25 @@ A <span class="bold">whitelist</span> is a list of domains that you are
 interested in being publicly seen on and you are comfortable sharing your activity on. You control what domains are on your
 whitelist. Some typical domains that users whitelist include <a href="http://en.wikipedia.org">Wikipedia</a>, <a href="http://www.cnn.com">CNN</a>,
 or <a href="http://stackoverflow.com">StackOverflow</a>, just as examples.
+<img class="prompt-img right-img about-img" src="{% static "common/img/prompt.png" %}">
 <BR />
 <BR />
 
-<img class="prompt-img" src="{% static "common/img/prompt.png" %}">
+
 Using the browser plugin that we've created for Chrome, it will occasionally ask you
 while you are browsing the Internet whether you would like to whitelist the domain that you
 are currently on. You can also add a domain to your whitelist without being prompted by clicking on
 the Eyebrowse Chrome extension and selecting 'Whitelist this Domain'.
 <BR />
 <BR />
-<img class="whitelist-img" src="{% static "common/img/whitelist.png" %}">
+<img class="whitelist-img left-img about-img" src="{% static "common/img/whitelist.png" %}">
 You can always add more domains or remove domains from your whitelist by editing your
 profile on the Eyebrowse website. Once you've added a domain to your whitelist that
 that you are comfortable sharing your activity on, the plugin will track when you visit a page
 on that domain and post it to your Eyebrowse feed for you automatically. 
 <BR />
 <BR />
-<img class="ext-links-img" src="{% static "common/img/ext-links.png" %}">
+<img class="ext-links-img right-img about-img" src="{% static "common/img/ext-links.png" %}">
 If you want to mark a visit to a webpage just this one time without
 putting the domain in your whitelist, you can do this from within the Eyebrowse plugin by clicking 
 "Mark a visit to this page" while on that page. 
@@ -44,13 +45,13 @@ Any browsing you do in Chrome incognito mode will by default have Eyebrowse off.
 <BR />
 <P>
 <h4>Social activities in the plugin</h4>
-<img class="users-img" src="{% static "common/img/users.png" %}">
+<img class="users-img right-img about-img" src="{% static "common/img/users.png" %}">
 Anytime you are browsing the web, you can "bump into" other people or cross paths with others. 
 Eyebrowse notifies you of this by showing in the
 extension popup all the other people currently on the same page and domain, as well as people who have been to this page before.
 <BR />
 <BR />
-<img class="bulletin-img" src="{% static "common/img/bulletin.png" %}">
+<img class="bulletin-img left-img about-img" src="{% static "common/img/bulletin.png" %}">
 You can post <span class="bold">Bulletins</span>, which are short messages or comments of your choosing, to any page on the web.
 You can think
 of Bulletins as being similar to a news article comment, Facebook status post, or tweet.
@@ -60,18 +61,30 @@ Bulletins will also post to your Eyebrowse feed on the website and from there, t
 followers. 
 You can also view all Bulletins on a page's Bulletin Board on the Chrome Extension popup or on the Eyebrowse website.
 <BR />
-<img class="chat-img" src="{% static "common/img/chat.png" %}">
+<img class="chat-img right-img about-img" src="{% static "common/img/chat.png" %}">
 <BR />
 
 Additionally, you can post <span class="bold">Chats</span>, more light-weight discussions with people within a page.
 These discussions, while public, do not get posted to your feed, and people can only see them when they
 are on that page. To see and participate in Chats, open the Chrome extension and find the Chat Room within the popup.
+<BR />
+<BR />
+<img class="popup-img left-img about-img" src="{% static "common/img/popup.png" %}">
+While you are browsing the web, small popups will appear under the eyebrowse extension logo. If someone else has been on the same 
+page or domain in the last month, their icon will show up in the popup. The more transparent their logo is, the longer it's been
+since they've been here. If there is a yellow border around their icon, that means you have bumped into this person - you two
+are on the same page at the same time. Also, the small popup will show a snippet of the most recent Bulletin or Chat message posted.
+If you're interested, you can click the extension icon to read more. If you want to get rid of the popup, you can click on the message
+and it will disappear, or wait 4 seconds for it to fade away.
 </P>
 <BR />
+
+
+
 <P>
 <h4>Social activities on the website</h4>
 
-<img class="follow-img" src="{% static "common/img/follow.png" %}">
+<img class="follow-img left-img about-img" src="{% static "common/img/follow.png" %}">
 On the Eyebrowse website, your homepage is a feed of all the people you are following. You can see the
 webpages that they've visited on their whitelist, and you can click through to view those webpages and 
 discover interesting content.
@@ -79,7 +92,16 @@ You can also view the Firehose of all Eyebrowse visits and search within it to f
 people to follow. 
 There are also aggregate statistics on the top links and most visited domains in the last day and week.
 You can browse other people's profile pages and view people's followers and followees. 
-Finally, you can edit your own profile and manage your whitelist.
+You can edit your own profile and manage your whitelist.
+<img class="notification-img right-img about-img" src="{% static "common/img/notifications.png" %}">
+<BR />
+<BR />
+
+
+If you click on Notifications in the left part of the navigation bar, you can see interesting things that have happened
+on the pages you visited in the last week. This page will tell you if you've bumped into anyone while browsing as well as
+any Bulletins or Chat messages that have been posted in the last week on pages you've visited.
+
 </p>
 <BR />
 <BR />
