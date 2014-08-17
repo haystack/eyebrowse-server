@@ -183,14 +183,15 @@ tr > .center {
     padding-bottom: 0px;
     position: relative;
     top: -1px;
-    padding-left: 11px;
-	padding-right: 11px;
+    padding-left: 22px;
+	padding-right: 0px;
 }
 
 .aggregate-left {
 	display: block;
-    width: 50%;
+    width: 48%;
     float: left;
+    padding-left: 20px;
 }
 
 .block-arts {
@@ -204,7 +205,7 @@ tr > .center {
 
 .aggregate-right {
 	display: block;
-    width: 50%;
+    width: 48%;
     float: right;
 }
 

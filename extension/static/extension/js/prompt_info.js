@@ -70,6 +70,8 @@ $(document).ready(function(){
 			    passMessage("fade");
 			});
 	    } else {
+	    	if (num == 34) num = 45;
+	    		$("#info-box").css("width", num + 'px');
 	    	$("#messageholder").css("display", "none");
 	    	$("#imgs").css("margin-top", '1px');
 	    	$("#imgs").css("float", 'none');
