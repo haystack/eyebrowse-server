@@ -23,6 +23,8 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=1000, default='')
     website = models.CharField(max_length=1000, default='')
     bio = models.CharField(max_length=1000, default='')
+    
+    confirmed = models.BooleanField(default=False)
 
     def get_following_history(self, history=None):
         following = self.follows.all()

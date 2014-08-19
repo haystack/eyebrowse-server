@@ -44,6 +44,9 @@ urlpatterns = patterns('',
     url(r'^about', about),
     url(r'^faq', faq),
     url(r'^api_docs', api_docs),
+    
+    url(r'^consent_accept$', consent_accept),
+    url(r'^consent$', consent),
 
     url(r'^ext/', include("extension.urls")),
 )

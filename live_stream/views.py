@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import redirect
@@ -14,8 +14,12 @@ from live_stream.query_managers import *
 @login_required
 @render_to('live_stream/live_stream.html')
 def live_stream(request):
-
-    user = request.user
+    
+    user = get_object_or_404(User, username=request.user.username)
+    userprof = UserProfile.objects.get(user=user)
+    confirmed = userprof.confirmed
+    if not confirmed:
+        return redirect('/consent')
 
     tot_time, num_history, num_online = _get_stats(user)
 

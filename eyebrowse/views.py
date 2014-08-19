@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.shortcuts import redirect
@@ -30,13 +30,42 @@ def api_docs(request):
 def home(request):
     if not request.user.is_authenticated():
         return _template_values(request, page_title="home", navbar='nav_home')
-    return redirect('/live_stream/')
+    else:
+        user = get_object_or_404(User, username=request.user.username)
+        userprof = UserProfile.objects.get(user=user)
+        confirmed = userprof.confirmed
+        if not confirmed:
+            return redirect('/consent')
+        else:
+            return redirect('/live_stream/')
 
+@login_required
+@render_to('common/consent.html')
+def consent(request):
+    return _template_values(request, page_title="consent", navbar='nav_home')
+    
 
 @render_to('common/downloads.html')
 def downloads(request):
     return _template_values(request, page_title="downloads", navbar='nav_home')
     
+@login_required
+@ajax_request
+def consent_accept(request):
+    """
+    Endpoint to submit consent
+    """
+    accept = request.POST.get('consent', None)
+    if not accept:
+        return {'res':'failed'}
+    
+    user = get_object_or_404(User, username=request.user.username)
+    prof = UserProfile.objects.get(user=user)
+    prof.confirmed = True
+    prof.save()
+    return {'res':'success'}
+
+
 
 @login_required
 @ajax_request

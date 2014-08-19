@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Count
 
 from annoying.decorators import render_to
@@ -20,9 +20,14 @@ from common.constants import *
 @render_to('stats/notifications.html')
 def notifications(request):
   
-    empty_search_msg = EMPTY_SEARCH_MSG['notifications']
     user = get_object_or_404(User, username=request.user.username)
+    userprof = UserProfile.objects.get(user=user)
+    confirmed = userprof.confirmed
+    if not confirmed:
+        return redirect('/consent')
     
+    empty_search_msg = EMPTY_SEARCH_MSG['notifications']
+
     ## stats
     tot_time, item_count = profile_stat_gen(user)
 
@@ -210,6 +215,13 @@ def followers_data(request, username=None):
 @login_required
 @render_to('stats/profile_data.html')
 def profile_data(request, username=None):
+    
+    user = get_object_or_404(User, username=request.user.username)
+    userprof = UserProfile.objects.get(user=user)
+    confirmed = userprof.confirmed
+    if not confirmed:
+        return redirect('/consent')
+    
     """
         Own profile page
     """
