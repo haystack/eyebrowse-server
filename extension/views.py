@@ -16,6 +16,7 @@ from api.utils import humanize_time
 from django.contrib.auth.views import redirect_to_login
 from django.views.generic.simple import redirect_to
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 @xframe_options_exempt
 @render_to("extension/track_prompt.html")
@@ -39,7 +40,6 @@ def get_info(request):
     url = request.GET.get("url")
     
     domain = url_domain(url)
-    my_user = request.user
     
     timestamp =  timezone.now() - datetime.timedelta(days=30)
     
@@ -200,7 +200,7 @@ def get_stats(visits):
 @ajax_request
 def stats(request):
     url = request.GET.get("url", '')
-    my_user = request.user
+    my_user = get_object_or_404(User, username=request.user.username)
 
     
     my_visits = EyeHistory.objects.filter(user=my_user, url=url)
