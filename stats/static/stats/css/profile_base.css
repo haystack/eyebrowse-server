@@ -67,6 +67,11 @@
 	margin-left: 303px;
 }
 
+#left-nav {
+	z-index: 1;
+}
+
+
 .aggregate-stats {
     margin-left:307px;
     position: relative;

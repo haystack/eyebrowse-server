@@ -4,8 +4,12 @@ To activate this account, please click the following link within the next {{ exp
 
 {{site.domain}}{% url registration_activate activation_key %}
 
-To download the extension at our {{site.domain}}/downloads
+To get started with Eyebrowse, download the Chrome extension at {{site.domain}}/downloads
 
 Sincerely,
 
-- the eyebrowse team
+- the Eyebrowse team
+
+eyebrowse@mit.edu
+@eyebrowse_proj
+{{ site.name }}

@@ -245,10 +245,6 @@ tr > .center {
 	border-radius: 6px;
 }
 
-.footer {
-	z-index: -1;
-}
-
 .bold {
 	font-weight: bold;
 }
@@ -261,7 +257,6 @@ tr > .center {
 	margin-right: 100px;
 	margin-left: 50px;
 }
-
 
 .screenshot2 {
 	width: 190px;
