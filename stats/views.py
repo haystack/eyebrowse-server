@@ -296,7 +296,7 @@ def _profile_info(user, username=None, following=False, followers=False):
     """
 
     follows = False
-    if not username: #viewing own profile
+    if not username or user.username == username: #viewing own profile
         username = user.username
         if following:
             msg_type = 'self_following'
