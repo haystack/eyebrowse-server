@@ -1,8 +1,8 @@
 function setFade() {
-    
-    var fadeTime = 4000; //8 seconds
+
+    var fadeTime = 8000; //8 seconds
     var $popup = $("#info-box");
-    
+
     var fadePopup = setTimeout(function() {
         fade($popup)
     }, fadeTime);
@@ -12,7 +12,7 @@ function setFade() {
         $popup.stop();
         $popup.css("opacity", 1.0);
     });
-    
+
     $popup.mouseleave(function() {
         fadePopup = setTimeout(function() {
             fade($popup);
@@ -50,7 +50,7 @@ function clickHandle(e){
 $(document).ready(function(){
 	var num_img = $("#info-box img").length;
 	var text = $.trim($("#message").text());
-	
+
 	if (num_img > 0) {
 		$(".bubble").css("visibility", "visible");
 	    setFade();
@@ -58,7 +58,7 @@ $(document).ready(function(){
 	    $("#info-box").css("width", num + 'px');
 	    $("#allow-btn").click(clickHandle);
 	    $("#deny-btn").click(clickHandle);
-	    
+
 	    if (!(text === "")) {
 	    	$("#info-box").css("width", (num + 195) + 'px');
 	    	$("#messagebox").css("width", '190px');
@@ -77,7 +77,7 @@ $(document).ready(function(){
 	    	$("#imgs").css("float", 'none');
 	    	$("#imgs").css("display", 'inline-block');
 	    }
-	    
+
 	} else if (!(text === "")) {
 		$(".bubble").css("visibility", "visible");
 		setFade();
