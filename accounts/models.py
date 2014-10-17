@@ -16,21 +16,21 @@ class UserProfile(models.Model):
 
     follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False)
     activation_key = models.CharField(max_length=40, default='')
-    pic_url = models.CharField(max_length=1000, default=settings.DEFAULT_IMG)
+    pic_url = models.CharField(max_length=1000, default='')
     use_tour = models.BooleanField(default=True)
     anon_email = models.BooleanField(default=False)
-    
+
     location = models.CharField(max_length=1000, default='')
     website = models.CharField(max_length=1000, default='')
     bio = models.CharField(max_length=1000, default='')
-    
+
     confirmed = models.BooleanField(default=False)
 
     def get_following_history(self, history=None):
         following = self.follows.all()
         if not history:
             history = EyeHistory.objects.all()
-                 
+
         query_set = history.filter(user__in=following)
         return query_set
 

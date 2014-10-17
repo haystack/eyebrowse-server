@@ -9,7 +9,7 @@ from django.utils import simplejson
 
 GRAVATAR_URL_PREFIX = getattr(settings, "GRAVATAR_URL_PREFIX",
                                       "http://www.gravatar.com/")
-GRAVATAR_DEFAULT_IMAGE = getattr(settings, "GRAVATAR_DEFAULT_IMAGE", "")
+GRAVATAR_DEFAULT_IMAGE = getattr(settings, "GRAVATAR_DEFAULT_IMAGE", "identicon")
 GRAVATAR_DEFAULT_RATING = getattr(settings, "GRAVATAR_DEFAULT_RATING", "g")
 GRAVATAR_DEFAULT_SIZE = getattr(settings, "GRAVATAR_DEFAULT_SIZE", 80)
 GRAVATAR_IMG_CLASS = getattr(settings, "GRAVATAR_IMG_CLASS", "gravatar")
@@ -57,7 +57,7 @@ def gravatar_for_email(email, size=None, rating=None, img_url=None):
     gravatar_url = "%savatar/%s" % (GRAVATAR_URL_PREFIX,
             _get_gravatar_id(email))
     #if we have an image uploaded for them
-    if img_url != settings.DEFAULT_IMG or email == "":
+    if img_url or email == "":
         return img_url
 
     img_url = settings.BASE_URL + img_url
@@ -93,7 +93,6 @@ def gravatar_for_user(user, size=None, rating=None, default_url=None):
         img_url = user.profile.pic_url or default_url
     else:
         email = ""
-        img_url = settings.DEFAULT_IMG
     return gravatar_for_email(email, size, rating, img_url)
 
 
