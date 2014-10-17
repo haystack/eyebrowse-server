@@ -33,18 +33,18 @@ def login(request):
     return {
         'src' : src
     }
-   
+
 @xframe_options_exempt
-@render_to("extension/info_prompt.html") 
+@render_to("extension/info_prompt.html")
 def get_info(request):
     url = request.GET.get("url")
-    
+
     domain = url_domain(url)
-    
-    timestamp =  timezone.now() - datetime.timedelta(days=30)
-    
+
+    timestamp =  timezone.now() - datetime.timedelta(days=7)
+
     used_users = []
-    
+
     active = []
 
     eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user_id=request.user.id)).order_by('-end_time').select_related()
@@ -54,16 +54,14 @@ def get_info(request):
             break
         user = eyehist.user
         if user not in used_users:
-            old_level = 4
+            old_level = 3
             if eyehist.end_time > (timezone.now() - datetime.timedelta(minutes=5)):
                 old_level = 0
             elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=1)):
                 old_level = 1
             elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=24)):
                 old_level = 2
-            elif eyehist.end_time > (timezone.now() - datetime.timedelta(days=7)):
-                old_level = 3
-            
+
             active.append({'username': user.username,
                         'pic_url': gravatar_for_user(user),
                         'url': '%s/users/%s' % (BASE_URL,user.username),
@@ -71,12 +69,12 @@ def get_info(request):
                         'time_ago': humanize_time(timezone.now()-eyehist.end_time)
                         })
             used_users.append(user)
-    
+
     message = EyeHistoryMessage.objects.filter(eyehistory__url=url).select_related()
     about_message = None
     user_url = None
     username = None
-    
+
     if message:
         about_message = humanize_time(timezone.now() - message[0].post_time) + ' ago'
         message = message[0].message
@@ -88,11 +86,11 @@ def get_info(request):
             message = '"%s"' % (chat_message[0].message)
             user_url = '%s/users/%s' % (BASE_URL,chat_message[0].author.username)
             username = chat_message[0].author.username
-    
+
     if not about_message:
         about_message = ''
         message = ''
-    
+
     return {
         'url' : url,
         'active_users': active,
@@ -101,15 +99,15 @@ def get_info(request):
         'user_url': user_url,
         'username': username,
     }
-    
-@ajax_request 
+
+@ajax_request
 def profilepic(request):
     return redirect_to(request, gravatar_for_user(request.user));
-  
+
 @ajax_request
-def get_messages(request): 
+def get_messages(request):
     url = request.GET.get("url")
-    
+
     messages = EyeHistoryMessage.objects.filter(eyehistory__url=url).order_by('-post_time').select_related()
 
     message_list = []
@@ -127,11 +125,11 @@ def get_messages(request):
                    'messages': message_list,
                    }
         }
-  
+
 @ajax_request
 def active(request):
     url = request.GET.get("url", '')
-    
+
     domain = url_domain(url)
 
     timestamp =  timezone.now() - datetime.timedelta(days=30)
@@ -156,7 +154,7 @@ def active(request):
                 old_level = 2
             elif eyehist.end_time > (timezone.now() - datetime.timedelta(days=7)):
                 old_level = 3
-            
+
             if url == eyehist.url:
                 active_users.append({'username': user.username,
                             'pic_url': gravatar_for_user(user),
@@ -175,7 +173,7 @@ def active(request):
 
 
 
-    
+
     return {'result': {
                        'page': active_users,
                        'domain': active_dusers
@@ -193,29 +191,29 @@ def get_stats(visits):
         time = '0 seconds'
     else:
         time = humanize_time(datetime.timedelta(milliseconds=visits.aggregate(Sum('total_time'))['total_time__sum']))
-        
+
     return count_text, time
 
-    
+
 @ajax_request
 def stats(request):
     url = request.GET.get("url", '')
     my_user = get_object_or_404(User, username=request.user.username)
 
-    
+
     my_visits = EyeHistory.objects.filter(user=my_user, url=url)
     my_count, my_time = get_stats(my_visits)
-    
+
     total_visits = EyeHistory.objects.filter(url=url)
     total_count, total_time = get_stats(total_visits)
-    
+
     domain = url_domain(url)
     my_dvisits = EyeHistory.objects.filter(user=my_user, domain=domain)
     my_dcount, my_dtime = get_stats(my_dvisits)
-    
+
     total_dvisits = EyeHistory.objects.filter(domain=domain)
     total_dcount, total_dtime = get_stats(total_dvisits)
-    
+
 
     res = {'my_count': my_count,
            'my_time': my_time,
@@ -226,6 +224,6 @@ def stats(request):
            'total_dcount': total_dcount,
            'total_dtime': total_dtime,
           }
-    
+
     return {'result': res}
 
