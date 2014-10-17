@@ -13,7 +13,7 @@ body {
 	z-index: 2;
 }
 
-.bubble 
+.bubble
 {
 	position: relative;
 	max-width: 390px;
@@ -50,10 +50,6 @@ body {
 
 .older3 {
 	opacity: .4;
-}
-
-.older4 {
-	opacity: .1;
 }
 
 #imgs {
@@ -119,7 +115,7 @@ body {
     cursor: pointer;
 }
 
-.bubble:after 
+.bubble:after
 {
 	content: '';
 	position: absolute;
@@ -133,7 +129,7 @@ body {
 	right: 23px;
 }
 
-.bubble:before 
+.bubble:before
 {
 	content: '';
 	position: absolute;
