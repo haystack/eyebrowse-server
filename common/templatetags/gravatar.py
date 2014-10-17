@@ -60,7 +60,6 @@ def gravatar_for_email(email, size=None, rating=None, img_url=None):
     if img_url or email == "":
         return img_url
 
-    img_url = settings.BASE_URL + img_url
     parameters = [p for p in (
         ('d', img_url or GRAVATAR_DEFAULT_IMAGE),
         ('s', size or GRAVATAR_DEFAULT_SIZE),
@@ -93,6 +92,7 @@ def gravatar_for_user(user, size=None, rating=None, default_url=None):
         img_url = user.profile.pic_url or default_url
     else:
         email = ""
+        img_url = ""
     return gravatar_for_email(email, size, rating, img_url)
 
 
