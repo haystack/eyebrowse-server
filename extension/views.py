@@ -70,7 +70,7 @@ def get_info(request):
                         })
             used_users.append(user)
 
-    message = EyeHistoryMessage.objects.filter(eyehistory__url=url).select_related()
+    message = EyeHistoryMessage.objects.filter(Q(eyehistory__url=url) & Q(post_time__gt=timestamp)).select_related()
     about_message = None
     user_url = None
     username = None
@@ -108,7 +108,7 @@ def profilepic(request):
 def get_messages(request):
     url = request.GET.get("url")
 
-    messages = EyeHistoryMessage.objects.filter(eyehistory__url=url).order_by('-post_time').select_related()
+    messages = EyeHistoryMessage.objects.filter(Q(eyehistory__url=url) & Q(post_time__gt=timestamp)).order_by('-post_time').select_related()
 
     message_list = []
     for message in messages:
@@ -132,7 +132,7 @@ def active(request):
 
     domain = url_domain(url)
 
-    timestamp =  timezone.now() - datetime.timedelta(days=30)
+    timestamp =  timezone.now() - datetime.timedelta(days=7)
 
     used_users = []
     active_users = []
@@ -145,15 +145,13 @@ def active(request):
             break
         user = eyehist.user
         if user not in used_users:
-            old_level = 4
+            old_level = 3
             if eyehist.end_time > (timezone.now() - datetime.timedelta(minutes=5)):
                 old_level = 0
             elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=1)):
                 old_level = 1
             elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=24)):
                 old_level = 2
-            elif eyehist.end_time > (timezone.now() - datetime.timedelta(days=7)):
-                old_level = 3
 
             if url == eyehist.url:
                 active_users.append({'username': user.username,
