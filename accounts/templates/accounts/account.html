@@ -3,7 +3,7 @@
 {% load gravatar %}
 
 {% block styles %}
-    
+
     {{ block.super }}
 
 {% endblock %}
@@ -29,7 +29,7 @@
             <input type="hidden" name="form_type" value="account-info">
 
             <fieldset class="control-group">
-                <label class="control-label" for="first_name"> First Name</label> 
+                <label class="control-label" for="first_name"> First Name</label>
 
                 <div class="controls">
                     <input type='text' name='first_name' value="{{ user.first_name }}" id='first_name'>
@@ -59,7 +59,7 @@
                 <input id="website" name="website" size="30" type="text" value="{{user.profile.website}}">
                 </div>
             </fieldset>
-            
+
             <fieldset class="control-group">
                 <label class="control-label" for="bio">Bio</label>
                 <div class="controls">
@@ -71,6 +71,13 @@
                 <label class="control-label checkbox" for="anon_checkbox">Anonymous Email?</label>
                 <div class="controls">
                     <input {% if user.profile.anon_email %} checked {% endif %} type="checkbox" id="anon_checkbox" name='anon_checkbox' class='checkbox tip' data-content="Anonymize your email address from user searches.">
+                </div>
+            </fieldset>
+
+            <fieldset class="control-group">
+                <label class="control-label checkbox" for="ticker_checkbox">Live Ticker Display?</label>
+                <div class="controls">
+                    <input {% if user.profile.ticker_display %} checked {% endif %} type="checkbox" id="ticker_checkbox" name='ticker_checkbox' class='checkbox tip' data-content="Display live ticker instead of bubble form.">
                 </div>
             </fieldset>
 

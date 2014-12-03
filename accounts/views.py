@@ -14,7 +14,7 @@ from common.helpers import put_profile_pic
 @render_to('accounts/whitelist.html')
 def whitelist(request):
     """
-        Edit whitelist entries 
+        Edit whitelist entries
     """
 
     whitelist = WhiteListItem.objects.filter(user=request.user)
@@ -25,7 +25,7 @@ def whitelist(request):
 @render_to('accounts/account.html')
 def account(request):
     """
-        Edit account info 
+        Edit account info
     """
 
     user = request.user
@@ -35,21 +35,23 @@ def account(request):
         errors = {}
         data = None
         type = request.POST.get('form_type', None)
-        
+
         if type == 'account-info':
             first_name = request.POST.get('first_name', '')
             last_name = request.POST.get('last_name', '')
             anon_email = request.POST.get('anon_checkbox', False) == 'True'
+            ticker_display = request.POST.get('ticker_checkbox', True) == 'False'
             location = request.POST.get('location', '')
             website = request.POST.get('website', '')
             bio = request.POST.get('bio', '')
-            
+
             user.first_name = first_name
             user.last_name = last_name
             user.save()
-            
+
             profile = user.profile
             profile.anon_email = anon_email
+            profile.ticker_display = ticker_display
             profile.location = location
             profile.website = website
             profile.bio = bio
@@ -108,7 +110,7 @@ def connect(request):
     req_prof = request.user.profile
 
     if request.POST and request.is_ajax():
-        
+
         type = request.POST.get('type', None)
         username = request.POST.get('user', None)
 
@@ -118,7 +120,7 @@ def connect(request):
                 user = user[0]
             else:
                 user = None
-            
+
             if not user:
                 errors['user'] = "Requested user %s not found."%username
 
@@ -130,7 +132,7 @@ def connect(request):
                     req_prof.follows.add(user.profile)
                 elif type == 'rm-follow' and req_prof.follows.filter(user=user).exists():
                     req_prof.follows.remove(user)
-        
+
             success = True
             data = {
                 'type' : type,
