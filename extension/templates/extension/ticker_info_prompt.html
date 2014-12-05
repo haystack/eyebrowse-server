@@ -2,34 +2,7 @@
 
 {% block content%}
 
-<div id=messageholder>
-<div id=messagebox title="Click to close">
-  {% if user_url %}
-  <div id=message>{{ message|truncatechars:103 }}
-      <span id=user-message><a href="{{ user_url }}" title="{{ username }}" target="_blank">{{ username }}</a></span>
-  {% else %}
-    <div id=message>{{ message|truncatechars:118 }}
-    {% endif %}
-    <span id=about-message>{{ about_message }}</span></div>
-
-</div>
-FURKKK
-</div>
-
-
-<div id="imgs">
-  {% for user in active_users %}
-    {% if user.old_level == 0 %}
-      <a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older0" src="{{ user.pic_url }}"></a>
-    {% elif user.old_level == 1 %}
-      <a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older1" src="{{ user.pic_url }}"></a>
-    {% elif user.old_level == 2 %}
-      <a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older2" src="{{ user.pic_url }}"></a>
-    {% elif user.old_level == 3 %}
-      <a href="{{ user.url }}" target="_blank" title="{{ user.username }} - {{ user.time_ago }} ago"><img class="img-rounded small-pic older3" src="{{ user.pic_url }}"></a>
-    {% endif %}
-  {% endfor %}
-</div>
+<div class="ticker-stream-container">hello</div>
 
 
 

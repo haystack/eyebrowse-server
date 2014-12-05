@@ -107,12 +107,12 @@ def get_ticker_info(request):
     user = get_object_or_404(User, username=request.user.username)
     print "*********user****"
     print user
-    get_dict, query, date = _get_query(request)
-    print get_dict
-    hist, history_stream = live_stream_query_manager(get_dict, user, "list");
+    # get_dict, query, date = _get_query(request)
+    # print get_dict
+    # hist, history_stream = live_stream_query_manager(get_dict, user, "list");
     # print history_stream[0]
     return {
-        'history_stream' : history_stream
+        # 'history_stream' : history_stream
     }
 
 @ajax_request
