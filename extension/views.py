@@ -3,7 +3,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from annoying.decorators import render_to, ajax_request
 from django.contrib.auth.models import User
 from django.db.models import Q
-from common.view_helpers import JSONResponse
+from common.view_helpers import JSONResponse, _template_values, _get_query
 from api.models import ChatMessage, EyeHistory, EyeHistoryMessage
 from common.templatetags.gravatar import gravatar_for_user
 
@@ -17,6 +17,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.views.generic.simple import redirect_to
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from live_stream.query_managers import *
 
 @xframe_options_exempt
 @render_to("extension/track_prompt.html")
@@ -103,68 +104,15 @@ def get_info(request):
 @xframe_options_exempt
 @render_to("extension/ticker_info_prompt.html")
 def get_ticker_info(request):
-    print "FUCK"
-    url = request.GET.get("url")
-
-    domain = url_domain(url)
-
-    timestamp =  timezone.now() - datetime.timedelta(days=7)
-
-    used_users = []
-
-    active = []
-
-    eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user_id=request.user.id)).order_by('-end_time').select_related()
-
-    for eyehist in eyehists:
-        if len(active) >= 6:
-            break
-        user = eyehist.user
-        if user not in used_users:
-            old_level = 3
-            if eyehist.end_time > (timezone.now() - datetime.timedelta(minutes=5)):
-                old_level = 0
-            elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=1)):
-                old_level = 1
-            elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=24)):
-                old_level = 2
-
-            active.append({'username': user.username,
-                        'pic_url': gravatar_for_user(user),
-                        'url': '%s/users/%s' % (BASE_URL,user.username),
-                        'old_level': old_level,
-                        'time_ago': humanize_time(timezone.now()-eyehist.end_time)
-                        })
-            used_users.append(user)
-
-    message = EyeHistoryMessage.objects.filter(Q(eyehistory__url=url) & Q(post_time__gt=timestamp)).select_related()
-    about_message = None
-    user_url = None
-    username = None
-
-    if message:
-        about_message = humanize_time(timezone.now() - message[0].post_time) + ' ago'
-        message = message[0].message
-
-    if not about_message:
-        chat_message = ChatMessage.objects.filter(url=url).select_related()
-        if chat_message:
-            about_message = humanize_time(timezone.now() - chat_message[0].date) + ' ago'
-            message = '"%s"' % (chat_message[0].message)
-            user_url = '%s/users/%s' % (BASE_URL,chat_message[0].author.username)
-            username = chat_message[0].author.username
-
-    if not about_message:
-        about_message = ''
-        message = ''
-
+    user = get_object_or_404(User, username=request.user.username)
+    print "*********user****"
+    print user
+    get_dict, query, date = _get_query(request)
+    print get_dict
+    hist, history_stream = live_stream_query_manager(get_dict, user, "list");
+    # print history_stream[0]
     return {
-        'url' : url,
-        'active_users': active,
-        'message': message,
-        'about_message': about_message,
-        'user_url': user_url,
-        'username': username,
+        'history_stream' : history_stream
     }
 
 @ajax_request

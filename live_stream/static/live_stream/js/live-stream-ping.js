@@ -26,7 +26,7 @@ function liveStreamPing(args, callback){
         this.pingInterval = setInterval($.proxy(this.ping, this), this.pingIntervalValue);
         this.setupIdle();
         this.first();
-        
+
         //lets display results automatically instead
         // $(document).on('ping-new', $.proxy(this.showNotification, this));
         // this.$container.on('click', '.load-new', $.proxy(this.insertHistoryItems, this));
@@ -61,20 +61,20 @@ function liveStreamPing(args, callback){
             'return_type' : 'list',
             'type' : 'ping',
         };
-        for (var attrname in this.searchParams) { 
-            payload[attrname] = this.searchParams[attrname]; 
+        for (var attrname in this.searchParams) {
+            payload[attrname] = this.searchParams[attrname];
         }
         var that = this;
         // console.log("pingload", payload)
         $.getJSON('/live_stream/ping/', payload, function(res){
                 that.history = res.history;
-
+                console.log(that.history);
                 if (that.callback){
                     that.callback(res);
                 }
                 if (that.history.length) {
                     $(document).trigger('ping-new');
-                }     
+                }
         });
     }
 
@@ -108,7 +108,7 @@ function liveStreamPing(args, callback){
         this.history = [];
         $loadNew.remove();
     }
-    
+
     this.setup();
     return this
 }
