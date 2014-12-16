@@ -26,9 +26,10 @@ body {
 .bubble
 {
   position: relative;
-  max-width: 450px;
-  min-width: 40px;
-  height: 70px;
+/*  max-width: 450px;
+  min-width: 40px;*/
+  height: 22px;
+  width: 400px;
   position: absolute;
   bottom: 0px;
   right: 0px;
@@ -119,34 +120,11 @@ body {
     cursor: pointer;
 }
 
-/*.bubble:after
-{
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 0 10px 10px;
-  border-color: #FFFFFF transparent;
-  display: block;
-  width: 0;
-  z-index: 1;
-  top: -7px;
-  right: 23px;
+.row {
+  width: 400px;
+  margin-left: 0px !important;
 }
 
-.bubble:before
-{
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 0 12px 12px;
-  border-color: #333333 transparent;
-  display: block;
-  width: 0;
-  z-index: 0;
-  top: -13px;
-  right: 21px;
-}
-*/
 .track-container {
     margin-left:100px !important;
 }

@@ -18,8 +18,11 @@ function tickerPing(args, callback){
     this.callback = callback;
     this.historyQueue = [];
 
-
     this.setup = function() {
+        var curTime = new Date();
+        this.lastTime = curTime.format("yyyy-mm-dd HH:MM:ss");
+        // this.lastTime = curTime.getFullYear()+'-'+curTime.getMonth()+'-'+curTime.getDate()+' '+curTime.getHours()+':'+curTime.getMinutes()+':'+curTime.getSeconds();
+
         this.pingInterval = setInterval($.proxy(this.ping, this), this.pingIntervalValue);
         // this.setupIdle();
         this.first();
@@ -50,9 +53,11 @@ function tickerPing(args, callback){
     this.ping = function(){
         if (!this.canPing) return;
         var filter = this.defaultFilter;
-        var oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        var timestamp = /* ('.first .date').data('timestamp') || oneWeekAgo*/ "2014-10-31 19:10:20";
+
+        var timestamp = this.lastTime /*"2014-10-31 19:10:20"*/;
+        console.log(timestamp);
+        var curTime = new Date();
+        this.lastTime = curTime.format("yyyy-mm-dd HH:MM:ss");
         var payload =  {
             'filter' : filter,
             'timestamp' : timestamp,

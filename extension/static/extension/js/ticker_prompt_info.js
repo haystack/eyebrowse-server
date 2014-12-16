@@ -40,7 +40,7 @@ function tickerCallback(history_stream) {
 
 $(function(){
     tickerStream = new tickerPing({
-        'defaultFilter' : 'following',
+        'defaultFilter' : 'firehose',
         'searchParams' : {
             'template':'../extension/ticker_history_item',
             'query' :  "",
