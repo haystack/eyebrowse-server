@@ -42,7 +42,7 @@ $(function(){
     tickerStream = new tickerPing({
         'defaultFilter' : 'following',
         'searchParams' : {
-            'template':'history_item_template_new',
+            'template':'../extension/ticker_history_item',
             'query' :  "",
             'date' :  ""
         },

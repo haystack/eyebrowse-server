@@ -11,16 +11,20 @@ function tickerPing(args, callback){
     this.history = [];
     this.canPing = true;
     this.$container = $('.ticker-stream-container');
-    this.pingIntervalValue = 3500;
+    this.pingIntervalValue = 10000;
     this.defaultFilter = args.defaultFilter;
     this.searchParams = args.searchParams;
     this.updateTemplate = args.updateTemplate || "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>";
     this.callback = callback;
+    this.historyQueue = [];
+
 
     this.setup = function() {
         this.pingInterval = setInterval($.proxy(this.ping, this), this.pingIntervalValue);
         // this.setupIdle();
         this.first();
+
+        setInterval($.proxy(this.dequeue, this), 3000);
 
         //lets display results automatically instead
         // $(document).on('ping-new', $.proxy(this.showNotification, this));
@@ -61,15 +65,15 @@ function tickerPing(args, callback){
         var that = this;
         // console.log("pingload", payload)
         $.getJSON('/live_stream/ping/', payload, function(res){
-                console.log("res", res);
-                that.history = res.history;
-                if (that.callback){
-                    that.callback(res);
-                }
-                if (that.history.length) {
-                    console.log("that.history:", that.history);
-                    $(document).trigger('ping-new');
-                }
+            console.log("res", res);
+            that.history = res.history;
+            if (that.callback){
+                that.callback(res);
+            }
+            if (that.history.length) {
+                console.log("that.history:", that.history);
+                $(document).trigger('ping-new');
+            }
         });
     }
 
@@ -85,19 +89,25 @@ function tickerPing(args, callback){
 
     this.insertHistoryItems = function (e){
         var that = this;
-        $('.first').removeClass('first');
         $.each(that.history.reverse(), function(index, item){
-            var $toAdd = $(item);
-            $toAdd.hide();
-            that.$container.prepend($toAdd);
-
-            $toAdd.fadeIn(750);
-            if (index === that.history.length -1){
-                $toAdd.addClass('first');
-            }
+            that.historyQueue.push(item);
         });
-
+        this.historyQueue = that.historyQueue;
         this.history = [];
+    }
+
+    this.dequeue = function() {
+        var that = this;
+        console.log('this.history', that.history.length);
+        console.log('this.historyQueue', that.historyQueue.length);
+        if (that.historyQueue.length > 0) {
+            that.$container.empty();
+            var $toAdd = $(that.historyQueue.shift());
+            $toAdd.hide();
+            $toAdd.fadeIn(750);
+            that.$container.prepend($toAdd);
+        }
+        this.historyQueue = that.historyQueue;
     }
 
     this.setup();
