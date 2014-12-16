@@ -36,20 +36,6 @@ function tickerPing(args, callback){
         $(document).on('ping-new', $.proxy(this.insertHistoryItems, this));
     }
 
-    // this.setupIdle = function() {
-    //     var that = this;
-    //     $(window).idle(
-    //         function() {
-    //             that.canPing = false; // cheap insurance
-    //             clearInterval(that.pingInterval);
-    //         },
-    //         function() {
-    //             that.canPing = true;
-    //             that.pingInterval = setInterval($.proxy(that.ping, that), that.pingIntervalValue);
-    //         }
-    //     );
-    // }
-
     this.ping = function(){
         if (!this.canPing) return;
         var filter = this.defaultFilter;
@@ -68,7 +54,6 @@ function tickerPing(args, callback){
             payload[attrname] = this.searchParams[attrname];
         }
         var that = this;
-        // console.log("pingload", payload)
         $.getJSON('/live_stream/ping/', payload, function(res){
             console.log("res", res);
             that.history = res.history;
@@ -103,14 +88,15 @@ function tickerPing(args, callback){
 
     this.dequeue = function() {
         var that = this;
-        console.log('this.history', that.history.length);
-        console.log('this.historyQueue', that.historyQueue.length);
         if (that.historyQueue.length > 0) {
+            $(".bubble").css("visibility", "visible");
             that.$container.empty();
             var $toAdd = $(that.historyQueue.shift());
             $toAdd.hide();
             $toAdd.fadeIn(750);
             that.$container.prepend($toAdd);
+        } else {
+            $(".bubble").css("visibility", "hidden");
         }
         this.historyQueue = that.historyQueue;
     }

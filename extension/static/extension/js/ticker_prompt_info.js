@@ -27,9 +27,7 @@ function clickHandle(e){
 $(document).ready(function(){
   var num_img = $("#info-box img").length;
   var text = $.trim($("#message").text());
-  $(".bubble").css("visibility", "visible");
-  // TODO: figure out where they click to hide, no longer messagebox
-  $('#messagebox').click(function(){
+  $('.bubble').click(function(){
     passMessage("fade");
   });
 });
@@ -40,7 +38,7 @@ function tickerCallback(history_stream) {
 
 $(function(){
     tickerStream = new tickerPing({
-        'defaultFilter' : 'firehose',
+        'defaultFilter' : 'firehose', //FOR TESTING- for deploy switch to following
         'searchParams' : {
             'template':'../extension/ticker_history_item',
             'query' :  "",
