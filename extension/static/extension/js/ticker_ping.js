@@ -41,7 +41,7 @@ function tickerPing(args, callback){
         var filter = this.defaultFilter;
 
         var timestamp = this.lastTime /*"2014-10-31 19:10:20"*/;
-        console.log(timestamp);
+        // console.log(timestamp);
         var curTime = new Date();
         this.lastTime = curTime.format("yyyy-mm-dd HH:MM:ss");
         var payload =  {
@@ -55,13 +55,13 @@ function tickerPing(args, callback){
         }
         var that = this;
         $.getJSON('/live_stream/ping/', payload, function(res){
-            console.log("res", res);
+            // console.log("res", res);
             that.history = res.history;
             if (that.callback){
                 that.callback(res);
             }
             if (that.history.length) {
-                console.log("that.history:", that.history);
+                // console.log("that.history:", that.history);
                 $(document).trigger('ping-new');
             }
         });

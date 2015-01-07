@@ -33,12 +33,12 @@ $(document).ready(function(){
 });
 
 function tickerCallback(history_stream) {
-  console.log("history_stream", history_stream)
+  // console.log("history_stream", history_stream)
 }
 
 $(function(){
     tickerStream = new tickerPing({
-        'defaultFilter' : 'firehose', //FOR TESTING- for deploy switch to following
+        'defaultFilter' : 'firehose', //FOR TESTING- for deploy switch to 'following'
         'searchParams' : {
             'template':'../extension/ticker_history_item',
             'query' :  "",
