@@ -40,7 +40,6 @@ def account(request):
             first_name = request.POST.get('first_name', '')
             last_name = request.POST.get('last_name', '')
             anon_email = request.POST.get('anon_checkbox', False) == 'True'
-            ticker_display = request.POST.get('ticker_checkbox', True) == 'False'
             location = request.POST.get('location', '')
             website = request.POST.get('website', '')
             bio = request.POST.get('bio', '')

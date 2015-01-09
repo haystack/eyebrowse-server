@@ -17,7 +17,6 @@ from django.contrib.auth.views import redirect_to_login
 from django.views.generic.simple import redirect_to
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from live_stream.query_managers import *
 
 @xframe_options_exempt
 @render_to("extension/track_prompt.html")
@@ -105,12 +104,6 @@ def get_info(request):
 @render_to("extension/ticker_info_prompt.html")
 def get_ticker_info(request):
     user = get_object_or_404(User, username=request.user.username)
-    print "*********user****"
-    print user
-    # get_dict, query, date = _get_query(request)
-    # print get_dict
-    # hist, history_stream = live_stream_query_manager(get_dict, user, "list");
-    # print history_stream[0]
     return {
         # 'history_stream' : history_stream
     }

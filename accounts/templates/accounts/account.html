@@ -74,13 +74,6 @@
                 </div>
             </fieldset>
 
-            <fieldset class="control-group">
-                <label class="control-label checkbox" for="ticker_checkbox">Live Ticker Display?</label>
-                <div class="controls">
-                    <input {% if user.profile.ticker_display %} checked {% endif %} type="checkbox" id="ticker_checkbox" name='ticker_checkbox' class='checkbox tip' data-content="Display live ticker instead of bubble form.">
-                </div>
-            </fieldset>
-
             <input class="btn btn-primary offset3" type="submit" value="Save" data-loading-text="Saving..." id="account-info-save"/>
 
         </form>

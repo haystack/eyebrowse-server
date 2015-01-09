@@ -19,7 +19,6 @@ class UserProfile(models.Model):
     pic_url = models.CharField(max_length=1000, default='')
     use_tour = models.BooleanField(default=True)
     anon_email = models.BooleanField(default=False)
-    ticker_display = models.BooleanField(default=True)
 
     location = models.CharField(max_length=1000, default='')
     website = models.CharField(max_length=1000, default='')
