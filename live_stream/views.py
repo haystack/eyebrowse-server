@@ -70,9 +70,6 @@ def live_stream(request):
 @login_required
 @ajax_request
 def ping(request):
-    # print "*************"
-    # print request
-    # print "*************"
     get_dict, query, date = _get_query(request)
 
     _, history = live_stream_query_manager(get_dict, request.user, return_type="list")

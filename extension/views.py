@@ -3,7 +3,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from annoying.decorators import render_to, ajax_request
 from django.contrib.auth.models import User
 from django.db.models import Q
-from common.view_helpers import JSONResponse, _template_values, _get_query
+from common.view_helpers import JSONResponse
 from api.models import ChatMessage, EyeHistory, EyeHistoryMessage
 from common.templatetags.gravatar import gravatar_for_user
 
