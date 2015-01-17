@@ -14,7 +14,7 @@ from live_stream.query_managers import *
 @login_required
 @render_to('live_stream/live_stream.html')
 def live_stream(request):
-    
+
     user = get_object_or_404(User, username=request.user.username)
     userprof = UserProfile.objects.get(user=user)
     confirmed = userprof.confirmed
@@ -26,8 +26,8 @@ def live_stream(request):
     get_dict, query, date = _get_query(request)
 
     hist, history_stream = live_stream_query_manager(get_dict, user)
-    
-    
+
+
     following_count = user.profile.follows.count()
     follower_count = UserProfile.objects.filter(follows=user.profile).count()
 
@@ -35,20 +35,20 @@ def live_stream(request):
     today = datetime.now() - timedelta(hours=24)
     day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
     day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
-    
+
     day_chart = {}
     for domain in day_domains:
         day_chart[domain['domain']] = domain['num_domains']
-    
+
     last_week = today - timedelta(days=7)
     week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
     week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
-    
+
     week_chart = {}
     for domain in week_domains:
         week_chart[domain['domain']] = domain['num_domains']
-    
-    
+
+
     template_dict = {
         'username': user.username,
         'following_count': following_count,
@@ -70,7 +70,6 @@ def live_stream(request):
 @login_required
 @ajax_request
 def ping(request):
-
     get_dict, query, date = _get_query(request)
 
     _, history = live_stream_query_manager(get_dict, request.user, return_type="list")

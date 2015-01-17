@@ -100,6 +100,14 @@ def get_info(request):
         'username': username,
     }
 
+@xframe_options_exempt
+@render_to("extension/ticker_info_prompt.html")
+def get_ticker_info(request):
+    user = get_object_or_404(User, username=request.user.username)
+    return {
+        # 'history_stream' : history_stream
+    }
+
 @ajax_request
 def profilepic(request):
     return redirect_to(request, gravatar_for_user(request.user));

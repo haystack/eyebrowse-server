@@ -1,7 +1,7 @@
 $(function(){
     liveStream = new liveStreamPing({
         'filterFunc' : getURLParameter,
-        'defaultFilter' : 'following', 
+        'defaultFilter' : 'following',
         'searchParams' : {
             'template':'history_item_template_new',
             'query' :  $(".search-bar").val(),
