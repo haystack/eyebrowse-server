@@ -15,6 +15,7 @@ from common.view_helpers import _template_values, _get_query
 from common.pagination import paginator
 
 from common.constants import *
+from eyebrowse.log import logger
 
 @login_required
 @render_to('stats/notifications.html')
@@ -210,22 +211,23 @@ def followers_data(request, username=None):
     return _template_values(request, page_title="following list", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
 
     
-
-
-@login_required
 @render_to('stats/profile_data.html')
 def profile_data(request, username=None):
     
-    user = get_object_or_404(User, username=request.user.username)
-    userprof = UserProfile.objects.get(user=user)
-    confirmed = userprof.confirmed
-    if not confirmed:
-        return redirect('/consent')
+    if request.user.is_authenticated():
+        user = get_object_or_404(User, username=request.user.username)
+        userprof = UserProfile.objects.get(user=user)
+        confirmed = userprof.confirmed
+        if not confirmed:
+            return redirect('/consent')
+    else:
+        user = None
+        userprof = None
     
     """
         Own profile page
     """
-    username, follows, profile_user, empty_search_msg = _profile_info(request.user, username)
+    username, follows, profile_user, empty_search_msg = _profile_info(user, username)
 
     get_dict, query, date = _get_query(request)
 
@@ -290,23 +292,31 @@ def profile_data(request, username=None):
 
     return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
 
-def _profile_info(user, username=None, following=False, followers=False):
+def _profile_info(user=None, username=None, following=False, followers=False):
     """
         Helper to give basic profile info for rendering the profile page or its child pages
     """
 
     follows = False
-    if not username or user.username == username: #viewing own profile
-        username = user.username
-        if following:
-            msg_type = 'self_following'
-        elif followers:
-            msg_type = 'self_followers'
-        else:
-            msg_type = 'self_profile_stream'
+    if user:
+        if not username or user.username == username: #viewing own profile
+            username = user.username
+            if following:
+                msg_type = 'self_following'
+            elif followers:
+                msg_type = 'self_followers'
+            else:
+                msg_type = 'self_profile_stream'
         
+        else:
+            follows = user.profile.follows.filter(user__username=username).exists()
+            if following:
+                msg_type = 'following'
+            elif followers:
+                msg_type = 'followers'
+            else:
+                msg_type = 'profile_stream'
     else:
-        follows = user.profile.follows.filter(user__username=username).exists()
         if following:
             msg_type = 'following'
         elif followers:
