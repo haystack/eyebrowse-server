@@ -11,13 +11,15 @@
 <div class="row span12 user-info" data-username="{{profile_user.username}}">
 
     {% include 'stats/profile_subnav.html' %}
-    <div class="span8 well profile-header">
+    <div class="span8 profile-header">
+    	<div class="well">
         <div class="upper-header">
-            {% if profile_user != user %}
+        	{% if profile_user != user %}
         		{% gravatar_img_for_user profile_user 80 %}
         	{% else %}
         		<a href="/accounts/profile/account" title="Click here to change your profile picture">{% gravatar_img_for_user profile_user 80 %}</a>
-        	{% endif %}        </div>
+        	{% endif %}
+        </div>
         
         <div class="lower-header">
 	        <span class="user-name">
@@ -46,14 +48,16 @@
 	            </span>
            </div>
         </div>
-        
-    </div>
+        </div>
 
-</div>
-
-{% block profile_content %}
+		{% block profile_content %}
+		
+		{% endblock %}
     
-{% endblock %}
+	</div>
+</div>
+    
+
 
 
 {% endblock %}
@@ -61,4 +65,6 @@
 {% block scripts %} 
     {% include_script 'stats/js/profile_base' %}
     {% include_script "stats/js/profile_stats" %}
+    {% include_script "live_stream/js/jsapi" %}
+    {% include_script "live_stream/js/barchart" %}
 {% endblock %}

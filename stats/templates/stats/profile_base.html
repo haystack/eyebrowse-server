@@ -11,7 +11,8 @@
 <div class="row span12 user-info" data-username="{{profile_user.username}}">
 
     {% include 'stats/profile_subnav.html' %}
-    <div class="span8 well profile-header">
+    <div class="span8 profile-header">
+    	<div class="well">
         <div class="upper-header">
         	{% if profile_user != user %}
         		{% gravatar_img_for_user profile_user 80 %}
@@ -47,16 +48,18 @@
 	            </span>
            </div>
         </div>
-        
-    </div>
-    {% include "live_stream/aggregate_stats.html" %}
+        </div>
     {% include "live_stream/search_bar.html" %}
-
-</div>
+    {% include "live_stream/aggregate_stats.html" %}
 
 {% block profile_content %}
-    
+
 {% endblock %}
+    
+    	</div>
+</div>
+    
+
 
 
 {% endblock %}

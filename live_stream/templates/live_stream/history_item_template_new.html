@@ -1,7 +1,7 @@
 {% load filters %}
 {% load gravatar %}
 
-<div id="history_item_{{item.id}}" class='row history-container infinite-scroll span8' data-id="{{ item.id }}">
+<div id="history_item_{{item.id}}" class='row history-container infinite-scroll' data-id="{{ item.id }}">
     <!-- <div class="author-container">
         <a class="author-name" href="/users/{{ item.user.username }}" title="Add connection" data-content="">
             <img class="author-pic img-polaroid" src="{% gravatar_for_user item.user %}"/>

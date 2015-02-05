@@ -1,4 +1,4 @@
-<div class="history-timeline-container live-stream-container offset3">
+<div class="history-timeline-container live-stream-container">
     {% for h_item in history %}
         {% include "live_stream/history_item_template_new.html" with item=h_item user=user follows=follows messages=h_item.messages %}
     {% endfor %}

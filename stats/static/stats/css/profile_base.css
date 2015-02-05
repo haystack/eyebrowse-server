@@ -10,12 +10,6 @@
 	margin:0 auto;
 }
 
-.profile-header {
-	margin-left:7px;
-	padding-left: 11px;
-	padding-right: 11px;
-}
-
 .bulletin-color {
 	color: green;
 }
@@ -45,8 +39,6 @@
 }
 
 .user-metadata{
-	position: relative;
-	top: 8px;
     text-align: center;
     align: center;
 }
@@ -55,29 +47,12 @@
     margin-top: -10px;
 }
 
-.search-bar-wrap {
-    margin-left:307px;
-}
-
-.history-timeline-container {
-	padding-left: 3px;
-}
-
 .offset-set {
 	margin-left: 303px;
 }
 
 #left-nav {
 	z-index: 1;
-}
-
-
-.aggregate-stats {
-    margin-left:307px;
-    position: relative;
-    top: 0px;
-    padding-left: 22px;
-	padding-right: 0px;
 }
 
 .followlink {
