@@ -49,7 +49,11 @@
 	            <br />
 	            <span class="profile-links">
 	                <a href="/api/v1/history-data?format=json&user__username={{ profile_user.username}}&offset=0&limit=10">
-	                API to {{ profile_user.username}}'s Eyebrowse Visits
+	                API of eyebrowse data
+	                </a>
+	                |
+	                <a href="/users/{{ profile_user.username}}/visualizations">
+	                View Visualizations of eyebrowse data
 	                </a>
 	                
 	            </span>

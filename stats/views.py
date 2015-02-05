@@ -273,20 +273,14 @@ def profile_viz(request, username=None):
     week_titles = hist.filter(start_time__gt=last_week).values_list('title')
    
     week_words = {}
-    max_count = 1
     for title in week_titles:
-        for word in title[0].split(' '):
+        for word in title[0].split():
             if re.match('^[\w]+$', word) is not None:
                 word = word.lower()
                 if word not in week_words:
                     week_words[word] = 1
                 else:
                     week_words[word] += 1
-                    if week_words[word] > max_count:
-                        max_count = week_words[word]
-    
-    for word in week_words:
-        week_words[word] = float(week_words[word]/max_count)
     
     template_dict = {
         'username': profile_user.username,
