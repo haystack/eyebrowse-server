@@ -25,7 +25,7 @@
                 <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.first_item.url|url_domain }} 
             </a> 
             | <a class="pointer" onclick="trackOutboundLink('{{ item.first_item.url }}'); return false;" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.first_item.url }}"><span class="cut-content pointer" data-content="{{ item.first_item.title}}">
-                {{ item.first_item.title|truncatechars:40 }} 
+                {{ item.first_item.title|truncatechars:50 }} 
                </a>
             </span>
         </span> <!-- | -->

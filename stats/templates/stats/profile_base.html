@@ -46,6 +46,13 @@
 	                {{ profile_user.profile.website }}
 	                </a>
 	            </span>
+	            <br />
+	            <span class="profile-links">
+	                <a href="/api/v1/history-data?format=json&user__username={{ profile_user.username}}&offset=0&limit=10">
+	                API to {{ profile_user.username}}'s Eyebrowse Visits
+	                </a>
+	                
+	            </span>
            </div>
         </div>
         </div>
