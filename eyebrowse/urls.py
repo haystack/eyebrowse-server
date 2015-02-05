@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
     url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 
+    url(r'^users/(?P<username>.+?)/visualizations$', 'stats.views.profile_viz'),
     url(r'^users/(?P<username>.+)$', 'stats.views.profile_data'),
     url(r'^following/(?P<username>.+)$', 'stats.views.following_data'),
     url(r'^followers/(?P<username>.+)$', 'stats.views.followers_data'),

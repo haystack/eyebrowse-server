@@ -1,0 +1,67 @@
+{% extends "common/base.html" %}
+{% load filters %}
+{% load staticfiles %}
+{% load gravatar %}
+
+{% block styles %}
+    {% include_style 'live_stream/css/history_item' %}
+    {% include_style "stats/css/profile_base" %}
+{% endblock %}
+
+{% block content %} 
+<div class="row span12 user-info">
+    {% include "stats/profile_subnav.html" %}
+
+    <div class="span8 profile-header">
+    	<div class="well">
+	        <div class="upper-header">
+	        	{% if profile_user != user %}
+	        		<a href="/users/{{ profile_user.username }}">{% gravatar_img_for_user profile_user 80 %}</a>
+	        	{% else %}
+	        		<a href="/accounts/profile/account" title="Click here to change your profile picture">{% gravatar_img_for_user profile_user 80 %}</a>
+	        	{% endif %}
+	        </div>
+        <div class="lower-header">
+	        <span class="user-name">
+	            Visualizations of {{username}}'s eyebrowse history
+	        </span>
+	       
+        	<div class="user-metadata">
+	            <span class="location profile-field">
+	               <a href="/users/{{ profile_user.username }}">{{ profile_user.username }}'s profile</a>
+	            </span>
+           </div>
+        </div>
+       </div>
+       
+       <div class="well">
+       	<div class="user-metadata">
+       		<h4>
+       			Pie chart of top visited domains and list of top pages in the last day and week.
+       		</h4>
+       	</div>
+       </div>
+       	{% include "live_stream/aggregate_stats.html" %}
+
+       <div class="well">
+       	<div class="user-metadata">
+       		<h4>
+       			Word cloud of page titles in the last week.
+       		</h4>
+       	</div>
+       </div>
+       	{% include "live_stream/aggregate_stats_wordle.html" %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {% include_script "live_stream/js/live-stream" %}
+    {% include_script "live_stream/js/history-tips" %}
+    {% include_script "live_stream/js/jsapi" %}
+    {% include_script "live_stream/js/barchart" %}
+    {% include_script "common/js/d3.min" %}
+    {% include_script "common/js/d3.layout.cloud" %}
+    {% include_script "live_stream/js/wordcloud" %}
+{% endblock %}

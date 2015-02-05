@@ -16,6 +16,7 @@ from common.pagination import paginator
 
 from common.constants import *
 from eyebrowse.log import logger
+import re
 
 @login_required
 @render_to('stats/notifications.html')
@@ -209,6 +210,107 @@ def followers_data(request, username=None):
     }
 
     return _template_values(request, page_title="following list", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
+
+    
+@render_to('stats/profile_viz.html')
+def profile_viz(request, username=None):
+    
+    if request.user.is_authenticated():
+        user = get_object_or_404(User, username=request.user.username)
+        userprof = UserProfile.objects.get(user=user)
+        confirmed = userprof.confirmed
+        if not confirmed:
+            return redirect('/consent')
+    else:
+        user = None
+        userprof = None
+    
+    """
+        Own profile page
+    """
+    username, follows, profile_user, empty_search_msg = _profile_info(user, username)
+
+    get_dict, query, date = _get_query(request)
+
+    get_dict["orderBy"] = "end_time"
+    get_dict["direction"] = "hl"
+    get_dict["filter"] = ""
+    get_dict["page"] = request.GET.get("page", 1)
+    get_dict["username"] = profile_user.username
+
+    hist, history_stream = live_stream_query_manager(get_dict, profile_user)
+
+    ## stats
+    tot_time, item_count = profile_stat_gen(profile_user)
+
+    fav_data = FavData.objects.get(user=profile_user)
+
+    num_history = EyeHistory.objects.filter(user=profile_user).count()
+
+    is_online = online_user(user=profile_user)
+    
+    following_count = profile_user.profile.follows.count()
+    follower_count = UserProfile.objects.filter(follows=profile_user.profile).count()
+    
+
+    
+    today = datetime.now() - timedelta(hours=24)
+    day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
+    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    
+    day_chart = {}
+    for domain in day_domains:
+        day_chart[domain['domain']] = domain['num_domains']
+    
+    last_week = today - timedelta(days=7)
+    week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
+    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    
+    week_chart = {}
+    for domain in week_domains:
+        week_chart[domain['domain']] = domain['num_domains']
+        
+    week_titles = hist.filter(start_time__gt=last_week).values_list('title')
+   
+    week_words = {}
+    max_count = 1
+    for title in week_titles:
+        for word in title[0].split(' '):
+            if re.match('^[\w]+$', word) is not None:
+                word = word.lower()
+                if word not in week_words:
+                    week_words[word] = 1
+                else:
+                    week_words[word] += 1
+                    if week_words[word] > max_count:
+                        max_count = week_words[word]
+    
+    for word in week_words:
+        week_words[word] = float(week_words[word]/max_count)
+    
+    template_dict = {
+        'username': profile_user.username,
+        'following_count': following_count,
+        'follower_count': follower_count,
+        "profile_user" : profile_user,
+        "history_stream" : history_stream,
+        "empty_search_msg" : empty_search_msg,
+        "follows" : str(follows), 
+        "is_online" : is_online,
+        "num_history" : num_history,
+        "tot_time" : tot_time,
+        "item_count" : item_count,
+        "fav_data" : fav_data,
+        "query" : query,
+        "date" : date,
+        'day_articles': day_count,
+        'week_articles': week_count,
+        'day_chart': json.dumps(day_chart),
+        'week_chart': json.dumps(week_chart),
+        'week_words': json.dumps(week_words.items())
+    }
+
+    return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
 
     
 @render_to('stats/profile_data.html')
