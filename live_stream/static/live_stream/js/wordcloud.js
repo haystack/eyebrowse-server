@@ -6,7 +6,7 @@ $(document).ready(function(){
 
 var fill = d3.scale.category20();
 
-var w = 750,
+var w = Math.min(750, $(window).width()),
 	h = 400;
 	
 var words = [],
@@ -71,7 +71,6 @@ function generate() {
 }
 
 function draw(data, bounds) {
-	console.log(bounds);
   scale = bounds ? Math.min(
       w / Math.abs(bounds[1].x - w / 2),
       w / Math.abs(bounds[0].x - w / 2),
@@ -80,8 +79,6 @@ function draw(data, bounds) {
   words = data;
   var text = vis.selectAll("text")
       .data(words, function(d) { return d.text.toLowerCase(); });
-      
-     console.log(data);
       
   text.transition()
       .duration(1000)
@@ -125,7 +122,6 @@ function draw(data, bounds) {
 }
 	
 	var word_list = JSON.parse($('#wordle').text());
-	console.log(word_list);
 	$('#wordle').text("");
 	$("#wordle").css({'visibility': "visible"});
 	
