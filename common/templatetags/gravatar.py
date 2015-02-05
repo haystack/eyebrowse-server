@@ -54,11 +54,14 @@ def gravatar_for_email(email, size=None, rating=None, img_url=None):
 
         {% gravatar_for_email someone@example.com 48 pg %}
     """
+    
+    #if we have an image uploaded for them
+    if (img_url and img_url != "") or email == "":
+        return img_url
+    
     gravatar_url = "%savatar/%s" % (GRAVATAR_URL_PREFIX,
             _get_gravatar_id(email))
-    #if we have an image uploaded for them
-    if img_url is not None or email == "":
-        return img_url
+
 
     parameters = [p for p in (
         ('d', img_url or GRAVATAR_DEFAULT_IMAGE),
