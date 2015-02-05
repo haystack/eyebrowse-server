@@ -16,10 +16,10 @@ def _get_env():
 
     if env[-1] == '\n':
         env = env[:-1]
-    
+
     f.close()
     return env
-ENV = _get_env() 
+ENV = _get_env()
 
 def _get_debug():
     f = open(_DEBUG_FILE_PATH)
@@ -27,13 +27,14 @@ def _get_debug():
 
     if debug[-1] == '\n':
         debug = debug[:-1]
-    
+
     f.close()
     if debug == 'true':
         return True
     else:
         return False
-#DEBUG = _get_debug() 
+
+#DEBUG = _get_debug()
 DEBUG = False
 
 try:
@@ -49,7 +50,7 @@ elif ENV == 'staging':
     MYSQL = MYSQL_STAGING
 else:
     BASE_URL = 'http://localhost:8000'
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" 
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     AWS["BUCKET"] = AWS["BUCKET_DEV"]
     MYSQL = MYSQL_LOCAL
 
@@ -236,7 +237,7 @@ TASTYPIE_ALLOW_MISSING_SLASH = True
 
 # gravatar settings
 GRAVATAR_IMG_CLASS = "img-polaroid"
-DEFAULT_IMG = "/static/common/img/placeholder.png"
+# DEFAULT_IMG = "/static/common/img/placeholder.png"
 
 
 # cross domain sharing

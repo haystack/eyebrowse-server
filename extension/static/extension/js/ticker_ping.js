@@ -1,31 +1,33 @@
 /*
 
-container of data to be updated must have the class '.live-stream-container'
-
-filterFunc is a function that takes one argument, the string "filter" and returns the type of filter to apply.
+container of data to be updated must have the class '.ticker-stream-container'
 
 defaultFilter is a string of the default filter to apply
-
-searchParams is a dictionary of additional search params to ping the server with
 
 updateTemplate is a html string to show when new data is available. Defaults to history container code
 
 */
-function liveStreamPing(args, callback){
+function tickerPing(args, callback){
     this.history = [];
     this.canPing = true;
-    this.$container = $('.live-stream-container');
-    this.pingIntervalValue = 3500;
-    this.filterFunc = args.filterFunc;
+    this.$container = $('.ticker-stream-container');
+    this.pingIntervalValue = 10000;
     this.defaultFilter = args.defaultFilter;
     this.searchParams = args.searchParams;
     this.updateTemplate = args.updateTemplate || "<div class='load-new pointer history-container row well'> <span class='center'> <strong> Load new items </strong> </span> </div>";
     this.callback = callback;
+    this.historyQueue = [];
 
     this.setup = function() {
+        var curTime = new Date();
+        this.lastTime = curTime.format("yyyy-mm-dd HH:MM:ss");
+        // this.lastTime = curTime.getFullYear()+'-'+curTime.getMonth()+'-'+curTime.getDate()+' '+curTime.getHours()+':'+curTime.getMinutes()+':'+curTime.getSeconds();
+
         this.pingInterval = setInterval($.proxy(this.ping, this), this.pingIntervalValue);
-        this.setupIdle();
+        // this.setupIdle();
         this.first();
+
+        setInterval($.proxy(this.dequeue, this), 3000);
 
         //lets display results automatically instead
         // $(document).on('ping-new', $.proxy(this.showNotification, this));
@@ -34,27 +36,14 @@ function liveStreamPing(args, callback){
         $(document).on('ping-new', $.proxy(this.insertHistoryItems, this));
     }
 
-    this.setupIdle = function() {
-        var that = this;
-        $(window).idle(
-            function() {
-                that.canPing = false; // cheap insurance
-                clearInterval(that.pingInterval);
-            },
-            function() {
-                that.canPing = true;
-                that.pingInterval = setInterval($.proxy(that.ping, that), that.pingIntervalValue);
-            }
-        );
-    }
-
     this.ping = function(){
-        if ($(".date-search-bar").val() !== "") {
-            this.canPing = false;
-        }
         if (!this.canPing) return;
-        var filter = this.filterFunc('filter') || this.defaultFilter;
-        var timestamp = $('.first .date').data('timestamp');
+        var filter = this.defaultFilter;
+
+        var timestamp = this.lastTime /*"2014-10-31 19:10:20"*/;
+        // console.log(timestamp);
+        var curTime = new Date();
+        this.lastTime = curTime.format("yyyy-mm-dd HH:MM:ss");
         var payload =  {
             'filter' : filter,
             'timestamp' : timestamp,
@@ -65,15 +54,16 @@ function liveStreamPing(args, callback){
             payload[attrname] = this.searchParams[attrname];
         }
         var that = this;
-        // console.log("pingload", payload)
         $.getJSON('/live_stream/ping/', payload, function(res){
-                that.history = res.history;
-                if (that.callback){
-                    that.callback(res);
-                }
-                if (that.history.length) {
-                    $(document).trigger('ping-new');
-                }
+            // console.log("res", res);
+            that.history = res.history;
+            if (that.callback){
+                that.callback(res);
+            }
+            if (that.history.length) {
+                // console.log("that.history:", that.history);
+                $(document).trigger('ping-new');
+            }
         });
     }
 
@@ -88,24 +78,27 @@ function liveStreamPing(args, callback){
     }
 
     this.insertHistoryItems = function (e){
-        $('.empty-search').remove();
-        $('.first').removeClass('first');
-        var $loadNew = $('.load-new');
-        $loadNew.fadeOut();
         var that = this;
         $.each(that.history.reverse(), function(index, item){
-            var $toAdd = $(item);
-            $toAdd.hide();
-            that.$container.prepend($toAdd);
-
-            $toAdd.fadeIn(750);
-            if (index === that.history.length -1){
-                $toAdd.addClass('first');
-            }
+            that.historyQueue.push(item);
         });
-
+        this.historyQueue = that.historyQueue;
         this.history = [];
-        $loadNew.remove();
+    }
+
+    this.dequeue = function() {
+        var that = this;
+        if (that.historyQueue.length > 0) {
+            $(".bubble").css("visibility", "visible");
+            that.$container.empty();
+            var $toAdd = $(that.historyQueue.shift());
+            $toAdd.hide();
+            $toAdd.fadeIn(750);
+            that.$container.prepend($toAdd);
+        } else {
+            $(".bubble").css("visibility", "hidden");
+        }
+        this.historyQueue = that.historyQueue;
     }
 
     this.setup();

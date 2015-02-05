@@ -1,0 +1,54 @@
+{% load filters %}
+{% load gravatar %}
+
+<div id="history_item_{{item.id}}" class='row history-container' data-id="{{ item.id }}">
+    <div id="history_item_{{ item.id }}_content" class="history-content">
+
+      <span>
+        {% for m in item.first_item.messages %}
+          <div class="history-message">{{ m.message }}</div>
+        {% endfor %}
+      </span>
+
+        <span>
+            <a onclick="trackOutboundLink('http://{{ item.first_item.url|url_domain }}'); return false;" href="http://{{ item.first_item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.first_item.url|url_domain }}">
+                <img class="pull-left small-pic favicon" src="{{ item.favIconUrl }}"> {{ item.first_item.url|url_domain }}
+            </a>
+            | <a class="pointer" onclick="trackOutboundLink('{{ item.first_item.url }}'); return false;" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.first_item.url }}"><span class="cut-content pointer" data-content="{{ item.first_item.title}}">
+                {{ item.first_item.title|truncatechars:30 }}
+               </a>
+            </span>
+        </span> <!-- | -->
+        <span class="pull-right author-container">
+
+           <span><a href="/users/{{ item.user.username }}"><img class="small-pic img-rounded" data-content="{{ item.user }}" src="{% gravatar_for_user item.user %}"/> </a></span><span class='time-ago pointer date' data-content="For {{ item.first_item.humanize_time }}, on {{item.first_item.start_time}}" data-time-ago="{{item.first_item.start_time|date_fmt}}" data-timestamp="{{item.first_item.start_time|date_fmt}}"></span>
+        </span>
+    </div>
+
+        <!-- Hide all secondary page visits on a domain -->
+
+        <!-- <div id="history_item_{{ item.id }}_lower">
+          {% for h_item in item.get_items %}
+              <span>
+            {% for m in h_item.messages %}
+              <div class="history-message2">{{ m.message }}</div>
+            {% endfor %}
+          </span>
+            <div id="history_item_{{ h_item.id }}_lower_item" class="lower-item">
+              <span class="pull-right author-container">
+                <span class='time-ago pointer date' data-content="For {{ h_item.humanize_time }}, on {{h_item.start_time}}" data-time-ago="{{h_item.start_time|date_fmt}}" data-timestamp="{{h_item.start_time|date_fmt}}"></span>
+              </span>
+
+              <span class="left">
+                <a class="pointer" onclick="trackOutboundLink('{{ h_item.url }}'); return false;" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ h_item.url }}">
+                  <span class="cut-content pointer" data-content="{{ h_item.title}}">
+                          {{ h_item.title|truncatechars:70 }}
+                    </span>
+                    </a>
+                </span>
+
+            </div>
+         {% endfor %} -->
+        </div>
+
+</div>
