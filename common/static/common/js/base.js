@@ -429,8 +429,9 @@ function calculateStats() {
 function setTimeAgo(){
     $.each($(".time-ago"), function(i, v){
         v = $(v);
-        var time = new Date(v.data('time-ago') + ' UTC');
-        v.text(moment(time).fromNow());
+        var tstr = v.data('time-ago') + ' +00:00';
+        var mom = moment(tstr, "YYYY-MM-DD HH:mm:ss ZZ");
+        v.text(mom.fromNow());
     });
 }
 
