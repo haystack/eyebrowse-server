@@ -26,7 +26,7 @@
 	            {{profile_user.username}}'s eyebrowse history 
 	        </span>
 	        <div class="followlink">
-		        {% if profile_user != user %}
+		        {% if user.is_authenticated and profile_user != user %}
 		            <a class="btn btn-info btn-prof-header connection">                
 		                {% include 'common/snippets/follow-btn.html' with follows=follows username=profile_user.username %}
 		                
