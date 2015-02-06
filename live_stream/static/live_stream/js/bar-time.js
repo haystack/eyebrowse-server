@@ -31,7 +31,7 @@ $(document).ready(function(){
 
 			//Set up scales
 			var xScale = d3.scale.linear()
-				.domain([0,24])
+				.domain([0,23.3])
 				.rangeRound([0, w - padding.left - padding.right]);
 
 			var yScale = d3.scale.linear()
@@ -42,12 +42,13 @@ $(document).ready(function(){
 						});
 					})
 				])
-				.range([h - padding.bottom - padding.top,0]);
+				.range([h - padding.bottom - padding.top,0])
+				.nice();
 
 			var xAxis = d3.svg.axis()
 						   .scale(xScale)
 						   .orient("bottom")
-						   .ticks(24);
+						   .ticks(23);
 
 			var yAxis = d3.svg.axis()
 						   .scale(yScale)
