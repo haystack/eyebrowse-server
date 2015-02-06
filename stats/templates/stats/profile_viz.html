@@ -27,8 +27,9 @@
 	        </span>
 	       
         	<div class="user-metadata">
+        		<br />
 	            <span class="location profile-field">
-	               <a href="/users/{{ profile_user.username }}">{{ profile_user.username }}'s profile</a>
+	               <a href="/users/{{ profile_user.username }}">{{ profile_user.username }}'s eyebrowse history</a>
 	               |
 	               	<a href="/api/v1/history-data?format=json&user__username={{ profile_user.username}}&offset=0&limit=10">
 	                API of eyebrowse data
@@ -55,6 +56,19 @@
        	</div>
        </div>
        	{% include "live_stream/aggregate_stats_wordle.html" %}
+       	
+       	
+       <div class="well">
+       	<div class="user-metadata">
+       		<h4>
+       			Aggregate eyebrowse visits per hour over the last week broken down by top-visited domains.
+       		</h4>
+       	</div>
+       </div>
+       	{% include "live_stream/aggregate_stats_time.html" %}
+       	
+       	
+       	
     </div>
 </div>
 
@@ -68,4 +82,5 @@
     {% include_script "common/js/d3.min" %}
     {% include_script "common/js/d3.layout.cloud" %}
     {% include_script "live_stream/js/wordcloud" %}
+    {% include_script "live_stream/js/bar-time" %}
 {% endblock %}

@@ -19,6 +19,10 @@ def url_domain(url):
     return url
 
 @register.filter
+def to_minute(value):
+    return round(int(value) / 60000.0, 2)
+
+@register.filter
 def date_ms(dt):
     return int(1000*time.mktime(dt.timetuple()))
 

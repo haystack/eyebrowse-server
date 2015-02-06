@@ -33,16 +33,16 @@ def live_stream(request):
 
 
     today = datetime.now() - timedelta(hours=24)
-    day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
-    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Sum('total_time')).order_by('-num_urls')[:3]
+    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:5]
 
     day_chart = {}
     for domain in day_domains:
         day_chart[domain['domain']] = domain['num_domains']
 
     last_week = today - timedelta(days=7)
-    week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
-    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Sum('total_time')).order_by('-num_urls')[:3]
+    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:5]
 
     week_chart = {}
     for domain in week_domains:
@@ -67,7 +67,6 @@ def live_stream(request):
 
     return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=_get_subnav(request), **template_dict)
 
-@login_required
 @ajax_request
 def ping(request):
     get_dict, query, date = _get_query(request)

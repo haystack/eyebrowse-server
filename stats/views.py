@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Count
+from django.utils import timezone
 
 from annoying.decorators import render_to
 
@@ -17,6 +18,7 @@ from common.pagination import paginator
 from common.constants import *
 from eyebrowse.log import logger
 import re
+from datetime import datetime, timedelta
 
 @login_required
 @render_to('stats/notifications.html')
@@ -224,10 +226,7 @@ def profile_viz(request, username=None):
     else:
         user = None
         userprof = None
-    
-    """
-        Own profile page
-    """
+
     username, follows, profile_user, empty_search_msg = _profile_info(user, username)
 
     get_dict, query, date = _get_query(request)
@@ -252,19 +251,17 @@ def profile_viz(request, username=None):
     following_count = profile_user.profile.follows.count()
     follower_count = UserProfile.objects.filter(follows=profile_user.profile).count()
     
-
-    
     today = datetime.now() - timedelta(hours=24)
-    day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
-    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Sum('total_time')).order_by('-num_urls')[:3]
+    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:5]
     
     day_chart = {}
     for domain in day_domains:
         day_chart[domain['domain']] = domain['num_domains']
     
     last_week = today - timedelta(days=7)
-    week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
-    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Sum('total_time')).order_by('-num_urls')[:3]
+    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:5]
     
     week_chart = {}
     for domain in week_domains:
@@ -281,7 +278,44 @@ def profile_viz(request, username=None):
                     week_words[word] = 1
                 else:
                     week_words[word] += 1
+                    
+    domain_list = [domain['domain'] for domain in week_domains]
     
+    week_hours = [None] * 6
+    week_time = hist.filter(start_time__gt=last_week).values('domain','start_time','total_time')
+    for w_time in week_time:
+        
+        hour = timezone.localtime(w_time['start_time']).hour
+        
+        try:
+            pos = domain_list.index(w_time['domain'])
+            if week_hours[pos] == None:
+                week_hours[pos] = {}
+            if hour not in week_hours[pos]:
+                week_hours[pos][hour] = 0.0
+            week_hours[pos][hour] += float(w_time['total_time'])/60000.0
+        except ValueError:
+            if week_hours[5] == None:
+                week_hours[5] = {}
+            if hour not in week_hours[5]:
+                week_hours[5][hour] = 0.0
+            week_hours[5][hour] += float(w_time['total_time'])/60000.0
+    
+    for i in range(len(week_hours)):
+        if week_hours[i]:
+            list_hours = []
+            for h in range(24):
+                if h not in week_hours[i]:
+                    list_hours.append({"time": h, "y": 0})
+                else:
+                    list_hours.append({"time": h, "y": week_hours[i][h]})
+            week_hours[i] = list_hours
+        else:
+            week_hours[i] = [{"time": x, "y": 0} for x in range(24)]
+    
+    
+    logger.info(week_hours)
+    logger.info(domain_list)
     template_dict = {
         'username': profile_user.username,
         'following_count': following_count,
@@ -301,7 +335,9 @@ def profile_viz(request, username=None):
         'week_articles': week_count,
         'day_chart': json.dumps(day_chart),
         'week_chart': json.dumps(week_chart),
-        'week_words': json.dumps(week_words.items())
+        'week_words': json.dumps(week_words.items()),
+        'week_hours': json.dumps(week_hours),
+        'domain_list': json.dumps(domain_list),
     }
 
     return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
@@ -350,16 +386,16 @@ def profile_data(request, username=None):
 
     
     today = datetime.now() - timedelta(hours=24)
-    day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
-    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Sum('total_time')).order_by('-num_urls')[:3]
+    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:5]
     
     day_chart = {}
     for domain in day_domains:
         day_chart[domain['domain']] = domain['num_domains']
     
     last_week = today - timedelta(days=7)
-    week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Count('id')).order_by('-num_urls')[:3]
-    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Count('id')).order_by('-num_domains')[:5]
+    week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Sum('total_time')).order_by('-num_urls')[:3]
+    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:5]
     
     week_chart = {}
     for domain in week_domains:

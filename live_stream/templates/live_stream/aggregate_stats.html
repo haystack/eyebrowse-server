@@ -1,13 +1,11 @@
+{% load filters %}
+
 <div class="aggregate-stats row">
 	<div class="span4">
 		<h4>Day</h4>
 		<div class="block-arts">
 		{% for art in day_articles %}
-			{% if art.num_urls == 1 %}
-				<P>{{ art.num_urls }} view | <a href="{{ art.url }}" onclick="trackOutboundLink('{{ art.url }}'); return false;">{{ art.title|truncatechars:40 }}</a></p>
-			{% else %}
-				<P>{{ art.num_urls }} views | <a href="{{ art.url }}" onclick="trackOutboundLink('{{ art.url }}'); return false;">{{ art.title|truncatechars:40 }}</a></p>
-			{% endif %}
+				<P>{{ art.num_urls|to_minute }} minutes | <a href="{{ art.url }}" onclick="trackOutboundLink('{{ art.url }}'); return false;">{{ art.title|truncatechars:40 }}</a></p>
 		{% endfor %}
 		{% if not day_articles %}
 			None.
@@ -21,11 +19,7 @@
 		<h4>Week</h4>
 		<div class="block-arts">
 		{% for art in week_articles %}
-			{% if art.num_urls == 1 %}
-				<P>{{ art.num_urls }} view | <a href="{{ art.url }}" onclick="trackOutboundLink('{{ art.url }}'); return false;">{{ art.title|truncatechars:40 }}</a></p>
-			{% else %}
-				<P>{{ art.num_urls }} views | <a href="{{ art.url }}" onclick="trackOutboundLink('{{ art.url }}'); return false;">{{ art.title|truncatechars:40 }}</a></p>
-			{% endif %}
+				<P>{{ art.num_urls|to_minute }} minutes | <a href="{{ art.url }}" onclick="trackOutboundLink('{{ art.url }}'); return false;">{{ art.title|truncatechars:40 }}</a></p>
 		{% endfor %}
 		{% if not week_articles %}
 			None.

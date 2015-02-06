@@ -8,7 +8,7 @@ function drawChart1() {
 		var arr = [['Domain', 'Link', 'Visits']];
 		for (var key in obj) {
 		  if (obj.hasOwnProperty(key)) {
-		  	arr.push([key, 'http://' + key, obj[key]]);
+		  	arr.push([key, 'http://' + key, Math.round((obj[key]/60000.0) * 100) / 100]);
 		  }
 		}
 		
@@ -52,7 +52,7 @@ function drawChart2() {
 		var arr = [['Domain', 'Link', 'Visits']];
 		for (var key in obj) {
 		  if (obj.hasOwnProperty(key)) {
-		  	arr.push([key, 'http://' + key, obj[key]]);
+		  	arr.push([key, 'http://' + key,  Math.round((obj[key]/60000.0) * 100) / 100]);
 		  }
 		}
 		
