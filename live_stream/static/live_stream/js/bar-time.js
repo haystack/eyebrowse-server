@@ -11,7 +11,7 @@ $(document).ready(function(){
 	
 	var w = 780;                        //width
 	var h = 400;                        //height
-	var padding = {top: 40, right: 180, bottom: 40, left:45};
+	var padding = {top: 40, right: 190, bottom: 40, left:45};
 	//Set up stack method
 	var stack = d3.layout.stack();
 
@@ -31,7 +31,7 @@ $(document).ready(function(){
 
 			//Set up scales
 			var xScale = d3.scale.linear()
-				.domain([0,23.3])
+				.domain([-.35,23.4])
 				.rangeRound([0, w - padding.left - padding.right]);
 
 			var yScale = d3.scale.linear()
@@ -105,7 +105,7 @@ $(document).ready(function(){
 
 				svg.append("g")
 					.attr("class","x axis")
-					.attr("transform","translate(50," + (h - padding.bottom) + ")")
+					.attr("transform","translate(52," + (h - padding.bottom) + ")")
 					.call(xAxis);
 
 
@@ -118,7 +118,7 @@ $(document).ready(function(){
 
 				var legend = svg.append("g")
 								.attr("class","legend")
-								.attr("x", w - padding.right + 5)
+								.attr("x", w - padding.right + 10)
 								.attr("y", 25)
 								.attr("height", 100)
 								.attr("width",100);
@@ -129,14 +129,14 @@ $(document).ready(function(){
 					  .each(function(d,i){
 					  	var g = d3.select(this);
 					  	g.append("rect")
-					  		.attr("x", w - padding.right + 5)
+					  		.attr("x", w - padding.right + 10)
 					  		.attr("y", i*25 + 10)
 					  		.attr("width", 10)
 					  		.attr("height",10)
 					  		.style("fill",color_hash[String(i)][1]);
 
 					  	g.append("text")
-					  	 .attr("x", w - padding.right + 20)
+					  	 .attr("x", w - padding.right + 25)
 					  	 .attr("y", i*25 + 20)
 					  	 .attr("height",30)
 					  	 .attr("width",200)
