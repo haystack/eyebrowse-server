@@ -1,6 +1,10 @@
 <div class="search-bar-wrap">
     <div class="search-wrap">
-        <input class="search-bar" type="text" placeholder="Search for a domain or page title..." value="{{query}}">
+    	{% if visualization %}
+    		<input class="search-bar" type="text" placeholder="Filter visualization by a domain or term..." value="{{query}}">
+    	{% else %}
+        	<input class="search-bar" type="text" placeholder="Search for a domain or page title..." value="{{query}}">
+        {% endif %}
     </div>
     <div class="date-search-wrap">
         <input class="date-search-bar input-xlarge" type="text" placeholder="i.e. from last week, the past 10 days" value="{{date}}">

@@ -360,9 +360,28 @@ function getURLParameter(name) {
         (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
     );
     if (res == 'null'){
-        res = null
+        res = null;
     }
-    return res
+    return res;
+}
+
+function getURLUsername() {
+	var str = window.location.pathname;
+    if (endsWith(str, "/visualizations")) {
+    	str = str.substring(0, str.length - 15);
+    }
+    if (startsWith(str, "/users/")) {
+    	str = str.substring(7, str.length);
+    }
+    return str;
+}
+
+function startsWith(str, prefix) {
+    return str.lastIndexOf(prefix, 0) === 0;
+}
+
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
 function nullFilter(filter){
@@ -436,18 +455,20 @@ function setTimeAgo(){
 }
 
 function submitSearch(e) {
-    if (e.which !== 1 && e.which !== 13) return
+    if (e.which !== 1 && e.which !== 13) return;
     var query = $(".search-bar").val();
     var date = $(".date-search-bar").val();
     var filter = getURLParameter("filter");
     var url = sprintf("?query=%s&date=%s&filter=%s", query, date, filter);
-
-    if (profile_username !== "") {
-        url = sprintf("/users/%s%s&username=%s", profile_username, url, profile_username);
+    
+	if (endsWith(window.location.pathname,"visualizations")) {
+    	url = sprintf("/users/%s/visualizations?query=%s&date=%s", profile_username, query, date);
+    } else if (profile_username !== "") {
+        url = sprintf("/users/%s%s", profile_username, url);
     } else {
         url = /live_stream/ + url;
     }
-
+    
     document.location = url;
 }
 
@@ -458,12 +479,15 @@ function setupSearch() {
     $('.search-bar').keypress(submitSearch);
     
     var filter = getURLParameter("filter");
+    
     var searchTip;
 
     if (filter !== null) {
         searchTip = sprintf("Search with the %s filter", filter);
+    } else if (endsWith(window.location.pathname,"visualizations")) {
+    	searchTip = sprintf("Filter %s's visualizations", profile_username);
     } else {
-        searchTip = sprintf("Search %s's history", profile_username)
+        searchTip = sprintf("Search %s's history", profile_username);
     }
     
     makeTip(".search-bar", searchTip, "right", "hover");

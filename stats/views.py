@@ -230,6 +230,8 @@ def profile_viz(request, username=None):
     username, follows, profile_user, empty_search_msg = _profile_info(user, username)
 
     get_dict, query, date = _get_query(request)
+    logger.info(get_dict)
+    logger.info(date)
 
     get_dict["orderBy"] = "end_time"
     get_dict["direction"] = "hl"
@@ -266,88 +268,9 @@ def profile_viz(request, username=None):
     week_chart = {}
     for domain in week_domains:
         week_chart[domain['domain']] = domain['num_domains']
-        
-    week_titles = hist.filter(start_time__gt=last_week).values_list('title')
-   
-    week_words = {}
-    for title in week_titles:
-        for word in title[0].split():
-            if re.match('^[\w]+$', word) is not None:
-                word = word.lower()
-                if word not in week_words:
-                    week_words[word] = 1
-                else:
-                    week_words[word] += 1
-                    
-    domain_list = [domain['domain'] for domain in week_domains]
-    
-    week_hours = [None] * 6
-    week_time = hist.filter(start_time__gt=last_week).values('domain','start_time','total_time')
-    for w_time in week_time:
-        
-        hour = timezone.localtime(w_time['start_time']).hour
-        
-        try:
-            pos = domain_list.index(w_time['domain'])
-            if week_hours[pos] == None:
-                week_hours[pos] = {}
-            if hour not in week_hours[pos]:
-                week_hours[pos][hour] = 0.0
-            week_hours[pos][hour] += float(w_time['total_time'])/60000.0
-        except ValueError:
-            if week_hours[5] == None:
-                week_hours[5] = {}
-            if hour not in week_hours[5]:
-                week_hours[5][hour] = 0.0
-            week_hours[5][hour] += float(w_time['total_time'])/60000.0
-    
-    for i in range(len(week_hours)):
-        if week_hours[i]:
-            list_hours = []
-            for h in range(24):
-                if h not in week_hours[i]:
-                    list_hours.append({"time": h, "y": 0})
-                else:
-                    list_hours.append({"time": h, "y": week_hours[i][h]})
-            week_hours[i] = list_hours
-        else:
-            week_hours[i] = [{"time": x, "y": 0} for x in range(24)]
-
-    week_days = [None] * 6
-    for w_time in week_time:
-        
-        day = timezone.localtime(w_time['start_time']).day
-        logger.info(day)
-        
-        try:
-            pos = domain_list.index(w_time['domain'])
-            if week_days[pos] == None:
-                week_days[pos] = {}
-            if day not in week_days[pos]:
-                week_days[pos][day] = 0.0
-            week_days[pos][day] += float(w_time['total_time'])/60000.0
-        except ValueError:
-            if week_days[5] == None:
-                week_days[5] = {}
-            if hour not in week_days[5]:
-                week_days[5][day] = 0.0
-            week_days[5][day] += float(w_time['total_time'])/60000.0
-    
-    for i in range(len(week_days)):
-        if week_days[i]:
-            list_days = []
-            for h in range(7):
-                if h not in week_days[i]:
-                    list_days.append({"time": h, "y": 0})
-                else:
-                    list_days.append({"time": h, "y": week_days[i][h]})
-            week_days[i] = list_days
-        else:
-            week_days[i] = [{"time": x, "y": 0} for x in range(7)]
-            
-    logger.info(week_days)
 
     template_dict = {
+        'visualization': True,
         'username': profile_user.username,
         'following_count': following_count,
         'follower_count': follower_count,
@@ -366,10 +289,6 @@ def profile_viz(request, username=None):
         'week_articles': week_count,
         'day_chart': json.dumps(day_chart),
         'week_chart': json.dumps(week_chart),
-        'week_words': json.dumps(week_words.items()),
-        'week_hours': json.dumps(week_hours),
-        'week_days': json.dumps(week_days),
-        'domain_list': json.dumps(domain_list),
         
     }
 

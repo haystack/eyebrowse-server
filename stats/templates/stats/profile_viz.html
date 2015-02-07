@@ -48,6 +48,8 @@
        	</div>
        </div>
        
+       {% include "live_stream/search_bar.html" %}
+       
        <div class="well" id="pie">
        	<div class="user-metadata">
        		<h4>
@@ -94,12 +96,11 @@
 {% endblock %}
 
 {% block scripts %}
-    {% include_script "live_stream/js/live-stream" %}
-    {% include_script "live_stream/js/history-tips" %}
     {% include_script "live_stream/js/jsapi" %}
     {% include_script "live_stream/js/barchart" %}
     {% include_script "common/js/d3.min" %}
     {% include_script "common/js/d3.layout.cloud" %}
+    {% include_script "live_stream/js/viz-base" %}
     {% include_script "live_stream/js/wordcloud" %}
     {% include_script "live_stream/js/bar-time" %}
     {% include_script "live_stream/js/bar-day" %}
