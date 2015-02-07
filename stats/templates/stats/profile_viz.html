@@ -67,6 +67,15 @@
        </div>
        	{% include "live_stream/aggregate_stats_time.html" %}
        	
+       	<div class="well">
+       	<div class="user-metadata">
+       		<h4>
+       			Aggregate eyebrowse visits per day over the last week broken down by top-visited domains.
+       		</h4>
+       	</div>
+       </div>
+       	{% include "live_stream/aggregate_stats_day.html" %}
+       	
        	
        	
     </div>
@@ -83,4 +92,5 @@
     {% include_script "common/js/d3.layout.cloud" %}
     {% include_script "live_stream/js/wordcloud" %}
     {% include_script "live_stream/js/bar-time" %}
+    {% include_script "live_stream/js/bar-day" %}
 {% endblock %}

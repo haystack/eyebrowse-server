@@ -312,10 +312,41 @@ def profile_viz(request, username=None):
             week_hours[i] = list_hours
         else:
             week_hours[i] = [{"time": x, "y": 0} for x in range(24)]
+
+    week_days = [None] * 6
+    for w_time in week_time:
+        
+        day = timezone.localtime(w_time['start_time']).day
+        logger.info(day)
+        
+        try:
+            pos = domain_list.index(w_time['domain'])
+            if week_days[pos] == None:
+                week_days[pos] = {}
+            if day not in week_days[pos]:
+                week_days[pos][day] = 0.0
+            week_days[pos][day] += float(w_time['total_time'])/60000.0
+        except ValueError:
+            if week_days[5] == None:
+                week_days[5] = {}
+            if hour not in week_days[5]:
+                week_days[5][day] = 0.0
+            week_days[5][day] += float(w_time['total_time'])/60000.0
     
-    
-    logger.info(week_hours)
-    logger.info(domain_list)
+    for i in range(len(week_days)):
+        if week_days[i]:
+            list_days = []
+            for h in range(7):
+                if h not in week_days[i]:
+                    list_days.append({"time": h, "y": 0})
+                else:
+                    list_days.append({"time": h, "y": week_days[i][h]})
+            week_days[i] = list_days
+        else:
+            week_days[i] = [{"time": x, "y": 0} for x in range(7)]
+            
+    logger.info(week_days)
+
     template_dict = {
         'username': profile_user.username,
         'following_count': following_count,
@@ -337,7 +368,9 @@ def profile_viz(request, username=None):
         'week_chart': json.dumps(week_chart),
         'week_words': json.dumps(week_words.items()),
         'week_hours': json.dumps(week_hours),
+        'week_days': json.dumps(week_days),
         'domain_list': json.dumps(domain_list),
+        
     }
 
     return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
