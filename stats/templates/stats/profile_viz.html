@@ -41,6 +41,15 @@
        
        <div class="well">
        	<div class="user-metadata">
+       		<a href="#pie">Pie chart of top visited domains</a><br />
+       		<a href="#wordle1">Word Cloud of page titles</a><br />
+       		<a href="#by-hour1">Breakdown of visits by hour</a><br />
+       		<a href="#by-day1">Breakdown of visits by day of the week</a><br />
+       	</div>
+       </div>
+       
+       <div class="well" id="pie">
+       	<div class="user-metadata">
        		<h4>
        			Pie chart of top visited domains and list of top pages in the last day and week.
        		</h4>
@@ -48,7 +57,7 @@
        </div>
        	{% include "live_stream/aggregate_stats.html" %}
 
-       <div class="well">
+       <div class="well" id="wordle1">
        	<div class="user-metadata">
        		<h4>
        			Word cloud of page titles in the last week.
@@ -59,7 +68,7 @@
        	{% include "live_stream/aggregate_stats_wordle.html" %}
        	
        	
-       <div class="well">
+       <div class="well" id="by-hour1">
        	<div class="user-metadata">
        		<h4>
        			Aggregate eyebrowse visits per hour over the last week broken down by top-visited domains.
@@ -68,7 +77,7 @@
        </div>
        	{% include "live_stream/aggregate_stats_time.html" %}
        	
-       	<div class="well">
+       	<div class="well" id="by-day1">
        	<div class="user-metadata">
        		<h4>
        			Aggregate eyebrowse visits per day over the last week broken down by top-visited domains.
