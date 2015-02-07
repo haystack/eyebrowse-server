@@ -42,6 +42,30 @@ function parseHTML(d) {
   }).replace(/&\w+;/g, " "));
 }
 
+// Converts a given word cloud to image/png.
+function downloadPNG() {
+  var canvas = document.createElement("canvas"),
+      c = canvas.getContext("2d");
+	  canvas.width = w;
+	  canvas.height = h;
+	  c.translate(w >> 1, h >> 1);
+	  c.scale(scale, scale);
+	  words.forEach(function(word, i) {
+	    c.save();
+	    c.translate(word.x, word.y);
+	    c.rotate(word.rotate * Math.PI / 180);
+	    c.textAlign = "center";
+	    c.fillStyle = fill(word.text.toLowerCase());
+	    c.font = word.size + "px " + word.font;
+	    c.fillText(word.text, 0, 0);
+	    c.restore();
+	  });
+  var a = document.createElement("a");
+  a.download = "image.png";
+  a.href = canvas.toDataURL("image/png");
+  a.click();
+}
+
 
 
 function parseText(word_list) {
@@ -136,6 +160,8 @@ function draw(data, bounds) {
     .attr("transform", "translate(" + [w >> 1, h >> 1] + ")");
 	
 	parseText(word_list);
+	
+	d3.select("#download-png").on("click", downloadPNG);
 	
 	
 	
