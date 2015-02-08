@@ -19,6 +19,7 @@ from common.constants import *
 from eyebrowse.log import logger
 import re
 from datetime import datetime, timedelta
+from django.views.generic.simple import redirect_to
 
 @login_required
 @render_to('stats/notifications.html')
@@ -216,6 +217,9 @@ def followers_data(request, username=None):
     
 @render_to('stats/profile_viz.html')
 def profile_viz(request, username=None):
+    
+    if request.GET.get("date") == None or request.GET.get("date") == "null":
+        return redirect_to(request, "/users/%s/visualizations?date=last week&query=%s" % (username, request.GET.get("date", "")))
     
     if request.user.is_authenticated():
         user = get_object_or_404(User, username=request.user.username)

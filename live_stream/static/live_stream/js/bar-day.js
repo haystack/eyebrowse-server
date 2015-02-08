@@ -4,17 +4,15 @@ d3.json("/api/graphs/timeline_days?username=" + username + "&date=" + date + "&q
 	function(error, data) {
 		var day_list = data.week_days;
 		var domain_list = data.domain_list;
+
+		color_hash = [];
 		
-		console.log(data);
-		
-		color_hash = {
-		    0 : [domain_list[0], "#1f77b4"],
-			1 : [domain_list[1], "#2ca02c"],
-			2 : [domain_list[2], "#ff7f0e"],
-		    3 : [domain_list[3], "#ff0000"],
-			4 : [domain_list[4], "#ff69b4"],
-			5 : ["Other", "#551a8b"],
-			};
+		for (var i=0;i<domain_list.length;i++) {
+			color_hash.push([domain_list[i], colors_list[i]]);
+		}
+		if (domain_list.length == 5) {
+			color_hash.push(["Other", colors_list[5]]);
+		}
 
 		stack(day_list);
 		
@@ -24,7 +22,7 @@ d3.json("/api/graphs/timeline_days?username=" + username + "&date=" + date + "&q
 
 function draw_SVG_day(dataset) {
 	var tickfmt = function(d, i){ return week[d];};
-	create_scales(dataset, 0, 7, 7, tickfmt);
+	create_scales(dataset, -.3, 7, 7, tickfmt);
 	draw_SVG(dataset, "#stackedbar-chart2");
 	set_transition();
 	transform_axes();

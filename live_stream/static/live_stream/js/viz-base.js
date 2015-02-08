@@ -4,6 +4,8 @@ var padding = {top: 40, right: 190, bottom: 40, left:45};
 
 var stack = d3.layout.stack();
 		
+var colors_list = ["#1f77b4", "#2ca02c", "#ff7f0e", "#ff0000", "#ff69b4", "#551a8b"];
+
 //Easy colors accessible via a 10-step ordinal scale
 var colors = d3.scale.category10();
 

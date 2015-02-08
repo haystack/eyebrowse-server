@@ -71,7 +71,11 @@ def whitelist_add(request):
 def search_graph_data(request):
     username = request.GET.get('username', None)
     query = request.GET.get("query", None)
-    date = request.GET.get("date", "")
+    if query == "null":
+        query = None
+    date = request.GET.get("date", None)
+    if date == "null":
+        date = None
     
     start_time = None
     end_time = None
@@ -109,11 +113,15 @@ def timeline_hour(request):
     hist = search_graph_data(request)
     
     week_domains = hist.values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:domain_count]
-    
 
     domain_list = [domain['domain'] for domain in week_domains]
     
-    week_hours = [None] * (domain_count+1)
+    domain_count = len(domain_list)
+    
+    if domain_count == 5:
+        week_hours = [None] * (domain_count+1)
+    else:
+        week_hours = [None] * (domain_count)
     week_time = hist.values('domain','start_time','total_time')
     for w_time in week_time:
         
@@ -127,11 +135,12 @@ def timeline_hour(request):
                 week_hours[pos][hour] = 0.0
             week_hours[pos][hour] += float(w_time['total_time'])/60000.0
         except ValueError:
-            if week_hours[domain_count] == None:
-                week_hours[domain_count] = {}
-            if hour not in week_hours[domain_count]:
-                week_hours[domain_count][hour] = 0.0
-            week_hours[domain_count][hour] += float(w_time['total_time'])/60000.0
+            if domain_count == 5:
+                if week_hours[domain_count] == None:
+                    week_hours[domain_count] = {}
+                if hour not in week_hours[domain_count]:
+                    week_hours[domain_count][hour] = 0.0
+                week_hours[domain_count][hour] += float(w_time['total_time'])/60000.0
     
     for i in range(len(week_hours)):
         if week_hours[i]:
@@ -159,13 +168,17 @@ def timeline_day(request):
     
     domain_list = [domain['domain'] for domain in week_domains]
     
+    domain_count = len(domain_list)
+    
     week_time = hist.values('domain','start_time','total_time')
-
-    week_days = [None] * (domain_count+1)
+    
+    if domain_count == 5:
+        week_days = [None] * (domain_count+1)
+    else:
+        week_days = [None] * (domain_count)
     for w_time in week_time:
         
-        day = timezone.localtime(w_time['start_time']).day
-        logger.info(day)
+        day = timezone.localtime(w_time['start_time']).day - 1
         
         try:
             pos = domain_list.index(w_time['domain'])
@@ -175,11 +188,12 @@ def timeline_day(request):
                 week_days[pos][day] = 0.0
             week_days[pos][day] += float(w_time['total_time'])/60000.0
         except ValueError:
-            if week_days[domain_count] == None:
-                week_days[domain_count] = {}
-            if day not in week_days[domain_count]:
-                week_days[domain_count][day] = 0.0
-            week_days[domain_count][day] += float(w_time['total_time'])/60000.0
+            if domain_count == 5:
+                if week_days[domain_count] == None:
+                    week_days[domain_count] = {}
+                if day not in week_days[domain_count]:
+                    week_days[domain_count][day] = 0.0
+                week_days[domain_count][day] += float(w_time['total_time'])/60000.0
     
     for i in range(len(week_days)):
         if week_days[i]:
