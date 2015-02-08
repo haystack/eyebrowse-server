@@ -84,11 +84,11 @@ def search_graph_data(request):
         start_time, end_time = DateRangeParser().parse(date)
 
     hist = history_search(request.user, query=query, filter=None, username=username, start_time=start_time, end_time=end_time)
-    return hist
+    return hist, start_time, end_time
     
 def word_cloud(request):
     
-    hist = search_graph_data(request)
+    hist, start_time, end_time = search_graph_data(request)
     
     week_titles = hist.values_list('title')
     
@@ -104,13 +104,15 @@ def word_cloud(request):
                         week_words[word] += 1
     
     return HttpResponse(json.dumps({
-            'week_words': week_words.items()
+            'week_words': week_words.items(),
+            'start_time': start_time.strftime("%Y-%m-%d"),
+            'end_time': end_time.strftime("%Y-%m-%d"),
             }), content_type="application/json")
     
 def timeline_hour(request):
     domain_count = request.GET.get('domain_count', 5)
     
-    hist = search_graph_data(request)
+    hist,start_time,end_time = search_graph_data(request)
     
     week_domains = hist.values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:domain_count]
 
@@ -162,7 +164,7 @@ def timeline_hour(request):
     
 def timeline_day(request):
     domain_count = request.GET.get('domain_count', 5)
-    hist = search_graph_data(request)
+    hist,start_time,end_time = search_graph_data(request)
     
     week_domains = hist.values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:domain_count]
     

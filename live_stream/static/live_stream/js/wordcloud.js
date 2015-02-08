@@ -1,8 +1,18 @@
 
+var start_time,
+	end_time;
+
 d3.json("/api/graphs/word_cloud?username=" + username + "&date=" + date + "&query=" + query,
 	function(error, data) {
 		word_list = data.week_words;
+		
+		start_time = data.start_time;
+		end_time = data.end_time;
+		
+
 		parseText(word_list);
+
+		  
 	});
 	
 var fontSize = d3.scale.log().range([10, 100]);
@@ -38,7 +48,6 @@ var background = svg.append("g"),
 	vis = svg.append("g")
 	.attr("transform", "translate(" + [w >> 1, h >> 1] + ")");
 
-
 d3.select("#download-png").on("click", downloadPNG);
 	
 
@@ -71,6 +80,27 @@ function downloadPNG() {
 	    c.fillText(word.text, 0, 0);
 	    c.restore();
 	  });
+	  
+	  c.restore();
+	  c.textAlign = "start";
+	  c.fillStyle = "#000000";
+	  c.font = "16px Arial";
+	  c.fillText("eyebrowse.csail.mit.edu", (w/2)*-1 + 20, (h/2) -30);
+	  c.save();
+	  
+	  		
+	  var text = "Word cloud of page titles | Collected from " + username + "'s web visits";
+	  if (start_time !== null && end_time !== null) text = text + " | " + start_time + " to " + end_time;
+	  if (query !== null) text = text + " | filtered by \"" + query + "\"";
+	  
+	  
+	  c.restore();
+	  c.textAlign = "start";
+	  c.fillStyle = "#000000";
+	  c.font = "14px Arial";
+	  c.fillText(text, (w/2)*-1 + 20, (h/2) - 15);
+	  c.save();
+	  
   var a = document.createElement("a");
   a.download = "image.png";
   a.href = canvas.toDataURL("image/png");
@@ -102,6 +132,18 @@ function generate() {
   complete = 0;
   words = [];
   layout.stop().words(tags.slice(0, max = Math.min(tags.length, +250))).start();
+  
+}
+
+function load(f) {
+  fetcher = f;
+  var h = /^(https?:)?\/\//.test(fetcher)
+      ? "#" + encodeURIComponent(fetcher)
+      : "";
+  if (fetcher != null) d3.select("#text").property("value", fetcher);
+  if (location.hash !== h) location.hash = h;
+  if (h) getURL(fetcher, parseHTML);
+  else if (fetcher) parseText(fetcher);
 }
 
 function draw(data, bounds) {
@@ -153,5 +195,7 @@ function draw(data, bounds) {
       .delay(1000)
       .duration(750)
       .attr("transform", "translate(" + [w >> 1, h >> 1] + ")scale(" + scale + ")");
+
+ 
 }
 	

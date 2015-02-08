@@ -359,6 +359,9 @@ function getURLParameter(name) {
     var res =  decodeURI(
         (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
     );
+    if (res.indexOf('&') == 0) {
+    	res = null;
+    }
     if (res == 'null'){
         res = null;
     }
