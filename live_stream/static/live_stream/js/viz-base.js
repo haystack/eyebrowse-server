@@ -23,6 +23,67 @@ var svg,
 	legend,
 	color_hash;
 	
+
+d3.select("#download-bar-png").on("click", function() {
+	downloadbarPNG(1);
+	});
+	
+d3.select("#download-bar2-png").on("click", function() {
+	downloadbarPNG(2);
+	});
+	
+
+function downloadbarPNG(version) {
+	
+	var xml;
+	if (version == 1) {
+		xml = document.getElementById("stackedbar-chart").firstElementChild;
+	} else {
+		xml = document.getElementById("stackedbar-chart2").firstElementChild;
+	}
+	
+ 	var img = new Image(),
+        serializer = new XMLSerializer(),
+        svgStr = serializer.serializeToString(xml);
+    
+    img.src = 'data:image/svg+xml;base64,'+window.btoa(svgStr);
+    
+  	var canvas = document.createElement("canvas");
+		canvas.width = w;
+		canvas.height = h;
+	var c = canvas.getContext("2d");
+		c.drawImage(img,0,0,w,h);
+	  
+	  c.restore();
+	  c.textAlign = "start";
+	  c.fillStyle = "#000000";
+	  c.font = "16px Arial";
+	  c.fillText("eyebrowse.csail.mit.edu", 0, 13);
+	  c.save();
+		
+	var text;
+	if (version == 1) {
+		text = "Time spent per hour of day | Collected from " + username + "'s web visits";
+	} else {
+		text = "Time spent per day of week | Collected from " + username + "'s web visits";
+	}
+	  
+	  if (start_time !== null && end_time !== null) text = text + " | " + start_time + " to " + end_time;
+	  if (query !== null) text = text + " | filtered by \"" + query + "\"";	  
+	  c.restore();
+	  c.textAlign = "start";
+	  c.fillStyle = "#000000";
+	  c.font = "14px Arial";
+	  c.fillText(text, 0, 28);
+	  c.save();
+	  
+  var a = document.createElement("a");
+  a.download = "image.png";
+  a.href = canvas.toDataURL("image/png");
+  a.click();
+}
+
+
 	
 function create_scales(dataset, domain_start, domain_end, tick_x, x_tickfmt) {
 	xScale = d3.scale.linear()
@@ -58,6 +119,7 @@ function draw_axis_labels(x_label, y_label) {
 		.attr("y", 0 - 5)
 		.attr("x", 0-(h/2))
 		.attr("dy","1em")
+		.attr("style", "font-family: Arial; font-size: 16.8px; fill: #000000; opacity: 1;")
 		.text(y_label);
 
 	svg.append("text")
@@ -65,6 +127,7 @@ function draw_axis_labels(x_label, y_label) {
 	   .attr("x",w/2 - padding.left)
 	   .attr("y",h - 5)
 	   .attr("text-anchor","middle")
+	   .attr("style", "font-family: Arial; font-size: 16.8px; fill: #000000; opacity: 1;")
 	   .text(x_label);
 }
 
@@ -72,7 +135,7 @@ function create_legend(dataset) {
 	legend = svg.append("g")
 					.attr("class","legend")
 					.attr("x", w - padding.right + 10)
-					.attr("y", 25)
+					.attr("y", 175)
 					.attr("height", 100)
 					.attr("width",100);
 
@@ -83,16 +146,19 @@ function create_legend(dataset) {
 		  	var g = d3.select(this);
 		  	g.append("rect")
 		  		.attr("x", w - padding.right + 10)
-		  		.attr("y", i*25 + 10)
+		  		.attr("y", 150 + i*25 + 10)
 		  		.attr("width", 10)
 		  		.attr("height",10)
 		  		.style("fill",color_hash[String(i)][1]);
 		  	g.append("text")
 		  	 .attr("x", w - padding.right + 25)
-		  	 .attr("y", i*25 + 20)
+		  	 .attr("y", 150 + i*25 + 20)
 		  	 .attr("height",30)
 		  	 .attr("width",200)
 		  	 .style("fill",color_hash[String(i)][1])
+		  	 .style("font-size", "15px")
+		  	 .style("opacity", 1)
+		  	 .style("font-family", "Arial")
 		  	 .text(color_hash[String(i)][0]);
 	  	  });
 
@@ -102,11 +168,13 @@ function transform_axes() {
 	svg.append("g")
 		.attr("class","x axis")
 		.attr("transform","translate(52," + (h - padding.bottom) + ")")
+		.attr("style", "font-family: Arial; font-size: 13px; fill: #000000; opacity: 1;")
 		.call(xAxis);
 
 	svg.append("g")
 		.attr("class","y axis")
 		.attr("transform","translate(" + (padding.left + 5) + "," + padding.top + ")")
+		.attr("style", "font-family: Arial; font-size: 13px; fill: #000000; opacity: 1;")
 		.call(yAxis);
 }
 
@@ -128,6 +196,8 @@ function set_transition() {
 		.attr("width", 15)
 		.style("fill-opacity",1);
 }
+
+
 
 function draw_SVG(dataset, element) {
 	svg = d3.select(element)
