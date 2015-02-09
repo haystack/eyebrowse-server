@@ -65,7 +65,15 @@
        			Word cloud of page titles.
        		</h4>
        		Save static image as: <button id="download-png">PNG</button>
+       		 <br />
+       		Insert this visualization on any page: <button id="get-widget">Get Widget Code</button>
        		</div>
+       </div>
+       <div id="widget-code" class="collapse">
+       	Copy and paste the code below where you want the widget to appear. 
+       	This code snippet uses the external JavaScript libraries jQuery, d3, and d3.layout.cloud.
+       	
+       	<textarea id="widget-code-text"></textarea>
        </div>
        	{% include "live_stream/aggregate_stats_wordle.html" %}
        	
@@ -86,7 +94,7 @@
        			Aggregate eyebrowse visits per day broken down by top-visited domains.
        		</h4>
        		Save static image as: <button id="download-bar2-png">PNG</button>
-       	</div>
+          	</div>
        </div>
        	{% include "live_stream/aggregate_stats_day.html" %}
        	

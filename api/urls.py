@@ -7,4 +7,5 @@ urlpatterns = patterns('api.views',
     url(r'^graphs/word_cloud$', 'word_cloud'),
     url(r'^graphs/timeline_hour', 'timeline_hour'),
     url(r'^graphs/timeline_day', 'timeline_day'),
+    url(r'^graphs/js/word_cloud$', 'word_cloud_js'),
 )

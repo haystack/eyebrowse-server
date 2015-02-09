@@ -1,24 +1,25 @@
-
 var start_time,
-	end_time;
+    end_time;
 
-d3.json("/api/graphs/word_cloud?username=" + username + "&date=" + date + "&query=" + query,
-	function(error, data) {
-		word_list = data.week_words;
-		
-		start_time = data.start_time;
-		end_time = data.end_time;
-		parseText(word_list);
+d3.json("http://eyebrowse.csail.mit.edu/api/graphs/word_cloud?username=" + username + "&date=" + date + "&query=" + query,
+    function(error, data) {
+        word_list = data.week_words;
+        
+        start_time = data.start_time;
+        end_time = data.end_time;
 
-	});
-	
+        parseText(word_list);
+
+          
+    });
+    
 var fontSize = d3.scale.log().range([10, 100]);
 
 var fill = d3.scale.category20();
 
 var w = Math.min(750, $(window).width()),
-	h = 400;
-	
+    h = 400;
+    
 var words = [],
     max,
     scale = 1,
@@ -28,7 +29,7 @@ var words = [],
     fontSize,
     maxLength = 30,
     fetcher;
-	
+    
 var layout = d3.layout.cloud()
     .timeInterval(10)
     .size([w, h])
@@ -37,17 +38,14 @@ var layout = d3.layout.cloud()
     .on("end", draw);
 
 var svg = d3.select("#wordle").append("svg")
-	.attr("width", w)
-	.attr("height", h);
+    .attr("width", w)
+    .attr("height", h);
 
+var background = svg.append("g");
 
-var background = svg.append("g"),
-	vis = svg.append("g")
-	.attr("transform", "translate(" + [w >> 1, h >> 1] + ")");
+var vis = svg.append("g")
+    .attr("transform", "translate(" + [w >> 1, h >> 1] + ")");
 
-d3.select("#download-png").on("click", downloadPNG);
-	
-d3.select("#get-widget").on("click", showWidget);
 
 var wordSeparators = /[\s\u3031-\u3035\u309b\u309c\u30a0\u30fc\uff70]+/g,
     discard = /^(@|https?:|\/\/)/,
@@ -59,67 +57,6 @@ function parseHTML(d) {
     return String.fromCharCode(+((hex ? "0x" : "") + m));
   }).replace(/&\w+;/g, " "));
 }
-
-function showWidget() {
-	var $collapse = $("#widget-code");
-	
-	if (query == null) query = "";
-	if (username == null) username = "";
-	if (date == null) date = "";
-	
-	$("#widget-code-text").text("<div id=\"wordle\"></div>\n" +
-	"<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
-	"<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-	"<script src=\"http://eyebrowse.csail.mit.edu/static/common/js/d3.layout.cloud.js\" charset=\"utf-8\"></script>\n" +
-	"<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/word_cloud?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
-
-	$collapse.collapse('toggle');
-}
-
-function downloadPNG() {
-  var canvas = document.createElement("canvas"),
-      c = canvas.getContext("2d");
-	  canvas.width = w;
-	  canvas.height = h;
-	  c.translate(w >> 1, h >> 1);
-	  c.scale(scale, scale);
-	  words.forEach(function(word, i) {
-	    c.save();
-	    c.translate(word.x, word.y);
-	    c.rotate(word.rotate * Math.PI / 180);
-	    c.textAlign = "center";
-	    c.fillStyle = fill(word.text.toLowerCase());
-	    c.font = word.size + "px " + word.font;
-	    c.fillText(word.text, 0, 0);
-	    c.restore();
-	  });
-	  
-	  c.restore();
-	  c.textAlign = "start";
-	  c.fillStyle = "#000000";
-	  c.font = "16px Arial";
-	  c.fillText("eyebrowse.csail.mit.edu", (w/2)*-1 + 20, (h/2) -30);
-	  c.save();
-	  
-	  		
-	  var text = "Word cloud of page titles | Collected from " + username + "'s web visits";
-	  if (start_time !== null && end_time !== null) text = text + " | " + start_time + " to " + end_time;
-	  if (query !== null) text = text + " | filtered by \"" + query + "\"";
-	  
-	  
-	  c.restore();
-	  c.textAlign = "start";
-	  c.fillStyle = "#000000";
-	  c.font = "14px Arial";
-	  c.fillText(text, (w/2)*-1 + 20, (h/2) - 15);
-	  c.save();
-	  
-  var a = document.createElement("a");
-  a.download = "image.png";
-  a.href = canvas.toDataURL("image/png");
-  a.click();
-}
-
 
 
 function parseText(word_list) {
@@ -145,6 +82,21 @@ function generate() {
   complete = 0;
   words = [];
   layout.stop().words(tags.slice(0, max = Math.min(tags.length, +250))).start();
+  
+	svg.append("text")
+	   .attr("class","xtext")
+	   .attr("x",10)
+	   .attr("y",h - 35)
+	   .attr("text-anchor","left")
+	   .attr("style", "font-family: Arial; font-size: 25.8px; fill: #000000; opacity: 1;")
+	   .text("eyebrowse.csail.mit.edu");
+   svg.append("text")
+	   .attr("class","xtext")
+	   .attr("x",10)
+	   .attr("y",h - 15)
+	   .attr("text-anchor","left")
+	   .attr("style", "font-family: Arial; font-size: 20.8px; fill: #000000; opacity: 1;")
+	   .text("Word cloud of page titles | " + username + " | " + date + ' | ' + query);
   
 }
 
@@ -184,31 +136,9 @@ function draw(data, bounds) {
       .style("opacity", 1e-6)
     .transition()
       .duration(1000)
-      .style("opacity", 1);
+      .style("opacity", .7);
       
   text.style("font-family", function(d) { return d.font; })
       .style("fill", function(d) { return fill(d.text.toLowerCase()); })
       .text(function(d) { return d.text; });
-      
-  var exitGroup = background.append("g")
-      .attr("transform", vis.attr("transform"));
-      
-  var exitGroupNode = exitGroup.node();
-  
-  text.exit().each(function() {
-    exitGroupNode.appendChild(this);
-  });
-  
-  exitGroup.transition()
-      .duration(1000)
-      .style("opacity", 1e-6)
-      .remove();
-      
-  vis.transition()
-      .delay(1000)
-      .duration(750)
-      .attr("transform", "translate(" + [w >> 1, h >> 1] + ")scale(" + scale + ")");
-
- 
 }
-	
