@@ -69,11 +69,11 @@
        		Insert this visualization on any page: <button id="get-widget">Get Widget Code</button>
        		</div>
        </div>
-       <div id="widget-code" class="collapse">
+       <div id="widget-code-word" class="collapse">
        	Copy and paste the code below where you want the widget to appear. 
        	This code snippet uses the external JavaScript libraries jQuery, d3, and d3.layout.cloud.
        	
-       	<textarea id="widget-code-text"></textarea>
+       	<textarea class="widget-code-text" id="widget-code-text-word"></textarea>
        </div>
        	{% include "live_stream/aggregate_stats_wordle.html" %}
        	
@@ -84,7 +84,16 @@
        			Aggregate eyebrowse visits per hour broken down by top-visited domains.
        		</h4>
        		Save static image as: <button id="download-bar-png">PNG</button>
-       	</div>
+      		 <br />
+       		Insert this visualization on any page: <button id="get-widget-bar">Get Widget Code</button>
+       		</div>
+       </div>
+       
+       <div id="widget-code-bar" class="collapse">
+       	Copy and paste the code below where you want the widget to appear. 
+       	This code snippet uses the external JavaScript libraries jQuery and d3.
+       	
+       	<textarea class="widget-code-text" id="widget-code-text-bar"></textarea>
        </div>
        	{% include "live_stream/aggregate_stats_time.html" %}
        	
@@ -94,7 +103,16 @@
        			Aggregate eyebrowse visits per day broken down by top-visited domains.
        		</h4>
        		Save static image as: <button id="download-bar2-png">PNG</button>
-          	</div>
+       		 <br />
+       		Insert this visualization on any page: <button id="get-widget-bar2">Get Widget Code</button>
+       		</div>
+       </div>
+       
+       <div id="widget-code-bar2" class="collapse">
+       	Copy and paste the code below where you want the widget to appear. 
+       	This code snippet uses the external JavaScript libraries jQuery and d3.
+       	
+       	<textarea class="widget-code-text" id="widget-code-text-bar2"></textarea>
        </div>
        	{% include "live_stream/aggregate_stats_day.html" %}
        	

@@ -9,10 +9,6 @@ var colors_list = ["#1f77b4", "#2ca02c", "#ff7f0e", "#ff0000", "#ff69b4", "#551a
 //Easy colors accessible via a 10-step ordinal scale
 var colors = d3.scale.category10();
 
-var username = getURLUsername();
-var date = getURLParameter("date");
-var query = getURLParameter("query");
-
 var svg,
 	groups,
 	rects,
@@ -23,103 +19,69 @@ var svg,
 	legend,
 	color_hash;
 	
+var start_time,
+	end_time;
 
-d3.select("#download-bar-png").on("click", function() {
-	downloadbarPNG(1);
-	});
-	
-d3.select("#download-bar2-png").on("click", function() {
-	downloadbarPNG(2);
-	});
-	
+var week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-d3.select("#get-widget-bar").on("click", function() {
-	showBarWidget(1);
-	});
-
-d3.select("#get-widget-bar2").on("click", function() {
-	showBarWidget(2);
-	});
-
-function showBarWidget(version) {
-	var $collapse;
-	var api_call;
-	var text_box;
-	
-	if (version == 1) {
-		$collapse = $("#widget-code-bar");
-		api_call = "bar_hour";
-		text_box = "#widget-code-text-bar";
-	} else {
-		$collapse = $("#widget-code-bar2");
-		api_call = "bar_day";
-		text_box = "#widget-code-text-bar2";
-	}
-	
-	
-	if (query == null) query = "";
-	if (username == null) username = "";
-	if (date == null) date = "";
-	
-	$(text_box).text("<div id=\"stackedbar-chart\"></div>\n" +
-	"<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
-	"<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-	"<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + api_call + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
-
-	$collapse.collapse('toggle');
-}
-
-function downloadbarPNG(version) {
-	
-	var xml;
-	if (version == 1) {
-		xml = document.getElementById("stackedbar-chart").firstElementChild;
-	} else {
-		xml = document.getElementById("stackedbar-chart2").firstElementChild;
-	}
-	
- 	var img = new Image(),
-        serializer = new XMLSerializer(),
-        svgStr = serializer.serializeToString(xml);
-    
-    img.src = 'data:image/svg+xml;base64,'+window.btoa(svgStr);
-    
-  	var canvas = document.createElement("canvas");
-		canvas.width = w;
-		canvas.height = h;
-	var c = canvas.getContext("2d");
-		c.drawImage(img,0,0,w,h);
-	  
-	  c.restore();
-	  c.textAlign = "start";
-	  c.fillStyle = "#000000";
-	  c.font = "16px Arial";
-	  c.fillText("eyebrowse.csail.mit.edu", 0, 13);
-	  c.save();
+d3.json("http://eyebrowse.csail.mit.edu/api/graphs/timeline_days?username=" + username + "&date=" + date + "&query=" + query,
+	function(error, data) {
+		var day_list = data.week_days;
+		var domain_list = data.domain_list;
 		
-	var text;
-	if (version == 1) {
-		text = "Time spent per hour of day | Collected from " + username + "'s web visits";
-	} else {
-		text = "Time spent per day of week | Collected from " + username + "'s web visits";
+		start_time = data.start_time;
+        end_time = data.end_time;
+
+		color_hash = [];
+		
+		for (var i=0;i<domain_list.length;i++) {
+			color_hash.push([domain_list[i], colors_list[i]]);
+		}
+		if (domain_list.length == 5) {
+			color_hash.push(["Other", colors_list[5]]);
+		}
+
+		stack(day_list);
+		
+		draw_SVG_day(day_list);
+		
+	});
+
+function draw_SVG_day(dataset) {
+	var tickfmt = function(d, i){ return week[d];};
+	create_scales(dataset, -.3, 7, 7, tickfmt);
+	draw_SVG(dataset, "#stackedbar-chart");
+	set_transition();
+	transform_axes();
+	create_legend(dataset);
+ 	draw_axis_labels("Day in the Week","Number of Minutes");
+ 	
+ 	svg.append("text")
+	   .attr("class","xtext")
+	   .attr("x",10)
+	   .attr("y",17)
+	   .attr("text-anchor","left")
+	   .attr("style", "font-family: Arial; font-size: 17.8px; fill: #000000; opacity: 1;")
+	   .text("eyebrowse.csail.mit.edu");
+	   
+	if (query.length == 0) {
+		var q_text = "";
+	} 
+	else {
+		var q_text = " | " + query;
 	}
-	  
-	  if (start_time !== null && end_time !== null) text = text + " | " + start_time + " to " + end_time;
-	  if (query !== null) text = text + " | filtered by \"" + query + "\"";	  
-	  c.restore();
-	  c.textAlign = "start";
-	  c.fillStyle = "#000000";
-	  c.font = "14px Arial";
-	  c.fillText(text, 0, 28);
-	  c.save();
-	  
-  var a = document.createElement("a");
-  a.download = "image.png";
-  a.href = canvas.toDataURL("image/png");
-  a.click();
+	
+   svg.append("text")
+	   .attr("class","xtext")
+	   .attr("x",10)
+	   .attr("y",30)
+	   .attr("text-anchor","left")
+	   .attr("style", "font-family: Arial; font-size: 14.8px; fill: #000000; opacity: 1;")
+	   .text("Time spent per day of week | " + username + " | " + start_time + ' to ' + end_time + q_text);
 }
-
-
+			
+			
+	
 	
 function create_scales(dataset, domain_start, domain_end, tick_x, x_tickfmt) {
 	xScale = d3.scale.linear()

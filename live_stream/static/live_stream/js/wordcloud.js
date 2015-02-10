@@ -61,13 +61,13 @@ function parseHTML(d) {
 }
 
 function showWidget() {
-	var $collapse = $("#widget-code");
+	var $collapse = $("#widget-code-word");
 	
 	if (query == null) query = "";
 	if (username == null) username = "";
 	if (date == null) date = "";
 	
-	$("#widget-code-text").text("<div id=\"wordle\"></div>\n" +
+	$("#widget-code-text-word").text("<div id=\"wordle\"></div>\n" +
 	"<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
 	"<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
 	"<script src=\"http://eyebrowse.csail.mit.edu/static/common/js/d3.layout.cloud.js\" charset=\"utf-8\"></script>\n" +

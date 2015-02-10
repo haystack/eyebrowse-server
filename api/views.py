@@ -111,7 +111,7 @@ def word_cloud(request):
             'end_time': end_time.strftime("%Y-%m-%d"),
             }), content_type="application/json")
     
-def word_cloud_js(request):
+def load_js_file(request, filename):
     username = request.GET.get("username","")
     date = request.GET.get("date","")
     query = request.GET.get("query","")
@@ -120,15 +120,22 @@ def word_cloud_js(request):
     text += "var date = \"%s\";" % date
     text += "var query = \"%s\";" % query
     
-    module_dir = os.path.dirname(__file__)  # get current directory)
-    logger.info(module_dir)
-    file_path = module_dir + '/static/api/js/word_cloud_boilerplate.js'
-    logger.info(file_path)
+    module_dir = os.path.dirname(__file__)
+    file_path = module_dir + '/static/api/js/' + filename
     js = open(file_path, 'r').read()
     text += js
     
     return HttpResponse(text, content_type="application/javascript")
     
+def word_cloud_js(request):
+    return load_js_file(request, "word_cloud_boilerplate.js")
+    
+def bar_hour_js(request):
+    return load_js_file(request, "bar_hour_boilerplate.js")
+   
+def bar_day_js(request):
+    return load_js_file(request, "bar_day_boilerplate.js")
+  
     
 def timeline_hour(request):
     domain_count = request.GET.get('domain_count', 5)
@@ -180,6 +187,8 @@ def timeline_hour(request):
     return HttpResponse(json.dumps({
             'week_hours': week_hours,
             'domain_list': domain_list,
+            'start_time': start_time.strftime("%Y-%m-%d"),
+            'end_time': end_time.strftime("%Y-%m-%d"),
             }), content_type="application/json")
     
     
@@ -233,6 +242,8 @@ def timeline_day(request):
     return HttpResponse(json.dumps({
             'week_days': week_days,
             'domain_list': domain_list,
+            'start_time': start_time.strftime("%Y-%m-%d"),
+            'end_time': end_time.strftime("%Y-%m-%d"),
             }), content_type="application/json")
     
 
