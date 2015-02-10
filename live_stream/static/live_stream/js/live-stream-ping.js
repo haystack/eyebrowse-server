@@ -15,7 +15,7 @@ function liveStreamPing(args, callback){
     this.history = [];
     this.canPing = true;
     this.$container = $('.live-stream-container');
-    this.pingIntervalValue = 3500;
+    this.pingIntervalValue = 10000;
     this.filterFunc = args.filterFunc;
     this.defaultFilter = args.defaultFilter;
     this.searchParams = args.searchParams;
