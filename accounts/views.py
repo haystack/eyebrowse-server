@@ -122,11 +122,17 @@ def sync_twitter(request):
     twitter_info = TwitterInfo.objects.filter(user=user)
     if len(twitter_info) > 0:
         auth.set_access_token(twitter_info[0].access_token, twitter_info[0].access_token_secret)
+        
+        api = tweepy.API(auth)
+        twitter_user = api.me()
         template_dict["synced"] = "Your Twitter account is already connected to Eyebrowse."
         template_dict['connected'] = True
+        
+        template_dict['username'] = twitter_user.screen_name
+        template_dict['profile_info'] = twitter_user.description
+        template_dict['profile_image'] = twitter_user.profile_image_url
     else:
         if "request_token" in request.session:
-            logger.info("request_token")
             token = request.session.pop("request_token")
             auth.request_token = token
             try:
@@ -135,9 +141,17 @@ def sync_twitter(request):
                 token = auth.access_token
                 secret = auth.access_token_secret
                 
-                _ = TwitterInfo.objects.create(user=user, twitter_username="", access_token=token, access_token_secret=secret)
+                api = tweepy.API(auth)
+                twitter_user = api.me()
+                username = twitter_user.screen_name
+                
+                _ = TwitterInfo.objects.create(user=user, twitter_username=username, access_token=token, access_token_secret=secret)
                 template_dict["synced"] = "Your Twitter account is now connected to Eyebrowse!"
                 template_dict['connected'] = True
+                template_dict['username'] = username
+                template_dict['profile_info'] = twitter_user.description
+                template_dict['profile_image'] = twitter_user.profile_image_url
+                
             except tweepy.TweepError, e:
                 logger.info(e)
                 logger.info("Error! Failed to get access token")
