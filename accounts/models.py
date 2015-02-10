@@ -10,6 +10,12 @@ from api.models import EyeHistory
 
 from datetime import datetime, timedelta
 
+class TwitterInfo(models.Model):
+    user = models.ForeignKey(User)
+    twitter_username = models.CharField(max_length=40, default='')
+    access_token = models.CharField(max_length=140, default='')
+    access_token_secret = models.CharField(max_length=140, default='')
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     #other fields here

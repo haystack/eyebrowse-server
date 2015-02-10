@@ -9,6 +9,11 @@ from api.models import *
 
 from common.view_helpers import _template_values, JSONResponse
 from common.helpers import put_profile_pic
+import tweepy
+from eyebrowse.settings import TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET
+from eyebrowse.log import logger
+from django.views.generic.simple import redirect_to
+from accounts.models import TwitterInfo
 
 @login_required
 @render_to('accounts/whitelist.html')
@@ -98,6 +103,57 @@ def connections(request):
     }
 
     return _template_values(request, page_title="edit connections", navbar='nav_account', sub_navbar="subnav_connections", **template_dict)
+
+
+@login_required
+@render_to('accounts/sync_twitter.html')
+def sync_twitter(request):
+    """
+        Edit connection (following/followers)
+    """
+
+    user = request.user
+    
+    template_dict = {"connected": False,
+                     "synced": "You are not connected to Eyebrowse."}
+    
+    auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, "http://eyebrowse.csail.mit.edu/accounts/profile/sync_twitter")
+    
+    twitter_info = TwitterInfo.objects.filter(user=user)
+    if len(twitter_info) > 0:
+        auth.set_access_token(twitter_info[0].access_token, twitter_info[0].access_token_secret)
+        template_dict["synced"] = "Your Twitter account is already connected to Eyebrowse."
+        template_dict['connected'] = True
+    else:
+        if "request_token" in request.session:
+            logger.info("request_token")
+            token = request.session.pop("request_token")
+            auth.request_token = token
+            try:
+                verifier = request.GET.get('oauth_verifier')
+                auth.get_access_token(verifier)
+                token = auth.access_token
+                secret = auth.access_token_secret
+                
+                _ = TwitterInfo.objects.create(user=user, twitter_username="", access_token=token, access_token_secret=secret)
+                template_dict["synced"] = "Your Twitter account is now connected to Eyebrowse!"
+                template_dict['connected'] = True
+            except tweepy.TweepError, e:
+                logger.info(e)
+                logger.info("Error! Failed to get access token")
+    
+        else:
+            logger.info("no request_token")
+            try:
+                redirect_rule = auth.get_authorization_url()
+                request.session["request_token"] = auth.request_token
+                return redirect_to(request, redirect_rule)
+            except tweepy.TweepError, e:
+                logger.info(e)
+                logger.info("Error! Failed to get request token")
+
+    return _template_values(request, page_title="Connect Twitter", navbar='nav_account', sub_navbar="subnav_sync_twitter", **template_dict)
+
 
 @login_required
 @ajax_request

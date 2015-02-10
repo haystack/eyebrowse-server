@@ -1,0 +1,19 @@
+{% extends 'accounts/edit_profile_base.html' %}
+{% load filters %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+ <div class="span6">
+	<h3>Connect to Twitter</h3>
+	{{ synced }}
+	
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
