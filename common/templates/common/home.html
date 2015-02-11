@@ -3,6 +3,15 @@
 
 {% block content %}
  <div class="hero-unit well">
+            <a class="btn btn-primary btn-large" href="/accounts/register/">Register &raquo;</a>
+            <a class="btn btn-primary btn-large" <a href="{% url django.contrib.auth.views.login %}">Login</a>
+	
+	<a href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">
+	<img style="margin-left: 20px;" class="ext-icon" src='{% static "common/img/chrome-logo.png" %}'></a>
+	    <a class="btn btn-large" href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">Get it for Chrome &raquo;</a> 
+
+        <br />
+        <br />
         <h1>Welcome to Eyebrowse!</h1>
         <BR />
         <p> When we go outside, a lot of the fun comes from seeing what other people are doing.  
@@ -11,45 +20,42 @@
 	</p>
 	<p style="font-style: italic;"> Wouldn't it be interesting to do the same on the web? </p>
 
-<p> Eyebrowse aims to create a social outdoors for your web browsing.
-</p>
+	<p> Eyebrowse aims to create a social outdoors for your web browsing.
+	</p>
 
-<div class="home-table">
-<table width="100%">
-	<tr>
-		<td width="37%">
-		<h4>Share.</h4>
-		By making yourself visible on sites you designate, you
-		open up a wealth of new social opportunities. You can chat in real-time or post comments to any webpage 
-		you wish, not just the ones that have those features enabled. 
-		You'll be able to "bump into
-		people" and notice when your friends are on the same sites as you.
-		Your friend's browsing paths can lead you to
-		interesting new web content, and yours can lead them. You can see places that are attracting a crowd while
-		it's happening, or follow well-trodden paths.  
-		</td>
-		<td width="27%">
-		<h4>Take control.</h4>
-		As an Eyebrowse user, you specify the websites you wish to be visible on, and those are the only
-		ones where you are visible to other users and they can see where you've been. 
-		We will never track your visits to websites that you have not explicitly given permission to be visible on.
-		You can also edit which websites you wish to be visible on at any time.
-		</td>
-		<td width="37%">
-		<h4>Contribute.</h4>
-		As a
-		community, we'll be able to build up a publicly visible map of the
-		ebbs and flows of traffic on the web.
-		By contributing your data to this public repository of web activity, you'll make new 
-		research and exciting projects possible. If you're a hacker, designer, or researcher, you can start
-		right now to play with Eyebrowse data.
-		We're excited about all the great things that can be learned or apps or visualizations that can be built
-		from this data, which is why we have an <a href="/api_docs">API</a> for you to use.
-		
-		</td>
-	</tr>
-</table>
-</div>
+	<div class="row">
+		<div class="span4">
+			<h4>Share.</h4>
+			By making yourself visible on sites you designate, you
+			open up a wealth of new social opportunities. You can chat in real-time or post comments to any webpage 
+			you wish, not just the ones that have those features enabled. 
+			You'll be able to "bump into
+			people" and notice when your friends are on the same sites as you.
+			Your friend's browsing paths can lead you to
+			interesting new web content, and yours can lead them. You can see places that are attracting a crowd while
+			it's happening, or follow well-trodden paths.  
+		</div>
+		<div class="span3">
+			<h4>Take control.</h4>
+			As an Eyebrowse user, you specify the websites you wish to be visible on, and those are the only
+			ones where you are visible to other users and they can see where you've been. 
+			We will never track your visits to websites that you have not explicitly given permission to be visible on.
+			You can also edit which websites you wish to be visible on at any time.
+		</div>
+		<div class="span3">
+			<h4>Contribute.</h4>
+			As a
+			community, we'll be able to build up a publicly visible map of the
+			ebbs and flows of traffic on the web.
+			By contributing your data to this public repository of web activity, you'll make new 
+			research and exciting projects possible. If you're a hacker, designer, or researcher, you can start
+			right now to play with Eyebrowse data.
+			We're excited about all the great things that can be learned or apps or visualizations that can be built
+			from this data, which is why we have an <a href="/api_docs">API</a> for you to use.
+			
+		</div>
+	</div>
+	<br />
 
 <P>
 Screenshots of the website and Chrome Extension:
@@ -63,15 +69,16 @@ Screenshots of the website and Chrome Extension:
 <p>
 Curious? Read more at the <a href="/about">About</a> page or our <a href="/faq">FAQ</a>.
 	</p>
-        <p>
+
             <a class="btn btn-primary btn-large" href="/accounts/register/">Register &raquo;</a>
-        </p>
-        <p>
+
             <a class="btn btn-primary btn-large" <a href="{% url django.contrib.auth.views.login %}">Login</a>
-        </p> 
-    <div class="row offset2 ">
-        {% include "common/snippets/download_links.html" %}
-    </div>
+
+        
+    	<a href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">
+	<img style="margin-left: 20px;" class="ext-icon" src='{% static "common/img/chrome-logo.png" %}'></a>
+	    <a class="btn btn-large" href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">Get it for Chrome &raquo;</a> 
+
 </div>
 
 {% endblock %}

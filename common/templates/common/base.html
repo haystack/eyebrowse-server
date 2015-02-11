@@ -136,6 +136,20 @@
                             <li class={{ nav_login }}>
                                  <a href="{% url django.contrib.auth.views.login %}">Login</a>
                             </li>
+                            <li class={{ nav_register }}>
+                                 <a href="/accounts/register/">Register</a>
+                            </li>
+                           </ul>
+                            <ul class="nav pull-right topbar">
+                            	<li class={{ nav_about }}>
+                                 <a href="/about">About</a>
+                            </li>
+                            <li class={{ nav_faq }}>
+                                 <a href="/faq">FAQ</a>
+                            </li>
+                            <li class={{ nav_api }}>
+                                 <a href="/api_docs">API</a>
+                            </li>
                         {% endif %}
                         </ul>
                     </div><!--/.nav-collapse -->

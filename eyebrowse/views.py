@@ -14,15 +14,15 @@ from common.view_helpers import _template_values
 
 @render_to('common/about.html')
 def about(request):
-    return _template_values(request, page_title="home", navbar='nav_home')
+    return _template_values(request, page_title="Eyebrowse - About", nav_about='active')
 
 @render_to('common/faq.html')
 def faq(request):
-    return _template_values(request, page_title="home", navbar='nav_home')
+    return _template_values(request, page_title="Eyebrowse - FAQ", nav_faq='active')
 
 @render_to('common/api_docs.html')
 def api_docs(request):
-    return _template_values(request, page_title="home", navbar='nav_home')
+    return _template_values(request, page_title="Eyebrowse - API Docs", nav_api='active')
 
 
 
