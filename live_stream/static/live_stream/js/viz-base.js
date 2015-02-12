@@ -61,11 +61,17 @@ function showBarWidget(version) {
 	if (username == null) username = "";
 	if (date == null) date = "";
 	
-	$(text_box).text("<div id=\"stackedbar-chart\"></div>\n" +
-	"<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
-	"<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-	"<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + api_call + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
-
+	if (version == 1) {
+		$(text_box).text("<div id=\"stackedbar-chart\"></div>\n" +
+		"<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
+		"<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
+		"<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + api_call + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
+	} else {
+		$(text_box).text("<div id=\"stackedbar-chart2\"></div>\n" +
+		"<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
+		"<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
+		"<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + api_call + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
+	}
 	$collapse.collapse('toggle');
 }
 

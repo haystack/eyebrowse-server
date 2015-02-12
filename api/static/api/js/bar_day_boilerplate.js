@@ -50,7 +50,7 @@ d3.json("http://eyebrowse.csail.mit.edu/api/graphs/timeline_days?username=" + us
 function draw_SVG_day(dataset) {
 	var tickfmt = function(d, i){ return week[d];};
 	create_scales(dataset, -.3, 7, 7, tickfmt);
-	draw_SVG(dataset, "#stackedbar-chart");
+	draw_SVG(dataset, "#stackedbar-chart2");
 	set_transition();
 	transform_axes();
 	create_legend(dataset);
