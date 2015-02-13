@@ -165,7 +165,7 @@ def timeline_hour(request):
                 week_hours[pos][hour] = 0.0
             week_hours[pos][hour] += float(w_time['total_time'])/60000.0
         except ValueError:
-            if domain_count == 5:
+            if domain_count == 10:
                 if week_hours[domain_count] == None:
                     week_hours[domain_count] = {}
                 if hour not in week_hours[domain_count]:
@@ -220,7 +220,7 @@ def timeline_day(request):
                 week_days[pos][day] = 0.0
             week_days[pos][day] += float(w_time['total_time'])/60000.0
         except ValueError:
-            if domain_count == 5:
+            if domain_count == 10:
                 if week_days[domain_count] == None:
                     week_days[domain_count] = {}
                 if day not in week_days[domain_count]:
