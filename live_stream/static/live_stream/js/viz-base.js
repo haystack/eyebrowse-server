@@ -200,6 +200,10 @@ function create_legend(dataset) {
 		  	 .style("fill",color_hash[String(i)][1])
 		  	 .style("font-size", "15px")
 		  	 .style("opacity", 1)
+		  	 .style("cursor", "pointer")
+		  	 .on("click", function(d) {
+        		window.location.href="http://" + color_hash[String(i)][0];
+      		 })
 		  	 .style("font-family", "Arial")
 		  	 .text(color_hash[String(i)][0]);
 	  	  });

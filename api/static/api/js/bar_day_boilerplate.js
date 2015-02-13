@@ -62,6 +62,10 @@ function draw_SVG_day(dataset) {
 	   .attr("y",17)
 	   .attr("text-anchor","left")
 	   .attr("style", "font-family: Arial; font-size: 17.8px; fill: #000000; opacity: 1;")
+	   .style("cursor", "pointer")
+	   .on("click", function(d) {
+       		window.location.href="http://eyebrowse.csail.mit.edu";
+      	})
 	   .text("eyebrowse.csail.mit.edu");
 	   
 	if (query.length == 0) {
@@ -156,6 +160,10 @@ function create_legend(dataset) {
 		  	 .style("fill",color_hash[String(i)][1])
 		  	 .style("font-size", "15px")
 		  	 .style("opacity", 1)
+		  	 .style("cursor", "pointer")
+		  	 .on("click", function(d) {
+        		window.location.href="http://" + color_hash[String(i)][0];
+      		 })
 		  	 .style("font-family", "Arial")
 		  	 .text(color_hash[String(i)][0]);
 	  	  });
