@@ -149,14 +149,17 @@ function generate() {
 }
 
 function load(f) {
-  fetcher = f;
-  var h = /^(https?:)?\/\//.test(fetcher)
-      ? "#" + encodeURIComponent(fetcher)
-      : "";
-  if (fetcher != null) d3.select("#text").property("value", fetcher);
-  if (location.hash !== h) location.hash = h;
-  if (h) getURL(fetcher, parseHTML);
-  else if (fetcher) parseText(fetcher);
+	if (f == null) {
+		return;
+	}
+	else {
+		if (query != null) {
+			window.location.href ="http://eyebrowse.csail.mit.edu/users/" + username + "?query=" + query + " " + f + "&date=" + date;
+		} else {
+			window.location.href ="http://eyebrowse.csail.mit.edu/users/" + username + "?query=" + f + "&date=" + date;
+		}
+		
+	}
 }
 
 function draw(data, bounds) {
@@ -178,6 +181,7 @@ function draw(data, bounds) {
       .attr("text-anchor", "middle")
       .attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
       .style("font-size", function(d) { return d.size + "px"; })
+      .style("cursor", "pointer")
       .on("click", function(d) {
         load(d.text);
       })
