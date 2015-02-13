@@ -4,7 +4,7 @@ var padding = {top: 40, right: 190, bottom: 40, left:45};
 
 var stack = d3.layout.stack();
 		
-var colors_list = ["#1f77b4", "#2ca02c", "#ff7f0e", "#ff0000", "#ff69b4", "#551a8b"];
+var colors_list = ["#000000", "#3300BB", "#1f77b4", "#2ca02c", "#999955", "#ff7f0e",  "#ff0000", "#ff69b4", "#992299", "#551a8b", "#777777"];
 
 //Easy colors accessible via a 10-step ordinal scale
 var colors = d3.scale.category10();
@@ -35,8 +35,8 @@ d3.json("http://eyebrowse.csail.mit.edu/api/graphs/timeline_hours?username=" + u
 		for (var i=0;i<domain_list.length;i++) {
 			color_hash.push([domain_list[i], colors_list[i]]);
 		}
-		if (domain_list.length == 5) {
-			color_hash.push(["Other", colors_list[5]]);
+		if (domain_list.length == 10) {
+			color_hash.push(["Other", colors_list[10]]);
 		}
 
 		stack(hour_list);
@@ -132,10 +132,17 @@ function create_legend(dataset) {
 	legend = svg.append("g")
 					.attr("class","legend")
 					.attr("x", w - padding.right + 10)
-					.attr("y", 175)
+					.attr("y", 90)
 					.attr("height", 100)
 					.attr("width",100);
-
+	svg.append("text")
+	   .attr("class","legend")
+	   .attr("x", w - padding.right)
+	   .attr("y", 90)
+	   .attr("text-anchor","left")
+	   .attr("style", "font-family: Arial; font-size: 16.8px; fill: #000000; opacity: 1;")
+	   .text("Top Domains Visited");
+	   
 	legend.selectAll("g").data(dataset)
 		  .enter()
 		  .append('g')
@@ -143,13 +150,13 @@ function create_legend(dataset) {
 		  	var g = d3.select(this);
 		  	g.append("rect")
 		  		.attr("x", w - padding.right + 10)
-		  		.attr("y", 150 + i*25 + 10)
+		  		.attr("y", 90 + i*25 + 10)
 		  		.attr("width", 10)
 		  		.attr("height",10)
 		  		.style("fill",color_hash[String(i)][1]);
 		  	g.append("text")
 		  	 .attr("x", w - padding.right + 25)
-		  	 .attr("y", 150 + i*25 + 20)
+		  	 .attr("y", 90 + i*25 + 20)
 		  	 .attr("height",30)
 		  	 .attr("width",200)
 		  	 .style("fill",color_hash[String(i)][1])

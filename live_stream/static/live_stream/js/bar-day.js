@@ -10,8 +10,8 @@ d3.json("/api/graphs/timeline_days?username=" + username + "&date=" + date + "&q
 		for (var i=0;i<domain_list.length;i++) {
 			color_hash.push([domain_list[i], colors_list[i]]);
 		}
-		if (domain_list.length == 5) {
-			color_hash.push(["Other", colors_list[5]]);
+		if (domain_list.length == 10) {
+			color_hash.push(["Other", colors_list[10]]);
 		}
 
 		stack(day_list);

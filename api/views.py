@@ -138,7 +138,7 @@ def bar_day_js(request):
   
     
 def timeline_hour(request):
-    domain_count = request.GET.get('domain_count', 5)
+    domain_count = request.GET.get('domain_count', 10)
     
     hist,start_time,end_time = search_graph_data(request)
     
@@ -148,7 +148,7 @@ def timeline_hour(request):
     
     domain_count = len(domain_list)
     
-    if domain_count == 5:
+    if domain_count == 10:
         week_hours = [None] * (domain_count+1)
     else:
         week_hours = [None] * (domain_count)
@@ -193,7 +193,7 @@ def timeline_hour(request):
     
     
 def timeline_day(request):
-    domain_count = request.GET.get('domain_count', 5)
+    domain_count = request.GET.get('domain_count', 10)
     hist,start_time,end_time = search_graph_data(request)
     
     week_domains = hist.values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:domain_count]
@@ -204,7 +204,7 @@ def timeline_day(request):
     
     week_time = hist.values('domain','start_time','total_time')
     
-    if domain_count == 5:
+    if domain_count == 10:
         week_days = [None] * (domain_count+1)
     else:
         week_days = [None] * (domain_count)
