@@ -58,7 +58,6 @@ def account(request):
 
             profile = user.profile
             profile.anon_email = anon_email
-            profile.ticker_display = ticker_display
             profile.location = location
             profile.website = website
             profile.bio = bio
@@ -82,7 +81,6 @@ def account(request):
             'type' : type,
             'data' : data,
         }
-
         return JSONResponse(resp)
 
     return _template_values(request, page_title="edit whitelist", header="account info", navbar='nav_account', sub_navbar="subnav_account_info")

@@ -32,7 +32,7 @@
                 <label class="control-label" for="first_name"> First Name</label>
 
                 <div class="controls">
-                    <input type='text' name='first_name' value="{{ user.first_name }}" id='first_name'>
+                    <input class="form-control" type='text' name='first_name' value="{{ user.first_name }}" id='first_name'>
 
                 </div>
 
@@ -41,7 +41,7 @@
             <fieldset class="control-group">
                 <label class="control-label" for="last_name"> Last Name</label>
                 <div class="controls">
-                    <input type='text' name='last_name' value="{{ user.last_name }}" id='last_name'>
+                    <input type='text' class="form-control" name='last_name' value="{{ user.last_name }}" id='last_name'>
                 </div>
             </fieldset>
 
@@ -49,21 +49,21 @@
             <fieldset class="control-group">
                 <label class="control-label" for="location">Location</label>
                 <div class="controls">
-                    <input id="location" name="location" type="text" value="{{user.profile.location}}">
+                    <input id="location" class="form-control" name="location" type="text" value="{{user.profile.location}}">
                 </div>
             </fieldset>
 
             <fieldset class="control-group">
                 <label class="control-label" for="website">Website</label>
                 <div class="controls">
-                <input id="website" name="website" size="30" type="text" value="{{user.profile.website}}">
+                <input id="website" class="form-control" name="website" size="30" type="text" value="{{user.profile.website}}">
                 </div>
             </fieldset>
 
             <fieldset class="control-group">
                 <label class="control-label" for="bio">Bio</label>
                 <div class="controls">
-                    <textarea id="bio" name="bio">{{user.profile.bio}}</textarea>
+                    <textarea id="bio" class="form-control" name="bio">{{user.profile.bio}}</textarea>
                 </div>
             </fieldset>
 

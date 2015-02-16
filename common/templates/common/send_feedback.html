@@ -1,15 +1,20 @@
-<div class="modal fade hide" id="send-feedback-modal">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">×</button>
-    <h3>Send us your praise or your criticism.</h3>
+<div class="modal fade" id="send-feedback-modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		
+		<div class="modal-content">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		    <h3>Send us your praise or your criticism.</h3>
+		  </div>
+		  <div class="modal-body">
+		    <p>We'll love you for either.</p>
+		    {% include "common/snippets/success_popup.html" %}
+		    <textarea id="feedback" class="form-control" rows="3"> </textarea>
+		  </div>
+		  <div class="modal-footer">
+		        <a href="#" class="btn" data-dismiss="modal">Close</a>
+		        <a id="submit_feedback" class="btn btn-primary">Send Feedback</a>
+        </div>
   </div>
-  <div class="modal-body">
-    <p>We'll love you for either.</p>
-    {% include "common/snippets/success_popup.html" %}
-    <textarea id="feedback" class="input-xlarge" rows="3"> </textarea>
-  </div>
-  <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal">Close</a>
-        <a id="submit_feedback" class="btn btn-primary">Send Feedback</a>
   </div>
 </div>

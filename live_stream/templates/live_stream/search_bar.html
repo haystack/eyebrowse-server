@@ -1,15 +1,18 @@
 <div class="search-bar-wrap">
+	<form>
     <div class="search-wrap">
+
     	{% if visualization %}
-    		<input class="search-bar" type="text" placeholder="Filter visualization by a domain or term..." value="{{query}}">
+    		<input type="text" class="form-control search-bar" placeholder="Filter visualization by a domain or term..." value="{{query}}">
     	{% else %}
-        	<input class="search-bar" type="text" placeholder="Search for a domain or page title..." value="{{query}}">
+        	<input type="text" class="form-control search-bar" placeholder="Search for a domain or page title..." value="{{query}}">
         {% endif %}
     </div>
     <div class="date-search-wrap">
-        <input class="date-search-bar input-xlarge" type="text" placeholder="i.e. from last week, the past 10 days" value="{{date}}">
+        <input class="form-control date-search-bar " type="text" placeholder="i.e. from last week, the past 10 days" value="{{date}}">
         <button class="btn btn-primary search-btn" type="button">
-            <i class="icon-white icon-search"></i> Search
+            <span class="glyphicon glyphicon-search"></span> Search
         </button>
     </div>
+    </form>
 </div>

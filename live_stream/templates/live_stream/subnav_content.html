@@ -1,8 +1,8 @@
 {% if user.is_authenticated %}
 <li class={{ subnav_following }}>
-    <a href="/live_stream/?filter=following"><i class="icon-user"></i> Following </a>
+    <a href="/live_stream/?filter=following"><span class="glyphicon glyphicon-user"></span> Following </a>
 </li>
 {% endif %}
 <li class={{ subnav_firehose }}>
-    <a href="/live_stream/?filter=firehose"><i class="icon-globe"></i> Firehose</a>
+    <a href="/live_stream/?filter=firehose"><span class="glyphicon glyphicon-globe"></span> Firehose</a>
 </li>
