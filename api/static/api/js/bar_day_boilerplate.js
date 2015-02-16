@@ -22,7 +22,7 @@ var svg,
 var start_time,
 	end_time;
 
-var week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 d3.json("http://eyebrowse.csail.mit.edu/api/graphs/timeline_days?username=" + username + "&date=" + date + "&query=" + query,
 	function(error, data) {
@@ -170,7 +170,11 @@ function create_legend(dataset) {
 		  	 .style("opacity", 1)
 		  	 .style("cursor", "pointer")
 		  	 .on("click", function(d) {
-        		window.location.href="http://" + color_hash[String(i)][0];
+		  	 	if (color_hash[String(i)][0] === "Other") {
+		  	 		return;
+		  	 	} else {
+		  	 		window.location.href="http://" + color_hash[String(i)][0];
+		  	 	}
       		 })
 		  	 .style("font-family", "Arial")
 		  	 .text(color_hash[String(i)][0]);

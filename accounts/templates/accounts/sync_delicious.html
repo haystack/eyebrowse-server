@@ -1,0 +1,25 @@
+{% extends 'accounts/edit_profile_base.html' %}
+{% load filters %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+ <div class="span6">
+	<h3>Connect to Delicious</h3>
+	{{ synced }}
+	
+	{% if not connected %}
+		<br />
+		<a href="/accounts/profile/sync_twitter">Connect with Twitter</a>
+		
+		
+	{% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}

@@ -10,10 +10,13 @@ from api.models import *
 from common.view_helpers import _template_values, JSONResponse
 from common.helpers import put_profile_pic
 import tweepy
-from eyebrowse.settings import TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET
+from eyebrowse.settings import TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, DELICIOUS_CONSUMER_KEY, DELICIOUS_CONSUMER_SECRET
 from eyebrowse.log import logger
 from django.views.generic.simple import redirect_to
-from accounts.models import TwitterInfo
+from accounts.models import TwitterInfo, DeliciousInfo
+
+import urllib2
+import json
 
 @login_required
 @render_to('accounts/whitelist.html')
@@ -103,6 +106,47 @@ def connections(request):
     }
 
     return _template_values(request, page_title="edit connections", navbar='nav_account', sub_navbar="subnav_connections", **template_dict)
+
+
+@login_required
+@render_to('accounts/sync_delicious.html')
+def sync_delicious(request):
+    """
+        Edit connection (following/followers)
+    """
+
+    user = request.user
+    
+    template_dict = {"connected": False,
+                     "synced": "You are not connected to Eyebrowse."}
+    
+    delicious_info = DeliciousInfo.objects.filter(user=user)
+    if len(delicious_info) > 0:
+        template_dict["synced"] = "Your Delicious account is already connected to Eyebrowse."
+        template_dict['connected'] = True
+    else:
+        if "code" in request.GET:
+            code = request.GET.get("code")
+             
+            data = urllib.urlencode({'client_id': DELICIOUS_CONSUMER_KEY,
+                                     'client_secret': DELICIOUS_CONSUMER_SECRET,
+                                     'grant_type': "code",
+                                     'redirect_uri': "http://eyebrowse.csail.mit.edu/accounts/profile/sync_delicious",
+                                     'code': code,
+                                     })
+
+            results = json.loads(urllib2.urlopen('https://avosapi.delicious.com/api/v1/oauth/token', data).read())
+
+            access_token = results["access_token"]
+                 
+            _ = DeliciousInfo.objects.create(user=user, access_token=access_token)
+            template_dict["synced"] = "Your Delicious account is now connected to Eyebrowse!"
+            template_dict['connected'] = True
+        else:
+            return redirect_to(request, "https://delicious.com/auth/authorize?client_id=" + DELICIOUS_CONSUMER_KEY + "&redirect_uri=http://eyebrowse.csail.mit.edu/accounts/profile/sync_delicious")
+
+    return _template_values(request, page_title="Connect Delicious", navbar='nav_account', sub_navbar="subnav_sync_delicious", **template_dict)
+
 
 
 @login_required

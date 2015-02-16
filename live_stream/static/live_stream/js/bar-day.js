@@ -1,4 +1,4 @@
-var week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 d3.json("/api/graphs/timeline_days?username=" + username + "&date=" + date + "&query=" + query,
 	function(error, data) {

@@ -6,11 +6,17 @@ from api.utils import humanize_time
 import datetime
 import urllib
 
+class Tag(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False)
+    name = models.CharField(max_length=80, blank=False, null=False)
+    domain = models.URLField(max_length=300, default='')
+    
 class ChatMessage(models.Model):
     author = models.ForeignKey(User, related_name='author', null=False, blank=False)
     message = models.CharField(max_length=2000, blank=False, null=False)
     date = models.DateTimeField(auto_now_add=True)
     url = models.URLField(max_length=300, blank=False, null=False)
+    
     
     def __unicode__(self):
         return "Chat message item on %s by %s" % (self.date, self.author)
