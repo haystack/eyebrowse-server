@@ -114,6 +114,40 @@ def add_tag(request):
         logger.info(e)
     return {'res':'success'}
 
+
+@login_required
+@ajax_request
+def color_tag(request):
+    name = request.POST.get('tag', None)
+    
+    user = request.user
+
+    tags = Tag.objects.filter(user=user, name=name)
+    r = lambda: random.randint(0,255)
+    color = '%02X%02X%02X' % (r(),r(),r())
+    
+    for tag in tags:
+        tag.color = color
+        tag.save()
+    return {'res':'success'}
+
+@login_required
+@ajax_request
+def delete_tag(request):
+    domain = request.POST.get('domain', None)
+    name = request.POST.get('tag', None)
+    
+    user = request.user
+
+    if domain and name:
+        tags = Tag.objects.filter(user=user, domain=domain, name=name)
+        tags.delete()
+    elif name:
+        tags = Tag.objects.filter(user=user, name=name)
+        tags.delete()
+        
+    return {'res':'success'}
+
 @render_to('google3a0cf4e7f8daa91b.html')
 def google_verify(request):
     return {}

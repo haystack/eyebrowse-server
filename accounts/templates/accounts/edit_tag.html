@@ -3,9 +3,7 @@
 {% load gravatar %}
 
 {% block styles %}
-
     {{ block.super }}
-
 {% endblock %}
 
 {% block account_content %}
@@ -13,13 +11,19 @@
 <div class="row span7 well">
 	{% for tag_list in tags %}
 	
-		<div class="span6">
+		<div class="span6 tags">
 			<h3>
 			<span class="label label-default" style="background-color: #{{ tag_list.0.color }}">{{ tag_list.0.name }}</span>
 			</h3>
+			<button class="btn btn-xs delete-tag" data-tag="{{ tag_list.0.name }}">Delete This Tag</button> 
+			<button class="btn btn-xs change-color-tag" data-tag="{{ tag_list.0.name }}">Change Color of Tag</button>
+			<br />
 			{% for tag in tag_list %}
-				<div class="span5">
-				{{ tag.domain }}
+				<div class="span5 tag-domain">
+				<a class="btn btn-danger btn-xs rm-tag" data-url="{{ tag.domain }}" data-tag="{{ tag_list.0.name }}">
+					<span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+					{{ tag.domain }} 
+					
 				</div>
 			{% endfor %}
 		</div>
@@ -30,6 +34,6 @@
 {% endblock %}
 
 {% block scripts %}
-
     {{ block.super }}
+    {% include_script "accounts/js/edit_tag" %}
 {% endblock %}

@@ -101,11 +101,12 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
 }
 
 .nav > li > a {
-display: block;
+	display: block;
+	color: #000000;
 }
 
 .nav-list > li > a {
-padding: 3px 15px;
+	padding: 3px 15px;
 }
 
 .navbar .brand {
