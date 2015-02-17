@@ -9,8 +9,9 @@
 {% block account_content %}
 
 <div class="row span7 well">
+	<h2> Edit My Tags </h2>
 	{% for tag_list in tags %}
-	
+
 		<div class="span6 tags">
 			<h3>
 			<span class="label label-default" style="background-color: #{{ tag_list.0.color }}">{{ tag_list.0.name }}</span>

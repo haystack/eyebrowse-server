@@ -75,11 +75,11 @@ function submitForm(e, d){
     });
 }
 
-function typeahead(id) {
+function typeahead_search(id) {
     id = id || 'search-bar';
     id = '#' + id;
     $(id).typeahead({
-        source: function (typeahead, query) {
+        source: function (query, process) {
             return $.getJSON('/api/typeahead/', {'query': query}, function(res) {
                 if (res.success) {
                 	var arr = [];
@@ -87,15 +87,16 @@ function typeahead(id) {
                     	var res_item = { username: value.username, fullname: value.fullname, email: value.email, gravatar: value.gravatar};
                     	arr.push(JSON.stringify(res_item));
                     });
-                    return typeahead.process(arr);
+                    return process(arr);
                 }
             });
         },
         // typeahead calls this function when a object is selected, and passes an object or string depending on what you processed, in this case a string
-        onselect: function (obj) {
+        afterSelect: function (obj) {
         	var item = JSON.parse(obj);
+        	$(id).val("");
             $(id).blur();
-            window.location = '/users/'+item.username
+            window.location = '/users/' + item.username
         },
         highlighter: function(obj) {
         	var item = JSON.parse(obj);
@@ -105,9 +106,9 @@ function typeahead(id) {
         	
         	username = item.username.replace(regex, func)
         	fullname = item.fullname.replace(regex, func)
-        	html = '<a href="/users/'+item.username+'"><li>'+item.gravatar;
+        	html = item.gravatar;
         	html += '<span class="fullname">'+fullname+'</span> ';
-        	html += '<span class="username">'+username+'</span></li></a>';
+        	html += '<span class="username">'+username+'</span>';
 			return html;
         },
         matcher: function (obj) {
@@ -532,7 +533,7 @@ $(function(){
     $("#save-tag-form").on('click', submitTag);
     
 
-    typeahead();
+    typeahead_search();
 
     infiniteScroll();
 
