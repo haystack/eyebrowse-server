@@ -545,8 +545,16 @@ $(function(){
     $('#tagModal').on('show.bs.modal', function (event) {
 	  var button = $(event.relatedTarget);
 	  var domain = button.data('domain');
+	  var tag = button.data('tag');
 	  var modal = $(this);
 	  modal.find('.modal-title').text(domain);
+	  if (tag != undefined) {
+	  	$("#tag-form").val(tag);
+	  }
+	});
+	
+	 $('#tagModal').on('hide.bs.modal', function (event) {
+	  $("#tag-form").val("");
 	});
 
 });

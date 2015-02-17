@@ -139,12 +139,9 @@ def _online_users():
             users.add(h.user)
     return users
 
-COLOR_LIST = ['#b00b1c', '#e51d7d', '#ff797f', '#8cc4c3', '#41998b']
-
 def group_history(history, req_user):
     history = list(history)
     history_groups = []
-    tags = {}
     i = 0
     while i < len(history):
         group = GroupHistory(history[i], req_user)
@@ -157,15 +154,7 @@ def group_history(history, req_user):
                 i = j
                 break
         i = j
-        if group.tag in tags:
-            tags[group.tag].append(group)
-        else:
-            tags[group.tag] = [group]
         history_groups.append(group)
-        
-    for i,tag in enumerate(tags.keys()):
-        for group in tags[tag]:
-            group.tag_color = COLOR_LIST[i]
     return history_groups
 
 
@@ -176,7 +165,7 @@ class GroupHistory(object):
         self.domain = history_item.domain
         tag = Tag.objects.filter(user=req_user, domain=history_item.domain)
         if tag.count() > 0:
-            self.tag = tag[0].name
+            self.tag = tag[0]
         else:
             self.tag = None
         history_item.messages = history_item.eyehistorymessage_set.all()

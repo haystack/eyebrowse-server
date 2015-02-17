@@ -146,6 +146,22 @@ def sync_delicious(request):
     return _template_values(request, page_title="Connect Delicious", navbar='nav_account', sub_navbar="subnav_sync_delicious", **template_dict)
 
 
+@login_required
+@render_to('accounts/edit_tag.html')
+def edit_tags(request):
+    user = request.user
+    tags = Tag.objects.filter(user=user)
+    tag_dict = {}
+    for tag in tags:
+        if tag.name in tag_dict:
+            tag_dict[tag.name].append(tag)
+        else:
+            tag_dict[tag.name] = [tag]
+
+    template_dict = {"tags": tag_dict.values()}
+    return _template_values(request, page_title="Edit My Tags", navbar='nav_account', sub_navbar="subnav_edit_tags", **template_dict)
+
+
 
 @login_required
 @render_to('accounts/sync_twitter.html')

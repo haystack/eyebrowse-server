@@ -1,0 +1,35 @@
+{% extends 'accounts/edit_profile_base.html' %}
+{% load filters %}
+{% load gravatar %}
+
+{% block styles %}
+
+    {{ block.super }}
+
+{% endblock %}
+
+{% block account_content %}
+
+<div class="row span7 well">
+	{% for tag_list in tags %}
+	
+		<div class="span6">
+			<h3>
+			<span class="label label-default" style="background-color: #{{ tag_list.0.color }}">{{ tag_list.0.name }}</span>
+			</h3>
+			{% for tag in tag_list %}
+				<div class="span5">
+				{{ tag.domain }}
+				</div>
+			{% endfor %}
+		</div>
+	{% endfor %}
+</div>	
+	
+	
+{% endblock %}
+
+{% block scripts %}
+
+    {{ block.super }}
+{% endblock %}

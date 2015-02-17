@@ -12,7 +12,7 @@
     	
         <span>
             <a onclick="trackOutboundLink('http://{{ item.first_item.url|url_domain }}'); return false;" href="http://{{ item.first_item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.first_item.url|url_domain }}">
-                <img class="favicon" src="{{ item.favIconUrl }}">{{ item.first_item.url|url_domain|truncatechars:30 }} 
+                <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.first_item.url|url_domain|truncatechars:30 }} 
             </a> 
             | <a class="pointer" onclick="trackOutboundLink('{{ item.first_item.url }}'); return false;" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.first_item.url }}">
             	<span class="cut-content pointer" data-content="{{ item.first_item.title}}">
@@ -30,14 +30,19 @@
            </span>
 	        <span class='time-ago pointer date' data-content="For {{ item.first_item.humanize_time }}, on {{item.first_item.start_time}}" data-time-ago="{{item.first_item.start_time|date_fmt}}" data-timestamp="{{item.first_item.start_time|date_fmt}}">	
 	        </span>
-	        <span class="dropdown timeline-options">
+	        <span class="dropdown timeline-options pull-right">
 	        	<a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
 	        	<span class="glyphicon glyphicon-chevron-down"></span>
 	        	</a>
 	        	<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
 				    <li role="presentation">
-				    	<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}">
-				    		Tag this Domain
+				    	{% if item.tag %}
+				    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}" data-tag="{{ item.tag.name }}">
+				    			Edit Tag for this Domain
+				    	{% else %}
+				    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}">
+								Tag this Domain
+				    		{% endif %}
 				    	</a>
 				    </li>
 			  </ul>
@@ -46,7 +51,7 @@
         
             {% if item.tag %}
         	  <span class="tag-area">
-            	<span class="label label-default" style="background-color: {{ item.tag_color }};">{{ item.tag }}</span>
+            	<span class="label label-default" style="background-color: #{{ item.tag.color }};">{{ item.tag.name }}</span>
             	</span>
             {% endif %}
     </div>

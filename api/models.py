@@ -9,6 +9,7 @@ import urllib
 class Tag(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     name = models.CharField(max_length=80, blank=False, null=False)
+    color = models.CharField(max_length=10, blank=False, null=False)
     domain = models.URLField(max_length=300, default='')
     
 class ChatMessage(models.Model):

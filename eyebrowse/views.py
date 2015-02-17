@@ -4,14 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.conf import settings
-
+import random
 from annoying.decorators import render_to, ajax_request
-
 from accounts.models import *
 
 from common.admin import email_templates
 from common.view_helpers import _template_values
 from api.models import Tag
+from eyebrowse.log import logger
 
 @render_to('common/about.html')
 def about(request):
@@ -86,18 +86,32 @@ def feedback(request):
     send_mail(subject, content, from_email=user.email, recipient_list=admin_emails)
     return {'res':'success'}
 
-
 @login_required
 @ajax_request
 def add_tag(request):
     domain = request.POST.get('domain', None)
-    tag = request.POST.get('tag', None)
-    if not domain or not tag:
+    name = request.POST.get('tag', None)
+    if not domain or not name:
         return {'res':'failed'}
 
     user = request.user
-
-    _ = Tag.objects.get_or_create(user=user, domain=domain, name=tag)
+    try:
+        tags = Tag.objects.filter(user=user, domain=domain)
+        if tags.count() > 0:
+            tag = tags[0]
+            tag.name = name
+            tag.save()
+        else:
+            
+            color_tags = Tag.objects.filter(user=user, name=name)
+            if color_tags.count() > 0:
+                color = color_tags[0].color
+            else:
+                r = lambda: random.randint(0,255)
+                color = '%02X%02X%02X' % (r(),r(),r())
+            _ = Tag.objects.get_or_create(user=user, domain=domain, name=name, color=color)
+    except Exception, e:
+        logger.info(e)
     return {'res':'success'}
 
 @render_to('google3a0cf4e7f8daa91b.html')

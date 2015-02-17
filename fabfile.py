@@ -32,7 +32,7 @@ def deploy():
     
 def deploy_static():
     with cd(env.server_path):
-        sudo('%s/python manage.py collectstatic -v0 --noinput' % (env.python_path))
+        sudo('%s/python manage.py collectstatic -v0 --noinput --clear' % (env.python_path))
         
 def compress_static():
     with cd(env.server_path):
