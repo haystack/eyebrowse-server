@@ -48,7 +48,7 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
         following = set([])
     
     if hasattr(history, 'object_list'):
-        history.object_list = group_history(history.object_list)
+        history.object_list = group_history(history.object_list, req_user)
     
 
     return hist, history_renderer(req_user, history, return_type,  get_dict.get("template"), get_params=search_params, following=following)
@@ -139,14 +139,15 @@ def _online_users():
             users.add(h.user)
     return users
 
+COLOR_LIST = ['#b00b1c', '#e51d7d', '#ff797f', '#8cc4c3', '#41998b']
 
-
-def group_history(history):
+def group_history(history, req_user):
     history = list(history)
     history_groups = []
+    tags = {}
     i = 0
     while i < len(history):
-        group = GroupHistory(history[i])
+        group = GroupHistory(history[i], req_user)
         j = i + 1
         while j < len(history):
             if group.domain == history[j].domain and group.user == history[j].user:
@@ -156,16 +157,28 @@ def group_history(history):
                 i = j
                 break
         i = j
+        if group.tag in tags:
+            tags[group.tag].append(group)
+        else:
+            tags[group.tag] = [group]
         history_groups.append(group)
         
+    for i,tag in enumerate(tags.keys()):
+        for group in tags[tag]:
+            group.tag_color = COLOR_LIST[i]
     return history_groups
 
 
     
 class GroupHistory(object):
-    def __init__(self, history_item):
+    def __init__(self, history_item, req_user):
         self.id = history_item.id
         self.domain = history_item.domain
+        tag = Tag.objects.filter(user=req_user, domain=history_item.domain)
+        if tag.count() > 0:
+            self.tag = tag[0].name
+        else:
+            self.tag = None
         history_item.messages = history_item.eyehistorymessage_set.all()
         self.history_items = [history_item]
         self.favIconUrl = history_item.favIconUrl

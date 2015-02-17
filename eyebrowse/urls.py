@@ -55,6 +55,7 @@ urlpatterns = patterns('',
 urlpatterns += patterns('eyebrowse.views',
     url(r'^google3a0cf4e7f8daa91b.html$', 'google_verify'),
     url(r'^feedback$', 'feedback'),
+    url(r'^add_tag$', 'add_tag'),
     url(r'^downloads$', 'downloads'),
     url(r'^$', 'home'),
 )

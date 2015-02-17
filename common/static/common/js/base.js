@@ -8,6 +8,18 @@ function submitFeedBack(e, d) {
     $('#feedback').val("");
 }
 
+function submitTag(e, d) {
+    $('#submit_success').fadeIn();
+    var tag = $("#tag-form").val();
+    var domain = $(".modal-title").text();
+    $.post('/add_tag', { 
+        'tag' : tag,
+        'domain': domain,
+    });
+    $('#submit_success').fadeOut();
+    window.location.reload();
+}
+
 function submitConsent(e, d) {
 	$.post('/consent_accept', {
 		'consent': 'true'
@@ -517,6 +529,8 @@ $(function(){
     
     $("#confirmation").on('click', submitConsent);
     
+    $("#save-tag-form").on('click', submitTag);
+    
 
     typeahead();
 
@@ -526,5 +540,13 @@ $(function(){
     setInterval(setTimeAgo, 3600);
 
     setupSearch();
+    
+        
+    $('#tagModal').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget);
+	  var domain = button.data('domain');
+	  var modal = $(this);
+	  modal.find('.modal-title').text(domain);
+	});
 
 });

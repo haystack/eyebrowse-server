@@ -11,6 +11,7 @@ from accounts.models import *
 
 from common.admin import email_templates
 from common.view_helpers import _template_values
+from api.models import Tag
 
 @render_to('common/about.html')
 def about(request):
@@ -83,6 +84,20 @@ def feedback(request):
     content = email_templates.feedback['content'] % (user.username, feedback)
     admin_emails = [admin[1] for admin in settings.ADMINS]
     send_mail(subject, content, from_email=user.email, recipient_list=admin_emails)
+    return {'res':'success'}
+
+
+@login_required
+@ajax_request
+def add_tag(request):
+    domain = request.POST.get('domain', None)
+    tag = request.POST.get('tag', None)
+    if not domain or not tag:
+        return {'res':'failed'}
+
+    user = request.user
+
+    _ = Tag.objects.get_or_create(user=user, domain=domain, name=tag)
     return {'res':'success'}
 
 @render_to('google3a0cf4e7f8daa91b.html')

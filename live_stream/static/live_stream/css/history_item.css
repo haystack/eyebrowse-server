@@ -46,8 +46,15 @@
     margin-top:20px;
 }
 
+.tag-area {
+	display: inline-block;
+	width: auto;
+	float: right;
+	padding-right: 3px;
+}
+
 .author-container{
-    width:155px;
+    width:185px;
 }
 
 .history-container .left {
