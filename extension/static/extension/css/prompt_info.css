@@ -18,10 +18,10 @@ body {
 	position: relative;
 	max-width: 390px;
 	min-width: 40px;
-	height: 26px;
+	height: 32px;
 	position: absolute;
 	top: 12px;
-	right: 10px;
+	right: 23px;
 	text-align: center;
 	padding: 0px;
 	padding-top: 2px;
@@ -126,7 +126,7 @@ body {
 	width: 0;
 	z-index: 1;
 	top: -7px;
-	right: 23px;
+	right: 10px;
 }
 
 .bubble:before
@@ -140,7 +140,7 @@ body {
 	width: 0;
 	z-index: 0;
 	top: -13px;
-	right: 21px;
+	right: 8px;
 }
 
 .track-container {

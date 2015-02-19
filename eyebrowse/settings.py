@@ -34,8 +34,7 @@ def _get_debug():
     else:
         return False
 
-#DEBUG = _get_debug()
-DEBUG = True
+DEBUG = _get_debug()
 
 try:
     execfile(SITE_ROOT + '/../config.py')

@@ -17,6 +17,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.views.generic.simple import redirect_to
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from accounts.models import UserProfile
 
 @xframe_options_exempt
 @render_to("extension/track_prompt.html")
@@ -47,13 +48,15 @@ def get_info(request):
 
     active = []
 
+    followers = User.objects.filter(userprofile__follows=request.user)
+
     eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user_id=request.user.id)).order_by('-end_time').select_related()
 
     for eyehist in eyehists:
         if len(active) >= 6:
             break
         user = eyehist.user
-        if user not in used_users:
+        if user not in used_users and user in followers:
             old_level = 3
             if eyehist.end_time > (timezone.now() - datetime.timedelta(minutes=5)):
                 old_level = 0
@@ -70,22 +73,26 @@ def get_info(request):
                         })
             used_users.append(user)
 
-    message = EyeHistoryMessage.objects.filter(Q(eyehistory__url=url) & Q(post_time__gt=timestamp)).select_related()
+    messages = EyeHistoryMessage.objects.filter(Q(eyehistory__url=url) & Q(post_time__gt=timestamp)).select_related()
     about_message = None
     user_url = None
     username = None
+    message = None
 
-    if message:
-        about_message = humanize_time(timezone.now() - message[0].post_time) + ' ago'
-        message = message[0].message
+    for m in messages:
+        if m.eyehistory.user in followers:
+            message = m.message
+            about_message = humanize_time(timezone.now() - message[0].post_time) + ' ago'
+            break
 
     if not about_message:
-        chat_message = ChatMessage.objects.filter(url=url).select_related()
-        if chat_message:
-            about_message = humanize_time(timezone.now() - chat_message[0].date) + ' ago'
-            message = '"%s"' % (chat_message[0].message)
-            user_url = '%s/users/%s' % (BASE_URL,chat_message[0].author.username)
-            username = chat_message[0].author.username
+        chat_messages = ChatMessage.objects.filter(url=url).select_related()
+        for c in chat_messages:
+            if c.author in followers:
+                about_message = humanize_time(timezone.now() - c.date) + ' ago'
+                message = '"%s"' % (c.message)
+                user_url = '%s/users/%s' % (BASE_URL,c.author.username)
+                username = c.author.username
 
     if not about_message:
         about_message = ''
