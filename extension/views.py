@@ -48,7 +48,7 @@ def get_info(request):
 
     active = []
 
-    followers = User.objects.filter(userprofile__follows=request.user)
+    followers = User.objects.filter(userprofile__followed_by=request.user)
 
     eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user_id=request.user.id)).order_by('-end_time').select_related()
 
