@@ -18,6 +18,9 @@ from django.views.generic.simple import redirect_to
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from accounts.models import UserProfile
+from django.contrib.auth.decorators import login_required
+import json
+from eyebrowse.log import logger
 
 @xframe_options_exempt
 @render_to("extension/track_prompt.html")
@@ -34,10 +37,103 @@ def login(request):
     return {
         'src' : src
     }
+    
+   
+def logged_in(request):
+    if request.user.is_authenticated():
+        return JSONResponse({"res": True,
+                             "username": request.user.username})
+    else:
+        return JSONResponse({"res": False})
+    
+    
+@login_required
+def popup_info(request):
+    url = request.POST.get("url")
+
+    domain = url_domain(url)
+
+    timestamp =  timezone.now() - datetime.timedelta(days=7)
+
+    used_users = []
+
+    active = []
+
+    followers = User.objects.filter(userprofile__followed_by=request.user)
+
+    eyehists = EyeHistory.objects.filter((Q(url=url) | Q(domain=domain)) & Q(start_time__gt=timestamp) & ~Q(user_id=request.user.id)).order_by('-end_time').select_related()
+
+    for eyehist in eyehists:
+        if len(active) >= 6:
+            break
+        user = eyehist.user
+        if user not in used_users and user in followers:
+            old_level = 3
+            if eyehist.end_time > (timezone.now() - datetime.timedelta(minutes=5)):
+                old_level = 0
+            elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=1)):
+                old_level = 1
+            elif eyehist.end_time > (timezone.now() - datetime.timedelta(hours=24)):
+                old_level = 2
+
+            active.append({'username': user.username,
+                        'pic_url': gravatar_for_user(user),
+                        'url': '%s/users/%s' % (BASE_URL,user.username),
+                        'old_level': old_level,
+                        'time_ago': humanize_time(timezone.now()-eyehist.end_time)
+                        })
+            used_users.append(user)
+
+    messages = EyeHistoryMessage.objects.filter(Q(eyehistory__url=url) & Q(post_time__gt=timestamp)).select_related()
+    about_message = None
+    user_url = None
+    username = None
+    message = None
+
+    for m in messages:
+        if m.eyehistory.user in followers:
+            message = m.message
+            about_message = humanize_time(timezone.now() - message[0].post_time) + ' ago'
+            break
+
+    if not about_message:
+        chat_messages = ChatMessage.objects.filter(url=url).select_related()
+        for c in chat_messages:
+            if c.author in followers:
+                about_message = humanize_time(timezone.now() - c.date) + ' ago'
+                message = '"%s"' % (c.message)
+                user_url = '%s/users/%s' % (BASE_URL,c.author.username)
+                username = c.author.username
+
+    if not about_message:
+        about_message = ''
+        message = ''
+
+    return JSONResponse({
+        'url' : url,
+        'active_users': active,
+        'message': message,
+        'about_message': about_message,
+        'user_url': user_url,
+        'username': username,
+    })
+    
 
 @xframe_options_exempt
 @render_to("extension/info_prompt.html")
 def get_info(request):
+    
+    if not request.user.is_authenticated():
+        return {
+            'logged_in': False,
+            'url' : None,
+            'active_users': None,
+            'message': None,
+            'about_message': None,
+            'user_url': None,
+            'username': None,
+    }
+        
     url = request.GET.get("url")
 
     domain = url_domain(url)
@@ -99,12 +195,13 @@ def get_info(request):
         message = ''
 
     return {
-        'url' : url,
-        'active_users': active,
-        'message': message,
-        'about_message': about_message,
-        'user_url': user_url,
-        'username': username,
+            'logged_in': True,
+            'url' : url,
+            'active_users': active,
+            'message': message,
+            'about_message': about_message,
+            'user_url': user_url,
+            'username': username,
     }
 
 @xframe_options_exempt
@@ -119,6 +216,7 @@ def get_ticker_info(request):
 def profilepic(request):
     return redirect_to(request, gravatar_for_user(request.user));
 
+@login_required
 @ajax_request
 def get_messages(request):
     url = request.GET.get("url")
@@ -143,6 +241,7 @@ def get_messages(request):
                    }
         }
 
+@login_required
 @ajax_request
 def active(request):
     url = request.GET.get("url", '')
@@ -195,7 +294,6 @@ def active(request):
                        }
             }
 
-
 def get_stats(visits):
     count = visits.count()
     if count == 1:
@@ -209,7 +307,7 @@ def get_stats(visits):
 
     return count_text, time
 
-
+@login_required
 @ajax_request
 def stats(request):
     url = request.GET.get("url", '')

@@ -48,6 +48,12 @@ function clickHandle(e){
 }
 
 $(document).ready(function(){
+	var logged_in = $("#logged-in").text();
+
+	if (logged_in == "False") {
+		passMessage("fade");
+	}
+		
 	var num_img = $("#info-box img").length;
 	var text = $.trim($("#message").text());
 
