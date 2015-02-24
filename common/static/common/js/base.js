@@ -510,6 +510,30 @@ function setupSearch() {
     makeTip(".date-search-bar", "Limit search by date.", "bottom", "hover");
 }
 
+function typeahead_tags(res) {
+	
+	$("#tag-form").addClass('dropdown');
+	
+	$("#tag-form").typeahead({
+        source: res.tags,
+        highlighter: function(obj) {
+        	console.log(obj);
+        	html = '<span class="label" style="font-size: 14px; background-color: #' + obj[1] + '">' + obj[0] + '</span>';
+			return html;
+        },
+        afterSelect: function (obj) {
+        	$('#tag-form').val(obj[0]);
+        },
+        matcher: function (obj) {
+        	return obj[0].toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+		},
+		sorter: function(items) {
+		    return items;
+        }
+        });
+        
+}
+
 
 $(function(){
     var csrftoken = $.cookie('csrftoken');
@@ -552,6 +576,21 @@ $(function(){
 	  if (tag != undefined) {
 	  	$("#tag-form").val(tag);
 	  }
+	  
+	  if ($('#tag-form').hasClass('dropdown') !== true) {
+	  	$.ajax({
+		        type: 'GET',
+		        url: '/api/my_tags/',
+		        contentType:'application/json',
+		        success: function(res) {
+
+		        	console.log('here');
+		        	typeahead_tags(res);
+		        }
+		   });
+	  	
+	  }
+	  
 	});
 	
 	 $('#tagModal').on('hide.bs.modal', function (event) {

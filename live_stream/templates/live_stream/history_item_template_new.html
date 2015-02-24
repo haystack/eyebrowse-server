@@ -34,18 +34,20 @@
 	        	<a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
 	        	<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
 	        	</a>
-	        	<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
-				    <li role="presentation">
-				    	{% if item.tag %}
-				    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}" data-tag="{{ item.tag.name }}">
-				    			Edit Tag for this Domain
-				    	{% else %}
-				    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}">
-								Tag this Domain
-				    		{% endif %}
-				    	</a>
-				    </li>
-			  </ul>
+	        	{% if user.is_authenticated %}
+		        	<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+					    <li role="presentation">
+					    	{% if item.tag %}
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}" data-tag="{{ item.tag.name }}">
+					    			Edit Tag for this Domain
+					    	{% else %}
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}">
+									Tag this Domain
+					    		{% endif %}
+					    	</a>
+					    </li>
+				  </ul>
+				{% endif %}
 	        </span>
         </span>
         

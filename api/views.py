@@ -248,6 +248,14 @@ def timeline_day(request):
     
 
 @ajax_request
+def my_tags(request):
+    if request.user.is_authenticated():
+        t = list(set(Tag.objects.filter(user=request.user).values_list('name', 'color')))
+        return {'tags': t}
+    return {'tags': None}
+        
+
+@ajax_request
 def typeahead(request):
     query = request.GET.get('query', None)
     success =  False
