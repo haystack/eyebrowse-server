@@ -23,7 +23,7 @@ def live_stream(request):
 
     tot_time, num_history, num_online = _get_stats(user)
 
-    get_dict, query, date = _get_query(request)
+    get_dict, query, date, sort, filter = _get_query(request)
 
     hist, history_stream = live_stream_query_manager(get_dict, user)
 
@@ -31,45 +31,27 @@ def live_stream(request):
     following_count = user.profile.follows.count()
     follower_count = UserProfile.objects.filter(follows=user.profile).count()
 
-
-    today = datetime.now() - timedelta(hours=24)
-    day_count = hist.filter(start_time__gt=today).values('url', 'title').annotate(num_urls=Sum('total_time')).order_by('-num_urls')[:3]
-    day_domains = hist.filter(start_time__gt=today).values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:5]
-
-    day_chart = {}
-    for domain in day_domains:
-        day_chart[domain['domain']] = domain['num_domains']
-
-    last_week = today - timedelta(days=7)
-    week_count = hist.filter(start_time__gt=last_week).values('url', 'title').annotate(num_urls=Sum('total_time')).order_by('-num_urls')[:3]
-    week_domains = hist.filter(start_time__gt=last_week).values('domain').annotate(num_domains=Sum('total_time')).order_by('-num_domains')[:5]
-
-    week_chart = {}
-    for domain in week_domains:
-        week_chart[domain['domain']] = domain['num_domains']
-
-
     template_dict = {
         'username': user.username,
         'following_count': following_count,
         'follower_count': follower_count,
         'query' : query,
         'date' : date,
+        'sort' : sort,
+        'filter' : filter,
         'history_stream' : history_stream,
         'tot_time' : tot_time,
         'num_history' : num_history,
         'num_online' : num_online,
-        'day_articles': day_count,
-        'week_articles': week_count,
-        'day_chart': json.dumps(day_chart),
-        'week_chart': json.dumps(week_chart),
     }
 
     return _template_values(request, page_title="live stream", navbar="nav_home", sub_navbar=_get_subnav(request), **template_dict)
 
 @ajax_request
 def ping(request):
-    get_dict, query, date = _get_query(request)
+    get_dict, query, date, sort, filter = _get_query(request)
+    
+    get_dict["sort"] = "time"
 
     _, history = live_stream_query_manager(get_dict, request.user, return_type="list")
 

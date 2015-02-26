@@ -1,0 +1,115 @@
+{% load filters %}
+{% load gravatar %}
+
+<div id="history_item_{{item.id}}" class='row history-container infinite-scroll' data-id="{{ item.id }}">
+    <div id="history_item_{{ item.id }}_content" class="history-content">
+    	
+        <span class="span6" style="margin-left: 0px">
+            <a onclick="trackOutboundLink('http://{{ item.first_item.url|url_domain }}'); return false;" href="http://{{ item.first_item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url|url_domain }}">
+                <img class="favicon" src="{{ item.popular_history.favIconUrl }}"> {{ item.popular_history.url|url_domain|truncatechars:30 }} 
+            </a> | 
+            <a onclick="trackOutboundLink('http://{{ item.first_item.url }}'); return false;" href="http://{{ item.first_item.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url }}">
+                {{ item.popular_history.url|truncatechars:50 }} 
+            </a>
+            <br />
+            <a class="pointer" onclick="trackOutboundLink('{{ item.popular_history.url }}'); return false;" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.popular_history.url }}">
+
+            	
+            	 <div class="cut-content pointer" data-content="{{ item.popular_history.title}}">
+            	 	<img align="left" class="popular_image img-rounded" src="{{ item.popular_history.img_url }}">
+            	 	                <h4>
+		                {{ item.popular_history.title|truncatechars:150 }} 
+		            	</h4>
+                	{{ item.popular_history.description }} 
+            	</div>
+            	
+            </a>
+        </span>
+            
+        <span class="pull-right author-container"> 
+
+		
+           <span>
+           	{% for v in item.visitors.all %}
+	           	<a href="/users/{{ v.username }}">
+	           		<img class="author-pic img-rounded" data-content="{{ v }}" src="{% gravatar_for_user v %}"/> 
+	           	</a>
+	        {% endfor %}
+           </span>
+	        <span class="dropdown timeline-options pull-right">
+	        	<a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+	        	<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+	        	</a>
+	        	{% if user.is_authenticated %}
+		        	<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+					    <li role="presentation">
+					    	{% if item.tag %}
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}" data-tag="{{ item.tag.name }}">
+					    			Edit Tag for this Domain
+					    	{% else %}
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}">
+									Tag this Domain
+					    		{% endif %}
+					    	</a>
+					    </li>
+				  </ul>
+				{% endif %}
+	        </span>
+	        
+	        <br />
+	        <span class="date">
+	        	Avg time: {{ item.humanize_avg_time }}
+	        </span>
+	        
+	        	<br />
+	          <span class='time-ago date' data-time-ago="{{item.avg_time_ago|date_fmt}}" data-timestamp="{{item.avg_time_ago|date_fmt}}">	
+	        </span>
+	        <br />
+	                    {% if item.tag %}
+        	  <span>
+            	<span class="label label-default" style="background-color: #{{ item.tag.color }};">{{ item.tag.name }}</span>
+            	</span>
+            {% endif %}
+        </span>
+
+    </div>
+    
+    
+    
+    {% if messages|length > 0 %}
+    <div class="span7">
+    		<a data-toggle="collapse" data-target="#message_details_{{ item.id }}" class="pointer">
+    			<span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+    			{{ messages|length }} notes</a>
+    </div>
+    
+    <div class="collapse span7" id="message_details_{{ item.id }}">
+    		{% for m in messages %}
+	            <span class="span5">
+				    		<a href="/users/{{ m.eyehistory.user.username }}">
+			           		<img class="author-pic img-rounded" data-content="{{ m.eyehistory.user }}" src="{% gravatar_for_user m.eyehistory.user %}"/> 
+			           		</a>
+		    				
+		    				{{ m.message }}
+
+		    	</span>
+	        	
+	        		<span class="pull-right author-container"> 
+	        			<span class="tag-area">&nbsp;</span>
+		          	<span class='time-ago pointer date' data-content="For {{ m.eyehistory.humanize_time }}, on {{m.post_time}}" data-time-ago="{{m.post_time|date_fmt}}" data-timestamp="{{m.post_time|date_fmt}}"></span>
+					</span>
+
+	      {% endfor %}
+	      
+	  </div>
+	   {% else %}
+    	{% endif %}
+	      
+    <!--
+    <hr class='rm-margin'>
+    <div class="history-footer">
+        <span class="date" data-timestamp="{{item.start_time|date_fmt}}"> {{ item.start_time }} </span>
+    </div>
+    -->
+
+</div>

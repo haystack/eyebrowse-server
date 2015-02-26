@@ -103,3 +103,12 @@
 	cursor: hand;
 }
 
+.popular_image {
+	max-width: 100px;
+	max-height: 100px;
+	margin-left: 0px;
+	padding: 0px;
+	margin-right: 10px;
+	margin-bottom: 5px;
+}
+

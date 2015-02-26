@@ -317,13 +317,14 @@ def profile_data(request, username=None):
     """
     username, follows, profile_user, empty_search_msg = _profile_info(user, username)
 
-    get_dict, query, date = _get_query(request)
+    get_dict, query, date, sort, filter = _get_query(request)
 
     get_dict["orderBy"] = "end_time"
     get_dict["direction"] = "hl"
     get_dict["filter"] = ""
     get_dict["page"] = request.GET.get("page", 1)
     get_dict["username"] = profile_user.username
+    get_dict["sort"] = "time"
 
     hist, history_stream = live_stream_query_manager(get_dict, profile_user)
 

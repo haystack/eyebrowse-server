@@ -12,8 +12,8 @@
     
   <div class="span8 profile-header">
     {% include "live_stream/search_bar.html" %}
-    {% include "live_stream/aggregate_stats.html" %}
     
+    {% include "live_stream/sort_stream.html" %}
 
     {{ history_stream }}
    </div>
@@ -22,6 +22,7 @@
 {% endblock %}
 
 {% block scripts %}
+    {% include_script "live_stream/js/live-stream-ping" %}
     {% include_script "live_stream/js/live-stream" %}
     {% include_script "live_stream/js/history-tips" %}
     {% include_script "live_stream/js/jsapi" %}

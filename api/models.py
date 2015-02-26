@@ -45,7 +45,7 @@ class BlackListItem(FilterListItem):
         unique_together = ('user','url')
     
     def __unicode__(self):
-        return "Blacklist item %s for %s" % (self.url, self.user.username)
+        return "Blacklist item %s for %s" % (self.url, self.user.username) 
     
 class EyeHistoryRaw(models.Model):
     user = models.ForeignKey(User)
@@ -106,7 +106,6 @@ class EyeHistoryMessage(models.Model):
     post_time = models.DateTimeField(auto_now_add=True)
     eyehistory = models.ForeignKey(EyeHistory, blank=True, null=True, on_delete=models.SET_NULL)
 
-    
     class Meta:
         ordering = ['-post_time']
 
@@ -114,6 +113,40 @@ class EyeHistoryMessage(models.Model):
         return "Message %s on %s" % (self.message, self.post_time)
     
     
+
+class PopularHistoryInfo(models.Model):
+    url = models.URLField(max_length=255, unique=True)
+    
+    img_url = models.URLField(max_length=2000, default='')
+    description = models.TextField(default='')
+    
+    domain = models.URLField(max_length=100, default='')
+    favIconUrl = models.URLField(max_length=2000, default='')
+    title = models.CharField(max_length=2000, default='')
+ 
+
+class PopularHistory(models.Model):
+   
+    user = models.ForeignKey(User, null=True)
+    
+    popular_history = models.ForeignKey(PopularHistoryInfo, null=False)
+    eye_hists = models.ManyToManyField(EyeHistory)
+    visitors = models.ManyToManyField(User, related_name='pophist_visitors')
+    messages = models.ManyToManyField(EyeHistoryMessage)
+    top_score = models.FloatField(default=0.0)     # unique visitors + avg_time_spent + num_comments / avg_time_ago
+    unique_visitor_score = models.FloatField(default=0.0)    # unique visitors / avg_time_ago
+    avg_time_spent_score = models.FloatField(default=0.0)   # avg_time_spent / avg_time_ago
+    num_comment_score = models.FloatField(default=0.0)   # avg_time_spent / avg_time_ago
+    
+    total_time_spent = models.IntegerField(default=0)    # store in ms
+    total_time_ago = models.IntegerField(default=0)    # store in rounded hours
+     
+    humanize_avg_time = models.CharField(max_length=200, default='')
+    avg_time_ago = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "popular_history")
+   
 def save_raw_eyehistory(user, url, title, start_event, end_event, start_time, end_time, src, domain, favIconUrl):
     elapsed_time = end_time - start_time
     total_time = int(round((elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))

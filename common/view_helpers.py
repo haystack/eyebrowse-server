@@ -40,6 +40,8 @@ def _get_query(request):
     query = request.GET.get("query", "")
     date = request.GET.get("date", "")
     timestamp = request.GET.get("timestamp", None)
+    sort = request.GET.get("sort", "top").lower()
+    filter = request.GET.get("filter", "following").lower()
     
     if timestamp:
         t = parse(timestamp, ignoretz=True)
@@ -55,7 +57,8 @@ def _get_query(request):
 
     get_dict = {
         "query" : query,
-        "filter" : request.GET.get("filter", "following"),
+        "filter" : filter,
+        "sort" : sort,
         "start_time" : start_time,
         "end_time": end_time,
         "username" : request.GET.get("username", ""),
@@ -67,7 +70,7 @@ def _get_query(request):
         'timestamp' : timestamp,
     }
     
-    return get_dict, query, date
+    return get_dict, query, date, sort, filter
 
 
 def validateEmail(email):

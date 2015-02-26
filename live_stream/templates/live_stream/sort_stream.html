@@ -1,0 +1,32 @@
+<div class="sort_stream">
+	Sort Eyebrowse by: 
+		{% if sort == "top" %}
+			<b>Top</b>
+		{% else %}
+			<a href="/live_stream/?sort=top&filter={{ filter }}&date={{ date }}&query={{ query }}">Top</a>
+		{% endif %}
+		 | 
+		 {% if sort == "visits" %}
+		 	<b>Most Visitors</b>
+		 {% else %}
+			<a href="/live_stream/?sort=visits&filter={{ filter }}&date={{ date }}&query={{ query }}">Most Visitors</a>
+		{% endif %}
+		 | 
+		 {% if sort == "long" %}
+		 	<b>Long Reads</b>
+		 {% else %}
+		 	<a href="/live_stream/?sort=long&filter={{ filter }}&date={{ date }}&query={{ query }}">Long Reads</a>
+		 {% endif %}
+		  | 
+		  {% if sort == "comments" %}
+		 	<b>Most Notes</b>
+		 {% else %}
+		 	<a href="/live_stream/?sort=comments&filter={{ filter }}&date={{ date }}&query={{ query }}">Most Notes</a>
+		 {% endif %}
+		  | 
+		   {% if sort == "time" %}
+		   <b>Most Recent</b>
+		  {% else %}
+		  <a href="/live_stream/?sort=time&filter={{ filter }}&date={{ date }}&query={{ query }}">Most Recent</a>
+		 {% endif %}
+</div>

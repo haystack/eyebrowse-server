@@ -6,8 +6,6 @@ from django.conf import settings
 
 from annoying.fields import AutoOneToOneField
 
-from api.models import EyeHistory
-
 from datetime import datetime, timedelta
 
 class TwitterInfo(models.Model):
@@ -39,6 +37,8 @@ class UserProfile(models.Model):
     def get_following_history(self, history=None):
         following = self.follows.all()
         if not history:
+            
+            from api.models import EyeHistory
             history = EyeHistory.objects.all()
 
         query_set = history.filter(user__in=following)

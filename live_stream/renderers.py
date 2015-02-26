@@ -5,7 +5,7 @@ from common.constants import *
 
 import urllib
 
-def history_renderer(user, history, return_type, template, get_params=None, following=None):
+def history_renderer(user, history, hist_type, return_type, template, get_params=None, following=None):
     """ 
         Can render a history as html block or list of
         html items. User is the user requesting the view.
@@ -18,6 +18,7 @@ def history_renderer(user, history, return_type, template, get_params=None, foll
 
         template_values =  {
             'history' : history,
+            'hist_type' : hist_type,
             'user' : user,
             'empty_search_msg': empty_search_msg,
             'following' : following,

@@ -18,7 +18,7 @@ from eyebrowse.log import logger
 
 def live_stream_query_manager(get_dict, req_user, return_type="html"):
 
-    valid_params = ["timestamp", "query", "following", "firehose", "direction", "filter", "ping", "req_user", "username", "limit", "orderBy", "start_time", "end_time"]
+    valid_params = ["timestamp", "sort", "query", "following", "firehose", "direction", "filter", "ping", "req_user", "username", "limit", "orderBy", "start_time", "end_time"]
 
     valid_types = {
         "ping" : {
@@ -36,7 +36,7 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     if type in valid_types:
         search_params = dict(search_params, **valid_types[type])
 
-    hist = history_search(req_user, **search_params)
+    hist_type, hist = history_search(req_user, **search_params)
     
     page = get_dict.get("page", 1)
 
@@ -47,51 +47,92 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     else:
         following = set([])
     
-    if hasattr(history, 'object_list'):
+    if hist_type == "eyehistory" and hasattr(history, 'object_list'):
         history.object_list = group_history(history.object_list, req_user)
+    else:
+        set_tags(history.object_list, req_user)
     
 
-    return hist, history_renderer(req_user, history, return_type,  get_dict.get("template"), get_params=search_params, following=following)
+    return hist, history_renderer(req_user, history, hist_type, return_type,  get_dict.get("template"), get_params=search_params, following=following)
 
 
 
-def history_search(req_user, timestamp=None, query=None, filter="following", type=None, direction="hl", orderBy="start_time", limit=None, username=None, start_time=None, end_time=None):
+def history_search(req_user, timestamp=None, query=None, sort="top", filter="following", type=None, direction="hl", orderBy="start_time", limit=None, username=None, start_time=None, end_time=None):
 
-    history = EyeHistory.objects.all()
-    try:
-        
-        if query:
-            history = history.filter(Q(title__icontains=query) | Q(url__icontains=query))
-        
-        if filter == "following" and req_user.is_authenticated():
-            history = req_user.profile.get_following_history(history=history)
-        
-        if username:
-            history = history.filter(user__username=username)
-        
-        orderBy = "-" + orderBy
-        if direction == "lh":
-            orderBy = orderBy[1:]
-        history = history.order_by(orderBy)
-
-        if start_time and end_time:
-            history = history.filter(start_time__gt=start_time, end_time__lt=end_time)
-        elif start_time:
-            history = history.filter(start_time__gt=start_time)
-        
-        #ping data with latest time and see if time is present
-        ## must be last
-        if type == "ping" and timestamp:
-            history = history.filter(start_time__gt=timestamp)
-
-        if limit:
-            history = history[:limit]
+    hist_type = None
+    
+    if not username and sort != "time":
+        try:
+            if filter == "following" and req_user.is_authenticated():
+                history = PopularHistory.objects.filter(user=req_user)
+            else:
+                history = PopularHistory.objects.filter(user=None)
             
-    except Exception as e:
-        print "EXCEPTION", e
-        history = EyeHistory.objects.none()
+            if query:
+                history = history.filter(Q(popular_history__title__icontains=query) | Q(popular_history__url__icontains=query))
+        
+            if start_time and end_time:
+                history = history.filter(avg_time_ago__gt=start_time, avg_time_ago__lt=end_time)
+            elif start_time:
+                history = history.filter(avg_time_ago__gt=start_time)
+        
 
-    return history.select_related()
+            if sort == "visits":
+                history = history.order_by('-unique_visitor_score')
+            elif sort == "long":
+                history = history.order_by('-avg_time_spent_score')
+            elif sort == "comments":
+                history = history.order_by('-num_comment_score')
+            else:
+                history = history.order_by('-top_score')
+                
+            if limit:
+                history = history[:limit]
+                
+            hist_type = "popularhistory"
+       
+        except Exception as e:
+            print "EXCEPTION", e
+            history = EyeHistory.objects.none()  
+    else:
+        history = EyeHistory.objects.all()
+        try:
+            
+            if query:
+                history = history.filter(Q(title__icontains=query) | Q(url__icontains=query))
+            
+            if filter == "following" and req_user.is_authenticated():
+                history = req_user.profile.get_following_history(history=history)
+            
+            if username:
+                history = history.filter(user__username=username)
+            
+            orderBy = "-" + orderBy
+            if direction == "lh":
+                orderBy = orderBy[1:]
+            history = history.order_by(orderBy)
+    
+            if start_time and end_time:
+                history = history.filter(start_time__gt=start_time, end_time__lt=end_time)
+            elif start_time:
+                history = history.filter(start_time__gt=start_time)
+            
+            #ping data with latest time and see if time is present
+            ## must be last
+            if type == "ping" and timestamp:
+                history = history.filter(start_time__gt=timestamp)
+    
+            if limit:
+                history = history[:limit]
+            
+        except Exception as e:
+            print "EXCEPTION", e
+            history = EyeHistory.objects.none()
+    
+    if not hist_type:
+        hist_type = "eyehistory"
+
+    return hist_type, history.select_related()
 
 def profile_stat_gen(profile_user, username=None, url=None):
     """
@@ -101,11 +142,16 @@ def profile_stat_gen(profile_user, username=None, url=None):
     if username is None:
         username = profile_user.username
 
-    history_items = history_search(profile_user, filter="", username=username)
+
+    history_items = EyeHistory.objects.all()
+    
+    if username:
+        history_items = history_items.filter(user__username=username)
 
     if url:
         history_items = history_items.filter(url=url)
 
+ 
     total_time = history_items.aggregate(total=Sum("total_time"))
 
     return total_time["total"], history_items.count()
@@ -139,6 +185,13 @@ def _online_users():
             users.add(h.user)
     return users
 
+def set_tags(history, req_user):
+    history = list(history)
+    for h in history:
+        t = Tag.objects.filter(user=req_user, domain=h.popular_history.domain)
+        if t.exists():
+            h.tag = t[0]
+
 def group_history(history, req_user):
     history = list(history)
     history_groups = []
@@ -163,11 +216,12 @@ class GroupHistory(object):
     def __init__(self, history_item, req_user):
         self.id = history_item.id
         self.domain = history_item.domain
-        tag = Tag.objects.filter(user=req_user, domain=history_item.domain)
-        if tag.count() > 0:
-            self.tag = tag[0]
-        else:
-            self.tag = None
+        self.tag = None
+        if req_user.is_authenticated():
+            tag = Tag.objects.filter(user=req_user, domain=history_item.domain)
+            if tag.count() > 0:
+                self.tag = tag[0]
+            
         history_item.messages = history_item.eyehistorymessage_set.all()
         self.history_items = [history_item]
         self.favIconUrl = history_item.favIconUrl

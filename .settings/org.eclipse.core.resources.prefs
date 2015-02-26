@@ -8,3 +8,4 @@ encoding//api/migrations/0014_auto__del_field_whitelistitem_type__del_field_blac
 encoding//api/migrations/0015_auto__chg_field_whitelistitem_url__chg_field_blacklistitem_url.py=utf-8
 encoding//api/migrations/0017_copy_eyehistory.py=utf-8
 encoding//api/migrations/0023_auto__del_field_chatmessage_to_user__del_field_chatmessage_read__del_f.py=utf-8
+encoding//api/migrations/0027_auto__add_field_popularhistory_humanize_avg_time__add_field_popularhis.py=utf-8
