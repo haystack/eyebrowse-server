@@ -1,4 +1,4 @@
-SIGNATURE = "- the eyebrowse team"
+SIGNATURE = "- the Eyebrowse team"
 
 alt_email = {
 	'subject': 'Confirm your alternate email',
@@ -14,8 +14,23 @@ alt_email = {
 
 
 feedback = {
-	'subject': 'Feedback for eyebrowse',
+	'subject': 'Feedback for Eyebrowse',
 	'content': """
 		'Feedback received from: %s <br><br> %s'
 	"""
+}
+
+follow_email = {
+	'subject': "%s is now following you on Eyebrowse!",
+	'content': """
+		Hi %s,
+		<br>
+		<br>
+		%s is now following you on <a href='http://eyebrowse.csail.mit.edu'>Eyebrowse</a>! 
+		Check out their profile <a href="%s">here</a>. 
+		And you can check out all the people that are following you <a href="%s">here</a>.
+		<br>
+		<br>
+		""" + SIGNATURE
+			
 }

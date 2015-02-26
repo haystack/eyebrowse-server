@@ -310,13 +310,13 @@ function swapFollowClass(icon, type) {
     var $icon = $(icon);
     if (type == 'add-follow'){
         $icon.attr('data-type', 'rm-follow');
-        $icon.removeClass('icon-ok').addClass('icon-remove');
+        $icon.removeClass('glyphicon-ok').addClass('glyphicon-remove');
         var text = $icon.parent().html().replace('Follow', 'Following')
         $icon.parent().html(text);
         ;
     } else {
         $icon.attr('data-type', 'add-follow');
-        $icon.removeClass('icon-remove').addClass('icon-ok');
+        $icon.removeClass('glyphicon-remove').addClass('glyphicon-ok');
         var text = $icon.parent().html().replace('Following', 'Follow')
         $icon.parent().html(text);
     }
