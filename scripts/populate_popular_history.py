@@ -75,10 +75,10 @@ def populate_popular_history():
             
             total_pop.total_time_spent += eyehist.total_time
             
-            time_diff = timezone.now() - eyehist.end_time
-            total_pop.total_time_ago += int(round(float(time_diff.total_seconds())/3600.0))
-            
-            total_pop.save()
+        time_diff = timezone.now() - eyehist.end_time
+        total_pop.total_time_ago += int(round(float(time_diff.total_seconds())/3600.0))
+        
+        total_pop.save()
                 
     
         follow_users = UserProfile.objects.filter(follows=eyehist.user.profile).select_related()
@@ -101,10 +101,10 @@ def populate_popular_history():
                 
                 user_pop.total_time_spent += eyehist.total_time
                 
-                time_diff = timezone.now() - eyehist.end_time
-                user_pop.total_time_ago += int(round(float(time_diff.total_seconds())/3600.0))
-                
-                user_pop.save()
+            time_diff = timezone.now() - eyehist.end_time
+            user_pop.total_time_ago += int(round(float(time_diff.total_seconds())/3600.0))
+            
+            user_pop.save()
     
 def calculate_scores():
     
@@ -120,7 +120,7 @@ def calculate_scores():
         
         
         num_comments = pop.messages.count()
-        c = float(num_comments*100.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.4)
+        c = float(num_comments*85.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.4)
         pop.num_comment_score = c
         
         num_vistors = pop.visitors.count()
@@ -137,9 +137,7 @@ def calculate_scores():
         pop.top_score = float(c + v + t)
         pop.save()
  
-        
-    
-    
+
     
 if __name__ == '__main__':
     populate_popular_history()
