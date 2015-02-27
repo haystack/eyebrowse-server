@@ -261,10 +261,10 @@ def connect(request):
                     req_prof.follows.add(user.profile)
   
                     subject = email_templates.follow_email['subject'] % (request.user.username)
-                    content = email_templates.follow_email['content'] % (request.user.username,
-                                                                         user.username, 
-                                                                         "http://eyebrowse.csail.mit.edu/users/" + user.username,
-                                                                         "http://eyebrowse.csail.mit.edu/followers/" + request.user.username)
+                    content = email_templates.follow_email['content'] % (user.username,
+                                                                         request.user.username,
+                                                                         "http://eyebrowse.csail.mit.edu/users/" + request.user.username,
+                                                                         "http://eyebrowse.csail.mit.edu/followers/" + user.username)
                     new_follow_emails = [user.email]
                     send_mail(subject, content, from_email=user.email, recipient_list=new_follow_emails)
                     

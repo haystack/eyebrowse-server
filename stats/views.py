@@ -133,7 +133,7 @@ def following_data(request, username=None):
     if request.user.username == username:
         username = None
     
-    username, follows, profile_user, empty_search_msg = _profile_info(request.user, username, following=True)
+    username, follows, profile_user, empty_search_msg, nav_bar = _profile_info(request.user, username, following=True)
 
     ## stats
     tot_time, item_count = profile_stat_gen(profile_user)
@@ -167,7 +167,7 @@ def following_data(request, username=None):
         "fav_data" : fav_data,
     }
 
-    return _template_values(request, page_title="following list", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
+    return _template_values(request, page_title="following list", navbar=nav_bar, sub_navbar="subnav_data", **template_dict)
 
     
 
@@ -178,7 +178,7 @@ def followers_data(request, username=None):
     if request.user.username == username:
         username = None
     
-    username, follows, profile_user, empty_search_msg = _profile_info(request.user, username, followers=True)
+    username, follows, profile_user, empty_search_msg, nav_bar = _profile_info(request.user, username, followers=True)
 
     ## stats
     tot_time, item_count = profile_stat_gen(profile_user)
@@ -212,7 +212,7 @@ def followers_data(request, username=None):
         "fav_data" : fav_data,
     }
 
-    return _template_values(request, page_title="following list", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
+    return _template_values(request, page_title="following list", navbar=nav_bar, sub_navbar="subnav_data", **template_dict)
 
     
 @render_to('stats/profile_viz.html')
@@ -231,9 +231,9 @@ def profile_viz(request, username=None):
         user = None
         userprof = None
 
-    username, follows, profile_user, empty_search_msg = _profile_info(user, username)
+    username, follows, profile_user, empty_search_msg, nav_bar = _profile_info(user, username)
 
-    get_dict, query, date = _get_query(request)
+    get_dict, query, date, sort, filter = _get_query(request)
     logger.info(get_dict)
     logger.info(date)
 
@@ -242,6 +242,7 @@ def profile_viz(request, username=None):
     get_dict["filter"] = ""
     get_dict["page"] = request.GET.get("page", 1)
     get_dict["username"] = profile_user.username
+    get_dict["sort"] = "time"
 
     hist, history_stream = live_stream_query_manager(get_dict, profile_user)
 
@@ -296,7 +297,7 @@ def profile_viz(request, username=None):
         
     }
 
-    return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
+    return _template_values(request, page_title="profile history", navbar=nav_bar, sub_navbar="subnav_data", **template_dict)
 
     
 @render_to('stats/profile_data.html')
@@ -315,7 +316,7 @@ def profile_data(request, username=None):
     """
         Own profile page
     """
-    username, follows, profile_user, empty_search_msg = _profile_info(user, username)
+    username, follows, profile_user, empty_search_msg, nav_bar = _profile_info(user, username)
 
     get_dict, query, date, sort, filter = _get_query(request)
 
@@ -379,7 +380,7 @@ def profile_data(request, username=None):
         'week_chart': json.dumps(week_chart),
     }
 
-    return _template_values(request, page_title="profile history", navbar='nav_profile', sub_navbar="subnav_data", **template_dict)
+    return _template_values(request, page_title="profile history", navbar=nav_bar, sub_navbar="subnav_data", **template_dict)
 
 def _profile_info(user=None, username=None, following=False, followers=False):
     """
@@ -387,8 +388,10 @@ def _profile_info(user=None, username=None, following=False, followers=False):
     """
 
     follows = False
+    nav_bar = ""
     if user:
         if not username or user.username == username: #viewing own profile
+            nav_bar = "nav_profile"
             username = user.username
             if following:
                 msg_type = 'self_following'
@@ -417,7 +420,7 @@ def _profile_info(user=None, username=None, following=False, followers=False):
 
     profile_user = get_object_or_404(User, username=username)
 
-    return username, follows, profile_user, empty_search_msg
+    return username, follows, profile_user, empty_search_msg, nav_bar
 
 
 def follow_list(follows, req_user, empty_search_msg):

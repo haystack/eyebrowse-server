@@ -85,7 +85,7 @@ def search_graph_data(request):
     if date:
         start_time, end_time = DateRangeParser().parse(date)
 
-    hist = history_search(request.user, query=query, filter=None, username=username, start_time=start_time, end_time=end_time)
+    hist_type, hist = history_search(request.user, sort="time", query=query, filter=None, username=username, start_time=start_time, end_time=end_time)
     return hist, start_time, end_time
     
 def word_cloud(request):

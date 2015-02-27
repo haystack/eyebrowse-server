@@ -24,7 +24,7 @@ class Command(NoArgsCommand):
 
         item_meta = {}
 
-        history_items = history_search(user, filter="",username=user.username)
+        hist_type, history_items = history_search(user, sort="time", filter="",username=user.username)
 
         if not history_items:
             fav_data, created = FavData.objects.get_or_create(user=user)

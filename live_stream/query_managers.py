@@ -49,10 +49,9 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
     
     if hist_type == "eyehistory" and hasattr(history, 'object_list'):
         history.object_list = group_history(history.object_list, req_user)
-    else:
-        set_tags(history.object_list, req_user)
+    elif hasattr(history, 'object_list'):
+        set_tags(history.object_list, req_user) 
     
-
     return hist, history_renderer(req_user, history, hist_type, return_type,  get_dict.get("template"), get_params=search_params, following=following)
 
 
