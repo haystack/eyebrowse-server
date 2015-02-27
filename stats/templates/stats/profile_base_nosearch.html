@@ -35,19 +35,27 @@
 		        {% endif %}
 	        </div>
         	<div class="user-metadata">
-	            <div class="bio">
-	                <strong>{{ profile_user.profile.bio }}</strong>
-	            </div>
-	            <span class="location profile-field">
-	                {{ profile_user.profile.location }}
-	            </span>
-	            <BR />
+        		
+				{% if profile_user.profile.bio|length > 0 %}
+		            <div class="bio">
+		                <strong>{{ profile_user.profile.bio }}</strong>
+		            </div>
+		        {% endif %}
+		        {% if profile_user.profile.location|length > 0 %}
+		            <span class="location profile-field">
+		                {{ profile_user.profile.location }}
+		            </span>
+	            <br />
+	            {% endif %}
+	            {% if profile_user.profile.website|length > 0 %}
 	            <span class="profile-field">
 	                <a target="_blank" href="{{ profile_user.profile.website }}">
 	                {{ profile_user.profile.website }}
 	                </a>
 	            </span>
 	            <br />
+	            {% endif %}
+	            
 	            <br />
 	            <span class="profile-links">
 	            	<a href="/api/v1/history-data?format=json&user__username={{ profile_user.username}}&offset=0&limit=10">

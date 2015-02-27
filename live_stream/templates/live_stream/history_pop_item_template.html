@@ -44,10 +44,10 @@
 		        	<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
 					    <li role="presentation">
 					    	{% if item.tag %}
-					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}" data-tag="{{ item.tag.name }}">
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.popular_history.domain }}" data-tag="{{ item.tag.name }}">
 					    			Edit Tag for this Domain
 					    	{% else %}
-					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}">
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.popular_history.domain }}">
 									Tag this Domain
 					    		{% endif %}
 					    	</a>
@@ -80,14 +80,21 @@
     <div class="span7">
     		<a data-toggle="collapse" data-target="#message_details_{{ item.id }}" class="pointer">
     			<span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
-    			{{ messages|length }} notes</a>
+    			
+    			{{ messages|length }} 
+    			{% if messages|length == 1 %}
+    				note
+    			{% else %}
+    				notes
+    			{% endif %}
+    		</a>
     </div>
     
     <div class="collapse span7" id="message_details_{{ item.id }}">
     		{% for m in messages %}
 	            <span class="span5">
 				    		<a href="/users/{{ m.eyehistory.user.username }}">
-			           		<img class="author-pic img-rounded" data-content="{{ m.eyehistory.user }}" src="{% gravatar_for_user m.eyehistory.user %}"/> 
+			           			<img class="author-pic img-rounded" data-content="{{ m.eyehistory.user }}" src="{% gravatar_for_user m.eyehistory.user %}"/> 
 			           		</a>
 		    				
 		    				{{ m.message }}
