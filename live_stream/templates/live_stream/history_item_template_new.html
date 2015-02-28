@@ -3,7 +3,6 @@
 
 <div id="history_item_{{item.id}}" class='row history-container infinite-scroll' data-id="{{ item.id }}">
     <div id="history_item_{{ item.id }}_content" class="history-content">
-    	
     	<span>
     		{% for m in item.first_item.messages %}
     			<div class="history-message">{{ m.message }}</div>
@@ -48,7 +47,8 @@
 					    		{% endif %}
 					    	</a>
 					    </li>
-					    {% if user == item.user %}
+					    
+					    {% if user.username == item.user.username %}
 					    <li role="presentation">
 					    	
 					    	{% if item.get_items|length > 0 %}

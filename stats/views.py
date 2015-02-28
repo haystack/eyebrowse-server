@@ -327,7 +327,7 @@ def profile_data(request, username=None):
     get_dict["username"] = profile_user.username
     get_dict["sort"] = "time"
 
-    hist, history_stream = live_stream_query_manager(get_dict, profile_user)
+    hist, history_stream = live_stream_query_manager(get_dict, request.user)
 
     ## stats
     tot_time, item_count = profile_stat_gen(profile_user)
