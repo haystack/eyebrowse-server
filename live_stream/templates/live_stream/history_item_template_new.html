@@ -39,13 +39,36 @@
 					    <li role="presentation">
 					    	{% if item.tag %}
 					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}" data-tag="{{ item.tag.name }}">
+					    			<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
 					    			Edit Tag for this Domain
 					    	{% else %}
 					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}">
+									<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
 									Tag this Domain
 					    		{% endif %}
 					    	</a>
 					    </li>
+					    {% if user == item.user %}
+					    <li role="presentation">
+					    	
+					    	{% if item.get_items|length > 0 %}
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#deleteModal" data-item="{{ item.id }}">
+					    	{% else %}
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#deleteModalDomain" data-url="{{ item.first_item.url }}">
+					    	{% endif %}
+					    			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					    			Delete visits to this page from the Eyebrowse history
+								</a>
+							
+					    </li>
+					    <li role="presentation">
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#deleteModalDomain" data-domain="{{ item.first_item.domain }}">
+					    			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					    			Delete ALL visits to this domain from the Eyebrowse history
+								</a>
+					    </li>
+					    {% endif %}
+					    
 				  </ul>
 				{% endif %}
 	        </span>

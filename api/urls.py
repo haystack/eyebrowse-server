@@ -4,6 +4,7 @@ urlpatterns = patterns('api.views',
     url(r'^whitelist/add/$', 'whitelist_add'),
     url(r'^typeahead/$', 'typeahead'),
     url(r'^my_tags/$', 'my_tags'),
+    url(r'^delete_eyehistory$', 'delete_eyehistory'),
     
     url(r'^graphs/word_cloud$', 'word_cloud'),
     url(r'^graphs/timeline_hour', 'timeline_hour'),

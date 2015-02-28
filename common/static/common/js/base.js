@@ -11,12 +11,27 @@ function submitFeedBack(e, d) {
 function submitTag(e, d) {
     $('#submit_success').fadeIn();
     var tag = $("#tag-form").val();
-    var domain = $(".modal-title").text();
+    var domain = $("#tagModalLabel").text();
     $.post('/add_tag', { 
         'tag' : tag,
         'domain': domain,
     });
     $('#submit_success').fadeOut();
+    window.location.reload();
+}
+
+function deleteEyeHistory(urls) {
+    $.post('/api/delete_eyehistory', { 
+        'urls': JSON.stringify(urls),
+    });
+    window.location.reload();
+}
+
+function deleteEyeHistoryDomain(domain) {
+    $.post('/api/delete_eyehistory', { 
+        'domain': domain,
+        'delete_domain': true,
+    });
     window.location.reload();
 }
 
@@ -517,7 +532,6 @@ function typeahead_tags(res) {
 	$("#tag-form").typeahead({
         source: res.tags,
         highlighter: function(obj) {
-        	console.log(obj);
         	html = '<span class="label" style="font-size: 14px; background-color: #' + obj[1] + '">' + obj[0] + '</span>';
 			return html;
         },
@@ -534,37 +548,77 @@ function typeahead_tags(res) {
         
 }
 
+function setupDropdown() {
+	
+	$('#deleteModalDomain').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget);
+	  var domain = button.data('domain');
+	  var url = button.data('url');
+	  
+	  var modal = $(this);
+	  if (domain != undefined) {
+		  modal.find('.modal-title').text("Are you sure you want to delete ALL visits to " + domain + " from your Eyebrowse history?");
+		  
+		  $("#delete-eyehistory-domain-button").click(function() {
+		  	deleteEyeHistoryDomain(domain);
+		  });
+	  } else {
+	  	modal.find('.modal-title').text("Are you sure you want to delete all visits to " + url + " from your Eyebrowse history?");
+		  $("#delete-eyehistory-domain-button").click(function() {
+		  	var urls = [];
+    		urls.push(url);
+		  	deleteEyeHistory(urls);
+		  });
+	  }
 
-$(function(){
-    var csrftoken = $.cookie('csrftoken');
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
-                // Send the token to same-origin, relative URLs only.
-                // Send the token only if the method warrants CSRF protection
-                // Using the CSRFToken value acquired earlier
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-    });
-
-    TEMPLATE_BASE = "api/js_templates/";
-
-    $("#submit_feedback").on('click', submitFeedBack);
+	  
+	});
     
-    $("#confirmation").on('click', submitConsent);
     
-    $("#save-tag-form").on('click', submitTag);
-    
+    $('#deleteModal').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget);
+	  var item = button.data('item');
+	  
+	  var text = '<fieldset><input type="checkbox" class="checkall"> &emsp;Check All <div id="checkboxes">';
+	  
+	  url = $("#history_item_" + item + "_content").children()[1].children[1].href;
+	  title = $("#history_item_" + item + "_content").children()[1].children[1].children[0].innerHTML;
+	  text += '<input type="checkbox" name="' + url + '">&emsp;<a target="_blank" href="' + url + '">' + title + '</a><br />';
+	  	 
+	  var visits = $("#history_item_" + item + "_lower");
+	  
+	  visits.children("div").each(function() {
+	  	url = this.children[1].children[0].href;
+	  	title = this.children[1].children[0].children[0].innerHTML;
+	  	text += '<input type="checkbox" name="' + url + '">&emsp;<a target="_blank" href="' + url + '">' + title + '</a><br />';
+	  	
+	  });
+	  
+	  text += "</div></fieldset>";
+	  
+	  $("#deleteModalBody").html(text);
 
-    typeahead_search();
+		$('.checkall').on('click', function () {
+	        $(this).closest('fieldset').find(':checkbox').prop('checked', this.checked);
+	    });
+	    
+	    
+	   $("#delete-eyehistory-button").click(function() {
+	   	
+	   	var selected = [];
+	   	 $('#checkboxes input:checked').each(function() {
+			selected.push($(this).attr('name'));
+		});
+		
+		deleteEyeHistory(selected);
+		
+	   });
 
-    infiniteScroll();
-
-    setTimeAgo(); //init
-    setInterval(setTimeAgo, 3600);
-
-    setupSearch();
+	});
+	
+	$('#deleteModal').on('hide.bs.modal', function (event) {
+	  $("#deleteModalBody").val("");
+	});
     
         
     $('#tagModal').on('show.bs.modal', function (event) {
@@ -583,8 +637,6 @@ $(function(){
 		        url: '/api/my_tags/',
 		        contentType:'application/json',
 		        success: function(res) {
-
-		        	console.log('here');
 		        	typeahead_tags(res);
 		        }
 		   });
@@ -596,5 +648,40 @@ $(function(){
 	 $('#tagModal').on('hide.bs.modal', function (event) {
 	  $("#tag-form").val("");
 	});
+
+}
+
+
+$(function(){
+    var csrftoken = $.cookie('csrftoken');
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+    
+    TEMPLATE_BASE = "api/js_templates/";
+
+    $("#submit_feedback").on('click', submitFeedBack);
+    
+    $("#confirmation").on('click', submitConsent);
+    
+    $("#save-tag-form").on('click', submitTag);
+
+    typeahead_search();
+
+    infiniteScroll();
+
+    setTimeAgo(); //init
+    setInterval(setTimeAgo, 3600);
+
+    setupSearch();
+
+    setupDropdown();
 
 });
