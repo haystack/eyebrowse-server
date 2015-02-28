@@ -133,7 +133,7 @@ def history_search(req_user, timestamp=None, query=None, sort="top", filter="fol
 
     return hist_type, history.select_related()
 
-def profile_stat_gen(profile_user, username=None, url=None):
+def profile_stat_gen(profile_user, filter=None, username=None, url=None):
     """
         Helper to calculate total time spent for a given user.
         If a url is present, the queryset is filtered to reduce the set to only this url
@@ -146,6 +146,10 @@ def profile_stat_gen(profile_user, username=None, url=None):
     
     if username:
         history_items = history_items.filter(user__username=username)
+
+    if filter:
+        user_prof = UserProfile.objects.get(user=profile_user)
+        history_items = user_prof.get_following_history()
 
     if url:
         history_items = history_items.filter(url=url)

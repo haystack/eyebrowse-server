@@ -21,9 +21,9 @@ def live_stream(request):
     if not confirmed:
         return redirect('/consent')
 
-    tot_time, num_history, num_online = _get_stats(user)
-
     get_dict, query, date, sort, filter = _get_query(request)
+    
+    tot_time, num_history, num_online = _get_stats(user, filter=filter)
 
     hist, history_stream = live_stream_query_manager(get_dict, user)
 
@@ -76,11 +76,11 @@ def ping(request):
         'is_online' : online_user(user),
     }
 
-def _get_stats(user):
+def _get_stats(user, filter=filter):
     """
         Helper to _get_stats
     """
-    tot_time, num_history = profile_stat_gen(user, username="")
+    tot_time, num_history = profile_stat_gen(user, filter=filter, username="")
 
     num_online = online_user_count()
 
