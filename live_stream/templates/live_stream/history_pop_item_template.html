@@ -5,7 +5,7 @@
     <div id="history_item_{{ item.id }}_content" class="history-content">
     	
         <span class="span6" style="margin-left: 0px">
-            <a onclick="trackOutboundLink('{{ item.popular_history.url|url_domain }}'); return false;" href="{{ item.popular_history.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url|url_domain }}">
+            <a onclick="trackOutboundLink('http://{{ item.popular_history.url|url_domain }}'); return false;" href="http://{{ item.popular_history.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url|url_domain }}">
                 <img class="favicon" src="{{ item.popular_history.favIconUrl }}"> {{ item.popular_history.url|url_domain|truncatechars:30 }} 
             </a> | 
             <a onclick="trackOutboundLink('{{ item.popular_history.url }}'); return false;" href="{{ item.popular_history.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url }}">
@@ -20,7 +20,7 @@
             	 	                <h4>
 		                {{ item.popular_history.title|truncatechars:150 }} 
 		            	</h4>
-                	{{ item.popular_history.description }} 
+                	{{ item.popular_history.description|truncatechars:800 }} 
             	</div>
             	
             </a>
