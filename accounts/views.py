@@ -32,6 +32,17 @@ def whitelist(request):
     return _template_values(request, page_title="edit whitelist", header="whitelist", navbar='nav_account', sub_navbar="subnav_whitelist", whitelist=whitelist)
 
 @login_required
+@render_to('accounts/mutelist.html')
+def mutelist(request):
+    """
+        Edit mutelist entries
+    """
+
+    mutelist = MuteList.objects.filter(user=request.user)
+
+    return _template_values(request, page_title="edit mute list", header="mutelist", navbar='nav_account', sub_navbar="subnav_mutelist", mutelist=mutelist)
+
+@login_required
 @render_to('accounts/account.html')
 def account(request):
     """

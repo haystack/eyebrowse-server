@@ -45,11 +45,19 @@
 					    <li role="presentation">
 					    	{% if item.tag %}
 					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.popular_history.domain }}" data-tag="{{ item.tag.name }}">
-					    			Edit Tag for this Domain
+					    			<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
+					    			Edit tag for this domain
 					    	{% else %}
 					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.popular_history.domain }}">
-									Tag this Domain
+									<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
+									Tag this domain
 					    		{% endif %}
+					    	</a>
+					    </li>
+					    <li role="presentation">
+				    		<a role="menuitem" tabindex="-1" data-toggle="modal" class="mute-domain" data-domain="{{ item.popular_history.domain }}">
+				    			<span class="glyphicon glyphicon-volume-off" aria-hidden="true"></span>
+				    			Mute this domain from my feeds
 					    	</a>
 					    </li>
 				  </ul>

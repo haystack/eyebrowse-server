@@ -1,7 +1,7 @@
 <div class="history-timeline-container live-stream-container">
     {% for h_item in history %}
     	{% if hist_type == "eyehistory" %}
-        	{% include "live_stream/history_item_template_new.html" with item=h_item user=user follows=follows messages=h_item.messages %}
+        	{% include "live_stream/history_item_template_new.html" with item=h_item user=user username=username follows=follows messages=h_item.messages %}
     	{% else %}
     		{% include "live_stream/history_pop_item_template.html" with item=h_item user=user follows=follows messages=h_item.messages.all %}
     	{% endif %}

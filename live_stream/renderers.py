@@ -19,6 +19,7 @@ def history_renderer(user, history, hist_type, return_type, template, get_params
         template_values =  {
             'history' : history,
             'hist_type' : hist_type,
+            'username' : get_params.get('username', None),
             'user' : user,
             'empty_search_msg': empty_search_msg,
             'following' : following,

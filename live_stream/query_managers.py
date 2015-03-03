@@ -63,7 +63,7 @@ def history_search(req_user, timestamp=None, query=None, sort="top", filter="fol
     if not username and sort != "time":
         try:
             if filter == "following" and req_user.is_authenticated():
-                history = PopularHistory.objects.filter(user=req_user)
+                history = PopularHistory.objects.filter(user=req_user)    
             else:
                 history = PopularHistory.objects.filter(user=None)
             
@@ -75,6 +75,10 @@ def history_search(req_user, timestamp=None, query=None, sort="top", filter="fol
             elif start_time:
                 history = history.filter(avg_time_ago__gt=start_time)
         
+            if req_user.is_authenticated():
+                mutelist = MuteList.objects.filter(user=req_user).values_list('domain', flat=True)
+                if len(mutelist) > 0:
+                    history = history.filter(~Q(popular_history__domain__in=mutelist))
 
             if sort == "visits":
                 history = history.order_by('-unique_visitor_score')
@@ -105,6 +109,11 @@ def history_search(req_user, timestamp=None, query=None, sort="top", filter="fol
             
             if username:
                 history = history.filter(user__username=username)
+            else:
+                if req_user.is_authenticated():
+                    mutelist = MuteList.objects.filter(user=req_user).values_list('domain', flat=True)
+                    if len(mutelist) > 0:
+                        history = history.filter(~Q(domain__in=mutelist))
             
             orderBy = "-" + orderBy
             if direction == "lh":

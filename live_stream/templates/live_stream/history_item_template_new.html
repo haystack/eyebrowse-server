@@ -39,15 +39,22 @@
 					    	{% if item.tag %}
 					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}" data-tag="{{ item.tag.name }}">
 					    			<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
-					    			Edit Tag for this Domain
+					    			Edit tag for this domain
 					    	{% else %}
 					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#tagModal" data-domain="{{ item.domain }}">
 									<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
-									Tag this Domain
+									Tag this domain
 					    		{% endif %}
 					    	</a>
 					    </li>
-					    
+					    {% if not username %}
+						    <li role="presentation">
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" class="mute-domain" data-domain="{{ item.domain }}">
+					    			<span class="glyphicon glyphicon-volume-off" aria-hidden="true"></span>
+					    			Mute this domain from my feeds
+						    	</a>
+						    </li>
+					    {% endif %}
 					    {% if user.username == item.user.username %}
 					    <li role="presentation">
 					    	
@@ -62,7 +69,7 @@
 							
 					    </li>
 					    <li role="presentation">
-					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#deleteModalDomain" data-domain="{{ item.first_item.domain }}">
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#deleteModalDomain" data-domain="{{ item.domain }}">
 					    			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 					    			Delete ALL visits to this domain from the Eyebrowse history
 								</a>

@@ -6,6 +6,13 @@ from api.utils import humanize_time
 import datetime
 import urllib
 
+class MuteList(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False)
+    domain = models.URLField(max_length=300, blank=False, null=False)
+    
+    class Meta:
+        unique_together = ('user','domain')
+
 class Tag(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     name = models.CharField(max_length=80, blank=False, null=False)

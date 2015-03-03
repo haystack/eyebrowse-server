@@ -550,6 +550,17 @@ function typeahead_tags(res) {
 
 function setupDropdown() {
 	
+	$(".mute-domain").on('click', function(event) {
+		var button = $(event.currentTarget);
+		var domain = button.data('domain');
+		$.post('/api/mutelist/add/', { 
+        	'mutelist': domain,
+        	'form_type': 'mutelist',
+    	});
+   		window.location.reload();
+		
+	});
+	
 	$('#deleteModalDomain').on('show.bs.modal', function (event) {
 	  var button = $(event.relatedTarget);
 	  var domain = button.data('domain');

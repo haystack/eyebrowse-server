@@ -110,6 +110,31 @@ class UserProfileResource(ModelResource):
     }
 
 
+class MuteListResource(BaseResource):
+
+    user = fields.ForeignKey(UserResource, 'user')
+  
+    def obj_create(self, bundle, request=None, **kwargs):
+        domain = bundle.data['domain']
+
+        try:
+            obj = MuteList.objects.get(user=request.user, domain=domain)
+        except MuteList.DoesNotExist:
+            return super(MuteListResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+   
+        return bundle
+
+    class Meta(BaseMeta):
+        list_allowed_methods = ['get', 'post']
+        detail_allowed_methods = ['get', 'post', 'put', 'delete']
+        filtering = {
+            'user': ALL_WITH_RELATIONS,
+            'domain': ALL,
+        }
+        queryset = MuteList.objects.select_related().all()
+        resource_name = 'mutelist'
+    
+
 class FilterSetItemResource(BaseResource):
 
   '''

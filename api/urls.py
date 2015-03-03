@@ -2,6 +2,7 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns('api.views',
     url(r'^whitelist/add/$', 'whitelist_add'),
+    url(r'^mutelist/add/$', 'mutelist_add'),
     url(r'^typeahead/$', 'typeahead'),
     url(r'^my_tags/$', 'my_tags'),
     url(r'^delete_eyehistory$', 'delete_eyehistory'),

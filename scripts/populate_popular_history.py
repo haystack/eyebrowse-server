@@ -112,6 +112,10 @@ def calculate_scores():
     
     for pop in p.iterator():
         
+        if pop.eye_hists.count() == 0:
+            pop.delete()
+            continue
+        
         time = pop.total_time_ago/float(pop.eye_hists.count())
         pop.avg_time_ago = datetime.datetime.now() - datetime.timedelta(hours=time)
         

@@ -46,8 +46,40 @@ def delete_eyehistory(request):
                 "error": e}
     
     return {"res": True}
+
+@login_required
+@ajax_request
+def mutelist_add(request):
+    user = request.user
+    success = False
+    errors = {}
+    data = None
+    _type = request.POST.get('form_type', None)
     
+    if request.POST and request.is_ajax() and _type == "mutelist":
+        url = request.POST.get('mutelist')
+        errors['mutelist'] = []
+        data = {'url' : url}
+        if not validate_url(url):
+            if url.strip() == "":
+                errors['mutelist'].append("Enter a url!")
+            else:
+                errors['mutelist'].append("%s is not a valid url." % url)
+        elif MuteList.objects.filter(domain=url, user=user).exists():
+            errors['mutelist'].append("You already registered the mutelist item %s" % url)
+            
+        if not len(errors['mutelist']):
+            mutelist = MuteList(domain=url, user=user)
+            mutelist.save()
+            data['id'] = mutelist.id
+            success = "Added %s" % url
     
+    return {
+        'success' : success,
+        'errors': errors,
+        'type' : _type,
+        'data' : data,
+    }
 
 @login_required
 @ajax_request
