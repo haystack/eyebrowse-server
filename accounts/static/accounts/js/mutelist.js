@@ -1,5 +1,6 @@
 function setupFilterList() {
     setupTemplateValues(mutelist_filterset, addFilterlist, 'mutelist')
+    setupTemplateValues(mutelist_filterset_word, addFilterlist2, 'mutelist')
 }
 
 // custom css expression for a case-insensitive contains()
@@ -13,17 +14,32 @@ function handleFormResponse(e, d){
 
 function addFilterlist(res, type){
     if (res.success && type == 'mutelist') {
-        $('.add-url').val('')
         var data = res.data;
         data.type = type;
-        var template = ich[TEMPLATE_BASE + 'filterset_row.html'](data);
+    	if ($('.add-word').val() != '') {
+    		var template = ich[TEMPLATE_BASE + 'mutelist_set_row2.html'](data);
+    		$('.add-word').val('')
+    	} else {
+    		var template = ich[TEMPLATE_BASE + 'mutelist_set_row.html'](data);
+    		$('.add-url').val('')
+    	}
+    }
+    addTableTemplate(type, template)
+}
+
+function addFilterlist2(res, type){
+    if (res.success && type == 'mutelist') {
+        $('.add-url').val('')
+        $('.add-word').val('')
+        var data = res.data;
+        data.type = type;
+        var template = ich[TEMPLATE_BASE + 'mutelist_set_row2.html'](data);
     }
     addTableTemplate(type, template)
 }
 
 function rmFilterListItem(e) {
     var $target = $(e.currentTarget);
-    var url = $target.data('url');
     if (rmItem(e, "mutelist")) {    
         $('.filter-input').val('').trigger('keyup');
     }

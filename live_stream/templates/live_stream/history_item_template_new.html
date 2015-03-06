@@ -10,10 +10,10 @@
     	</span>
     	
         <span>
-            <a onclick="trackOutboundLink('http://{{ item.first_item.url|url_domain }}'); return false;" href="http://{{ item.first_item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.first_item.url|url_domain }}">
+            <a href="http://{{ item.first_item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.first_item.url|url_domain }}">
                 <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.first_item.url|url_domain|truncatechars:30 }} 
             </a> 
-            | <a class="pointer" onclick="trackOutboundLink('{{ item.first_item.url }}'); return false;" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.first_item.url }}">
+            | <a class="pointer" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.first_item.url }}">
             	<span class="cut-content pointer" data-content="{{ item.first_item.title}}">
                 {{ item.first_item.title|truncatechars:40 }} 
             	</span>
@@ -49,9 +49,9 @@
 					    </li>
 					    {% if not username %}
 						    <li role="presentation">
-					    		<a role="menuitem" tabindex="-1" data-toggle="modal" class="mute-domain" data-domain="{{ item.domain }}">
-					    			<span class="glyphicon glyphicon-volume-off" aria-hidden="true"></span>
-					    			Mute this domain from my feeds
+					    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#muteModal" data-title="{{ item.first_item.title }}" data-url="{{ item.first_item.url }}">
+				    				<span class="glyphicon glyphicon-volume-off" aria-hidden="true"></span>
+					    			Mute items like this from my feeds
 						    	</a>
 						    </li>
 					    {% endif %}

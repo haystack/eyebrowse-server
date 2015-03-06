@@ -76,9 +76,16 @@ def history_search(req_user, timestamp=None, query=None, sort="top", filter="fol
                 history = history.filter(avg_time_ago__gt=start_time)
         
             if req_user.is_authenticated():
-                mutelist = MuteList.objects.filter(user=req_user).values_list('domain', flat=True)
+                mutelist = MuteList.objects.filter(user=req_user, url__isnull=False).values_list('url', flat=True)
                 if len(mutelist) > 0:
-                    history = history.filter(~Q(popular_history__domain__in=mutelist))
+                    query = reduce(operator.and_, (~Q(popular_history__url__contains=x) for x in mutelist))
+                    history = history.filter(query)
+                    
+                mutelist = MuteList.objects.filter(user=req_user, word__isnull=False).values_list('word', flat=True)
+                if len(mutelist) > 0:
+                    query = reduce(operator.and_, (~Q(popular_history__title__contains=x) for x in mutelist))
+                    history = history.filter(query)
+
 
             if sort == "visits":
                 history = history.order_by('-unique_visitor_score')
@@ -111,9 +118,15 @@ def history_search(req_user, timestamp=None, query=None, sort="top", filter="fol
                 history = history.filter(user__username=username)
             else:
                 if req_user.is_authenticated():
-                    mutelist = MuteList.objects.filter(user=req_user).values_list('domain', flat=True)
+                    mutelist = MuteList.objects.filter(user=req_user, url__isnull=False).values_list('url', flat=True)
                     if len(mutelist) > 0:
-                        history = history.filter(~Q(domain__in=mutelist))
+                        query = reduce(operator.and_, (~Q(url__contains=x) for x in mutelist))
+                        history = history.filter(query)
+                        
+                    mutelist = MuteList.objects.filter(user=req_user, word__isnull=False).values_list('word', flat=True)
+                    if len(mutelist) > 0:
+                        query = reduce(operator.and_, (~Q(title__contains=x) for x in mutelist))
+                        history = history.filter(query)
             
             orderBy = "-" + orderBy
             if direction == "lh":

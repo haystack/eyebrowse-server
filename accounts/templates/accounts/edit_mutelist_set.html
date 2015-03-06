@@ -1,0 +1,62 @@
+{% load jstemplate %}
+
+<div class="span6">
+    <form id="{{type}}" class="edit" data-url="/api/{{type}}/add/">
+
+            {% include 'common/snippets/alert_box.html' %}
+            {% csrf_token %}
+            
+            <div class="controls offset1">
+                <div class="controls-wrap">
+                    <input class="add-url rm-margin" placeholder="Add URL to mute" type="text" name="url" >
+                    <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Add " id="{{type}}-save"/>
+                    <br />
+                     <input class="add-word rm-margin" placeholder="Add phrase to mute" type="text" name="word" >
+                    <input class="btn btn-primary" data-loading-text="Saving..." type="submit" value="Add " id="{{type}}-save"/>
+                </div>
+                <div class="controls-wrap">
+                    <input type="hidden" name="form_type" value="{{type}}">
+                    <input class="filter-input" type="text" placeholder="Filter {{type}}">
+                </div>
+            </div>
+            
+            <div class="filterset-container">
+                <table class="table table-condensed table-striped table-bordered">
+                    <thead class='hidden'>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="{{type}}-body {{type}}">
+                    </tbody>
+                </table>
+
+            </div>
+            {% include_ichtemplate 'api/js_templates/mutelist_set_row.html' %}
+            <script type="text/javascript">
+                var {{type}}_filterset = []
+                {% for item in items %}
+                	{% if item.url != None %}
+	                    {{type}}_filterset.push({
+	                    	'id' : "{{item.id}}",
+	                    	'url' : "{{item.url}}"
+	                    });
+	                {% endif %}
+                {% endfor %}
+            </script>
+            
+            {% include_ichtemplate 'api/js_templates/mutelist_set_row2.html' %}
+            <script type="text/javascript">
+                var {{type}}_filterset_word = []
+                {% for item in items %}
+                	{% if item.word != None %}
+	                    {{type}}_filterset_word.push({
+	                    	'id' : "{{item.id}}",
+	                    	'word' : "{{item.word}}",
+	                    });
+	                {% endif %}
+                {% endfor %}
+            </script>
+    </form>
+</div>

@@ -10,9 +10,18 @@ from accounts.models import UserProfile
 from api.utils import humanize_time
 
 
+def reset_values():
+    p = PopularHistory.objects.all()
+    
+    for pop in p.iterator():
+        pop.total_time_ago = 0
+        pop.save()
+        
+    
+
 def create_pop(eyehist, url):
     print eyehist.title
-    p = PopularHistoryInfo.objects.create(url=url,
+    p,_ = PopularHistoryInfo.objects.get_or_create(url=url,
                                       domain=eyehist.domain,
                                       favIconUrl=eyehist.favIconUrl,
                                       title=eyehist.title)
@@ -33,17 +42,25 @@ def create_pop(eyehist, url):
         m = tree.xpath( "//meta[@property='og:image']" )
         if m:
             p.img_url = m[0].get("content",'')
+        else:
+            n = tree.xpath( "//meta[@property='twitter:image']" )
+            if n:
+                p.img_url = n[0].get("content",'')
             
         m = tree.xpath( "//meta[@property='og:description']" )
         if m:
             p.description = m[0].get("content",'')
+        else:
+            n = tree.xpath( "//meta[@property='twitter:description']" )
+            if n:
+                p.description = n[0].get("content",'')
     except:
         pass
     
     p.save()
     
     return p
-
+ 
 def populate_popular_history():
     
     month_ago = datetime.datetime.now() - datetime.timedelta(weeks=10)
@@ -59,8 +76,7 @@ def populate_popular_history():
             p = create_pop(eyehist, url)
         else:
             p = p[0]
-            
-            
+
         total_pop,_ = PopularHistory.objects.get_or_create(popular_history=p, user=None)
             
         if not total_pop.eye_hists.filter(pk=eyehist.id).exists():
@@ -106,6 +122,14 @@ def populate_popular_history():
             
             user_pop.save()
     
+    p = PopularHistory.objects.filter(total_time_ago=0)
+    p.delete()
+    
+    p = PopularHistoryInfo.objects.all()
+    for pop in p.iterator():
+        if len(list(pop.popularhistory_set.all())) == 0:
+            pop.delete()
+    
 def calculate_scores():
     
     p = PopularHistory.objects.all()
@@ -139,11 +163,15 @@ def calculate_scores():
         pop.avg_time_spent_score = t2
         
         pop.top_score = float(c + v + t)
-        pop.save()
+        try:
+            pop.save()
+        except:
+            continue
  
 
     
 if __name__ == '__main__':
+    reset_values()
     populate_popular_history()
     calculate_scores()
     

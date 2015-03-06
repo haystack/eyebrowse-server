@@ -8,10 +8,8 @@ import urllib
 
 class MuteList(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
-    domain = models.URLField(max_length=300, blank=False, null=False)
-    
-    class Meta:
-        unique_together = ('user','domain')
+    url = models.URLField(max_length=300, blank=False, null=True)
+    word = models.URLField(max_length=300, blank=False, null=True)
 
 class Tag(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)

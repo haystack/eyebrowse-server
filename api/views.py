@@ -57,22 +57,38 @@ def mutelist_add(request):
     _type = request.POST.get('form_type', None)
     
     if request.POST and request.is_ajax() and _type == "mutelist":
-        url = request.POST.get('mutelist')
+        url = request.POST.get('url', None)
+        word = request.POST.get('word', None)
+        
         errors['mutelist'] = []
-        data = {'url' : url}
-        if not validate_url(url):
-            if url.strip() == "":
-                errors['mutelist'].append("Enter a url!")
-            else:
-                errors['mutelist'].append("%s is not a valid url." % url)
-        elif MuteList.objects.filter(domain=url, user=user).exists():
-            errors['mutelist'].append("You already registered the mutelist item %s" % url)
+        
+        if url:
+            data = {'url' : url}
+            if not validate_url(url):
+                if url.strip() == "":
+                    errors['mutelist'].append("Enter a url!")
+                else:
+                    errors['mutelist'].append("%s is not a valid url." % url)
+            elif MuteList.objects.filter(url=url, user=user).exists():
+                errors['mutelist'].append("You already registered the mutelist item %s" % url)
             
-        if not len(errors['mutelist']):
-            mutelist = MuteList(domain=url, user=user)
-            mutelist.save()
-            data['id'] = mutelist.id
-            success = "Added %s" % url
+            if not len(errors['mutelist']):
+                mutelist = MuteList(url=url, user=user)
+                mutelist.save()
+                data['id'] = mutelist.id
+                success = "Added %s" % url
+        elif word:
+            data = {'word' : word}
+            if word.strip() == "":
+                errors['mutelist'].append("Enter a phrase!")
+            elif MuteList.objects.filter(word=word, user=user).exists():
+                errors['mutelist'].append("You already registered the mutelist item %s" % word)
+            
+            if not len(errors['mutelist']):
+                mutelist = MuteList(word=word, user=user)
+                mutelist.save()
+                data['id'] = mutelist.id
+                success = "Added %s" % word
     
     return {
         'success' : success,

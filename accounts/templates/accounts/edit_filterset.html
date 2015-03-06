@@ -13,7 +13,7 @@
                 </div>
                 <div class="controls-wrap">
                     <input type="hidden" name="form_type" value="{{type}}">
-                    <input class="filter-input" type="text" placeholder="Filter {{type}}">
+                    <input class="filter-input" type="text" placeholder="Filter whitelist">
                 </div>
             </div>
             
@@ -35,13 +35,8 @@
                 var {{type}}_filterset = []
                 {% for item in items %}
                     {{type}}_filterset.push({
-                    {% if type == "mutelist" %}
-                    	'id' : "{{item.id}}",
-                        'url' : "{{item.domain}}",
-                    {% else %}
                         'id' : "{{item.id}}",
                         'url' : "{{item.url}}",
-                    {% endif %}
                     });
                 {% endfor %}
             </script>

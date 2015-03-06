@@ -5,22 +5,21 @@
     <div id="history_item_{{ item.id }}_content" class="history-content">
     	
         <span class="span6" style="margin-left: 0px">
-            <a onclick="trackOutboundLink('http://{{ item.popular_history.url|url_domain }}'); return false;" href="http://{{ item.popular_history.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url|url_domain }}">
+            <a href="http://{{ item.popular_history.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url|url_domain }}">
                 <img class="favicon" src="{{ item.popular_history.favIconUrl }}"> {{ item.popular_history.url|url_domain|truncatechars:30 }} 
             </a> | 
-            <a onclick="trackOutboundLink('{{ item.popular_history.url }}'); return false;" href="{{ item.popular_history.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url }}">
-                {{ item.popular_history.url|truncatechars:50 }} 
+            <a href="{{ item.popular_history.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url }}">
+                {{ item.popular_history.url|truncatechars:43 }} 
             </a>
-            <br />
-            <a class="pointer" onclick="trackOutboundLink('{{ item.popular_history.url }}'); return false;" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.popular_history.url }}">
-
-            	
+            <br />     	
             	 <div class="cut-content pointer" data-content="{{ item.popular_history.title}}">
             	 	<img align="left" class="popular_image img-rounded" src="{{ item.popular_history.img_url }}">
-            	 	                <h4>
-		                {{ item.popular_history.title|truncatechars:150 }} 
-		            	</h4>
-                	{{ item.popular_history.description|truncatechars:400 }} 
+            	 	  	<a class="pointer" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.popular_history.url }}">
+	            	 	    <h4>
+			                {{ item.popular_history.title|truncatechars:150 }} 
+			            	</h4>
+		            	</a>
+                	{{ item.popular_history.description|truncatechars:300 }} 
             	</div>
             	
             </a>
@@ -55,9 +54,9 @@
 					    	</a>
 					    </li>
 					    <li role="presentation">
-				    		<a role="menuitem" tabindex="-1" data-toggle="modal" class="mute-domain" data-domain="{{ item.popular_history.domain }}">
+				    		<a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#muteModal" data-title="{{ item.popular_history.title }}" data-domain="{{ item.popular_history.domain }}" data-url="{{ item.popular_history.url }}">
 				    			<span class="glyphicon glyphicon-volume-off" aria-hidden="true"></span>
-				    			Mute this domain from my feeds
+				    			Mute items like this from my feeds
 					    	</a>
 					    </li>
 				  </ul>

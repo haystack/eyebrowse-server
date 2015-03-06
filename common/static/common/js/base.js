@@ -548,18 +548,153 @@ function typeahead_tags(res) {
         
 }
 
+function dropSlash(url) {
+	var n = url.lastIndexOf('/');
+	if (n < 8) {
+		return null;
+	}
+	return url.substring(0,n);
+}
+
+var words = ['of', 'the', 'in', 'on', 'at', 'to', 'a', 'is'];
+var regstr = new RegExp('\\b(' + words.join('|') + ')\\b', 'g');
+
+function keyword(s) {
+    return (s || '').replace(regstr, '').replace(/[ ]{2,}/, ' ');
+}
+
 function setupDropdown() {
 	
-	$(".mute-domain").on('click', function(event) {
-		var button = $(event.currentTarget);
-		var domain = button.data('domain');
-		$.post('/api/mutelist/add/', { 
-        	'mutelist': domain,
-        	'form_type': 'mutelist',
-    	});
-   		window.location.reload();
+	$('#muteModal').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget);
+	  var url = button.data('url');
+	  var title = button.data('title');
+	  
+
+	 var modal = $("#muteModalBody");
+	  
+	 var str = '';
+	  
+	  if (url != undefined) {
+	  	str += "Mute all visits to: <br />";
+		  	while (dropSlash(url) != null) {
+		  		url = dropSlash(url);
+		  		str += '<strong>' + url + '</strong> ';
+		  		str += '<button class="btn btn-xs mute-domain">Mute</button> ';
+			  str += '<span id="ok-url" style="color: green; display: none;" class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
+			  str += '<br />';
+		  	}
 		
+		str += '<input style="height: 23px; width: 300px;" type="text" placeholder="or write another domain or subdomain here"> ';
+		str += '<button class="btn btn-xs mute-domain-input">Mute</button> ';
+	    str += '<span id="ok-url" style="color: green; display: none;" class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
+		str += '<br />';
+		  	
+	  	str += '<br />';
+		}
+		
+		if (title != undefined) {
+			str += "Mute all visits with titles containing the word: <br />";
+			var words = keyword(title.toLowerCase().replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ")).split(/\b\s+/);
+			for (var i=0; i<words.length; i++) {
+				str += '<strong>' + words[i] + '</strong> ';
+				str += '<button class="btn btn-xs mute-word">Mute</button> ';
+				str += '<span id="ok-word" style="color: green; display: none;" class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
+			  	str += '<br />';
+			}
+			
+			str += '<input style="height: 23px; width: 300px;" type="text" placeholder="or write another word or phrase here"> ';
+			str += '<button class="btn btn-xs mute-word-input">Mute</button> ';
+		    str += '<span id="ok-word" style="color: green; display: none;" class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
+			str += '<br />';
+		}
+	  
+	  
+	  modal.html(str);
+	  
+	  	$(".mute-word").on('click', function(event) {
+		  		var button = $(this);
+		  		var word = button.prev('strong').text();
+		  		
+		  		data = { 
+		        	'word': word,
+		        	'form_type': 'mutelist',
+		    	};
+		  		
+			  	$.ajax({
+			        type: 'POST',
+			        url: '/api/mutelist/add/',
+			        data: data,
+			        success: function(res) {
+			        	button.next('span').show();
+			        }
+			   });
+			});
+			
+			$(".mute-word-input").on('click', function(event) {
+		  		var button = $(this);
+		  		var word = button.prev('input').val();
+
+		  		data = { 
+		        	'word': word,
+		        	'form_type': 'mutelist',
+		    	};
+		  		
+			  	$.ajax({
+			        type: 'POST',
+			        url: '/api/mutelist/add/',
+			        data: data,
+			        success: function(res) {
+			        	button.next('span').show();
+			        }
+			   });
+			});
+			
+			$(".mute-domain-input").on('click', function(event) {
+		  		var button = $(this);
+		  		var url = button.prev('input').val();
+
+		  		data = { 
+		        	'url': url,
+		        	'form_type': 'mutelist',
+		    	};
+		  		
+			  	$.ajax({
+			        type: 'POST',
+			        url: '/api/mutelist/add/',
+			        data: data,
+			        success: function(res) {
+			        	button.next('span').show();
+			        }
+			   });
+			});
+	  
+		  	$(".mute-domain").on('click', function(event) {
+		  		var button = $(this);
+		  		var url = button.prev('strong').text();
+		  		
+		  		data = { 
+		        	'url': url,
+		        	'form_type': 'mutelist',
+		    	};
+		  		
+			  	$.ajax({
+			        type: 'POST',
+			        url: '/api/mutelist/add/',
+			        data: data,
+			        success: function(res) {
+			        	button.next('span').show();
+			        }
+			   });
+			});
+			
+			$("#refresh-mute-modal").on('click', function(event) {
+				window.location.reload();
+			});
+	  
 	});
+	
+
 	
 	$('#deleteModalDomain').on('show.bs.modal', function (event) {
 	  var button = $(event.relatedTarget);

@@ -80,7 +80,10 @@ def _get_stats(user, filter=filter):
     """
         Helper to _get_stats
     """
-    tot_time, num_history = profile_stat_gen(user, filter=filter, username="")
+    if filter == "following":
+        tot_time, num_history = profile_stat_gen(user, filter=filter, username="")
+    else:
+        tot_time, num_history = profile_stat_gen(user, username="")
 
     num_online = online_user_count()
 
