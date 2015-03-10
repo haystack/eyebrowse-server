@@ -148,16 +148,16 @@ def calculate_scores():
         
         
         num_comments = pop.messages.count()
-        c = float(num_comments*85.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.4)
+        c = float(num_comments*40.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.2)
         pop.num_comment_score = c
         
         num_vistors = pop.visitors.count()
-        v = float((num_vistors-1.0)*50.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.4)
+        v = float((num_vistors-1.0)*50.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.2)
         pop.unique_visitor_score = v
         
         num_time = float(pop.total_time_spent)/float(pop.eye_hists.count())
         
-        t = float((num_time**.8)/1000.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.4)
+        t = float((num_time**.8)/1000.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.2)
         
         t2 = float((num_time - 5000)/1000.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1)
         pop.avg_time_spent_score = t2
