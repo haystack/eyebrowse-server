@@ -160,22 +160,16 @@ class WhiteListItemResource(FilterSetItemResource):
 
     blacklist_item = get_BlackListItem(url)  # check to see if this exists
     if blacklist_item:
-      blacklist_item.delete()
+        blacklist_item.delete()
 
     # do not create if it is a default blacklist url
     if url in DEFAULT_BLACKLIST:
-      return bundle
+        return bundle
 
     try:
-      obj = WhiteListItem.objects.get(user=request.user, url=url)
+        _ = WhiteListItem.objects.get(user=request.user, url=url)
     except WhiteListItem.DoesNotExist:
-      try:
         return super(WhiteListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
-      except IntegrityError:
-        call_command('remove_duplicate_filtersets')
-    except MultipleObjectsReturned:
-      # multiple items created, delete duplicates
-      call_command('remove_duplicate_filtersets')
     return bundle
 
   class Meta(FilterSetItemResource.Meta):
@@ -196,13 +190,8 @@ class BlackListItemResource(FilterSetItemResource):
     try:
       obj = BlackListItem.objects.get(user=request.user, url=url)
     except BlackListItem.DoesNotExist:
-      try:
         return super(BlackListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
-      except:
-        call_command('remove_duplicate_filtersets')
-    except MultipleObjectsReturned:
-      # multiple items created, delete duplicates
-      call_command('remove_duplicate_filtersets')
+    
     return bundle
 
   class Meta(FilterSetItemResource.Meta):
