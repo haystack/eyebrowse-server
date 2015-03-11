@@ -26,19 +26,20 @@ First, check out the `eyebrowse-server`:
 git clone git@github.com:haystack/eyebrowse-server.git
 cd eyebrowse-server
 ```
-The first step is to provide configuration variables for the database and a few
-other things required by django. We've provided `config_template.py` for you to
-fill in the required values, so use your favorite editor and fill that puppy out:
+The application requires some configuration variables for the database and a few
+other django-related things. We've provided `config_template.py` for you to
+add the required values, so use your favorite editor and fill that puppy out:
 
 ```vim
 vim config_template.py
 ```
+Next, you can install the python requirements and setup the config file you make.
 
 Note: You need to use `sudo` if you are not working in a
 [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/).
 
 ```bash
-make install # handles python requirements and config
+make install
 make run
 ```
 
@@ -46,7 +47,6 @@ The `make install` command has two arguments for setting up the enviroment
 ```bash
 make install debug=[true|false] env=[prod|staging|dev]
 ```
-
 The default options are `debug=true` and `env=dev`.
 
 ## Contact Info
