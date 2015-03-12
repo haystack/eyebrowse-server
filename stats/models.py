@@ -12,7 +12,8 @@ class FavData(models.Model):
     user = models.ForeignKey(User)
 
     domain = models.URLField(max_length=2000, default='')
-    favicon_url = models.TextField()
+    favicon_url = models.TextField(default='')
+    favIconUrl = models.URLField(max_length=2000, default='')
 
     visit_count = models.IntegerField(blank=True, null=True)
     total_time = models.IntegerField(blank=True, null=True)  # store in ms

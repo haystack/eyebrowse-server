@@ -63,7 +63,8 @@ class EyeHistoryRaw(models.Model):
     src = models.CharField(max_length=40, default='')
     url = models.URLField(max_length=2000, default='')
     domain = models.URLField(max_length=2000, default='')
-    favicon_url = models.TextField()
+    favicon_url = models.TextField(default='')
+    favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=2000, default='')
 
     start_event = models.CharField(max_length=40, default='')
@@ -88,7 +89,8 @@ class EyeHistory(models.Model):
     src = models.CharField(max_length=40, default='')
     url = models.URLField(max_length=2000, default='')
     domain = models.URLField(max_length=2000, default='')
-    favicon_url = models.TextField()
+    favicon_url = models.TextField(default='')
+    favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=2000, default='')
 
     start_event = models.CharField(max_length=40, default='')
@@ -127,7 +129,8 @@ class PopularHistoryInfo(models.Model):
     description = models.TextField(default='')
 
     domain = models.URLField(max_length=100, default='')
-    favicon_url = models.URLField(max_length=2000, default='')
+    favicon_url = models.TextField(default='')
+    favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=2000, default='')
 
 
