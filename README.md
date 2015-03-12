@@ -49,10 +49,10 @@ $ sudo mysql
 Where the corresponding dictionary in `config_template.py` would read:
 ```python
 MYSQL_LOCAL = {
-    'NAME' : 'eyebrowse',
-    'USER' : 'admin',
-    'PASSWORD' : 'somepassword',
-    'HOST' : 'localhost',
+    'NAME': 'eyebrowse',
+    'USER': 'admin',
+    'PASSWORD': 'somepassword',
+    'HOST': 'localhost',
 }
 ```
 
@@ -71,8 +71,10 @@ make install debug=[true|false] env=[prod|staging|dev]
 The default options are `debug=true` and `env=dev`.
 
 Common problems:
+
 1. `DoesNotExist at /admin/ Site matching query does not exist.`
-  For dev:
+  
+For dev:
   ```python
    from django.contrib.sites.models import Site
    Site.objects.create(name='localhost:8000', domain='http://localhost:8000')
