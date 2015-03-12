@@ -1,4 +1,4 @@
-.PHONY: run clean requirements env config install lint
+.PHONY: run clean requirements env config install lint shell db
 
 root_path="/opt/eyebrowse"
 env_path="$(ROOT_PATH)/env"
@@ -12,8 +12,11 @@ ifndef debug
 	debug=true
 endif
 
+shell:
+	python manage.py shell
+
 run:
-	python manage.py runserver.py
+	python manage.py runserver
 
 clean:
 	find . -type f -name '*.py[cod]' -delete
@@ -28,10 +31,15 @@ env:
 	echo $(debug) | sudo tee $(debug_path) > /dev/null
 
 config:
-	mv config.py config.py-bak # save a copy just in case
+	mv config.py config.py-bak 2>/dev/null # save a copy just in case
 	cp config_template.py config.py
+	git checkout config_template.py # reset the template
 
-install: clean requirements env config
+db:
+	python manage.py syncdb
+	python manage.py --migrate
+
+install: clean requirements env config db
 
 lint: clean
 	# TODO (joshblum): Add jshint stuff

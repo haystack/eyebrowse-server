@@ -34,6 +34,27 @@ fill in the required values, so use your favorite editor and fill that puppy out
 vim config_template.py
 ```
 
+Note: If you're setting up a dev with MYSQL, this might be helpful to get
+started:
+
+```mysql
+$ sudo mysql
+> CREATE USER 'admin'@'localhost' IDENTIFIED BY 'somepassword';
+> CREATE DATABASE eyebrowse;
+> USE eyebrowse;
+> GRANT ALL PRIVILEGES ON eyebrowse.* TO 'admin'@'localhost';
+```
+
+Where the corresponding dictionary in `config_template.py` would read:
+```python
+MYSQL_LOCAL = {
+    'NAME' : 'eyebrowse',
+    'USER' : 'admin',
+    'PASSWORD' : 'somepassword',
+    'HOST' : 'localhost',
+}
+```
+
 Note: You need to use `sudo` if you are not working in a
 [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/).
 
@@ -42,12 +63,21 @@ make install # handles python requirements and config
 make run
 ```
 
-The `make install` command has two arguments for setting up the enviroment
+The `make install` command has two arguments for setting up the envirnoment
 ```bash
 make install debug=[true|false] env=[prod|staging|dev]
 ```
 
 The default options are `debug=true` and `env=dev`.
+
+Common problems:
+1. `DoesNotExist at /admin/ Site matching query does not exist.`
+  For dev:
+  ```python
+   from django.contrib.sites.models import Site
+   Site.objects.create(name='localhost:8000', domain='http://localhost:8000')
+  ```
+  [Reference](http://stackoverflow.com/questions/11476210/getting-site-matching-query-does-not-exist-error-after-creating-django-admin)
 
 ## Contact Info
 

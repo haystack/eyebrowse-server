@@ -13,13 +13,6 @@ MYSQL_PROD = {
     'HOST': '',
 }
 
-MYSQL_STAGING = {
-    'NAME': '',
-    'USER': '',
-    'PASSWORD': '',
-    'HOST': '',
-}
-
 MYSQL_LOCAL = {
     'NAME': '',
     'USER': '',
@@ -51,3 +44,15 @@ AWS = {
     'BUCKET': '',
     'BUCKET_DEV': '',
 }
+
+############ Twitter ################
+
+TWITTER_CONSUMER_KEY = ''
+TWITTER_CONSUMER_SECRET = ''
+
+############ Delicious #############
+
+DELICIOUS_CONSUMER_KEY = ''
+DELICIOUS_CONSUMER_SECRET = ''
+
+EYEBROWSE_DELICIOUS_ACCOUNT = ''
