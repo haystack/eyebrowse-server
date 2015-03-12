@@ -37,7 +37,7 @@ config:
 
 db:
 	python manage.py syncdb
-	python manage.py --migrate
+	python manage.py migrate
 
 install: clean requirements env config db
 
