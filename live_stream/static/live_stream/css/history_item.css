@@ -9,10 +9,6 @@
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15)!important;
     -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.15)!important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15)!important;
-    border: #DDD 1px solid!important;
-    border-top-color: #EEE!important;
-    border-bottom-color: #BBB!important;
-    background-color: white!important;
     -webkit-border-radius: 5px!important;
     -moz-border-radius: 5px!important;
     border-radius: 5px!important;
@@ -110,5 +106,17 @@
 	padding: 0px;
 	margin-right: 10px;
 	margin-bottom: 5px;
+}
+
+.eye-hist-visited {
+	background-color: #DDD !important;
+	border: #e3e3e3 1px solid!important;
+}
+
+.eye-hist {
+    border: #DDD 1px solid!important;
+    background-color: white!important;
+	border-top-color: #EEE 1px solid !important;
+	border-bottom-color: #BBB 1px solid !important;	
 }
 

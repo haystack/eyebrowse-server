@@ -1,7 +1,11 @@
 {% load filters %}
 {% load gravatar %}
 
-<div id="history_item_{{item.id}}" class='row history-container infinite-scroll' data-id="{{ item.id }}">
+{% if user.username != username and user == item.user %}
+	<div id="history_item_{{item.id}}" class='row history-container infinite-scroll eye-hist-visited' data-id="{{ item.id }}">
+{% else %}
+	<div id="history_item_{{item.id}}" class='row history-container infinite-scroll eye-hist' data-id="{{ item.id }}">
+{% endif %}
     <div id="history_item_{{ item.id }}_content" class="history-content">
     	<span>
     		{% for m in item.first_item.messages %}
