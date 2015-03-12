@@ -3,6 +3,7 @@ from django.core.management.base import NoArgsCommand
 from api.models import EyeHistoryRaw
 from api.models import EyeHistory
 from api.models import PopularHistoryInfo
+from stats.models import FavData
 
 import base64
 import requests
@@ -10,6 +11,7 @@ import urllib
 
 GOOGLE_FAVICON_URL = 'http://www.google.com/s2/favicons?domain_url='
 B64_HEADER = "data:image/png;base64,"
+
 
 def get_favicon_url(favicon_url, url):
     if not favicon_url or not str(favicon_url).strip():
@@ -26,7 +28,7 @@ def convert_img_to_base64(url):
     try:
         r = requests.get(url, stream=True)
         if r.status_code == 200:
-            encoded = base64.b64encode(r.content).replace('\n','')
+            encoded = base64.b64encode(r.content).replace('\n', '')
             return "%s%s" % (B64_HEADER, encoded)
     except Exception:
         pass
@@ -34,7 +36,11 @@ def convert_img_to_base64(url):
 
 
 def update_favicon(obj, favicon_cache):
-    favicon_url = get_favicon_url(obj.favicon_url, obj.url)
+    if isinstance(obj, FavData):
+        url = obj.domain
+    else:
+        url = obj.url
+    favicon_url = get_favicon_url(obj.favicon_url, url)
     favicon_b64 = favicon_cache.get(favicon_url)
 
     if favicon_b64 is None:
@@ -51,7 +57,7 @@ class Command(NoArgsCommand):
     def handle(self, *args, **options):
         self.stdout.write('Beginning update...\n')
         favicon_cache = {}
-        models = [EyeHistoryRaw, EyeHistory, PopularHistoryInfo]
+        models = [EyeHistoryRaw, EyeHistory, PopularHistoryInfo, FavData]
         for model in models:
             self.stdout.write('Updating model %s\n' % str(model))
             for count, obj in enumerate(model.objects.all()):

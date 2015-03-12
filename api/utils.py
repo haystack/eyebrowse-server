@@ -1,11 +1,3 @@
-GOOGLE_FAVICON_URL = "http://www.google.com/s2/favicons?domain_url="
-
-def get_favicon_url(favicon_url, url):
-    if not favicon_url or not str(favicon_url).strip():
-        favicon_url = GOOGLE_FAVICON_URL + urllib.quote(url)
-    return favicon_url
-
-
 def humanize_time(time_delta):
     second_diff = time_delta.seconds
     day_diff = time_delta.days
