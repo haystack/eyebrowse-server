@@ -254,7 +254,6 @@ class EyeHistoryResource(ModelResource):
         return bundle
 
     def obj_create(self, bundle, request=None, **kwargs):
-
         url = bundle.data['url']
         domain = url_domain(url)
 
@@ -266,6 +265,7 @@ class EyeHistoryResource(ModelResource):
         end_time = bundle.data['end_time']
         end_event = bundle.data['end_event']
         favicon_url = bundle.data.get('favIconUrl')
+        bundle.data['favicon_url'] = favicon_url
         src = bundle.data['src']
 
         end_time = datetime.datetime.strptime(
