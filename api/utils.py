@@ -1,3 +1,10 @@
+GOOGLE_FAVICON_URL = "http://www.google.com/s2/favicons?domain_url="
+
+def get_favicon_url(favicon_url, url):
+    if not favicon_url or not str(favicon_url).strip():
+        favicon_url = GOOGLE_FAVICON_URL + urllib.quote(url)
+    return favicon_url
+
 
 def humanize_time(time_delta):
     second_diff = time_delta.seconds
@@ -10,30 +17,28 @@ def humanize_time(time_delta):
         if second_diff < 60:
             return "a few seconds"
         if second_diff < 120:
-            return  "a minute"
+            return "a minute"
         if second_diff < 3600:
-            return str( second_diff / 60 ) + " minutes"
+            return str(second_diff / 60) + " minutes"
         if second_diff < 7200:
             return "an hour"
         if second_diff < 86400:
-            return str( second_diff / 3600 ) + " hours"
+            return str(second_diff / 3600) + " hours"
     if day_diff == 1:
         return "a day"
     if day_diff < 7:
         return str(day_diff) + " days"
     if day_diff < 31:
-        if day_diff/7 == 1:
+        if day_diff / 7 == 1:
             return "a week"
         else:
-            return str(day_diff/7) + " weeks"
+            return str(day_diff / 7) + " weeks"
     if day_diff < 365:
-        if day_diff/30 == 1:
+        if day_diff / 30 == 1:
             return "a month"
         else:
-            return str(day_diff/30) + " months"
-    if day_diff/365 == 1:
+            return str(day_diff / 30) + " months"
+    if day_diff / 365 == 1:
         return "a year"
     else:
-        return str(day_diff/365) + " years"
-
-            
+        return str(day_diff / 365) + " years"
