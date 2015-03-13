@@ -4,7 +4,14 @@ from django.conf import settings
 
 
 class Command(NoArgsCommand):
-    help = 'After running the import_db.sh script this sets all of the usrs except admins to inactive so that they cannot log into the dev site. Important!! Only run this on staging server since it will mess up the registration process for future users.'
+    help = """
+    After running the import_db.sh script this sets all
+    of the usrs except admins to inactive so that they
+    cannot log into the dev site.
+
+    Important!! Only run this on staging server since it will
+    mess up the registration process for future users."""
+
     def handle(self, **options):
         self.stdout.write('Beginning update...\n')
         users = User.objects.all()

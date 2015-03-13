@@ -7,9 +7,11 @@ import time
 
 register = template.Library()
 
+
 def fill(template, path):
     static_path = staticfiles_storage.url(path)
     return template % static_path
+
 
 @register.filter
 def url_domain(url):
@@ -18,22 +20,29 @@ def url_domain(url):
         return domain
     return url
 
+
 @register.filter
 def to_minute(value):
     return round(int(value) / 60000.0, 2)
 
+
 @register.filter
 def date_ms(dt):
-    return int(1000*time.mktime(dt.timetuple()))
+    return int(1000 * time.mktime(dt.timetuple()))
+
 
 @register.filter
 def date_fmt(dt):
     return str(dt).split("+")[0]
 
+
 @register.simple_tag
 def include_script(script_name):
-    return fill("""<script type="text/javascript" src="%s.js"></script>""", script_name)
+    return fill("""<script type="text/javascript" \
+            src="%s.js"></script>""", script_name)
+
 
 @register.simple_tag
 def include_style(style_name):
-    return fill("""<link type="text/css" rel="stylesheet" href="%s.css" />""", style_name)
+    return fill("""<link type="text/css" rel="stylesheet" \
+            href="%s.css" />""", style_name)

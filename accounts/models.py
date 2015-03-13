@@ -1,28 +1,25 @@
-from django.db import models
-from django.utils import simplejson as json
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.conf import settings
+from django.db import models
 
-from annoying.fields import AutoOneToOneField
-
-from datetime import datetime, timedelta
 
 class TwitterInfo(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     twitter_username = models.CharField(max_length=40, default='')
     access_token = models.CharField(max_length=140, default='')
     access_token_secret = models.CharField(max_length=140, default='')
-    
+
+
 class DeliciousInfo(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     access_token = models.CharField(max_length=140, default='')
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    #other fields here
+    # other fields here
 
-    follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False)
+    follows = models.ManyToManyField(
+        'self', related_name='followed_by', symmetrical=False)
     activation_key = models.CharField(max_length=40, default='')
     pic_url = models.CharField(max_length=1000, default='')
     use_tour = models.BooleanField(default=True)
@@ -37,7 +34,7 @@ class UserProfile(models.Model):
     def get_following_history(self, history=None):
         following = self.follows.all()
         if not history:
-            
+
             from api.models import EyeHistory
             history = EyeHistory.objects.all()
 
@@ -51,7 +48,7 @@ class UserProfile(models.Model):
         return self.user.username
 
     def __unicode__(self):
-          return "%s's profile" % self.user
+        return "%s's profile" % self.user
 
 
 User.profile = property(lambda u: u.get_profile())

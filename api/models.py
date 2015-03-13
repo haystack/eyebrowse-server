@@ -1,10 +1,12 @@
-from django.db import models
+import datetime
+import urllib
+
+
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils import timezone
 
 from api.utils import humanize_time
-import datetime
-import urllib
 
 
 class MuteList(models.Model):
@@ -80,7 +82,8 @@ class EyeHistoryRaw(models.Model):
     humanize_time = models.CharField(max_length=200, default='')
 
     def __unicode__(self):
-        return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
+        return "EyeHistory item %s for %s on %s" % (
+            self.url, self.user.username, self.start_time)
 
 
 class EyeHistory(models.Model):
@@ -105,7 +108,8 @@ class EyeHistory(models.Model):
     humanize_time = models.CharField(max_length=200, default='')
 
     def __unicode__(self):
-        return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
+        return "EyeHistory item %s for %s on %s" % (
+            self.url, self.user.username, self.start_time)
 
     def save(self, save_raw=True, *args, **kwargs):
         self.favIconUrl = self.strip_https(self.favIconUrl)
@@ -169,13 +173,17 @@ class PopularHistory(models.Model):
         unique_together = ("user", "popular_history")
 
 
-def save_raw_eyehistory(user, url, title, start_event, end_event, start_time, end_time, src, domain, favIconUrl):
+def save_raw_eyehistory(user, url, title,
+                        start_event, end_event, start_time,
+                        end_time, src, domain,
+                        favIconUrl):
     elapsed_time = end_time - start_time
     total_time = int(round((elapsed_time.microseconds / 1.0E3) +
-                           (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
+                           (elapsed_time.seconds * 1000) +
+                           (elapsed_time.days * 8.64E7)))
     hum_time = humanize_time(elapsed_time)
 
-    if favIconUrl == None:
+    if favIconUrl is None:
         favIconUrl = "http://www.google.com/s2/favicons?domain_url=" + \
             urllib.quote(url)
 
@@ -203,7 +211,7 @@ def merge_histories(dup_histories, end_time, end_event):
             earliest_start = hist.start_time
             earliest_eyehist = hist
 
-    if earliest_eyehist == None:
+    if earliest_eyehist is None:
         earliest_eyehist = dup_histories[0]
 
     earliest_eyehist.end_time = end_time
@@ -211,7 +219,9 @@ def merge_histories(dup_histories, end_time, end_event):
 
     elapsed_time = earliest_eyehist.end_time - earliest_eyehist.start_time
     earliest_eyehist.total_time = int(round(
-        (elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
+        (elapsed_time.microseconds / 1.0E3)
+        + (elapsed_time.seconds * 1000) +
+        (elapsed_time.days * 8.64E7)))
     earliest_eyehist.humanize_time = humanize_time(elapsed_time)
 
     if earliest_eyehist.favIconUrl.strip() == '':

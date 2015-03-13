@@ -1,12 +1,26 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include
+from django.conf.urls import patterns
+from django.conf.urls import url
 from django.shortcuts import HttpResponse
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from django.conf import settings
 
 from tastypie.api import Api
-from api.resources import *
-from eyebrowse.views import *
+
+from api.resources import UserResource
+from api.resources import UserProfileResource
+from api.resources import WhiteListItemResource
+from api.resources import BlackListItemResource
+from api.resources import EyeHistoryResource
+from api.resources import EyeHistoryMessageResource
+from api.resources import ChatMessageResource
+from api.resources import MuteListResource
+
+from eyebrowse.views import about
+from eyebrowse.views import faq
+from eyebrowse.views import api_docs
+from eyebrowse.views import consent_accept
+from eyebrowse.views import consent
 
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
@@ -23,42 +37,51 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+                       url(r'^admin/doc/',
+                           include('django.contrib.admindocs.urls')),
+                       url(r'^admin/', include(admin.site.urls)),
 
-    url(r'', include('django.contrib.auth.urls')),
-    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-    url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
+                       url(r'', include('django.contrib.auth.urls')),
+                       url(r'^static/(?P<path>.*)$',
+                           'django.views.static.serve',
+                           {'document_root': settings.STATIC_ROOT}),
+                       url(r'^robots\.txt$', lambda r: HttpResponse(
+                           "User-agent: *\nDisallow: /",
+                           mimetype="text/plain")),
 
-    url(r'^users/(?P<username>.+?)/visualizations$', 'stats.views.profile_viz'),
-    url(r'^users/(?P<username>.+)$', 'stats.views.profile_data'),
-    url(r'^following/(?P<username>.+)$', 'stats.views.following_data'),
-    url(r'^followers/(?P<username>.+)$', 'stats.views.followers_data'),
-    
-    url(r'^notifications', 'stats.views.notifications'),
+                       url(r'^users/(?P<username>.+?)/visualizations$',
+                           'stats.views.profile_viz'),
+                       url(r'^users/(?P<username>.+)$',
+                           'stats.views.profile_data'),
+                       url(r'^following/(?P<username>.+)$',
+                           'stats.views.following_data'),
+                       url(r'^followers/(?P<username>.+)$',
+                           'stats.views.followers_data'),
 
-    url(r'^accounts/', include('accounts.urls')),
-    url(r'^live_stream/', include('live_stream.urls')),
-    url(r'^stats/', include('stats.urls')),
-    url(r'^api/', include('api.urls')),
-    url(r'^api/', include(v1_api.urls)),
+                       url(r'^notifications', 'stats.views.notifications'),
 
-    url(r'^about', about),
-    url(r'^faq', faq),
-    url(r'^api_docs', api_docs),
-    
-    url(r'^consent_accept$', consent_accept),
-    url(r'^consent$', consent),
+                       url(r'^accounts/', include('accounts.urls')),
+                       url(r'^live_stream/', include('live_stream.urls')),
+                       url(r'^stats/', include('stats.urls')),
+                       url(r'^api/', include('api.urls')),
+                       url(r'^api/', include(v1_api.urls)),
 
-    url(r'^ext/', include("extension.urls")),
-)
+                       url(r'^about', about),
+                       url(r'^faq', faq),
+                       url(r'^api_docs', api_docs),
+
+                       url(r'^consent_accept$', consent_accept),
+                       url(r'^consent$', consent),
+
+                       url(r'^ext/', include("extension.urls")),
+                       )
 
 urlpatterns += patterns('eyebrowse.views',
-    url(r'^google3a0cf4e7f8daa91b.html$', 'google_verify'),
-    url(r'^feedback$', 'feedback'),
-    url(r'^add_tag$', 'add_tag'),
-    url(r'^delete_tag$', 'delete_tag'),
-    url(r'^color_tag$', 'color_tag'),
-    url(r'^downloads$', 'downloads'),
-    url(r'^$', 'home'),
-)
+                        url(r'^google3a0cf4e7f8daa91b.html$', 'google_verify'),
+                        url(r'^feedback$', 'feedback'),
+                        url(r'^add_tag$', 'add_tag'),
+                        url(r'^delete_tag$', 'delete_tag'),
+                        url(r'^color_tag$', 'color_tag'),
+                        url(r'^downloads$', 'downloads'),
+                        url(r'^$', 'home'),
+                        )
