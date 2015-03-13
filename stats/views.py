@@ -212,7 +212,7 @@ def followers_data(request, username=None):
         "fav_data" : fav_data,
     }
 
-    return _template_values(request, page_title="following list", navbar=nav_bar, sub_navbar="subnav_data", **template_dict)
+    return _template_values(request, page_title="followers list", navbar=nav_bar, sub_navbar="subnav_data", **template_dict)
 
     
 @render_to('stats/profile_viz.html')

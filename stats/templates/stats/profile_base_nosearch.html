@@ -24,7 +24,7 @@
         
         <div class="lower-header">
 	        <span class="user-name">
-	            {{profile_user.username}}'s eyebrowse history 
+	            {{profile_user.username}}'s {{ page_title }}
 	        </span>
 	        <div class="followlink">
 		        {% if profile_user != user %}
@@ -73,7 +73,6 @@
            </div>
         </div>
         </div>
-
 		{% block profile_content %}
 		
 		{% endblock %}
