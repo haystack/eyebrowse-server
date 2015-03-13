@@ -228,13 +228,14 @@ def group_history(history, req_user, self_profile=False):
         group = GroupHistory(history[i], req_user)
         if not self_profile:
             url = history[i].url
-            if EyeHistory.objects.filter(user=req_user, url=url).exists():
-                group.visited = True
+            if req_user.is_authenticated():
+                if EyeHistory.objects.filter(user=req_user, url=url).exists():
+                    group.visited = True
             
         j = i + 1
         while j < len(history):
             if group.domain == history[j].domain and group.user == history[j].user:
-                if not self_profile:
+                if not self_profile and req_user.is_authenticated():
                     url = history[j].url
                     if EyeHistory.objects.filter(user=req_user, url=url).exists():
                         if group.visited:
@@ -263,8 +264,9 @@ def group_history(history, req_user, self_profile=False):
         for group in history_groups:
             if len(group.history_items) == 1:
                 url = group.history_items[0].url
-                if EyeHistory.objects.filter(user=req_user, url=url).exists():
-                    group.visited = True
+                if req_user.is_authenticated():
+                    if EyeHistory.objects.filter(user=req_user, url=url).exists():
+                        group.visited = True
     
     return history_groups
 
