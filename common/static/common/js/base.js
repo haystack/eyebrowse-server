@@ -800,8 +800,6 @@ $(function(){
 
     $("#submit_feedback").on('click', submitFeedBack);
     
-    $("#confirmation").on('click', submitConsent);
-    
     $("#save-tag-form").on('click', submitTag);
 
     typeahead_search();
