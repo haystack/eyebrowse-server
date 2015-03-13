@@ -48,7 +48,10 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
         following = set([])
     
     if hist_type == "eyehistory" and hasattr(history, 'object_list'):
-        history.object_list = group_history(history.object_list, req_user)
+        self_profile = False
+        if search_params.get('username') == req_user.username:
+            self_profile = True
+        history.object_list = group_history(history.object_list, req_user, self_profile=self_profile)
     elif hasattr(history, 'object_list'):
         set_tags(history.object_list, req_user) 
     
@@ -217,22 +220,52 @@ def set_tags(history, req_user):
         if t.exists():
             h.tag = t[0]
 
-def group_history(history, req_user):
+def group_history(history, req_user, self_profile=False):
     history = list(history)
     history_groups = []
     i = 0
     while i < len(history):
         group = GroupHistory(history[i], req_user)
+        if not self_profile:
+            url = history[i].url
+            if EyeHistory.objects.filter(user=req_user, url=url).exists():
+                group.visited = True
+            
         j = i + 1
         while j < len(history):
             if group.domain == history[j].domain and group.user == history[j].user:
-                group.add_item(history[j])
-                j += 1
+                if not self_profile:
+                    url = history[j].url
+                    if EyeHistory.objects.filter(user=req_user, url=url).exists():
+                        if group.visited:
+                            group.add_item(history[j])
+                            j += 1
+                        else:
+                            i = j
+                            break
+                    else:
+                        if group.visited:
+                            i = j
+                            break
+                        else:
+                            group.add_item(history[j])
+                            j += 1
+                else:    
+                    group.add_item(history[j])
+                    j += 1
             else:
                 i = j
                 break
         i = j
         history_groups.append(group)
+        
+    if not self_profile:
+        for group in history_groups:
+            if len(group.history_items) == 1:
+                url = group.history_items[0].url
+                if EyeHistory.objects.filter(user=req_user, url=url).exists():
+                    group.visited = True
+    
     return history_groups
 
 
@@ -242,6 +275,8 @@ class GroupHistory(object):
         self.id = history_item.id
         self.domain = history_item.domain
         self.tag = None
+        self.visited = False
+        
         if req_user.is_authenticated():
             tag = Tag.objects.filter(user=req_user, domain=history_item.domain)
             if tag.count() > 0:
