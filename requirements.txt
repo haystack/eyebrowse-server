@@ -22,3 +22,5 @@ ConcurrentLogHandler==0.9.1
 South==0.8.4
 pytz==2014.1
 tweepy==3.2.0
+ipython==3.0.0
+flake8==2.4.0
