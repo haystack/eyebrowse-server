@@ -66,7 +66,7 @@ make run
 
 The `make install` command has two arguments for setting up the envirnoment
 ```bash
-make install debug=[true|false] env=[prod|staging|dev]
+make install debug=[true|false] env=[prod|dev]
 ```
 The default options are `debug=true` and `env=dev`.
 
