@@ -13,7 +13,7 @@
     </p>
     <p>
     Thank you for using Eyebrowse! <BR />
-    Eyebrowse is a research project from MIT CSAIL's Haystack Group exploring the possibilities of social
+    Eyebrowse is a research project from MIT CSAIL's <a href="http://haystack.csail.mit.edu" target="_blank">Haystack Group</a> exploring the possibilities of social
     	web browsing.
 	</P>
 <P>
@@ -22,7 +22,7 @@
 	- Whether features in Eyebrowse are useful or interesting to participants.
 </P>
 <P>
-	As you should know by now, much information on Eyebrowse is publicly available. 
+	As you should know by now, much information on Eyebrowse is <strong>publicly available</strong>. 
 	This includes the browser visits to webpages on websites you have whitelisted, comments you post, and chats you post.
 </p>
 <P>
@@ -46,11 +46,15 @@
 <P>
         Click below to confirm that you have read the above,
         understand the guarantees,
-        and agree to the requirements for participation:<BR />
+        and agree to the requirements for participation:<BR /><BR />
         <a class="btn btn-primary" id="confirmation">I confirm</a>
 </p>
 </div>
 
 {% endblock %}
 
+
+{% block scripts %}
+	{% include_script 'common/js/consent' %}
+{% endblock %}
 
