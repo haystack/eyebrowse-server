@@ -247,8 +247,8 @@ class GroupHistory(object):
             if tag.count() > 0:
                 self.tag = tag[0]
             
-        history_item.messages = history_item.eyehistorymessage_set.all()
-        self.history_items = [history_item]
+        self.history_items = []
+        self.add_item(history_item)
         self.favIconUrl = history_item.favIconUrl
         self.user = history_item.user
     
