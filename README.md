@@ -74,12 +74,12 @@ Common problems:
 
 1. `DoesNotExist at /admin/ Site matching query does not exist.`
   
-For dev:
+For dev [(stackoverflow reference)](http://stackoverflow.com/questions/11476210/getting-site-matching-query-does-not-exist-error-after-creating-django-admin):
   ```python
    from django.contrib.sites.models import Site
    Site.objects.create(name='localhost:8000', domain='http://localhost:8000')
   ```
-  [Reference](http://stackoverflow.com/questions/11476210/getting-site-matching-query-does-not-exist-error-after-creating-django-admin)
+  
 =======
 [![Join the chat at https://gitter.im/haystack/eyebrowse-server](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/haystack/eyebrowse-server?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
