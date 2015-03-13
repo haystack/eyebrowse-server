@@ -97,9 +97,10 @@ def populate_popular_history():
         total_pop.save()
                 
     
-        follow_users = UserProfile.objects.filter(follows=eyehist.user.profile).select_related()
+        follow_users = list(UserProfile.objects.filter(follows=eyehist.user.profile).select_related())
         
-        
+        follow_users.append(eyehist.user.profile)
+
         for user_prof in follow_users:
             u = user_prof.user
             
@@ -124,6 +125,13 @@ def populate_popular_history():
     
     p = PopularHistory.objects.filter(total_time_ago=0)
     p.delete()
+    
+    p = PopularHistory.objects.filter(user__isnull=False)
+    
+    for pop in p.iterator():
+        if pop.visitors.count() == 1:
+            if pop.visitors.all()[0] == pop.user:
+                pop.delete()
     
     p = PopularHistoryInfo.objects.all()
     for pop in p.iterator():

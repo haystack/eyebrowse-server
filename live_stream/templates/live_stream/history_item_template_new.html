@@ -1,7 +1,7 @@
 {% load filters %}
 {% load gravatar %}
 
-{% if user.username != username and user == item.user %}
+{% if user.username != username and user == item.user or item.visited %}
 	<div id="history_item_{{item.id}}" class='row history-container infinite-scroll eye-hist-visited' data-id="{{ item.id }}">
 {% else %}
 	<div id="history_item_{{item.id}}" class='row history-container infinite-scroll eye-hist' data-id="{{ item.id }}">

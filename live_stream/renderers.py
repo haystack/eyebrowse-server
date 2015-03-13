@@ -23,6 +23,7 @@ def history_renderer(user, history, hist_type, return_type, template, get_params
             'user' : user,
             'empty_search_msg': empty_search_msg,
             'following' : following,
+            'filter' : get_params.get('filter') if get_params else None
         }
 
         if get_params:
