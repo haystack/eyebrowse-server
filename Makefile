@@ -1,4 +1,4 @@
-.PHONY: run clean requirements env config install lint shell db
+.PHONY: run clean requirements env config install lint-py lint-js lint shell db
 
 root_path="/opt/eyebrowse"
 env_path="$(ROOT_PATH)/env"
@@ -41,6 +41,10 @@ db:
 
 install: clean requirements env config db
 
-lint: clean
-	# TODO (joshblum): Add jshint stuff
+lint-py:
 	flake8 .
+
+lint-js:
+	jshint -c .jshintrc --exclude-path .jshintignore .
+
+lint: clean lint-py lint-js
