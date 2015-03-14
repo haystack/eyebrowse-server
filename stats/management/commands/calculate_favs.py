@@ -50,6 +50,7 @@ class Command(NoArgsCommand):
                     "count" : 1,
                     "total_time" : item.total_time,
                     "domain" : domain
+
                 }
 
         max_count = 0

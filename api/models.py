@@ -1,12 +1,11 @@
 import datetime
-import urllib
-
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
 from api.utils import humanize_time
+
 
 class MuteList(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
@@ -165,8 +164,10 @@ class PopularHistory(models.Model):
         unique_together = ("user", "popular_history")
 
 
-
-def save_raw_eyehistory(user, url, title, start_event, end_event, start_time, end_time, src, domain, favicon_url):
+def save_raw_eyehistory(user, url, title,
+                        start_event, end_event,
+                        start_time, end_time,
+                        src, domain, favicon_url):
     elapsed_time = end_time - start_time
     total_time = int(round((elapsed_time.microseconds / 1.0E3) +
                            (elapsed_time.seconds * 1000) +
