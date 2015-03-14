@@ -142,7 +142,6 @@ STATICFILES_FINDERS = (
 )
 
 # settings for django-compressor
-COMPRESS_ENABLED = True
 COMPRESS_CSS_FILTERS = (
     'compressor.filters.template.TemplateFilter',
 )

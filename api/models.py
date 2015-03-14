@@ -8,7 +8,6 @@ from django.utils import timezone
 
 from api.utils import humanize_time
 
-
 class MuteList(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     url = models.URLField(max_length=300, blank=False, null=True)
@@ -66,6 +65,7 @@ class EyeHistoryRaw(models.Model):
     src = models.CharField(max_length=40, default='')
     url = models.URLField(max_length=2000, default='')
     domain = models.URLField(max_length=2000, default='')
+    favicon_url = models.TextField(default='')
     favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=2000, default='')
 
@@ -92,6 +92,7 @@ class EyeHistory(models.Model):
     src = models.CharField(max_length=40, default='')
     url = models.URLField(max_length=2000, default='')
     domain = models.URLField(max_length=2000, default='')
+    favicon_url = models.TextField(default='')
     favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=2000, default='')
 
@@ -110,16 +111,6 @@ class EyeHistory(models.Model):
     def __unicode__(self):
         return "EyeHistory item %s for %s on %s" % (
             self.url, self.user.username, self.start_time)
-
-    def save(self, save_raw=True, *args, **kwargs):
-        self.favIconUrl = self.strip_https(self.favIconUrl)
-        if self.favIconUrl.strip() == '':
-            self.favIconUrl = "http://www.google.com/s2/favicons?domain_url=" + \
-                urllib.quote(self.url)
-        super(EyeHistory, self).save(*args, **kwargs)
-
-    def strip_https(self, url):
-        return url.replace('https://', 'http://')
 
 
 class EyeHistoryMessage(models.Model):
@@ -142,6 +133,7 @@ class PopularHistoryInfo(models.Model):
     description = models.TextField(default='')
 
     domain = models.URLField(max_length=100, default='')
+    favicon_url = models.TextField(default='')
     favIconUrl = models.URLField(max_length=2000, default='')
     title = models.CharField(max_length=2000, default='')
 
@@ -173,19 +165,13 @@ class PopularHistory(models.Model):
         unique_together = ("user", "popular_history")
 
 
-def save_raw_eyehistory(user, url, title,
-                        start_event, end_event, start_time,
-                        end_time, src, domain,
-                        favIconUrl):
+
+def save_raw_eyehistory(user, url, title, start_event, end_event, start_time, end_time, src, domain, favicon_url):
     elapsed_time = end_time - start_time
     total_time = int(round((elapsed_time.microseconds / 1.0E3) +
                            (elapsed_time.seconds * 1000) +
                            (elapsed_time.days * 8.64E7)))
     hum_time = humanize_time(elapsed_time)
-
-    if favIconUrl is None:
-        favIconUrl = "http://www.google.com/s2/favicons?domain_url=" + \
-            urllib.quote(url)
 
     raw, created = EyeHistoryRaw.objects.get_or_create(user=user,
                                                        url=url,
@@ -196,7 +182,7 @@ def save_raw_eyehistory(user, url, title,
                                                        end_time=end_time,
                                                        src=src,
                                                        domain=domain,
-                                                       favIconUrl=favIconUrl,
+                                                       favicon_url=favicon_url,
                                                        total_time=total_time,
                                                        humanize_time=hum_time)
 
@@ -223,10 +209,6 @@ def merge_histories(dup_histories, end_time, end_event):
         + (elapsed_time.seconds * 1000) +
         (elapsed_time.days * 8.64E7)))
     earliest_eyehist.humanize_time = humanize_time(elapsed_time)
-
-    if earliest_eyehist.favIconUrl.strip() == '':
-        earliest_eyehist.favIconUrl = "http://www.google.com/s2/favicons?domain_url=" + \
-            urllib.quote(earliest_eyehist.url)
 
     earliest_eyehist.save()
 
