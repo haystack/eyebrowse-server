@@ -17,7 +17,10 @@ from api.models import Tag
 from common.admin import email_templates
 from common.view_helpers import _template_values
 
+from api.models import Tag, WhiteListItem
+
 from eyebrowse.log import logger
+from django.db.models.aggregates import Count
 
 
 @render_to('common/about.html')
