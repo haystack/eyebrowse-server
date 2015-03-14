@@ -4,7 +4,7 @@
 function calculateStats() {
     $.each($(".time-stat"), function(i, v) {
         v = $(v);
-        v.text(moment.humanizeDuration(v.data('time')));
+        v.text(moment.humanizeDuration(v.data("time")));
     });
 }
 

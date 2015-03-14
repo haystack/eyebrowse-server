@@ -32,9 +32,9 @@
             </div>
             {% include_ichtemplate 'api/js_templates/filterset_row.html' %}
             <script type="text/javascript">
-                var {{type}}_filterset = []
+                var {{type}}Filterset = []
                 {% for item in items %}
-                    {{type}}_filterset.push({
+                    {{type}}Filterset.push({
                         'id' : "{{item.id}}",
                         'url' : "{{item.url}}",
                     });

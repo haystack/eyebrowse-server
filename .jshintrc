@@ -14,5 +14,5 @@
   "trailing" : true,
   "globalstrict" : true,
   "eqeqeq" : true,
-  "predef": ["console"]
+  "predef": ["console", "d3", "moment", "google", "sprintf", "filepicker", "URI", "ich", "TEMPLATE_BASE"]
 }

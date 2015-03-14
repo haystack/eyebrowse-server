@@ -203,7 +203,7 @@
 
         <!--  helpers -->
         {% include_script 'common/js/es5-shim.min' %}
-        {% include_script 'common/js/jquery.cookie' %}
+        {% include_script 'common/js/jquery.cookie.min' %}
         {% include_script 'common/js/jquery.idle' %}
         {% include_script 'common/js/jquery.infinitescroll.min' %}
         {% include_script 'common/js/mobile_detection.min' %}
@@ -212,7 +212,7 @@
         {% include_script 'common/js/moment.min' %}
         {% include_script 'common/js/ich.min' %}
         {% include_script 'common/js/sprintf-0.7-beta1.min' %}
-        {% include_script 'common/js/bootstrap-tour' %}
+        {% include_script 'common/js/bootstrap-tour.min' %}
 
         <!--  bootstrap -->
         {% include_script 'common/js/bootstrap.min' %}
@@ -225,7 +225,7 @@
         {% endcompress %}
         <script type="text/javascript">
             var username = "{{user.username}}";
-            var profile_username = "{{profile_user.username}}";
+            var profileUsername = "{{profile_user.username}}";
         </script>
     </body>
 </html>

@@ -11,7 +11,7 @@ var padding = {
 
 var stack = d3.layout.stack();
 
-var colors_list = ["#000000", "#3300BB", "#1f77b4", "#2ca02c", "#999955", "#ff7f0e", "#ff0000", "#ff69b4", "#992299", "#551a8b", "#777777"];
+var colorsList = ["#000000", "#3300BB", "#1f77b4", "#2ca02c", "#999955", "#ff7f0e", "#ff0000", "#ff69b4", "#992299", "#551a8b", "#777777"];
 
 //Easy colors accessible via a 10-step ordinal scale
 var colors = d3.scale.category10();
@@ -28,7 +28,7 @@ var svg,
     xAxis,
     yAxis,
     legend,
-    color_hash;
+    colorHash;
 
 
 d3.select("#download-bar-png").on("click", function() {
@@ -50,42 +50,41 @@ d3.select("#get-widget-bar2").on("click", function() {
 
 function showBarWidget(version) {
     var $collapse;
-    var api_call;
-    var text_box;
+    var apiCall;
+    var textBox;
 
-    if (version == 1) {
+    if (version === 1) {
         $collapse = $("#widget-code-bar");
-        api_call = "bar_hour";
-        text_box = "#widget-code-text-bar";
+        apiCall = "bar_hour";
+        textBox = "#widget-code-text-bar";
     } else {
         $collapse = $("#widget-code-bar2");
-        api_call = "bar_day";
-        text_box = "#widget-code-text-bar2";
+        apiCall = "bar_day";
+        textBox = "#widget-code-text-bar2";
     }
 
+    query = query || "";
+    username = username || "";
+    date = date || "";
 
-    if (query == null) query = "";
-    if (username == null) username = "";
-    if (date == null) date = "";
-
-    if (version == 1) {
-        $(text_box).text("<div id=\"stackedbar-chart\"></div>\n" +
+    if (version === 1) {
+        $(textBox).text("<div id=\"stackedbar-chart\"></div>\n" +
             "<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
             "<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + api_call + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
+            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
     } else {
-        $(text_box).text("<div id=\"stackedbar-chart2\"></div>\n" +
+        $(textBox).text("<div id=\"stackedbar-chart2\"></div>\n" +
             "<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
             "<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + api_call + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
+            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
     }
-    $collapse.collapse('toggle');
+    $collapse.collapse("toggle");
 }
 
 function downloadbarPNG(version) {
 
     var xml;
-    if (version == 1) {
+    if (version === 1) {
         xml = document.getElementById("stackedbar-chart").firstElementChild;
     } else {
         xml = document.getElementById("stackedbar-chart2").firstElementChild;
@@ -95,7 +94,7 @@ function downloadbarPNG(version) {
         serializer = new XMLSerializer(),
         svgStr = serializer.serializeToString(xml);
 
-    img.src = 'data:image/svg+xml;base64,' + window.btoa(svgStr);
+    img.src = "data:image/svg+xml;base64," + window.btoa(svgStr);
 
     var canvas = document.createElement("canvas");
     canvas.width = w;
@@ -111,14 +110,18 @@ function downloadbarPNG(version) {
     c.save();
 
     var text;
-    if (version == 1) {
+    if (version === 1) {
         text = "Time spent per hour of day | Collected from " + username + "'s web visits";
     } else {
         text = "Time spent per day of week | Collected from " + username + "'s web visits";
     }
 
-    if (start_time !== null && end_time !== null) text = text + " | " + start_time + " to " + end_time;
-    if (query !== null) text = text + " | filtered by \"" + query + "\"";
+    if (startTime !== null && endTime !== null) {
+        text = text + " | " + startTime + " to " + endTime;
+    }
+    if (query !== null) {
+        text = text + " | filtered by \"" + query + "\"";
+    }
     c.restore();
     c.textAlign = "start";
     c.fillStyle = "#000000";
@@ -134,9 +137,9 @@ function downloadbarPNG(version) {
 
 
 
-function create_scales(dataset, domain_start, domain_end, tick_x, x_tickfmt) {
+function createScales(dataset, domainStart, domainEnd, tickX, xTickfmt) {
     xScale = d3.scale.linear()
-        .domain([domain_start, domain_end])
+        .domain([domainStart, domainEnd])
         .rangeRound([0, w - padding.left - padding.right]);
 
     yScale = d3.scale.linear()
@@ -153,8 +156,8 @@ function create_scales(dataset, domain_start, domain_end, tick_x, x_tickfmt) {
     xAxis = d3.svg.axis()
         .scale(xScale)
         .orient("bottom")
-        .ticks(tick_x)
-        .tickFormat(x_tickfmt);
+        .ticks(tickX)
+        .tickFormat(xTickfmt);
 
     yAxis = d3.svg.axis()
         .scale(yScale)
@@ -162,14 +165,14 @@ function create_scales(dataset, domain_start, domain_end, tick_x, x_tickfmt) {
         .ticks(10);
 }
 
-function draw_axis_labels(x_label, y_label) {
+function drawAxisLabels(xLabel, yLabel) {
     svg.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 0 - 5)
         .attr("x", 0 - (h / 2))
         .attr("dy", "1em")
         .attr("style", "font-family: Arial; font-size: 16.8px; fill: #000000; opacity: 1;")
-        .text(y_label);
+        .text(yLabel);
 
     svg.append("text")
         .attr("class", "xtext")
@@ -177,10 +180,10 @@ function draw_axis_labels(x_label, y_label) {
         .attr("y", h - 5)
         .attr("text-anchor", "middle")
         .attr("style", "font-family: Arial; font-size: 16.8px; fill: #000000; opacity: 1;")
-        .text(x_label);
+        .text(xLabel);
 }
 
-function create_legend(dataset) {
+function createLegend(dataset) {
     legend = svg.append("g")
         .attr("class", "legend")
         .attr("x", w - padding.right + 10)
@@ -198,7 +201,7 @@ function create_legend(dataset) {
 
     legend.selectAll("g").data(dataset)
         .enter()
-        .append('g')
+        .append("g")
         .each(function(d, i) {
             var g = d3.select(this);
             g.append("rect")
@@ -206,30 +209,30 @@ function create_legend(dataset) {
                 .attr("y", 90 + i * 25 + 10)
                 .attr("width", 10)
                 .attr("height", 10)
-                .style("fill", color_hash[String(i)][1]);
+                .style("fill", colorHash[String(i)][1]);
             g.append("text")
                 .attr("x", w - padding.right + 25)
                 .attr("y", 90 + i * 25 + 20)
                 .attr("height", 30)
                 .attr("width", 200)
-                .style("fill", color_hash[String(i)][1])
+                .style("fill", colorHash[String(i)][1])
                 .style("font-size", "15px")
                 .style("opacity", 1)
                 .style("cursor", "pointer")
                 .on("click", function(d) {
-                    if (color_hash[String(i)][0] === "Other") {
+                    if (colorHash[String(i)][0] === "Other") {
                         return;
                     } else {
-                        window.location.href = "http://" + color_hash[String(i)][0];
+                        window.location.href = "http://" + colorHash[String(i)][0];
                     }
                 })
                 .style("font-family", "Arial")
-                .text(color_hash[String(i)][0]);
+                .text(colorHash[String(i)][0]);
         });
 
 }
 
-function transform_axes() {
+function transformAxes() {
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(52," + (h - padding.bottom) + ")")
@@ -243,7 +246,7 @@ function transform_axes() {
         .call(yAxis);
 }
 
-function set_transition() {
+function setTransition() {
     rects.transition()
         .duration(function(d, i) {
             return 200 * i;
@@ -264,7 +267,7 @@ function set_transition() {
 
 
 
-function draw_SVG(dataset, element) {
+function drawSVG(dataset, element) {
     svg = d3.select(element)
         .append("svg")
         .attr("width", w)
@@ -277,7 +280,7 @@ function draw_SVG(dataset, element) {
         .attr("class", "rgroups")
         .attr("transform", "translate(" + padding.left + "," + (h - padding.bottom) + ")")
         .style("fill", function(d, i) {
-            return color_hash[dataset.indexOf(d)][1];
+            return colorHash[dataset.indexOf(d)][1];
         });
     // Add a rect for each data value
     rects = groups.selectAll("rect")

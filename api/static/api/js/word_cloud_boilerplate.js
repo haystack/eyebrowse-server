@@ -1,16 +1,16 @@
 "use strict";
 
-var start_time,
-    end_time;
+var startTime,
+    endTime;
 
 d3.json("http://eyebrowse.csail.mit.edu/api/graphs/word_cloud?username=" + username + "&date=" + date + "&query=" + query,
     function(error, data) {
-        word_list = data.week_words;
+        var wordList = data.week_words;
 
-        start_time = data.start_time;
-        end_time = data.end_time;
+        startTime = data.start_time;
+        endTime = data.end_time;
 
-        parseText(word_list);
+        parseText(wordList);
 
 
     });
@@ -65,14 +65,16 @@ function parseHTML(d) {
 }
 
 
-function parseText(word_list) {
+function parseText(wordList) {
     tags = {};
     var cases = {};
-    word_list.forEach(function(word) {
-        if (discard.test(word[0])) return;
-        word_short = word[0].substr(0, maxLength);
-        cases[word_short] = word_short;
-        tags[word_short] = word[1];
+    wordList.forEach(function(word) {
+        if (discard.test(word[0])) {
+            return;
+        }
+        var wordShort = word[0].substr(0, maxLength);
+        cases[wordShort] = wordShort;
+        tags[wordShort] = word[1];
     });
     tags = d3.entries(tags).sort(function(a, b) {
         return b.value - a.value;
@@ -87,8 +89,10 @@ function generate() {
     layout
         .font("Arial")
         .spiral("archimedean");
-    fontSize = d3.scale["sqrt"]().range([10, 100]);
-    if (tags.length) fontSize.domain([+tags[tags.length - 1].value || 1, +tags[0].value]);
+    fontSize = d3.scale.sqrt().range([10, 100]);
+    if (tags.length) {
+        fontSize.domain([+tags[tags.length - 1].value || 1, +tags[0].value]);
+    }
     complete = 0;
     words = [];
     layout.stop().words(tags.slice(0, max = Math.min(tags.length, +250))).start();
@@ -110,15 +114,15 @@ function generate() {
         .attr("y", h - 15)
         .attr("text-anchor", "left")
         .attr("style", "font-family: Arial; font-size: 20.8px; fill: #000000; opacity: 1;")
-        .text("Word cloud of page titles | " + username + " | " + date + ' | ' + query);
+        .text("Word cloud of page titles | " + username + " | " + date + " | " + query);
 
 }
 
 function load(f) {
-    if (f == null) {
+    if (f === null) {
         return;
     } else {
-        if (query != null) {
+        if (query !== null) {
             window.location.href = "http://eyebrowse.csail.mit.edu/users/amyzhang?query=" + query + " " + f + "&date=" + date;
         } else {
             window.location.href = "http://eyebrowse.csail.mit.edu/users/amyzhang?query=" + f + "&date=" + date;
@@ -162,7 +166,7 @@ function draw(data, bounds) {
         .style("opacity", 1e-6)
         .transition()
         .duration(1000)
-        .style("opacity", .7);
+        .style("opacity", 0.7);
 
     text.style("font-family", function(d) {
         return d.font;

@@ -6,7 +6,7 @@ function setFade() {
     var $popup = $("#info-box");
 
     var fadePopup = setTimeout(function() {
-        fade($popup)
+        fade($popup);
     }, fadeTime);
 
     $popup.hover(function() {
@@ -28,7 +28,7 @@ function passMessage(action, type) {
         "action": action,
         "type": type,
     };
-    window.parent.postMessage(JSON.stringify(message), "*")
+    window.parent.postMessage(JSON.stringify(message), "*");
 }
 
 
@@ -50,51 +50,53 @@ function clickHandle(e) {
 }
 
 $(document).ready(function() {
-    var logged_in = $("#logged-in").text();
+    var loggedIn = $("#logged-in").text();
 
-    if (logged_in == "False") {
+    if (loggedIn === "False") {
         passMessage("fade");
     }
 
-    var num_img = $("#info-box img").length;
+    var numImg = $("#info-box img").length;
     var text = $.trim($("#message").text());
 
-    if (num_img > 0) {
+    if (numImg > 0) {
         $(".bubble").css("visibility", "visible");
         setFade();
-        var num = (num_img * 24) + 10;
-        $("#info-box").css("width", num + 'px');
+        var num = (numImg * 24) + 10;
+        $("#info-box").css("width", num + "px");
         $("#allow-btn").click(clickHandle);
         $("#deny-btn").click(clickHandle);
 
-        if (!(text === "")) {
-            $("#info-box").css("width", (num + 195) + 'px');
-            $("#messagebox").css("width", '190px');
-            $("#info-box").css("height", '35px');
-            $("#messageholder").css("width", '190px');
-            $("#messageholder").css("border-right", '#000000 solid 2px');
-            $("#messageholder").css("padding-right", '2px');
-            $('#messagebox').click(function() {
+        if (text !== "") {
+            $("#info-box").css("width", (num + 195) + "px");
+            $("#messagebox").css("width", "190px");
+            $("#info-box").css("height", "35px");
+            $("#messageholder").css("width", "190px");
+            $("#messageholder").css("border-right", "#000000 solid 2px");
+            $("#messageholder").css("padding-right", "2px");
+            $("#messagebox").click(function() {
                 passMessage("fade");
             });
         } else {
-            if (num == 34) num = 45;
-            $("#info-box").css("width", num + 'px');
+            if (num === 34) {
+                num = 45;
+            }
+            $("#info-box").css("width", num + "px");
             $("#messageholder").css("display", "none");
-            $("#imgs").css("margin-top", '1px');
-            $("#imgs").css("float", 'none');
-            $("#imgs").css("display", 'inline-block');
+            $("#imgs").css("margin-top", "1px");
+            $("#imgs").css("float", "none");
+            $("#imgs").css("display", "inline-block");
         }
 
-    } else if (!(text === "")) {
+    } else if (text !== "") {
         $(".bubble").css("visibility", "visible");
         setFade();
-        $("#info-box").css("width", '195px');
-        $("#messagebox").css("width", '190px');
-        $("#messageholder").css("width", '190px');
+        $("#info-box").css("width", "195px");
+        $("#messagebox").css("width", "190px");
+        $("#messageholder").css("width", "190px");
         $("#imgs").css("display", "none");
-        $("#info-box").css("height", '35px');
-        $('#messagebox').click(function() {
+        $("#info-box").css("height", "35px");
+        $("#messagebox").click(function() {
             passMessage("fade");
         });
     } else {

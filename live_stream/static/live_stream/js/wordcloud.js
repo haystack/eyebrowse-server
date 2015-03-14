@@ -1,15 +1,19 @@
 "use strict";
 
-var start_time,
-    end_time;
+var startTime,
+    endTime;
+
+var username = getURLUsername();
+var date = getURLParameter("date");
+var query = getURLParameter("query");
 
 d3.json("/api/graphs/word_cloud?username=" + username + "&date=" + date + "&query=" + query,
     function(error, data) {
-        word_list = data.week_words;
+        var wordList = data.week_words;
 
-        start_time = data.start_time;
-        end_time = data.end_time;
-        parseText(word_list);
+        startTime = data.start_time;
+        endTime = data.end_time;
+        parseText(wordList);
 
     });
 
@@ -67,18 +71,17 @@ function parseHTML(d) {
 
 function showWidget() {
     var $collapse = $("#widget-code-word");
-
-    if (query == null) query = "";
-    if (username == null) username = "";
-    if (date == null) date = "";
+    query = query || "";
+    username = username || "";
+    date = date || "";
 
     $("#widget-code-text-word").text("<div id=\"wordle\"></div>\n" +
         "<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
         "<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-        "<script src=\"http://eyebrowse.csail.mit.edu/static/common/js/d3.layout.cloud.js\" charset=\"utf-8\"></script>\n" +
+        "<script src=\"http://eyebrowse.csail.mit.edu/static/common/js/d3.layout.cloud.min.js\" charset=\"utf-8\"></script>\n" +
         "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/word_cloud?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
 
-    $collapse.collapse('toggle');
+    $collapse.collapse("toggle");
 }
 
 function downloadPNG() {
@@ -108,9 +111,12 @@ function downloadPNG() {
 
 
     var text = "Word cloud of page titles | Collected from " + username + "'s web visits";
-    if (start_time !== null && end_time !== null) text = text + " | " + start_time + " to " + end_time;
-    if (query !== null) text = text + " | filtered by \"" + query + "\"";
-
+    if (startTime !== null && endTime !== null) {
+        text = text + " | " + startTime + " to " + endTime;
+    }
+    if (query !== null) {
+        text = text + " | filtered by \"" + query + "\"";
+    }
 
     c.restore();
     c.textAlign = "start";
@@ -127,14 +133,16 @@ function downloadPNG() {
 
 
 
-function parseText(word_list) {
+function parseText(wordList) {
     tags = {};
     var cases = {};
-    word_list.forEach(function(word) {
-        if (discard.test(word[0])) return;
-        word_short = word[0].substr(0, maxLength);
-        cases[word_short] = word_short;
-        tags[word_short] = word[1];
+    wordList.forEach(function(word) {
+        if (discard.test(word[0])) {
+            return;
+        }
+        var wordShort = word[0].substr(0, maxLength);
+        cases[wordShort] = wordShort;
+        tags[wordShort] = word[1];
     });
     tags = d3.entries(tags).sort(function(a, b) {
         return b.value - a.value;
@@ -149,8 +157,10 @@ function generate() {
     layout
         .font("Arial")
         .spiral("archimedean");
-    fontSize = d3.scale["sqrt"]().range([10, 100]);
-    if (tags.length) fontSize.domain([+tags[tags.length - 1].value || 1, +tags[0].value]);
+    fontSize = d3.scale.sqrt().range([10, 100]);
+    if (tags.length) {
+        fontSize.domain([+tags[tags.length - 1].value || 1, +tags[0].value]);
+    }
     complete = 0;
     words = [];
     layout.stop().words(tags.slice(0, max = Math.min(tags.length, +250))).start();
@@ -158,10 +168,10 @@ function generate() {
 }
 
 function load(f) {
-    if (f == null) {
+    if (f === null) {
         return;
     } else {
-        if (query != null) {
+        if (query !== null) {
             window.location.href = "http://eyebrowse.csail.mit.edu/users/" + username + "?query=" + query + " " + f + "&date=" + date;
         } else {
             window.location.href = "http://eyebrowse.csail.mit.edu/users/" + username + "?query=" + f + "&date=" + date;

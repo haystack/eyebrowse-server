@@ -6,7 +6,7 @@ function passMessage(action, type) {
         "action": action,
         "type": type,
     };
-    window.parent.postMessage(JSON.stringify(message), "*")
+    window.parent.postMessage(JSON.stringify(message), "*");
 }
 
 function fade(el) {
@@ -27,27 +27,25 @@ function clickHandle(e) {
 }
 
 $(document).ready(function() {
-    var num_img = $("#info-box img").length;
-    var text = $.trim($("#message").text());
-    $('.bubble').click(function() {
+    $(".bubble").click(function() {
         passMessage("fade");
     });
 });
 
-function tickerCallback(history_stream) {
-    // console.log("history_stream", history_stream)
+function tickerCallback(historyStream) {
+    // console.log("historyStream", historyStream)
 }
 
 $(function() {
-    tickerStream = new tickerPing({
-        'defaultFilter': 'firehose', //FOR TESTING- for deploy switch to 'following'
-        'searchParams': {
-            'template': '../extension/ticker_history_item',
-            'query': "",
-            'date': ""
+    var tickerStream = new TickerPing({
+        "defaultFilter": "firehose", //FOR TESTING- for deploy switch to "following"
+        "searchParams": {
+            "template": "../extension/ticker_history_item",
+            "query": "",
+            "date": ""
         },
     }, tickerCallback);
 
-    // $('.history-container').on('click', '.connection', follow);
+    // $(".history-container").on("click", ".connection", follow);
 
 });

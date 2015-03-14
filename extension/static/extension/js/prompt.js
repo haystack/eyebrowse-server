@@ -6,7 +6,7 @@ function setFade() {
     var $popup = $(".popup");
 
     var fadePopup = setTimeout(function() {
-        fade($popup)
+        fade($popup);
     }, fadeTime);
 
     $popup.hover(function() {
@@ -28,7 +28,7 @@ function passMessage(action, type) {
         "action": action,
         "type": type,
     };
-    window.parent.postMessage(JSON.stringify(message), "*")
+    window.parent.postMessage(JSON.stringify(message), "*");
 }
 
 
