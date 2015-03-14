@@ -1,13 +1,17 @@
 import setup_django
+
+import datetime
+
 from django.contrib.auth.models import User
+
 from api.models import EyeHistory
 from api.utils import humanize_time
-import datetime
+
 
 def merge_histories(histories):
     histories = list(histories)
     i = 0
-    
+
     while i < len(histories) - 1:
         hist1 = histories[i]
         j = i + 1
@@ -18,25 +22,30 @@ def merge_histories(histories):
                 hist1.end_time = hist2.end_time
                 hist1.end_event = hist2.end_event
                 elapsed_time = hist1.end_time - hist1.start_time
-                hist1.total_time = int(round((elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
+                hist1.total_time = int(round(
+                    (elapsed_time.microseconds / 1.0E3) +
+                    (elapsed_time.seconds * 1000) +
+                    (elapsed_time.days * 8.64E7)))
                 hist1.humanize_time = humanize_time(elapsed_time)
                 hist2.delete()
                 hist1.save(save_raw=False)
                 print 'deleting %s' % (hist2)
-                j+=1
+                j += 1
             else:
                 i = j
                 break
         i = j
 
+
 def run():
     for u in User.objects.all():
-        urls = EyeHistory.objects.filter(user=u).values_list('url', flat=True).distinct()
+        urls = EyeHistory.objects.filter(
+            user=u).values_list('url', flat=True).distinct()
         for url in urls:
-            dup_histories = EyeHistory.objects.filter(user=u, url=url).order_by('start_time')
+            dup_histories = EyeHistory.objects.filter(
+                user=u, url=url).order_by('start_time')
             merge_histories(dup_histories)
-            
-    
+
 
 if __name__ == '__main__':
     run()

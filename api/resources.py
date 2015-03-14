@@ -1,29 +1,39 @@
+import datetime
+import pytz
+
 from django.contrib.sessions.models import Session
 from django.contrib.auth.models import User
 from django.conf.urls import url
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.management import call_command
-from django.db.models import Q
-from django.db import IntegrityError
 
-from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from tastypie.authorization import Authorization
+from tastypie import fields
 from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import DjangoAuthorization
-from tastypie import fields
 from tastypie.paginator import Paginator
+from tastypie.resources import ALL
+from tastypie.resources import ALL_WITH_RELATIONS
+from tastypie.resources import ModelResource
 
 from api.defaults import DEFAULT_BLACKLIST
-from accounts.models import UserProfile
-from api.models import *
-from resource_helpers import *
-from defaults import DEFAULT_BLACKLIST
-from eyebrowse.log import logger
+from api.models import BlackListItem
+from api.models import ChatMessage
+from api.models import EyeHistory
+from api.models import EyeHistoryMessage
+from api.models import MuteList
+from api.models import WhiteListItem
+from api.models import merge_histories
+from api.resource_helpers import get_BlackListItem
+from api.resource_helpers import get_WhiteListItem
+from api.resource_helpers import urlencodeSerializer
+from api.utils import humanize_time
 
-import pytz
+from accounts.models import UserProfile
 
 from common.templatetags.filters import url_domain
 from common.templatetags.gravatar import gravatar_for_user
+
+from eyebrowse.log import logger
 
 
 class MyBasicAuthentication(BasicAuthentication):
@@ -118,7 +128,7 @@ class MuteListResource(BaseResource):
         domain = bundle.data['domain']
 
         try:
-            obj = MuteList.objects.get(user=request.user, domain=domain)
+            MuteList.objects.get(user=request.user, domain=domain)
         except MuteList.DoesNotExist:
             return super(MuteListResource, self).obj_create(bundle, request, user=request.user, **kwargs)
 
@@ -158,23 +168,24 @@ class WhiteListItemResource(FilterSetItemResource):
     def obj_create(self, bundle, request=None, **kwargs):
         url = bundle.data['url']
 
-
         blacklist_item = get_BlackListItem(url)  # check to see if this exists
         if blacklist_item:
             blacklist_item.delete()
-    
+
         # do not create if it is a default blacklist url
         if url in DEFAULT_BLACKLIST:
             return bundle
-    
+
         try:
-            _ = WhiteListItem.objects.get(user=request.user, url=url)
+            WhiteListItem.objects.get(user=request.user, url=url)
         except WhiteListItem.DoesNotExist:
-            return super(WhiteListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
+            return super(WhiteListItemResource,
+                         self).obj_create(
+                bundle, request,
+                user=request.user, **kwargs)
         return bundle
 
     class Meta(FilterSetItemResource.Meta):
-
         queryset = WhiteListItem.objects.select_related().all()
         resource_name = 'whitelist'
 
@@ -182,17 +193,18 @@ class WhiteListItemResource(FilterSetItemResource):
 class BlackListItemResource(FilterSetItemResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
-
         url = bundle.data['url']
-    
+
         whitelist_item = get_WhiteListItem(url)  # check to see if this exists
         if whitelist_item:
-          whitelist_item.delete()
+            whitelist_item.delete()
         try:
-          obj = BlackListItem.objects.get(user=request.user, url=url)
+            BlackListItem.objects.get(user=request.user, url=url)
         except BlackListItem.DoesNotExist:
-            return super(BlackListItemResource, self).obj_create(bundle, request, user=request.user, **kwargs)
-        
+            return super(BlackListItemResource, self
+                         ).obj_create(
+                bundle, request, user=request.user, **kwargs)
+
         return bundle
 
     class Meta(FilterSetItemResource.Meta):
@@ -217,11 +229,12 @@ class EyeHistoryMessageResource(ModelResource):
 class EyeHistoryResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user')
     message = fields.ToManyField(
-        EyeHistoryMessageResource, 'eyehistorymessage_set', null=True, blank=True, full=True)
+        EyeHistoryMessageResource,
+        'eyehistorymessage_set', null=True, blank=True, full=True)
 
     class Meta(BaseMeta):
-        queryset = EyeHistory.objects.select_related().all().order_by(
-            '-start_time')
+        queryset = EyeHistory.objects.select_related(
+        ).all().order_by('-start_time')
         resource_name = 'history-data'
 
         list_allowed_methods = ['get', 'post']

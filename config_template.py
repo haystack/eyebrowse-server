@@ -1,11 +1,11 @@
-########## Django settings ###########
+# ######### Django settings ###########
 ADMIN_INFO = (
     ('', ''),
 )
 
 SECRET_KEY = ''
 
-######## MYSQL #########
+# ####### MYSQL #########
 MYSQL_PROD = {
     'NAME': '',
     'USER': '',
@@ -20,7 +20,7 @@ MYSQL_LOCAL = {
     'HOST': '',
 }
 
-########## EMAIL ###############
+# ######### EMAIL ###############
 EMAIL = {
     'EMAIL_HOST': '',
     'EMAIL_HOST_USER': '',
@@ -30,12 +30,12 @@ EMAIL = {
 }
 
 
-###### Filepicker.io ##########
+# ##### Filepicker.io ##########
 FILEPICKER = {
     'API_KEY': '',
 }
 
-############# AWS ################
+# ############ AWS ################
 # setup instructions
 # http://aws.amazon.com/articles/3998?_encoding=UTF8&jiveRedirect=1
 AWS = {
@@ -45,12 +45,12 @@ AWS = {
     'BUCKET_DEV': '',
 }
 
-############ Twitter ################
+# ########### Twitter ################
 
 TWITTER_CONSUMER_KEY = ''
 TWITTER_CONSUMER_SECRET = ''
 
-############ Delicious #############
+# ########### Delicious #############
 
 DELICIOUS_CONSUMER_KEY = ''
 DELICIOUS_CONSUMER_SECRET = ''

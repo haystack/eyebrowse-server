@@ -1,10 +1,12 @@
-from django.db import models
+import datetime
+import urllib
+
+
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils import timezone
 
 from api.utils import humanize_time
-import datetime
-import urllib
 
 class MuteList(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
@@ -80,7 +82,8 @@ class EyeHistoryRaw(models.Model):
     humanize_time = models.CharField(max_length=200, default='')
 
     def __unicode__(self):
-        return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
+        return "EyeHistory item %s for %s on %s" % (
+            self.url, self.user.username, self.start_time)
 
 
 class EyeHistory(models.Model):
@@ -106,7 +109,8 @@ class EyeHistory(models.Model):
     humanize_time = models.CharField(max_length=200, default='')
 
     def __unicode__(self):
-        return "EyeHistory item %s for %s on %s" % (self.url, self.user.username, self.start_time)
+        return "EyeHistory item %s for %s on %s" % (
+            self.url, self.user.username, self.start_time)
 
 
 class EyeHistoryMessage(models.Model):
@@ -161,10 +165,12 @@ class PopularHistory(models.Model):
         unique_together = ("user", "popular_history")
 
 
+
 def save_raw_eyehistory(user, url, title, start_event, end_event, start_time, end_time, src, domain, favicon_url):
     elapsed_time = end_time - start_time
     total_time = int(round((elapsed_time.microseconds / 1.0E3) +
-                           (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
+                           (elapsed_time.seconds * 1000) +
+                           (elapsed_time.days * 8.64E7)))
     hum_time = humanize_time(elapsed_time)
 
     raw, created = EyeHistoryRaw.objects.get_or_create(user=user,
@@ -191,7 +197,7 @@ def merge_histories(dup_histories, end_time, end_event):
             earliest_start = hist.start_time
             earliest_eyehist = hist
 
-    if earliest_eyehist == None:
+    if earliest_eyehist is None:
         earliest_eyehist = dup_histories[0]
 
     earliest_eyehist.end_time = end_time
@@ -199,7 +205,9 @@ def merge_histories(dup_histories, end_time, end_event):
 
     elapsed_time = earliest_eyehist.end_time - earliest_eyehist.start_time
     earliest_eyehist.total_time = int(round(
-        (elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
+        (elapsed_time.microseconds / 1.0E3)
+        + (elapsed_time.seconds * 1000) +
+        (elapsed_time.days * 8.64E7)))
     earliest_eyehist.humanize_time = humanize_time(elapsed_time)
 
     earliest_eyehist.save()

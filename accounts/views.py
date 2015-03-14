@@ -1,24 +1,35 @@
+import json
+import tweepy
+import urllib
+import urllib2
+
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.views.generic.simple import redirect_to
 
-from annoying.decorators import render_to, ajax_request
+from annoying.decorators import ajax_request
+from annoying.decorators import render_to
 
-from accounts.renderers import *
+from accounts.models import TwitterInfo
+from accounts.models import DeliciousInfo
+from accounts.renderers import connection_table_renderer
 
-from api.models import *
+from api.models import MuteList
+from api.models import Tag
+from api.models import WhiteListItem
+
 
 from common.view_helpers import _template_values, JSONResponse
 from common.helpers import put_profile_pic
-import tweepy
-from eyebrowse.settings import TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, DELICIOUS_CONSUMER_KEY, DELICIOUS_CONSUMER_SECRET
-from eyebrowse.log import logger
-from django.views.generic.simple import redirect_to
-from accounts.models import TwitterInfo, DeliciousInfo
-
-import urllib2
-import json
 from common.admin import email_templates
-from django.core.mail import send_mail
+
+from eyebrowse.log import logger
+from eyebrowse.settings import TWITTER_CONSUMER_KEY
+from eyebrowse.settings import TWITTER_CONSUMER_SECRET
+from eyebrowse.settings import DELICIOUS_CONSUMER_KEY
+from eyebrowse.settings import DELICIOUS_CONSUMER_SECRET
+
 
 @login_required
 @render_to('accounts/whitelist.html')
@@ -29,7 +40,13 @@ def whitelist(request):
 
     whitelist = WhiteListItem.objects.filter(user=request.user)
 
-    return _template_values(request, page_title="edit whitelist", header="whitelist", navbar='nav_account', sub_navbar="subnav_whitelist", whitelist=whitelist)
+    return _template_values(request,
+                            page_title="edit whitelist",
+                            header="whitelist",
+                            navbar='nav_account',
+                            sub_navbar="subnav_whitelist",
+                            whitelist=whitelist)
+
 
 @login_required
 @render_to('accounts/mutelist.html')
@@ -40,7 +57,13 @@ def mutelist(request):
 
     mutelist = MuteList.objects.filter(user=request.user)
 
-    return _template_values(request, page_title="edit mute list", header="mutelist", navbar='nav_account', sub_navbar="subnav_mutelist", mutelist=mutelist)
+    return _template_values(request,
+                            page_title="edit mute list",
+                            header="mutelist",
+                            navbar='nav_account',
+                            sub_navbar="subnav_mutelist",
+                            mutelist=mutelist)
+
 
 @login_required
 @render_to('accounts/account.html')
@@ -80,8 +103,9 @@ def account(request):
 
         elif type == 'pic':
             pic_url = request.POST.get('pic_url')
-            pic_url = put_profile_pic(pic_url, user.profile) #download and upload to our S3
-            if pic_url: #no errors/less than 1mb #patlsotw
+            # download and upload to our S3
+            pic_url = put_profile_pic(pic_url, user.profile)
+            if pic_url:  # no errors/less than 1mb #patlsotw
                 user.profile.pic_url = pic_url
                 user.profile.save()
                 success = "Profile picture changed!"
@@ -89,14 +113,19 @@ def account(request):
                 errors['pic'] = ['Oops -- something went wrong.']
 
         resp = {
-            'success' : success,
+            'success': success,
             'errors': errors,
-            'type' : type,
-            'data' : data,
+            'type': type,
+            'data': data,
         }
         return JSONResponse(resp)
 
-    return _template_values(request, page_title="edit whitelist", header="account info", navbar='nav_account', sub_navbar="subnav_account_info")
+    return _template_values(request,
+                            page_title="edit whitelist",
+                            header="account info",
+                            navbar='nav_account',
+                            sub_navbar="subnav_account_info")
+
 
 @login_required
 @render_to('accounts/connections.html')
@@ -107,16 +136,22 @@ def connections(request):
 
     following = request.user.profile.follows.all()
     followers = request.user.profile.followed_by.all()
-    rendered_following = connection_table_renderer(following, 'following', following)
-    rendered_followers = connection_table_renderer(followers, 'followers', following)
+    rendered_following = connection_table_renderer(
+        following, 'following', following)
+    rendered_followers = connection_table_renderer(
+        followers, 'followers', following)
 
     template_dict = {
-        "rendered_followers" : rendered_followers,
-        "rendered_following" : rendered_following,
-        "header" : connections,
+        "rendered_followers": rendered_followers,
+        "rendered_following": rendered_following,
+        "header": connections,
     }
 
-    return _template_values(request, page_title="edit connections", navbar='nav_account', sub_navbar="subnav_connections", **template_dict)
+    return _template_values(request,
+                            page_title="edit connections",
+                            navbar='nav_account',
+                            sub_navbar="subnav_connections",
+                            **template_dict)
 
 
 @login_required
@@ -127,36 +162,49 @@ def sync_delicious(request):
     """
 
     user = request.user
-    
+
     template_dict = {"connected": False,
                      "synced": "You are not connected to Eyebrowse."}
-    
+
     delicious_info = DeliciousInfo.objects.filter(user=user)
     if len(delicious_info) > 0:
-        template_dict["synced"] = "Your Delicious account is already connected to Eyebrowse."
+        template_dict[
+            "synced"] = "Your Delicious account is already connected to Eyebrowse."
         template_dict['connected'] = True
     else:
         if "code" in request.GET:
             code = request.GET.get("code")
-             
-            data = urllib.urlencode({'client_id': DELICIOUS_CONSUMER_KEY,
-                                     'client_secret': DELICIOUS_CONSUMER_SECRET,
-                                     'grant_type': "code",
-                                     'redirect_uri': "http://eyebrowse.csail.mit.edu/accounts/profile/sync_delicious",
-                                     'code': code,
-                                     })
 
-            results = json.loads(urllib2.urlopen('https://avosapi.delicious.com/api/v1/oauth/token', data).read())
+            data = urllib.urlencode(
+                {'client_id': DELICIOUS_CONSUMER_KEY,
+                 'client_secret': DELICIOUS_CONSUMER_SECRET,
+                 'grant_type': "code",
+                 'redirect_uri': "http://eyebrowse.csail.mit.edu/accounts/profile/sync_delicious",
+                 'code': code,
+                 })
+
+            results = json.loads(urllib2.urlopen(
+                'https://avosapi.delicious.com/api/v1/oauth/token',
+                data).read())
 
             access_token = results["access_token"]
-                 
-            _ = DeliciousInfo.objects.create(user=user, access_token=access_token)
-            template_dict["synced"] = "Your Delicious account is now connected to Eyebrowse!"
+
+            DeliciousInfo.objects.create(
+                user=user, access_token=access_token)
+            template_dict[
+                "synced"] = "Your Delicious account is now connected to Eyebrowse!"
             template_dict['connected'] = True
         else:
-            return redirect_to(request, "https://delicious.com/auth/authorize?client_id=" + DELICIOUS_CONSUMER_KEY + "&redirect_uri=http://eyebrowse.csail.mit.edu/accounts/profile/sync_delicious")
+            return redirect_to(request,
+                               "https://delicious.com/auth/authorize?client_id=" +
+                               DELICIOUS_CONSUMER_KEY +
+                               "&redirect_uri=http://eyebrowse.csail.mit.edu/accounts/profile/sync_delicious")
 
-    return _template_values(request, page_title="Connect Delicious", navbar='nav_account', sub_navbar="subnav_sync_delicious", **template_dict)
+    return _template_values(request,
+                            page_title="Connect Delicious",
+                            navbar='nav_account',
+                            sub_navbar="subnav_sync_delicious",
+                            **template_dict)
 
 
 @login_required
@@ -172,8 +220,11 @@ def edit_tags(request):
             tag_dict[tag.name] = [tag]
 
     template_dict = {"tags": tag_dict.values()}
-    return _template_values(request, page_title="Edit My Tags", navbar='nav_account', sub_navbar="subnav_edit_tags", **template_dict)
-
+    return _template_values(request,
+                            page_title="Edit My Tags",
+                            navbar='nav_account',
+                            sub_navbar="subnav_edit_tags",
+                            **template_dict)
 
 
 @login_required
@@ -184,21 +235,27 @@ def sync_twitter(request):
     """
 
     user = request.user
-    
+
     template_dict = {"connected": False,
                      "synced": "You are not connected to Eyebrowse."}
-    
-    auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, "http://eyebrowse.csail.mit.edu/accounts/profile/sync_twitter")
-    
+
+    auth = tweepy.OAuthHandler(
+        TWITTER_CONSUMER_KEY,
+        TWITTER_CONSUMER_SECRET,
+        "http://eyebrowse.csail.mit.edu/accounts/profile/sync_twitter")
+
     twitter_info = TwitterInfo.objects.filter(user=user)
     if len(twitter_info) > 0:
-        auth.set_access_token(twitter_info[0].access_token, twitter_info[0].access_token_secret)
-        
+        auth.set_access_token(
+            twitter_info[0].access_token,
+            twitter_info[0].access_token_secret)
+
         api = tweepy.API(auth)
         twitter_user = api.me()
-        template_dict["synced"] = "Your Twitter account is already connected to Eyebrowse."
+        template_dict[
+            "synced"] = "Your Twitter account is already connected to Eyebrowse."
         template_dict['connected'] = True
-        
+
         template_dict['username'] = twitter_user.screen_name
         template_dict['profile_info'] = twitter_user.description
         template_dict['profile_image'] = twitter_user.profile_image_url
@@ -211,22 +268,25 @@ def sync_twitter(request):
                 auth.get_access_token(verifier)
                 token = auth.access_token
                 secret = auth.access_token_secret
-                
+
                 api = tweepy.API(auth)
                 twitter_user = api.me()
                 username = twitter_user.screen_name
-                
-                _ = TwitterInfo.objects.create(user=user, twitter_username=username, access_token=token, access_token_secret=secret)
-                template_dict["synced"] = "Your Twitter account is now connected to Eyebrowse!"
+
+                TwitterInfo.objects.create(
+                    user=user, twitter_username=username,
+                    access_token=token, access_token_secret=secret)
+                template_dict[
+                    "synced"] = "Your Twitter account is now connected to Eyebrowse!"
                 template_dict['connected'] = True
                 template_dict['username'] = username
                 template_dict['profile_info'] = twitter_user.description
                 template_dict['profile_image'] = twitter_user.profile_image_url
-                
+
             except tweepy.TweepError, e:
                 logger.info(e)
                 logger.info("Error! Failed to get access token")
-    
+
         else:
             logger.info("no request_token")
             try:
@@ -237,7 +297,11 @@ def sync_twitter(request):
                 logger.info(e)
                 logger.info("Error! Failed to get request token")
 
-    return _template_values(request, page_title="Connect Twitter", navbar='nav_account', sub_navbar="subnav_sync_twitter", **template_dict)
+    return _template_values(request,
+                            page_title="Connect Twitter",
+                            navbar='nav_account',
+                            sub_navbar="subnav_sync_twitter",
+                            **template_dict)
 
 
 @login_required
@@ -262,7 +326,7 @@ def connect(request):
                 user = None
 
             if not user:
-                errors['user'] = "Requested user %s not found."%username
+                errors['user'] = "Requested user %s not found." % username
 
             elif user.profile == req_prof:
                 errors['user'] = "Cannot follow yourself."
@@ -270,33 +334,41 @@ def connect(request):
             else:
                 if type == 'add-follow':
                     req_prof.follows.add(user.profile)
-  
-                    subject = email_templates.follow_email['subject'] % (request.user.username)
-                    content = email_templates.follow_email['content'] % (user.username,
-                                                                         request.user.username,
-                                                                         "http://eyebrowse.csail.mit.edu/users/" + request.user.username,
-                                                                         "http://eyebrowse.csail.mit.edu/followers/" + user.username)
+
+                    subject = email_templates.follow_email[
+                        'subject'] % (request.user.username)
+                    content = email_templates.follow_email['content'] % (
+                        user.username,
+                        request.user.username,
+                        "http://eyebrowse.csail.mit.edu/users/" +
+                        request.user.username,
+                        "http://eyebrowse.csail.mit.edu/followers/" +
+                        user.username)
                     new_follow_emails = [user.email]
-                    send_mail(subject, content, from_email=user.email, recipient_list=new_follow_emails)
-                    
-                    
-                elif type == 'rm-follow' and req_prof.follows.filter(user=user).exists():
+                    send_mail(
+                        subject, content,
+                        from_email=user.email,
+                        recipient_list=new_follow_emails)
+
+                elif type == 'rm-follow' and req_prof.follows.filter(
+                        user=user).exists():
                     req_prof.follows.remove(user)
 
             success = True
             data = {
-                'type' : type,
-                'user' : username,
+                'type': type,
+                'user': username,
             }
 
         else:
-            errors['user'] = 'Username required. Provided %s as username.' % username
+            errors[
+                'user'] = 'Username required. Provided %s as username.' % username
             errors['type'] = 'Type required. Provided %s as type.' % type
 
     resp = {
-        'success' : success,
+        'success': success,
         'errors': errors,
-        'data' : data,
+        'data': data,
     }
 
     return resp

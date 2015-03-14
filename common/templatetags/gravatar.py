@@ -8,8 +8,9 @@ from django.utils.html import escape
 from django.utils import simplejson
 
 GRAVATAR_URL_PREFIX = getattr(settings, "GRAVATAR_URL_PREFIX",
-                                      "http://www.gravatar.com/")
-GRAVATAR_DEFAULT_IMAGE = getattr(settings, "GRAVATAR_DEFAULT_IMAGE", "identicon")
+                              "http://www.gravatar.com/")
+GRAVATAR_DEFAULT_IMAGE = getattr(
+    settings, "GRAVATAR_DEFAULT_IMAGE", "identicon")
 GRAVATAR_DEFAULT_RATING = getattr(settings, "GRAVATAR_DEFAULT_RATING", "g")
 GRAVATAR_DEFAULT_SIZE = getattr(settings, "GRAVATAR_DEFAULT_SIZE", 80)
 GRAVATAR_IMG_CLASS = getattr(settings, "GRAVATAR_IMG_CLASS", "gravatar")
@@ -25,7 +26,7 @@ def _imgclass_attr():
 
 def _wrap_img_tag(url, info, size):
     return '<img src="%s"%s alt="Avatar for %s" height="%s" width="%s"/>' % \
-            (escape(url), _imgclass_attr(), info, size, size)
+        (escape(url), _imgclass_attr(), info, size, size)
 
 
 def _get_user(user):
@@ -36,6 +37,7 @@ def _get_user(user):
             # raise Exception("Bad user for gravatar.")
             return None
     return user
+
 
 def _get_gravatar_id(email):
     return md5_constructor(email).hexdigest()
@@ -54,14 +56,13 @@ def gravatar_for_email(email, size=None, rating=None, img_url=None):
 
         {% gravatar_for_email someone@example.com 48 pg %}
     """
-    
-    #if we have an image uploaded for them
+
+    # if we have an image uploaded for them
     if (img_url and img_url != "") or email == "":
         return img_url
-    
-    gravatar_url = "%savatar/%s" % (GRAVATAR_URL_PREFIX,
-            _get_gravatar_id(email))
 
+    gravatar_url = "%savatar/%s" % (GRAVATAR_URL_PREFIX,
+                                    _get_gravatar_id(email))
 
     parameters = [p for p in (
         ('d', img_url or GRAVATAR_DEFAULT_IMAGE),

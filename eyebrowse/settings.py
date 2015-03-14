@@ -10,6 +10,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 _ENV_FILE_PATH = '/opt/eyebrowse/env'
 _DEBUG_FILE_PATH = '/opt/eyebrowse/debug'
 
+
 def _get_env():
     f = open(_ENV_FILE_PATH)
     env = f.read()
@@ -20,6 +21,7 @@ def _get_env():
     f.close()
     return env
 ENV = _get_env()
+
 
 def _get_debug():
     f = open(_DEBUG_FILE_PATH)
@@ -55,7 +57,7 @@ else:
 
 TEMPLATE_DEBUG = DEBUG
 
-#custom auth
+# custom auth
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 LOGIN_REDIRECT_URL = "/"
@@ -71,12 +73,14 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': MYSQL["NAME"],# Or path to database file if using sqlite3.
-        'USER': MYSQL["USER"], # Not used with sqlite3.
-        'PASSWORD': MYSQL["PASSWORD"],# Not used with sqlite3.
-        'HOST': MYSQL["HOST"], # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '', # Set to empty string for default. Not used with sqlite3.
+        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': MYSQL["NAME"],  # Or path to database file if using sqlite3.
+        'USER': MYSQL["USER"],  # Not used with sqlite3.
+        'PASSWORD': MYSQL["PASSWORD"],  # Not used with sqlite3.
+        # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': MYSQL["HOST"],
+        'PORT': '',  # Set to empty string for default. Not used with sqlite3.
         'STORAGE_ENGINE': 'MyISAM'
     }
 }
@@ -135,25 +139,24 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 
     'compressor.finders.CompressorFinder',
 )
 
-##### settings for django-compressor
-COMPRESS_ENABLED = True
+# settings for django-compressor
 COMPRESS_CSS_FILTERS = (
     'compressor.filters.template.TemplateFilter',
 )
 
 # Make this unique, and don't share it with anybody.
-#SECRET_KEY is loaded in by config.py
+# SECRET_KEY is loaded in by config.py
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -167,7 +170,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    #'common.middleware.profiler.ProfileMiddleware',
+    # 'common.middleware.profiler.ProfileMiddleware',
 )
 
 ROOT_URLCONF = 'eyebrowse.urls'
@@ -176,7 +179,7 @@ ROOT_URLCONF = 'eyebrowse.urls'
 WSGI_APPLICATION = 'eyebrowse.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Put strings here, like "/home/html/django_templates"
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(SITE_ROOT, 'templates'),
@@ -224,12 +227,12 @@ EMAIL_HOST_PASSWORD = EMAIL["EMAIL_HOST_PASSWORD"]
 EMAIL_PORT = EMAIL["EMAIL_PORT"]
 EMAIL_USE_TLS = EMAIL["EMAIL_USE_TLS"]
 
-ACCOUNT_ACTIVATION_DAYS = 14 # Two-week activation window;
+ACCOUNT_ACTIVATION_DAYS = 14  # Two-week activation window;
 
 
 # Tastypie settings:
 
-API_LIMIT_PER_PAGE = 0 # no default
+API_LIMIT_PER_PAGE = 0  # no default
 TASTYPIE_FULL_DEBUG = DEBUG
 TASTYPIE_ALLOW_MISSING_SLASH = True
 
@@ -272,5 +275,3 @@ LOGGING = {
         },
     }
 }
-
-

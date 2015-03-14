@@ -1,5 +1,7 @@
 from tastypie.serializers import Serializer
-from api.models import *
+
+from api.models import BlackListItem
+from api.models import WhiteListItem
 from api.defaults import DEFAULT_BLACKLIST
 
 import urlparse
@@ -22,7 +24,10 @@ def in_Blacklist(url):
 
 def in_FilterSet(set_type, url):
     domain, protocol = split_url(url)
-    return (set_type.objects.filter(url=domain).exists() or set_type.objects.filter(url=protocol).exists() or set_type.objects.filter(url=url).exists())
+    return (set_type.objects.filter(
+        url=domain).exists() or set_type.objects.filter(
+            url=protocol).exists() or
+        set_type.objects.filter(url=url).exists())
 
 
 def get_WhiteListItem(url):

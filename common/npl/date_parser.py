@@ -1,25 +1,33 @@
-from pyparsing import *
+from pyparsing import Keyword
+from pyparsing import Word
+from pyparsing import nums
+from pyparsing import NoMatch
+from pyparsing import MatchFirst
+from pyparsing import CaselessLiteral
+from pyparsing import Suppress
+from pyparsing import Optional
+
 from pluralize import pluralize
 from datetime import datetime, timedelta
-from operator import mul
 
 time_units = {
-    "day"   : 1,
-    "week"  : 7,
-    "month" : 31,
-    "year"  : 365,
+    "day": 1,
+    "week": 7,
+    "month": 31,
+    "year": 365,
 }
 
 add_modifiers = {
-    "couple"  : 2,
-    "few"     : 3,
-    "several" : 4,
+    "couple": 2,
+    "few": 3,
+    "several": 4,
 }
 
 special = {
-    "yesterday" : 1,
-    "last night" : 1,
+    "yesterday": 1,
+    "last night": 1,
 }
+
 
 def pluralize_units(time_units):
     """
@@ -30,6 +38,7 @@ def pluralize_units(time_units):
         plural_units[pluralize(key)] = time_units[key]
     time_units.update(plural_units)
     return time_units
+
 
 def get_match_first(lits, parseAction=None):
     el = MatchFirst(NoMatch())
@@ -43,7 +52,9 @@ def get_match_first(lits, parseAction=None):
 CL = CaselessLiteral
 time_units = pluralize_units(time_units)
 
+
 class DateRangeParser():
+
     def __init__(self):
         """
         access the start and end date the string represents
@@ -51,15 +62,15 @@ class DateRangeParser():
         self.parser = self.setup()
 
     def parse(self, date_string):
-        try : 
+        try:
             start, end = self.parser.parseString(date_string)[0]
         except Exception as e:
             print e
-            ##for now just return the last week
+            # for now just return the last week
             return self.parse("last week")
         return start, end
 
-    def combineTokens(self,tok):
+    def combineTokens(self, tok):
         base_unit = tok['unit']
         total = base_unit * tok.get('multiply', 1)
         total += tok.get('add', 0)
@@ -68,15 +79,15 @@ class DateRangeParser():
     def parseRange(self, a, b, tok):
         delta = self.combineTokens(tok)
         start = datetime.today() - timedelta(days=delta)
-        end = datetime.today() + timedelta(days=1) #plus 1 to include today
+        end = datetime.today() + timedelta(days=1)  # plus 1 to include today
         return (start, end)
 
-    def parseMulti (self, a, b, tok):
+    def parseMulti(self, a, b, tok):
         if tok:
             return int(tok[0])
         return 1
 
-    def parseAdd (self, a, b, tok):
+    def parseAdd(self, a, b, tok):
         return add_modifiers[tok[0]]
 
     def parseAgo(self, s, l, tok):
@@ -87,7 +98,7 @@ class DateRangeParser():
         return (start, end)
 
     def setup(self):
-        #some expressions that will be reused
+        # some expressions that will be reused
         units = []
         for unit in time_units:
             units.append(Keyword(unit))
@@ -105,10 +116,9 @@ class DateRangeParser():
         adder = get_match_first(adder)
         adder = adder.setResultsName("add")
         adder.setParseAction(self.parseAdd)
-        modifier = (multiplier | adder) #+ FollowedBy(units)
+        modifier = (multiplier | adder)  # + FollowedBy(units)
 
-
-        # ago 
+        # ago
         #
         # e.g 5 days ago
         ago = Optional(modifier) + units + Suppress(Word("ago"))
@@ -117,17 +127,24 @@ class DateRangeParser():
         # time range
         #
         # e.g in the lat 10 days
-        time_range = Suppress(Optional(CL("in the"))) + Suppress(Word("last") | Word("past")) + Optional(modifier) + units
+        time_range = Suppress(Optional(
+            CL("in the"))) + \
+            Suppress(Word("last") |
+                     Word("past")) + \
+            Optional(modifier) + \
+            units
         time_range.setParseAction(self.parseRange)
-
 
         # special keyword handling
         #
         # e.g yesterday
-        # only handles yesterday right now, maybe need to be modified to do more
+        # only handles yesterday right now, maybe need to be modified to do
+        # more
         special_expr = []
         for expr in special:
-            special_expr.append(Keyword(expr).setParseAction(lambda s, l, tok: special[tok[0]]))
+            special_expr.append(
+                Keyword(expr).setParseAction(
+                    lambda s, l, tok: special[tok[0]]))
         special_expr = get_match_first(special_expr)
         special_expr = special_expr.setResultsName("unit")
         special_expr.setParseAction(self.parseAgo)
@@ -155,5 +172,5 @@ if __name__ == "__main__":
 
     for test in tests.splitlines():
         print "\n" + test.strip()
-        start, end  = parser.parse(test)
-        print "Start: %s, End: %s" % (start , end)
+        start, end = parser.parse(test)
+        print "Start: %s, End: %s" % (start, end)

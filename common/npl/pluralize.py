@@ -1,4 +1,4 @@
-## {{{ http://code.activestate.com/recipes/577781/ (r1)
+# {{{ http://code.activestate.com/recipes/577781/ (r1)
 ABERRANT_PLURAL_MAP = {
     'appendix': 'appendices',
     'barracks': 'barracks',
@@ -30,14 +30,15 @@ ABERRANT_PLURAL_MAP = {
     'torpedo': 'torpedoes',
     'veto': 'vetoes',
     'woman': 'women',
-    }
+}
 
 VOWELS = set('aeiou')
+
 
 def pluralize(singular):
     """Return plural form of given lowercase singular word (English only). Based on
     ActiveState recipe http://code.activestate.com/recipes/413172/
-    
+
     >>> pluralize('')
     ''
     >>> pluralize('goose')
@@ -96,4 +97,4 @@ def pluralize(singular):
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-## end of http://code.activestate.com/recipes/577781/ }}}
+# end of http://code.activestate.com/recipes/577781/ }}}
