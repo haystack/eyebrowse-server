@@ -1,9 +1,11 @@
-$(function(){
-    //following tab
-    $('#following').on('click', '.connection', follow)
+"use strict";
+
+$(function() {
+    // following tab
+    $("#following").on("click", ".connection", follow);
     listFilter($(".following-body"));
 
-    //followers tab
-    $('#followers').on('click', '.connection', follow)
+    // followers tab
+    $("#followers").on("click", ".connection", follow);
     listFilter($(".followers-body"));
 });

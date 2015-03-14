@@ -1,3 +1,5 @@
+"use strict";
+
 function whitelistAdd(e, d) {
 	button = $(this);
     var url = button.data('url');

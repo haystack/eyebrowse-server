@@ -1,12 +1,14 @@
+"use strict";
+
 //humanize the timestamps passed down
 function calculateStats() {
-    $.each($(".time-stat"), function(i, v){
+    $.each($(".time-stat"), function(i, v) {
         v = $(v);
-        v.text(moment.humanizeDuration(v.data('time')));
+        v.text(moment.humanizeDuration(v.data("time")));
     });
 }
 
-$(function(){
+$(function() {
     calculateStats();
     makeTip(".fav-site", $(".fav-site").data("content"), "top", "hover");
-}); 
+});

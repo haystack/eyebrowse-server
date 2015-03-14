@@ -1,3 +1,5 @@
+"use strict";
+
 function submitConsent(e, d) {
 	$.post('/consent_accept', {
 		'consent': 'true'
@@ -10,9 +12,8 @@ function submitConsent(e, d) {
 		}
 	});
 	return false;
-	
 }
 
 $(function() {
-	    $("#confirmation").on('click', submitConsent);
+    $("#confirmation").on("click", submitConsent);
 });

@@ -1,4 +1,4 @@
-.PHONY: run clean requirements env config install lint shell db
+.PHONY: run clean requirements env config install pylint jslint lint shell db deploy
 
 root_path="/opt/eyebrowse"
 env_path="$(ROOT_PATH)/env"
@@ -41,6 +41,13 @@ db:
 
 install: clean requirements env config db
 
-lint: clean
-	# TODO (joshblum): Add jshint stuff
-	flake8 .
+pylint:
+	-flake8 .
+
+jslint:
+	-jshint -c .jshintrc --exclude-path .jshintignore .
+
+lint: clean pylint jslint
+
+deploy: lint
+	fab deploy
