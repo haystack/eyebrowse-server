@@ -1,7 +1,9 @@
-(function ($) {
-    $.fn.idle = function (onidle, onactive, options) {
-        return this.each(function () {
-            var isidle   = false,
+"use strict";
+
+(function($) {
+    $.fn.idle = function(onidle, onactive, options) {
+        return this.each(function() {
+            var isidle = false,
                 hasMoved = false,
                 lastMove = (new Date()).getTime(),
                 opts;
@@ -16,7 +18,7 @@
 
             opts = $.extend({}, $.fn.idle.defaults, options);
 
-            $(this).bind("mousemove", function () {
+            $(this).bind("mousemove", function() {
                 hasMoved = true;
                 lastMove = (new Date()).getTime();
                 if (isidle) {
@@ -25,7 +27,7 @@
                 }
             });
 
-            window.setInterval(function () {
+            window.setInterval(function() {
                 if ((new Date()).getTime() - lastMove > opts.after) {
                     if (hasMoved) {
                         onidle.call(this);

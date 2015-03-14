@@ -1,3 +1,5 @@
+"use strict";
+
 /*
 
 container of data to be updated must have the class '.ticker-stream-container'
@@ -7,7 +9,7 @@ defaultFilter is a string of the default filter to apply
 updateTemplate is a html string to show when new data is available. Defaults to history container code
 
 */
-function tickerPing(args, callback){
+function tickerPing(args, callback) {
     this.history = [];
     this.canPing = true;
     this.$container = $('.ticker-stream-container');
@@ -36,28 +38,28 @@ function tickerPing(args, callback){
         $(document).on('ping-new', $.proxy(this.insertHistoryItems, this));
     }
 
-    this.ping = function(){
+    this.ping = function() {
         if (!this.canPing) return;
         var filter = this.defaultFilter;
 
-        var timestamp = this.lastTime /*"2014-10-31 19:10:20"*/;
+        var timestamp = this.lastTime /*"2014-10-31 19:10:20"*/ ;
         // console.log(timestamp);
         var curTime = new Date();
         this.lastTime = curTime.format("yyyy-mm-dd HH:MM:ss");
-        var payload =  {
-            'filter' : filter,
-            'timestamp' : timestamp,
-            'return_type' : 'list',
-            'type' : 'ping',
+        var payload = {
+            'filter': filter,
+            'timestamp': timestamp,
+            'return_type': 'list',
+            'type': 'ping',
         };
         for (var attrname in this.searchParams) {
             payload[attrname] = this.searchParams[attrname];
         }
         var that = this;
-        $.getJSON('/live_stream/ping/', payload, function(res){
+        $.getJSON('/live_stream/ping/', payload, function(res) {
             // console.log("res", res);
             that.history = res.history;
-            if (that.callback){
+            if (that.callback) {
                 that.callback(res);
             }
             if (that.history.length) {
@@ -72,14 +74,14 @@ function tickerPing(args, callback){
     }
 
     this.showNotification = function() {
-        if (!$('.load-new').length){
+        if (!$('.load-new').length) {
             this.$container.prepend(this.updateTemplate);
         }
     }
 
-    this.insertHistoryItems = function (e){
+    this.insertHistoryItems = function(e) {
         var that = this;
-        $.each(that.history.reverse(), function(index, item){
+        $.each(that.history.reverse(), function(index, item) {
             that.historyQueue.push(item);
         });
         this.historyQueue = that.historyQueue;
