@@ -35,21 +35,6 @@ function deleteEyeHistoryDomain(domain) {
     window.location.reload();
 }
 
-function submitConsent(e, d) {
-	$.post('/consent_accept', {
-		'consent': 'true'
-	},
-	function(res) {
-		if (res.res === 'success') {
-			window.location.replace('/live_stream/');
-		} else {
-			location.reload();
-		}
-	});
-	return false;
-	
-}
-
 function dropitemSelected (e, v) {
     $('#search-bar').blur();
     navToUser(v);
@@ -814,8 +799,6 @@ $(function(){
     TEMPLATE_BASE = "api/js_templates/";
 
     $("#submit_feedback").on('click', submitFeedBack);
-    
-    $("#confirmation").on('click', submitConsent);
     
     $("#save-tag-form").on('click', submitTag);
 

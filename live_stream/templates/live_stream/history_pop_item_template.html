@@ -1,7 +1,11 @@
 {% load filters %}
 {% load gravatar %}
 
-<div id="history_item_{{item.id}}" class='row history-container infinite-scroll' data-id="{{ item.id }}">
+{% if user in item.visitors.all %}
+	<div id="history_item_{{item.id}}" class='row history-container infinite-scroll eye-hist-visited' data-id="{{ item.id }}">
+{% else %}
+	<div id="history_item_{{item.id}}" class='row history-container infinite-scroll eye-hist' data-id="{{ item.id }}">
+{% endif %}
     <div id="history_item_{{ item.id }}_content" class="history-content">
     	
         <span class="span6" style="margin-left: 0px">
@@ -30,9 +34,11 @@
 		
            <span>
            	{% for v in item.visitors.all %}
-	           	<a href="/users/{{ v.username }}">
-	           		<img class="author-pic img-rounded" data-content="{{ v }}" src="{% gravatar_for_user v %}"/> 
-	           	</a>
+           		{% if filter == "firehose" or v != user %}
+		           	<a href="/users/{{ v.username }}">
+		           		<img class="author-pic img-rounded" data-content="{{ v }}" src="{% gravatar_for_user v %}"/> 
+		           	</a>
+		        {% endif %}
 	        {% endfor %}
            </span>
 	        <span class="dropdown timeline-options pull-right">

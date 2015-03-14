@@ -97,9 +97,17 @@ def populate_popular_history():
             round(float(time_diff.total_seconds()) / 3600.0))
 
         total_pop.save()
+<<<<<<< HEAD
 
         follow_users = UserProfile.objects.filter(
             follows=eyehist.user.profile).select_related()
+=======
+                
+    
+        follow_users = list(UserProfile.objects.filter(follows=eyehist.user.profile).select_related())
+        
+        follow_users.append(eyehist.user.profile)
+>>>>>>> master
 
         for user_prof in follow_users:
             u = user_prof.user
@@ -127,7 +135,18 @@ def populate_popular_history():
 
     p = PopularHistory.objects.filter(total_time_ago=0)
     p.delete()
+<<<<<<< HEAD
 
+=======
+    
+    p = PopularHistory.objects.filter(user__isnull=False)
+    
+    for pop in p.iterator():
+        if pop.visitors.count() == 1:
+            if pop.visitors.all()[0] == pop.user:
+                pop.delete()
+    
+>>>>>>> master
     p = PopularHistoryInfo.objects.all()
     for pop in p.iterator():
         if len(list(pop.popularhistory_set.all())) == 0:
@@ -153,12 +172,17 @@ def calculate_scores():
             datetime.timedelta(milliseconds=time_spent))
 
         num_comments = pop.messages.count()
+<<<<<<< HEAD
         c = float(num_comments * 85.0) / \
             float(
                 ((float(pop.total_time_ago) + 1.0) / float(pop.eye_hists.count()))**1.4)
+=======
+        c = float(num_comments*40.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.2)
+>>>>>>> master
         pop.num_comment_score = c
 
         num_vistors = pop.visitors.count()
+<<<<<<< HEAD
         v = float((num_vistors - 1.0) * 50.0) / \
             float(
                 ((float(pop.total_time_ago) + 1.0) / float(pop.eye_hists.count()))**1.4)
@@ -173,6 +197,16 @@ def calculate_scores():
         t2 = float((num_time - 5000) / 1000.0) / \
             float(
                 ((float(pop.total_time_ago) + 1.0) / float(pop.eye_hists.count()))**1)
+=======
+        v = float((num_vistors-1.0)*50.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.2)
+        pop.unique_visitor_score = v
+        
+        num_time = float(pop.total_time_spent)/float(pop.eye_hists.count())
+        
+        t = float((num_time**.8)/1000.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1.2)
+        
+        t2 = float((num_time - 5000)/1000.0) / float(((float(pop.total_time_ago)+1.0)/float(pop.eye_hists.count()))**1)
+>>>>>>> master
         pop.avg_time_spent_score = t2
 
         pop.top_score = float(c + v + t)
