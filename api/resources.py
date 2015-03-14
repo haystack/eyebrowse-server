@@ -60,8 +60,7 @@ class PublicGetAuthentication(MyBasicAuthentication):
         if request.method == 'GET':
             return True
         else:
-            return super(PublicGetAuthentication, self
-                         ).is_authenticated(request, **kwargs)
+            return super(PublicGetAuthentication, self).is_authenticated(request, **kwargs)
 
 
 class BaseMeta:
@@ -77,8 +76,7 @@ class BaseMeta:
 class BaseResource(ModelResource):
 
     '''
-        Subclass this to get generic ModelResource add-ins
-        that TastyPie doesn't supply.
+        Subclass this to get generic ModelResource add-ins that TastyPie doesn't supply.
     '''
 
     def apply_authorization_limits(self, request, object_list):
@@ -89,9 +87,8 @@ class UserResource(ModelResource):
 
     def override_urls(self):
         return [
-            url(r'^(?P<resource_name>%s)/(?P<username>[\w\d_.-]+)/$' %
-                self._meta.resource_name, self.wrap_view(
-                    'dispatch_detail'), name='api_dispatch_detail'),
+            url(r'^(?P<resource_name>%s)/(?P<username>[\w\d_.-]+)/$' % self._meta.resource_name, self.wrap_view(
+                'dispatch_detail'), name='api_dispatch_detail'),
         ]
 
     class Meta(BaseMeta):
@@ -133,9 +130,7 @@ class MuteListResource(BaseResource):
         try:
             MuteList.objects.get(user=request.user, domain=domain)
         except MuteList.DoesNotExist:
-            return super(MuteListResource, self
-                         ).obj_create(
-                bundle, request, user=request.user, **kwargs)
+            return super(MuteListResource, self).obj_create(bundle, request, user=request.user, **kwargs)
 
         return bundle
 
@@ -191,7 +186,6 @@ class WhiteListItemResource(FilterSetItemResource):
         return bundle
 
     class Meta(FilterSetItemResource.Meta):
-
         queryset = WhiteListItem.objects.select_related().all()
         resource_name = 'whitelist'
 
@@ -199,7 +193,6 @@ class WhiteListItemResource(FilterSetItemResource):
 class BlackListItemResource(FilterSetItemResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
-
         url = bundle.data['url']
 
         whitelist_item = get_WhiteListItem(url)  # check to see if this exists
@@ -264,7 +257,6 @@ class EyeHistoryResource(ModelResource):
         return bundle
 
     def obj_create(self, bundle, request=None, **kwargs):
-
         url = bundle.data['url']
         domain = url_domain(url)
 
@@ -275,7 +267,8 @@ class EyeHistoryResource(ModelResource):
         start_event = bundle.data['start_event']
         end_time = bundle.data['end_time']
         end_event = bundle.data['end_event']
-        favIconUrl = bundle.data.get('favIconUrl')
+        favicon_url = bundle.data.get('favIconUrl')
+        bundle.data['favicon_url'] = favicon_url
         src = bundle.data['src']
 
         end_time = datetime.datetime.strptime(
@@ -292,37 +285,24 @@ class EyeHistoryResource(ModelResource):
             bundle.data.pop('message', None)
 
         try:
-            exists = EyeHistory.objects.filter(
-                user=request.user, url=url,
-                title=title, src=src,
-                favIconUrl=favIconUrl,
-                start_time__gt=start_time -
-                datetime.timedelta(minutes=1),
-                start_event=start_event)
+            exists = EyeHistory.objects.filter(user=request.user, url=url, title=title, src=src, favicon_url=favicon_url,
+                                               start_time__gt=start_time - datetime.timedelta(minutes=1), start_event=start_event)
             if exists.count() > 0:
                 eye_his = exists[0]
                 eye_his.end_time = end_time
                 eye_his.end_event = end_event
                 elapsed_time = end_time - start_time
                 eye_his.total_time = int(round(
-                    (elapsed_time.microseconds / 1.0E3) +
-                    (elapsed_time.seconds * 1000) +
-                    (elapsed_time.days * 8.64E7)))
+                    (elapsed_time.microseconds / 1.0E3) + (elapsed_time.seconds * 1000) + (elapsed_time.days * 8.64E7)))
                 eye_his.humanize_time = humanize_time(elapsed_time)
                 eye_his.save()
                 if message:
                     eye_message, created = EyeHistoryMessage.objects.get_or_create(
                         eyehistory=eye_his, message=message)
             else:
-               # save_raw_eyehistory(request.user,
-                   # url, title, start_event, end_event,
-                   # start_time, end_time,
-                   # src, domain, favIconUrl)
+               # save_raw_eyehistory(request.user, url, title, start_event, end_event, start_time, end_time, src, domain, favicon_url)
                 dup_histories = EyeHistory.objects.filter(
-                    user=request.user,
-                    url=url, title=title,
-                    end_time__gt=start_time -
-                    datetime.timedelta(minutes=5))
+                    user=request.user, url=url, title=title, end_time__gt=start_time - datetime.timedelta(minutes=5))
                 if dup_histories.count() > 0:
                     obj = merge_histories(dup_histories, end_time, end_event)
                     if message:

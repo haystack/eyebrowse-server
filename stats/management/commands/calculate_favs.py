@@ -46,10 +46,17 @@ class Command(NoArgsCommand):
                 item_meta[domain] = data
             else:
                 item_meta[domain] = {
+<<<<<<< HEAD
                     "fav_icon": item.favIconUrl,
                     "count": 1,
                     "total_time": item.total_time,
                     "domain": domain
+=======
+                    "favicon" : item.favicon_url,
+                    "count" : 1,
+                    "total_time" : item.total_time,
+                    "domain" : domain
+>>>>>>> master
                 }
 
         max_count = 0
@@ -64,7 +71,7 @@ class Command(NoArgsCommand):
 
         fav_data, created = FavData.objects.get_or_create(user=user)
         fav_data.domain = max_dict["domain"]
-        fav_data.favIconUrl = max_dict["fav_icon"]
+        fav_data.favicon_url = max_dict["favicon"]
         fav_data.total_time = max_dict["total_time"]
         fav_data.visit_count = max_dict["count"]
         fav_data.save()

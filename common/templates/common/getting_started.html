@@ -1,0 +1,121 @@
+{% extends 'common/base.html' %}
+{% load gravatar %}
+{% load staticfiles %}
+{% load filters %}
+
+{% block styles %} 
+{% include_style "common/css/downloads" %}
+{% endblock %}
+
+{% block content %}
+<div class="span9 offset1 well">
+    <p>
+        <h2> Getting Started</h2>
+    </p>
+    <p>
+    	<h4>Start Tracking Your Data</h4>
+		If you're interested in tracking your visits to certain pages, you'll need to install the 
+		<a href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">
+			<img width=20 height=20 src='{% static "common/img/chrome-logo.png" %}'>
+			Chrome extension</a>
+		from the Chrome webstore.
+	</P>
+	<P>
+			
+	</p>
+	<P>
+		You'll also want to build up a whitelist of the domains you're interested in tracking and sharing. Below are some
+		common domains that people on this site have whitelisted:
+	</P>
+	<P>
+		<table>
+		{% for list in top_whitelists %}
+		<tr class="light-well">
+			<td>
+				<a target="_blank" href="{{ list }}">{{ list }}</a>
+			</td>
+			<td id="to-whitelist">
+				<a class="btn btn-info whitelist-add" data-url="{{ list }}">
+					<span data-url="{{ list }}" class="icon-white glyphicon glyphicon-ok">
+					 Whitelist
+				</a>
+				
+			</td>
+		</tr>
+		{% endfor %}
+		</table>
+	</P>
+	<P>
+		You can always edit your whitelist in the <a href="/accounts/profile/whitelist">Settings page</a> and through
+		the extension. Additionally, if you don't want to whitelist a domain but still want to check in to a particular page, 
+		you can do so using the extension while on that page.
+	</P>
+	<br />
+	<P>
+		<h4>Find Friends and Interesting People to Follow</h4>
+		You can find friends to follow by <a target="_blank" href="/accounts/profile/sync_twitter">connecting your Twitter</a>. 
+		You can also 
+		<a data-toggle="modal" data-target="#invite-modal">
+			invite your friends
+		</a> to try out Eyebrowse.
+		Below are some people in Eyebrowse that currently have the most followers:
+		
+	</P>
+	<P>
+		<table>
+		{% for person in top_people %}
+		<tr class="light-well">
+			<td>
+				<a href="/users/{{ person.user.username }}">
+					<img class="nav-prof-img img-rounded" src="{% gravatar_for_user person.user %}">
+					{{ person.user.username }}</a>
+			</td>
+			<td id="to-follow">
+				<a class="btn btn-info follow-add">
+		             <span data-user="{{ person.user.username }}" class="icon-white glyphicon glyphicon-ok" data-type="add-follow">
+		             	Follow  
+		        </span></a>
+        	</td>
+		</tr>
+		{% endfor %}
+		</table>
+	</P>
+	<P>
+		You can always edit your following list in the <a href="/accounts/profile/connections">Settings page</a>.
+	</P>
+	
+	<br />
+
+
+        <a class="btn btn-primary" href="/live_stream/">Continue to my Home Page</a>
+</p>
+</div>
+
+<div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="inviteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Invite your Friends to Try out Eyebrowse</h4>
+      </div>
+      <div class="modal-body" id="inviteModalBody">
+      	<textarea>
+      		Hi!
+      	</textarea>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="delete-eyehistory-button">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+	{% include_script 'common/js/getting_started' %}
+{% endblock %}
+

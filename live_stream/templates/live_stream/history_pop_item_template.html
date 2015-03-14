@@ -10,7 +10,7 @@
     	
         <span class="span6" style="margin-left: 0px">
             <a href="http://{{ item.popular_history.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url|url_domain }}">
-                <img class="favicon" src="{{ item.popular_history.favIconUrl }}"> {{ item.popular_history.url|url_domain|truncatechars:30 }} 
+                <img class="favicon" src="{{ item.popular_history.favicon_url }}"> {{ item.popular_history.url|url_domain|truncatechars:30 }} 
             </a> | 
             <a href="{{ item.popular_history.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url }}">
                 {{ item.popular_history.url|truncatechars:43 }} 

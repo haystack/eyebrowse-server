@@ -15,7 +15,7 @@
     <div id="history_item_{{ item.id }}_content" class="history-content">
         <span>
             <a href="{{ item.url }}" target="_blank" data-content="{{ url }}" class="pointer">
-             <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.url|url_domain }}
+             <img class="favicon" src="{{ item.favicon_url }}"> {{ item.url|url_domain }}
             </a> {{ item.title }}
         </span> |
         <span> <strong> Total Time: </strong> {{ item.humanize_time }} </span>

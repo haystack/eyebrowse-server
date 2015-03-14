@@ -15,7 +15,7 @@
     	
         <span>
             <a href="http://{{ item.first_item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.first_item.url|url_domain }}">
-                <img class="favicon" src="{{ item.favIconUrl }}"> {{ item.first_item.url|url_domain|truncatechars:30 }} 
+                <img class="favicon" src="{{ item.favicon_url }}"> {{ item.first_item.url|url_domain|truncatechars:30 }} 
             </a> 
             | <a class="pointer" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.first_item.url }}">
             	<span class="cut-content pointer" data-content="{{ item.first_item.title}}">
