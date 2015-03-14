@@ -4,7 +4,7 @@ function submitConsent(e, d) {
 	},
 	function(res) {
 		if (res.res === 'success') {
-			window.location.replace('/live_stream/');
+			window.location.replace('/getting_started');
 		} else {
 			location.reload();
 		}

@@ -32,11 +32,19 @@
 		{% for list in top_whitelists %}
 		<tr class="light-well">
 			<td>
-				<a target="_blank" href="{{ list }}">{{ list }}</a>
+				<a target="_blank" href="{{ list.url }}">{{ list.url }}</a>
 			</td>
-			<td id="to-whitelist">
-				<a class="btn btn-info whitelist-add" data-url="{{ list }}">
-					<span data-url="{{ list }}" class="icon-white glyphicon glyphicon-ok">
+			<td>
+				{% if list.count == 1 %}
+					{{ list.count }} person
+				{% else %}
+					{{ list.count }} people
+				{% endif %}
+					have whitelisted this
+			</td>
+			<td>
+				<a class="btn btn-info whitelist-add" data-url="{{ list.url }}">
+					<span data-url="{{ list.url }}" class="icon-white glyphicon glyphicon-ok" data-type="add-whitelist">
 					 Whitelist
 				</a>
 				
@@ -53,11 +61,7 @@
 	<br />
 	<P>
 		<h4>Find Friends and Interesting People to Follow</h4>
-		You can find friends to follow by <a target="_blank" href="/accounts/profile/sync_twitter">connecting your Twitter</a>. 
-		You can also 
-		<a data-toggle="modal" data-target="#invite-modal">
-			invite your friends
-		</a> to try out Eyebrowse.
+		Follow people to see what they're sharing online and find new content that is interesting to you.
 		Below are some people in Eyebrowse that currently have the most followers:
 		
 	</P>
@@ -66,12 +70,22 @@
 		{% for person in top_people %}
 		<tr class="light-well">
 			<td>
-				<a href="/users/{{ person.user.username }}">
+				<a href="/users/{{ person.user.username }}" target="_blank">
 					<img class="nav-prof-img img-rounded" src="{% gravatar_for_user person.user %}">
 					{{ person.user.username }}</a>
 			</td>
-			<td id="to-follow">
-				<a class="btn btn-info follow-add">
+			<td>
+				<a href="/followers/{{ person.user.username }}" target="_blank">
+					{{ person.num_followed }}
+					{% if person.num_followed == 1 %}
+						 follower
+					{% else %}
+						 followers
+					{% endif %}
+					
+			</td>
+			<td>
+				<a class="btn btn-info connection">
 		             <span data-user="{{ person.user.username }}" class="icon-white glyphicon glyphicon-ok" data-type="add-follow">
 		             	Follow  
 		        </span></a>
@@ -89,27 +103,6 @@
 
         <a class="btn btn-primary" href="/live_stream/">Continue to my Home Page</a>
 </p>
-</div>
-
-<div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="inviteModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Invite your Friends to Try out Eyebrowse</h4>
-      </div>
-      <div class="modal-body" id="inviteModalBody">
-      	<textarea>
-      		Hi!
-      	</textarea>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="delete-eyehistory-button">Delete</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 {% endblock %}

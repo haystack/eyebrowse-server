@@ -1,26 +1,12 @@
-from django.conf.urls import include
-from django.conf.urls import patterns
-from django.conf.urls import url
+from django.conf.urls import include, patterns, url
 from django.shortcuts import HttpResponse
-
 from django.conf import settings
 
 from tastypie.api import Api
 
-from api.resources import UserResource
-from api.resources import UserProfileResource
-from api.resources import WhiteListItemResource
-from api.resources import BlackListItemResource
-from api.resources import EyeHistoryResource
-from api.resources import EyeHistoryMessageResource
-from api.resources import ChatMessageResource
-from api.resources import MuteListResource
+from api.resources import *
 
-from eyebrowse.views import about
-from eyebrowse.views import faq
-from eyebrowse.views import api_docs
-from eyebrowse.views import consent_accept
-from eyebrowse.views import consent
+from eyebrowse.views import *
 
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
@@ -72,6 +58,7 @@ urlpatterns = patterns('',
 
                        url(r'^consent_accept$', consent_accept),
                        url(r'^consent$', consent),
+                       url(r'^getting_started$', getting_started),
 
                        url(r'^ext/', include("extension.urls")),
                        )

@@ -1,38 +1,62 @@
 function whitelistAdd(e, d) {
 	button = $(this);
     var url = button.data('url');
-	$.post('/api/whitelist/add/', {
-		'form_type': 'whitelist',
-		'whitelist': url
-	},
-	function(res) {
-		if (res.success != false) {
-			button.next('span').show();
-		} else{
-			console.log(res);
-		}
-	});
+    var $icon = $(e.currentTarget).children();
+    var type = $icon.data('type');
+    
+    if (type == 'add-whitelist'){
+		$.post('/api/whitelist/add/', {
+			'form_type': 'whitelist',
+			'whitelist': url
+		},
+		function(res) {
+			if (res.success) {
+				$.each($('.whitelist-add'), function(index, item){
+	                $item = $(item).children();
+	                if ($item.data('url') == $icon.data('url')){
+	                    swapWhitelistClass($item, type);
+	                    button.attr('id', res.data['id']);
+	                }
+	            });
+			}
+		});
+	} else {
+		var id = button.attr('id');
+		console.log(id);
+	    $.ajax({
+	        url: getApiURL('whitelist', id),
+	        type: 'DELETE',
+	        success: function(res) {
+				$.each($('.whitelist-add'), function(index, item){
+	                $item = $(item).children();
+	                if ($item.data('url') == $icon.data('url')){
+	                    swapWhitelistClass($item, type);
+	                }
+	            });
+	        }
+	    });
+		
+	}
 	return false;
 }
 
-function followAdd(e, d) {
-	button = $(this);
-    var username = button.data('username');
-	$.post('/api/whitelist/add/', {
-		'form_type': 'whitelist',
-		'whitelist': url
-	},
-	function(res) {
-		if (res.success != false) {
-			button.next('span').show();
-		} else{
-			console.log(res);
-		}
-	});
-	return false;
+function swapWhitelistClass(icon, type) {
+    var $icon = $(icon);
+    if (type == 'add-whitelist'){
+        $icon.attr('data-type', 'rm-whitelist');
+        $icon.removeClass('glyphicon-ok').addClass('glyphicon-remove');
+        var text = $icon.parent().html().replace('Whitelist', 'Whitelisted');
+        $icon.parent().html(text);
+        ;
+    } else {
+        $icon.attr('data-type', 'add-whitelist');
+        $icon.removeClass('glyphicon-remove').addClass('glyphicon-ok');
+        var text = $icon.parent().html().replace('Whitelisted', 'Whitelist');
+        $icon.parent().html(text);
+    }
 }
 
 $(function() {
-		$('#to-follow').on('click', '.follow-add', follow)
+		$('.connection').on('click', follow);
 	    $(".whitelist-add").on('click', whitelistAdd);
 });
