@@ -50,4 +50,4 @@ jslint:
 lint: clean pylint jslint
 
 deploy: lint
-	fab deploy
+	fab -i prod deploy restart_apache
