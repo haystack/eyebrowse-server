@@ -46,9 +46,6 @@ except IOError:
 if ENV == 'prod':
     BASE_URL = 'http://eyebrowse.csail.mit.edu'
     MYSQL = MYSQL_PROD
-elif ENV == 'staging':
-    BASE_URL = 'http://eyebrowse.csail.mit.edu'
-    MYSQL = MYSQL_STAGING
 else:
     BASE_URL = 'http://localhost:8000'
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

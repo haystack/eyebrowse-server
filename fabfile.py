@@ -1,15 +1,6 @@
 from fabric.api import *
 
 
-def staging():
-    env.user = 'ubuntu'
-    env.hosts = ['eyebrowse-staging.csail.mit.edu']
-    env.server_path = '/eyebrowse-server'
-    env.python_path = '/eyebrowse-virtualenv/bin'
-    env.graceful = True
-    return
-
-
 def prod():
     env.user = 'ubuntu'
     env.hosts = ['eyebrowse.csail.mit.edu']
@@ -20,7 +11,6 @@ def prod():
 
 
 def deploy():
-
     sudo("rm -rf %s/*" % env.server_path)
     local('zip -r code.zip * -x "*.pyc" "*.git"')
     put("code.zip", "%s/" % env.server_path, use_sudo=True)
