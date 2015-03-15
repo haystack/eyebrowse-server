@@ -1,10 +1,12 @@
 import kronos
 
-from stats.cron_tasks.calculate_stats import user_stat_gen
 from common.cron_tasks.add_favicons import add_favicons
+from scripts.cron_tasks.populate_popular_history import update_popular_history
+from stats.cron_tasks.calculate_stats import user_stat_gen
 
 
 @kronos.register("0 * * * *")
 def hourly_cron():
     user_stat_gen()
     add_favicons()
+    update_popular_history()
