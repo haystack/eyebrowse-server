@@ -7,7 +7,7 @@ d3.json("/api/graphs/timeline_days?username=" + username + "&date=" + date + "&q
         var dayList = data.week_days;
         var domainList = data.domain_list;
 
-        var colorHash = [];
+        colorHash = [];
 
         for (var i = 0; i < domainList.length; i++) {
             colorHash.push([domainList[i], colorsList[i]]);

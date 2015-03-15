@@ -44,7 +44,8 @@ def install_reqs():
 
 
 def install_cron():
-    sudo('%s/python manage.py installtasks' % (env.python_path))
+    with cd(env.server_path):
+        sudo('%s/python manage.py installtasks' % (env.python_path))
 
 
 def restart_apache():
