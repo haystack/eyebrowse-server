@@ -35,10 +35,10 @@
             </div>
             {% include_ichtemplate 'api/js_templates/mutelist_set_row.html' %}
             <script type="text/javascript">
-                var {{type}}_filterset = []
+                var {{type}}Filterset = []
                 {% for item in items %}
                 	{% if item.url != None %}
-	                    {{type}}_filterset.push({
+	                    {{type}}Filterset.push({
 	                    	'id' : "{{item.id}}",
 	                    	'url' : "{{item.url}}"
 	                    });
@@ -48,10 +48,10 @@
             
             {% include_ichtemplate 'api/js_templates/mutelist_set_row2.html' %}
             <script type="text/javascript">
-                var {{type}}_filterset_word = []
+                var {{type}}FiltersetWord = []
                 {% for item in items %}
                 	{% if item.word != None %}
-	                    {{type}}_filterset_word.push({
+	                    {{type}}FiltersetWord.push({
 	                    	'id' : "{{item.id}}",
 	                    	'word' : "{{item.word}}",
 	                    });

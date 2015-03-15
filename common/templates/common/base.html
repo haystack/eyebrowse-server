@@ -196,6 +196,11 @@
 
 
         {% include 'common/send_feedback.html' %}
+        
+        <script type="text/javascript">
+            var username = "{{user.username}}";
+            var profileUsername = "{{profile_user.username}}";
+        </script>
 
         <!--  javascript -->
         {% compress js %}
@@ -223,9 +228,5 @@
         {% endblock %}
 
         {% endcompress %}
-        <script type="text/javascript">
-            var username = "{{user.username}}";
-            var profileUsername = "{{profile_user.username}}";
-        </script>
     </body>
 </html>
