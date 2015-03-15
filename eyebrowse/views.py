@@ -14,11 +14,10 @@ from annoying.decorators import render_to
 from accounts.models import UserProfile
 
 from api.models import Tag
+from api.models import WhiteListItem
 
 from common.admin import email_templates
 from common.view_helpers import _template_values
-
-from api.models import Tag, WhiteListItem
 
 from eyebrowse.log import logger
 from django.db.models.aggregates import Count
@@ -66,15 +65,20 @@ def consent(request):
                             page_title="consent",
                             navbar='nav_home')
 
+
 @login_required
 @render_to('common/getting_started.html')
 def getting_started(request):
-    user_whitelist = WhiteListItem.objects.filter(user=request.user).values_list('url', flat=True)
-    top_whitelists = WhiteListItem.objects.filter(~Q(url__in=user_whitelist)).values('url').annotate(count=Count('url')).order_by('-count')[0:5]
+    user_whitelist = WhiteListItem.objects.filter(
+        user=request.user).values_list('url', flat=True)
+    top_whitelists = WhiteListItem.objects.filter(~Q(url__in=user_whitelist)).values(
+        'url').annotate(count=Count('url')).order_by('-count')[0:5]
     user_prof = UserProfile.objects.get(user=request.user)
-    user_follows = list(user_prof.followed_by.all().values_list('user__username', flat=True))
+    user_follows = list(
+        user_prof.followed_by.all().values_list('user__username', flat=True))
     user_follows.append(request.user.username)
-    top_people = UserProfile.objects.filter(~Q(user__username__in=user_follows)).annotate(num_followed=Count('followed_by')).order_by('-num_followed')[0:5]
+    top_people = UserProfile.objects.filter(~Q(user__username__in=user_follows)).annotate(
+        num_followed=Count('followed_by')).order_by('-num_followed')[0:5]
     return _template_values(request, page_title="getting started", navbar='nav_home', top_whitelists=top_whitelists, top_people=top_people)
 
 

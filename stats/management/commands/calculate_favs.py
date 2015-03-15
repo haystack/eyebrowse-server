@@ -46,10 +46,10 @@ class Command(NoArgsCommand):
                 item_meta[domain] = data
             else:
                 item_meta[domain] = {
-                    "favicon" : item.favicon_url,
-                    "count" : 1,
-                    "total_time" : item.total_time,
-                    "domain" : domain
+                    "favicon": item.favicon_url,
+                    "count": 1,
+                    "total_time": item.total_time,
+                    "domain": domain
 
                 }
 
