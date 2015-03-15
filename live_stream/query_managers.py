@@ -340,7 +340,7 @@ class GroupHistory(object):
 
         self.history_items = []
         self.add_item(history_item)
-        self.favIconUrl = history_item.favIconUrl
+        self.favicon_url = history_item.favicon_url
         self.user = history_item.user
 
     def add_item(self, history_item):

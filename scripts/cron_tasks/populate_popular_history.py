@@ -28,7 +28,7 @@ def create_pop(ehist, url):
     print ehist.title
     p, _ = PopularHistoryInfo.objects.get_or_create(url=url,
                                                     domain=ehist.domain,
-                                                    favIconUrl=ehist.favIconUrl,
+                                                    favicon_url=ehist.favicon_url,
                                                     title=ehist.title)
 
     try:
