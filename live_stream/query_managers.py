@@ -18,7 +18,7 @@ from common.pagination import paginator
 from live_stream.renderers import history_renderer
 
 
-def live_stream_query_manager(get_dict, req_user, return_type="html"):
+def live_stream_query_manager(get_dict, req_user, return_type="html", empty_search_msg=None):
 
     valid_params = ["timestamp", "sort",
                     "query", "following",
@@ -68,6 +68,7 @@ def live_stream_query_manager(get_dict, req_user, return_type="html"):
                                   history,
                                   hist_type,
                                   return_type,
+                                  empty_search_msg,
                                   get_dict.get("template"),
                                   get_params=search_params,
                                   following=following)

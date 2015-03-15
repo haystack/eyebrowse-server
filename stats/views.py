@@ -392,7 +392,7 @@ def profile_data(request, username=None):
     get_dict["username"] = profile_user.username
     get_dict["sort"] = "time"
 
-    hist, history_stream = live_stream_query_manager(get_dict, request.user)
+    hist, history_stream = live_stream_query_manager(get_dict, request.user, empty_search_msg=empty_search_msg)
 
     # stats
     tot_time, item_count = profile_stat_gen(profile_user)
@@ -479,8 +479,9 @@ def _profile_info(user=None, username=None, following=False, followers=False):
 
     follows = False
     nav_bar = ""
+    
     if user:
-        if not username or user.username == username:  # viewing own profile
+        if (not username) or (user.username == username):  # viewing own profile
             nav_bar = "nav_profile"
             username = user.username
             if following:
@@ -489,7 +490,6 @@ def _profile_info(user=None, username=None, following=False, followers=False):
                 msg_type = 'self_followers'
             else:
                 msg_type = 'self_profile_stream'
-
         else:
             follows = user.profile.follows.filter(
                 user__username=username).exists()

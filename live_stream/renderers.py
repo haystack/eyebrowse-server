@@ -7,6 +7,7 @@ import urllib
 
 def history_renderer(user, history,
                      hist_type, return_type,
+                     empty_search_msg,
                      template, get_params=None,
                      following=None):
     """
@@ -16,8 +17,9 @@ def history_renderer(user, history,
     """
 
     if return_type == "html":
-
-        empty_search_msg = EMPTY_SEARCH_MSG['home_stream']
+        
+        if not empty_search_msg:
+            empty_search_msg = EMPTY_SEARCH_MSG['home_stream']
 
         template_values = {
             'history': history,

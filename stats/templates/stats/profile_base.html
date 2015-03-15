@@ -71,7 +71,9 @@
         </div>
         </div>
     {% include "live_stream/search_bar.html" %}
-    {% include "live_stream/aggregate_stats.html" %}
+    {% if num_history > 0 %}
+    	{% include "live_stream/aggregate_stats.html" %}
+    {% endif %}
 
 {% block profile_content %}
 

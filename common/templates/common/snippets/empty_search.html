@@ -1,4 +1,6 @@
 <div class='row timeline-container empty-search'>
     <h1> Sorry, no results found ;(</h1>
-    <p> {{ msg }} </p>
+    <p> 
+    	{% autoescape off %}{{ msg }}{% endautoescape %}
+    </p>
 </div>
