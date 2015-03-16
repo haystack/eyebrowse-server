@@ -203,7 +203,7 @@
         </script>
 
         <!--  javascript -->
-        {% compress js %}
+        {# compress js #}
         {% include_script 'common/js/jquery-1.11.2.min' %}
 
         <!--  helpers -->
@@ -227,6 +227,6 @@
         {% block scripts %}
         {% endblock %}
 
-        {% endcompress %}
+        {# endcompress #}
     </body>
 </html>
