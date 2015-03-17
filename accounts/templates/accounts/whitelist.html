@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block account_content %}
+	<span class="span5">If you're not sure where to start, you can get <a href="/getting_started">suggestions for sites to whitelist</a>.</span>
     {% include 'accounts/edit_filterset.html' with items=whitelist type="whitelist" %}
 {% endblock %}
 
