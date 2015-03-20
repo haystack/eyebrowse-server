@@ -3,6 +3,7 @@
 root_path="/opt/eyebrowse"
 env_path="$(root_path)/env"
 debug_path="$(root_path)/debug"
+SITEDIR = $(shell python -m site --user-site)
 
 ifndef env
 	env=dev
@@ -44,13 +45,13 @@ db:
 
 py-path:
 	# find directory
-	SITEDIR=$(shell python -m site --user-site)
+	echo $(SITEDIR)
 	
-	# # create if it doesn't exist
-	mkdir -p "$(SITEDIR)"
+	# create if it doesn't exist
+	mkdir -p $(SITEDIR)
 	
 	# create new .pth file with our path
-	echo "$(shell pwd) > "$(SITEDIR)/eyebrowse-server.pth"
+	echo "$(shell pwd)" > $(SITEDIR)/eyebrowse-server.pth
 
 install: clean git py-path requirements env config db
 
