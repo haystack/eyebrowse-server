@@ -25,10 +25,10 @@ metis-install:
 	sudo mkdir -p /etc/metis
 	sudo cp metis_settings.py /etc/metis/settings.py
 	sudo mkdir -p /var/log/metis
-	docker run -v /etc/metis:/etc/metis -v /var/log/metis/:/var/log/metis/ -p PUBLIC_PORT:80 chronology/metis:$(METIS_VERSION)
+	sudo docker run -d -v /etc/metis:/etc/metis -v /var/log/metis/:/var/log/metis/ -p PUBLIC_PORT:80 chronology/metis:$(METIS_VERSION)
 
 jia-install:
 	sudo mkdir -p /etc/jia
 	sudo cp jia_settings.py /etc/jia/settings.py
 	sudo mkdir -p /var/log/jia
-	docker run -v /etc/jia:/etc/jia -v /var/log/jia/:/var/log/jia/ -p PUBLIC_PORT:80 chronology/jia:$(JIA_VERSION)
+	sudo docker run -d -v /etc/jia:/etc/jia -v /var/log/jia/:/var/log/jia/ -p PUBLIC_PORT:80 chronology/jia:$(JIA_VERSION)
