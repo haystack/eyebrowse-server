@@ -14,7 +14,7 @@ run: cassandra-run kronos-run metis-run jia-run
 # https://github.com/tobert/cassandra-docker
 cassandra-install:
 	sudo docker pull tobert/cassandra
-	sudo mkdir /srv/cassandra
+	sudo mkdir -p /srv/cassandra
 
 cassandra-run:
 	sudo docker run -d -v /srv/cassandra:/data tobert/cassandra
