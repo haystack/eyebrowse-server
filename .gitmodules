@@ -1,0 +1,3 @@
+[submodule "analytics/chronology"]
+	path = analytics/chronology
+	url = git@github.com:Locu/chronology.git
