@@ -13,7 +13,10 @@ def get_port(bundle):
         Returns the port value or the default value
         of 80 if the port is empty
     """
-    port = bundle.data['port']
+    try:
+        port = bundle.data['port']
+    except KeyError: # if they havn't upgraded the extension
+        port = None
     if not port:
         port = 80  # default port
     return port
