@@ -1,5 +1,5 @@
-from fabric.api import env, sudo, local \
-        put, cd
+from fabric.api import env, sudo, local, \
+    put, cd
 
 
 def prod():
