@@ -272,9 +272,10 @@ def sync_twitter(request):
                 api = tweepy.API(auth)
                 twitter_user = api.me()
                 username = twitter_user.screen_name
+                twitter_id = twitter_user.id
 
                 TwitterInfo.objects.create(
-                    user=user, twitter_username=username,
+                    user=user, twitter_username=username, twitter_id=twitter_id,
                     access_token=token, access_token_secret=secret)
                 template_dict[
                     "synced"] = "Your Twitter account is now connected to Eyebrowse!"
