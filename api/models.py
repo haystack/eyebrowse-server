@@ -34,6 +34,7 @@ class ChatMessage(models.Model):
 class FilterListItem(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     url = models.URLField(max_length=200, null=False, blank=False)
+    port = models.IntegerField(default=80)
     date_created = models.DateTimeField(default=datetime.datetime.utcnow())
 
     class Meta:

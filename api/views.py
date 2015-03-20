@@ -128,7 +128,6 @@ def whitelist_add(request):
                     errors['whitelist'].append("Enter a url!")
                 else:
                     errors['whitelist'].append("%s is not a valid url." % url)
-
             elif WhiteListItem.objects.filter(url=url, user=user).exists():
                 errors['whitelist'].append(
                     "You already registered the whitelist item %s" % url)

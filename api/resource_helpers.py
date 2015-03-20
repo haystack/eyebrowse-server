@@ -7,6 +7,18 @@ from api.defaults import DEFAULT_BLACKLIST
 import urlparse
 
 
+def get_port(bundle):
+    """
+        Helper to get the port from the bundle.
+        Returns the port value or the default value
+        of 80 if the port is empty
+    """
+    port = bundle.data['port']
+    if not port:
+        port = 80  # default port
+    return port
+
+
 def split_url(url):
     parsed = urlparse.urlparse(url)
     domain = parsed.netloc
@@ -14,15 +26,15 @@ def split_url(url):
     return domain, protocol
 
 
-def in_Whitelist(url):
-    return in_FilterSet(WhiteListItem, url)
+def in_Whitelist(url, port):
+    return in_FilterSet(WhiteListItem, url, port)
 
 
-def in_Blacklist(url):
-    return in_FilterSet(BlackListItem, url)
+def in_Blacklist(url, port):
+    return in_FilterSet(BlackListItem, url, port)
 
 
-def in_FilterSet(set_type, url):
+def in_FilterSet(set_type, url, port):
     domain, protocol = split_url(url)
     return (set_type.objects.filter(
         url=domain).exists() or set_type.objects.filter(
@@ -30,19 +42,19 @@ def in_FilterSet(set_type, url):
         set_type.objects.filter(url=url).exists())
 
 
-def get_WhiteListItem(url):
-    return get_FilterSetItem(WhiteListItem, url)
+def get_WhiteListItem(url, port):
+    return get_FilterSetItem(WhiteListItem, url, port)
 
 
-def get_BlackListItem(url):
-    return get_FilterSetItem(BlackListItem, url)
+def get_BlackListItem(url, port):
+    return get_FilterSetItem(BlackListItem, url, port)
 
 
-def get_FilterSetItem(set_type, url):
+def get_FilterSetItem(set_type, url, port):
     domain, protocol = split_url(url)
     urls = [domain, protocol, url]
     for item in urls:
-        item_set = set_type.objects.filter(url=item)
+        item_set = set_type.objects.filter(url=item, port=port)
         if item_set.exists():
             return item_set[0]
     return None

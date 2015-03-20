@@ -25,6 +25,7 @@ from api.models import WhiteListItem
 from api.models import merge_histories
 from api.resource_helpers import get_BlackListItem
 from api.resource_helpers import get_WhiteListItem
+from api.resource_helpers import get_port
 from api.resource_helpers import urlencodeSerializer
 from api.utils import humanize_time
 
@@ -159,6 +160,7 @@ class FilterSetItemResource(BaseResource):
             'user': ALL_WITH_RELATIONS,
             'date_created': ALL,
             'url': ALL,
+            'port': ALL
         }
         resource_name = 'filterset'
 
@@ -167,8 +169,10 @@ class WhiteListItemResource(FilterSetItemResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
         url = bundle.data['url']
+        port = get_port(bundle)
 
-        blacklist_item = get_BlackListItem(url)  # check to see if this exists
+        # check to see if this exists
+        blacklist_item = get_BlackListItem(url, port)
         if blacklist_item:
             blacklist_item.delete()
 
@@ -177,7 +181,7 @@ class WhiteListItemResource(FilterSetItemResource):
             return bundle
 
         try:
-            WhiteListItem.objects.get(user=request.user, url=url)
+            WhiteListItem.objects.get(user=request.user, url=url, port=port)
         except WhiteListItem.DoesNotExist:
             return super(WhiteListItemResource,
                          self).obj_create(
@@ -194,12 +198,14 @@ class BlackListItemResource(FilterSetItemResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
         url = bundle.data['url']
+        port = get_port(bundle)
 
-        whitelist_item = get_WhiteListItem(url)  # check to see if this exists
+        # check to see if this exists
+        whitelist_item = get_WhiteListItem(url, port)
         if whitelist_item:
             whitelist_item.delete()
         try:
-            BlackListItem.objects.get(user=request.user, url=url)
+            BlackListItem.objects.get(user=request.user, url=url, port=port)
         except BlackListItem.DoesNotExist:
             return super(BlackListItemResource, self
                          ).obj_create(
@@ -285,8 +291,11 @@ class EyeHistoryResource(ModelResource):
             bundle.data.pop('message', None)
 
         try:
-            exists = EyeHistory.objects.filter(user=request.user, url=url, title=title, src=src, favicon_url=favicon_url,
-                                               start_time__gt=start_time - datetime.timedelta(minutes=1), start_event=start_event)
+            exists = EyeHistory.objects.filter(user=request.user, url=url,
+                                               title=title, src=src, favicon_url=favicon_url,
+                                               start_time__gt=start_time -
+                                               datetime.timedelta(minutes=1),
+                                               start_event=start_event)
             if exists.count() > 0:
                 eye_his = exists[0]
                 eye_his.end_time = end_time
