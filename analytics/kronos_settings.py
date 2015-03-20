@@ -2,7 +2,7 @@ import multiprocessing
 import re
 
 from uuid import getnode
-from chronology.kronos.conf.constants import ServingMode
+from analytics.config import SECRET_KEY
 
 # In debug mode, print every request to standard out.
 debug = False
@@ -22,27 +22,27 @@ profile = False
 # `ServingMode.READONLY` mode, which allows read-only access to the
 # data for analytics processing without having to worry about errant
 # puts/deletes.
-serving_mode = ServingMode.COLLECTOR
+serving_mode = 'collector'
 
 # Backend storage engine configurations.  Below, 'memory' is a name we
 # assign to an `InMemoryStorage` engine that we'll reference later in
 # the configuration.  Check out other backend configurations for
 # storage backends like cassandra (tests/conf/cassandra.py).
 storage = {
-  'memory': {
-    'backend': 'kronos.storage.memory.InMemoryStorage',
-    'max_items': 100000,
-  },
-  'cassandra': {
-    'backend': 'kronos.storage.cassandra.CassandraStorage',
-    'hosts': ['127.0.0.1'],
-    'keyspace_prefix': 'kronos_test',
-    # Set to a value greater than 0 or you will get an UnavailableException
-    'replication_factor': 1,
-    'timewidth_seconds': 2,  # Keep this small for test environment.
-    'shards_per_bucket': 3,
-    'read_size': 10
-  },
+    'memory': {
+        'backend': 'kronos.storage.memory.InMemoryStorage',
+        'max_items': 100000,
+    },
+    'cassandra': {
+        'backend': 'kronos.storage.cassandra.CassandraStorage',
+        'hosts': ['127.0.0.1'],
+        'keyspace_prefix': 'kronos_test',
+        # Set to a value greater than 0 or you will get an UnavailableException
+        'replication_factor': 1,
+        'timewidth_seconds': 2,  # Keep this small for test environment.
+        'shards_per_bucket': 3,
+        'read_size': 10
+    },
 }
 
 # Default namespace for clients that don't specify one on their requests.
@@ -66,7 +66,7 @@ default_namespace = 'kronos'
 #     '': {
 #      'backends': {
 #        'cassandra': {
-#          'timewidth_seconds': 60*60*24*7 # 1 week.
+# 'timewidth_seconds': 60*60*24*7 # 1 week.
 #          },
 #        'memory': None
 #        },
@@ -75,7 +75,7 @@ default_namespace = 'kronos'
 #    'product.web.views': {
 #      'backends': {
 #        'cassandra': {
-#          'timewidth_seconds': 60*60 # 1 hour.
+# 'timewidth_seconds': 60*60 # 1 hour.
 #          }
 #        },
 #      'read_backend': 'cassandra'
@@ -92,35 +92,36 @@ default_namespace = 'kronos'
 # Cassandra and the memory store (our `backends`), but if a user
 # retrieves data, we'll pull it out of Cassandra (the `read_backend`).
 namespace_to_streams_configuration = {
-  default_namespace: {
-    '': {
-      'backends': {
-        'cassandra': {
-          'timewidth_seconds': 60*60*24*7 # 1 week.
-          },
-        'memory': None
+    default_namespace: {
+        '': {
+            'backends': {
+                'cassandra': {
+                    'timewidth_seconds': 60 * 60 * 24 * 7  # 1 week.
+                },
+                'memory': None
+            },
+            'read_backend': 'cassandra'
         },
-      'read_backend': 'cassandra'
-      },
     }
-  }
 }
 
 # Instance-related settings.
 node = {
-  'id': hex(getnode()),  # Unique ID for this Kronos server.
-  'flush_size': 131072,  # Number of bytes to flush at a time for /get endpoint.
-  'greenlet_pool_size': 500,  # Greenlet poolsize per process.  Balance against
-                              # the parallelism of upstream processes, like
-                              # uWSGI.
-  'gipc_pool_size': multiprocessing.cpu_count(),
-  'log_directory': 'logs',
-  'cors_whitelist_domains': map(re.compile, [
-    # Domains that match any regex in this list will be allowed to
-    # talk to this Kronos instance.  Allows CORS-compliant clients
-    # (e.g., web browsers) to respect your wishes for performing XHR
-    # requests from only certain domains.
-  ])
+    'id': hex(getnode()),  # Unique ID for this Kronos server.
+    # Number of bytes to flush at a time for /get endpoint.
+    'flush_size': 131072,
+    # Greenlet poolsize per process.  Balance against
+    'greenlet_pool_size': 500,
+    # the parallelism of upstream processes, like
+    # uWSGI.
+    'gipc_pool_size': multiprocessing.cpu_count(),
+    'log_directory': 'logs',
+    'cors_whitelist_domains': map(re.compile, [
+        # Domains that match any regex in this list will be allowed to
+        # talk to this Kronos instance.  Allows CORS-compliant clients
+        # (e.g., web browsers) to respect your wishes for performing XHR
+        # requests from only certain domains.
+    ])
 }
 
 # Stream settings.  `format` specifies what a valid stream name looks
@@ -128,5 +129,5 @@ node = {
 # are stored under for each backend.  Ensure that each backend that
 # you use accepts patterns defined by `format`.
 stream = {
-  'format': re.compile(r'^[a-z0-9\_]+(\.[a-z0-9\_]+)*$', re.I)
+    'format': re.compile(r'^[a-z0-9\_]+(\.[a-z0-9\_]+)*$', re.I)
 }

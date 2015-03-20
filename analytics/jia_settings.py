@@ -2,10 +2,10 @@ import os
 import re
 from os.path import dirname as parent
 APPROOT = parent(parent(parent((os.path.realpath(__file__)))))
-from eyebrowse.conifg import ANALYTICS_EMAILS
-from eyebrowse.conifg import GOOGLE_CLIENT_ID
-from eyebrowse.conifg import GOOGLE_CLIENT_SECRET
-from eyebrowse.conifg import SECRET_KEY
+from analytics.config import ANALYTICS_EMAILS
+from analytics.config import GOOGLE_CLIENT_ID
+from analytics.config import GOOGLE_CLIENT_SECRET
+from analytics.config import SECRET_KEY
 
 # Basic configuration settings
 DEBUG = False
@@ -46,11 +46,11 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///%s/app.db' % APPROOT
 
 ENABLE_GOOGLE_AUTH = False
 # Google authentication to protect your board from random users
-ALLOWED_EMAILS = map(re.compile, [
+ALLOWED_EMAILS = map(re.compile,
     # Only user IDs matching regexes in this list will be allowed to create
     # accounts
     ANALYTICS_EMAILS,
-])
+)
 
 # GOOGLE_CLIENT_SECRET imported
 # GOOGLE_CLIENT_ID imported
