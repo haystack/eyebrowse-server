@@ -31,4 +31,4 @@ jia-install:
 	sudo mkdir -p /etc/jia
 	sudo cp jia_settings.py /etc/jia/settings.py
 	sudo mkdir -p /var/log/jia
-	docker run -v /etc/jia:/etc/jia -v /var/log/jia/:/var/log/jia/ -p PUBLIC_PORT:80 chronology/jia:v0.7.1
+	docker run -v /etc/jia:/etc/jia -v /var/log/jia/:/var/log/jia/ -p PUBLIC_PORT:80 chronology/jia:$(JIA_VERSION)
