@@ -5,6 +5,7 @@ from django.db import models
 class TwitterInfo(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     twitter_username = models.CharField(max_length=40, default='')
+    twitter_id = models.IntegerField()
     access_token = models.CharField(max_length=140, default='')
     access_token_secret = models.CharField(max_length=140, default='')
 
