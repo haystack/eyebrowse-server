@@ -1,4 +1,4 @@
-.PHONY: run clean requirements env config install pylint jslint lint shell db deploy
+.PHONY: run clean requirements env config install pylint jslint lint shell db deploy git
 
 root_path="/opt/eyebrowse"
 env_path="$(root_path)/env"
@@ -25,6 +25,9 @@ clean:
 requirements:
 	pip install -r requirements.txt
 
+git:
+	git submodule update --init --recursive
+
 env:
 	sudo mkdir -p $(root_path)
 	echo $(env) | sudo tee $(env_path) > /dev/null
@@ -39,7 +42,7 @@ db:
 	python manage.py syncdb
 	python manage.py migrate
 
-install: clean requirements env config db
+install: clean git requirements env config db
 
 pylint:
 	-flake8 .
