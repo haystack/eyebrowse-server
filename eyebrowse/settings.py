@@ -1,11 +1,24 @@
 # Django settings for eyebrowse project.
-import os
 import django
+import os
+import sys
 
 from registration_defaults.settings import *
 
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+
+CHRONOLOGY_PATH = os.path.join(SITE_ROOT, 'analytics/chronology')
+
+
+def _fix_path():
+    """ add git submodules to the path"""
+    modules = ['kronos', 'metis', 'jia']
+    for module in modules:
+        sys.path.append(os.path.join(CHRONOLOGY_PATH, module))
+
+
+_fix_path()
 
 _ENV_FILE_PATH = '/opt/eyebrowse/env'
 _DEBUG_FILE_PATH = '/opt/eyebrowse/debug'

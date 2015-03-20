@@ -2,11 +2,7 @@ import multiprocessing
 import re
 
 from uuid import getnode
-
-class ServingMode(object):
-  ALL = 'all'
-  COLLECTOR = 'collector'
-  READONLY = 'readonly'
+from chronology.kronos.conf.constants import ServingMode
 
 # In debug mode, print every request to standard out.
 debug = False
