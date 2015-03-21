@@ -3,8 +3,8 @@ from django.conf import settings
 from django.db.models import signals
 from django.utils.translation import ugettext_noop as _
 
-if "pinax.notifications" in settings.INSTALLED_APPS:
-    from pinax.notifications.models import NoticeType
+if "notifications" in settings.INSTALLED_APPS:
+    from notifications.models import NoticeType
     NoticeType.create("new_follower", _("New Follower"), _("You have a new follower"))
     
     

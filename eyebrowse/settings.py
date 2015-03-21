@@ -205,7 +205,8 @@ INSTALLED_APPS = (
     'tastypie',
     'kronos',
     'south',
-    'pinax.notifications',
+    'notifications',
+    'languages',
 
     # eyebrowse
     'accounts',
@@ -217,6 +218,10 @@ INSTALLED_APPS = (
 )
 
 APPEND_SLASH = False
+
+#notification settings
+PINAX_NOTIFICATIONS_LANGUAGE_MODEL = "languages.Language"
+
 
 # email settings from sendgrid.com
 EMAIL_HOST = EMAIL["EMAIL_HOST"]

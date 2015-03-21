@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: PINAX\n"
+"POT-Creation-Date: 2014-07-03 16:39-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: AguD\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: models.py:39
+msgid "label"
+msgstr "etiqueta"
+
+#: models.py:40
+msgid "display"
+msgstr "visualización"
+
+#: models.py:41
+msgid "description"
+msgstr "descripción"
+
+#: models.py:44
+msgid "default"
+msgstr "valor por defecto"
+
+#: models.py:50 models.py:89
+msgid "notice type"
+msgstr "tipo de notificación"
+
+#: models.py:51
+msgid "notice types"
+msgstr "tipos de notificaciones"
+
+#: models.py:88
+msgid "user"
+msgstr "usuario"
+
+#: models.py:90
+msgid "medium"
+msgstr "medio"
+
+#: models.py:91
+msgid "send"
+msgstr "enviar"
+
+#: models.py:94
+msgid "notice setting"
+msgstr "configuración de notificación"
+
+#: models.py:95
+msgid "notice settings"
+msgstr "configuraciones de notificaciones"
+
+#: templates/notification/email_body.txt:1
+#, python-format
+msgid ""
+"You have received the following notice from %(current_site)s:\n"
+"\n"
+"%(message)s\n"
+"\n"
+"To see other notices or change how you receive notifications, please go to "
+"%(default_http_protocol)s://%(current_site)s%(notices_url)s\n"
+msgstr ""
+"Has recibido la siguiente notificación de %(current_site)s:\n"
+"\n"
+"%(message)s\n"
+"\n"
+"Para ver otras notificaciones o cambiar la forma en que las recibes, por favor visita "
+"%(default_http_protocol)s://%(current_site)s%(notices_url)s\n"
+
+#: templates/notification/email_subject.txt:1
+#, python-format
+msgid "[%(current_site)s] %(message)s"
+msgstr ""
+
+#: templates/notification/full.html:1 templates/notification/full.txt:1
+#: templates/notification/notice.html:1 templates/notification/short.txt:1
+#, python-format
+msgid "%(notice)s"
+msgstr ""
+
+#: templates/notification/notice_settings.html:8
+#: templates/notification/notice_settings.html:11
+msgid "Notification Settings"
+msgstr "Configuración de Notificaciones"
+
+#: templates/notification/notice_settings.html:15
+#, python-format
+msgid ""
+"\n"
+"        <p class=\"alert alert-warning\">\n"
+"            <span class=\"warning\">Note</span>:\n"
+"            You do not have a verified email address to which notices can be "
+"sent. <a href=\"%(email_url)s\">Add one</a> now.\n"
+"        </p>\n"
+"        "
+msgstr ""
+"\n"
+"        <p class=\"alert alert-warning\">\n"
+"            <span class=\"warning\">Note</span>:\n"
+"            No tienes una dirección de email verificada a la cual se pueden enviar "
+"notificaciones. <a href=\"%(email_url)s\">Agrega una</a> now.\n"
+"        </p>\n"
+"        "
+
+#: templates/notification/notice_settings.html:27
+msgid "Notification Type"
+msgstr "Tipo de Notificación"
+
+#: templates/notification/notice_settings.html:52
+msgid "Change"
+msgstr "Cambiar"

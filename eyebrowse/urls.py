@@ -60,6 +60,8 @@ urlpatterns = patterns('',
                        url(r'^followers/(?P<username>.+)$',
                            'stats.views.followers_data'),
 
+                       url(r"^notifications/", include("notifications.urls")),
+                       
                        url(r'^notifications', 'stats.views.notifications'),
 
                        url(r'^accounts/', include('accounts.urls')),
@@ -77,7 +79,7 @@ urlpatterns = patterns('',
                        url(r'^getting_started$', getting_started),
 
                        url(r'^ext/', include("extension.urls")),
-                       url(r"^notifications/", include("pinax.notifications.urls")),
+                       
                        )
 
 urlpatterns += patterns('eyebrowse.views',
