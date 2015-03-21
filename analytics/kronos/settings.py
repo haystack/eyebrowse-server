@@ -1,5 +1,11 @@
 import multiprocessing
 import re
+import os
+from os.path import dirname as parent
+import sys
+
+APPROOT = parent(parent(parent((os.path.realpath(__file__)))))
+sys.path.append(APPROOT)
 
 from uuid import getnode
 from analytics.config import SECRET_KEY

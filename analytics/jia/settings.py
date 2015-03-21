@@ -1,7 +1,11 @@
 import os
 import re
 from os.path import dirname as parent
+import sys
+
 APPROOT = parent(parent(parent((os.path.realpath(__file__)))))
+sys.path.append(APPROOT)
+
 from analytics.config import ANALYTICS_EMAILS
 from analytics.config import GOOGLE_CLIENT_ID
 from analytics.config import GOOGLE_CLIENT_SECRET

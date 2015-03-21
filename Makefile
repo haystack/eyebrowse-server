@@ -1,4 +1,4 @@
-.PHONY: run clean requirements env config install pylint jslint lint shell db deploy git py-path
+.PHONY: run clean requirements env config install pylint jslint lint shell db deploy git
 
 root_path="/opt/eyebrowse"
 env_path="$(root_path)/env"
@@ -43,17 +43,7 @@ db:
 	python manage.py syncdb
 	python manage.py migrate
 
-py-path:
-	# find directory
-	echo $(SITEDIR)
-	
-	# create if it doesn't exist
-	mkdir -p $(SITEDIR)
-	
-	# create new .pth file with our path
-	echo "$(shell pwd)" > $(SITEDIR)/eyebrowse-server.pth
-
-install: clean git py-path requirements env config db
+install: clean git requirements env config db
 
 pylint:
 	-flake8 .
