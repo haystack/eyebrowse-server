@@ -1,5 +1,6 @@
 import scripts.setup_django
 
+import sys
 import datetime
 import urllib2
 
@@ -89,8 +90,16 @@ def populate_popular_history():
         else:
             p = p[0]
 
-        total_pop, _ = PopularHistory.objects.get_or_create(
-            popular_history=p, user=None)
+        
+        pop_items = PopularHistory.objects.filter(popular_history=p, user=None)
+        if pop_items.count() == 0:
+            total_pop = PopularHistory.objects.create(popular_history=p, user=None)
+        elif pop_items.count() > 1:
+            total_pop = pop_items[0]
+            for i in pop_items[1:]:
+                i.delete()
+        else:
+            total_pop = pop_items[0]
 
         if not total_pop.eye_hists.filter(pk=ehist.id).exists():
             total_pop.eye_hists.add(ehist)
@@ -123,7 +132,7 @@ def populate_popular_history():
                 popular_history=p, user=u)
 
             if not user_pop.eye_hists.filter(pk=ehist.id).exists():
-
+                
                 user_pop.eye_hists.add(ehist)
                 user_pop.visitors.add(ehist.user)
 
@@ -168,6 +177,7 @@ def populate_popular_history():
     p = PopularHistoryInfo.objects.all()
     for pop in p.iterator():
         if len(list(pop.popularhistory_set.all())) == 0:
+            print 'delete pop hist info'
             pop.delete()
 
 
@@ -210,7 +220,7 @@ def calculate_scores():
             float(
                 ((
                     float(pop.total_time_ago) + 1.0) /
-                    float(pop.eye_hists.count())) ** 1.2)
+                    float(pop.eye_hists.count())) ** 1.5)
 
         t2 = float((num_time - 5000) / 1000.0) / \
             float(
