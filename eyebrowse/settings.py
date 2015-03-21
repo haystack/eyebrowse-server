@@ -205,6 +205,7 @@ INSTALLED_APPS = (
     'tastypie',
     'kronos',
     'south',
+    'pinax.notifications',
 
     # eyebrowse
     'accounts',
