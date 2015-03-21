@@ -11,7 +11,7 @@ from django.views.generic.simple import redirect_to
 from annoying.decorators import ajax_request
 from annoying.decorators import render_to
 
-from accounts.models import TwitterInfo
+from accounts.models import TwitterInfo, UserProfile
 from accounts.models import DeliciousInfo
 from accounts.renderers import connection_table_renderer
 
@@ -227,6 +227,21 @@ def edit_tags(request):
                             **template_dict)
 
 
+def get_twitter_info(request, api, twit_obj, template_dict):
+    template_dict['connected'] = True
+
+    template_dict['username'] = twit_obj.twitter_username
+    
+    eye_friends = UserProfile.objects.get(user=request.user).follows.all().values_list('user__username', flat=True)
+    
+    friends = api.friends_ids()
+    twitter_friends = TwitterInfo.objects.filter(twitter_id__in=friends)
+    
+    for friend in twitter_friends:
+        friend.follows = str(friend.user.username in eye_friends)
+    
+    template_dict['twitter_friends'] = twitter_friends
+
 @login_required
 @render_to('accounts/sync_twitter.html')
 def sync_twitter(request):
@@ -251,14 +266,11 @@ def sync_twitter(request):
             twitter_info[0].access_token_secret)
 
         api = tweepy.API(auth)
-        twitter_user = api.me()
         template_dict[
             "synced"] = "Your Twitter account is already connected to Eyebrowse."
-        template_dict['connected'] = True
-
-        template_dict['username'] = twitter_user.screen_name
-        template_dict['profile_info'] = twitter_user.description
-        template_dict['profile_image'] = twitter_user.profile_image_url
+            
+        get_twitter_info(request, api, twitter_info[0], template_dict)
+            
     else:
         if "request_token" in request.session:
             token = request.session.pop("request_token")
@@ -274,15 +286,13 @@ def sync_twitter(request):
                 username = twitter_user.screen_name
                 twitter_id = twitter_user.id
 
-                TwitterInfo.objects.create(
+                twit_obj = TwitterInfo.objects.create(
                     user=user, twitter_username=username, twitter_id=twitter_id,
                     access_token=token, access_token_secret=secret)
                 template_dict[
                     "synced"] = "Your Twitter account is now connected to Eyebrowse!"
-                template_dict['connected'] = True
-                template_dict['username'] = username
-                template_dict['profile_info'] = twitter_user.description
-                template_dict['profile_image'] = twitter_user.profile_image_url
+                    
+                get_twitter_info(request, api, twit_obj, template_dict)
 
             except tweepy.TweepError, e:
                 logger.info(e)

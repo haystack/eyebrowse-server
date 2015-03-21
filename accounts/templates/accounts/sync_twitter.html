@@ -1,5 +1,6 @@
 {% extends 'accounts/edit_profile_base.html' %}
 {% load filters %}
+{% load gravatar %}
 
 {% block styles %}
     {{ block.super }}
@@ -13,10 +14,29 @@
 	{% if connected %}
 		<br />
 		<br />
-		<div class="well">
-		<img src="{{ profile_image }}"><br />
-		<h4>{{ username }}</h4>
-		{{ profile_info }}
+		
+		<div class="light-well">
+			<h4>Friends on Twitter also on Eyebrowse:</h4>
+			
+			<table>
+				{% for friend in twitter_friends %}
+					<tr>
+					    <td> 
+					    	
+					        <a href="/users/{{ friend.user.username }}"> 
+					            {% gravatar_img_for_user friend.user 45 %} {{ friend.user.username }}
+					        </a>
+					        Twitter handle: @{{ friend.twitter_username }}
+					    </td>
+					    <td> 
+					        <a class="btn btn-info connection">
+					            {% include 'common/snippets/follow-btn.html' with follows=friend.follows username=friend.user.username %} 
+					        </a>
+					    </td>
+					</tr>
+				{% endfor %}
+			</table>
+			
 		</div>
 		
 	{% else %}
@@ -27,8 +47,10 @@
 	{% endif %}
 </div>
 
+
 {% endblock %}
 
 {% block scripts %}
     {{ block.super }}
+    {% include_script "accounts/js/twitter" %}
 {% endblock %}
