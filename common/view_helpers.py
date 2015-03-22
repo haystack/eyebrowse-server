@@ -33,7 +33,7 @@ def _template_values(request, page_title='',
     
     if not not_count:
         if request.user.is_authenticated():
-            not_count = Notification.objects.filter(recipient=request.user, seen=False).count(),
+            not_count = Notification.objects.filter(recipient=request.user, seen=False).count()
         else:
             not_count = 0
         
