@@ -3,5 +3,6 @@
 {{ message }}
 
 To see other notices, please go to {{ base_url }}{{ notices_url }}
+
 To change how you receive notifications, please go to {{ base_url }}{{ notices_settings }}
 {% endblocktrans %}
