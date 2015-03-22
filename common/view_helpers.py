@@ -13,6 +13,7 @@ from django.shortcuts import HttpResponse
 from django.utils import timezone
 
 from common.npl.date_parser import DateRangeParser
+from notifications.models import Notification
 
 
 def JSONResponse(payload):
@@ -28,12 +29,20 @@ def NotImplementedResponse():
 
 
 def _template_values(request, page_title='',
-                     navbar='', sub_navbar='', **kwargs):
+                     navbar='', sub_navbar='', not_count=None, **kwargs):
+    
+    if not not_count:
+        if request.user.is_authenticated():
+            not_count = Notification.objects.filter(recipient=request.user, seen=False).count(),
+        else:
+            not_count = 0
+        
     template_values = {
         'page_title': page_title,
         navbar: 'active',
         sub_navbar: 'active',
         'user': request.user,
+        "notification_count": not_count,
     }
 
     return dict(template_values.items() + kwargs.items())

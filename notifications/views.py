@@ -71,7 +71,6 @@ def notifications(request):
     
     template_dict = {
         "username": user.username,
-        "notification_count": 0,
         "following_count": following_count,
         "follower_count": follower_count,
         "is_online": is_online,
@@ -86,6 +85,7 @@ def notifications(request):
                             page_title="notifications",
                             navbar='notify',
                             sub_navbar="subnav_data",
+                            not_count=0,
                             **template_dict)
 
 
