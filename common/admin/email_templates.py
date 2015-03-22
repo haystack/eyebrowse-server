@@ -19,17 +19,3 @@ feedback = {
     'subject': 'Feedback for Eyebrowse',
     'content': """ 'Feedback received from: %s \n\n %s' """
 }
-
-follow_email = {
-    'subject': "%s is now following you on Eyebrowse!",
-    'content': """
-        Hi %s,
-        \n
-        \n
-        %s is now following you on http://eyebrowse.csail.mit.edu!
-        Check out their profile: %s.
-        And here you can see all the people that are following you: %s.
-        \n
-        \n
-        """ + SIGNATURE
-}

@@ -1,0 +1,11 @@
+{% load i18n %}{% blocktrans %}
+Hi {{ recipient }},
+
+
+{{ sender }} is now following you on {{ base_url }}!
+Check out their profile: {{ base_url }}/users/{{ sender }}.
+And here you can see all the people that are following you: {{ base_url }}/followers/{{ recipient }}.
+
+
+- the Eyebrowse team
+{% endblocktrans %}

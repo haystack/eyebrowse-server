@@ -29,6 +29,7 @@ from eyebrowse.settings import TWITTER_CONSUMER_KEY
 from eyebrowse.settings import TWITTER_CONSUMER_SECRET
 from eyebrowse.settings import DELICIOUS_CONSUMER_KEY
 from eyebrowse.settings import DELICIOUS_CONSUMER_SECRET
+from notifications.models import Notification, NoticeType, send_now
 
 
 @login_required
@@ -345,21 +346,11 @@ def connect(request):
             else:
                 if type == 'add-follow':
                     req_prof.follows.add(user.profile)
-
-                    subject = email_templates.follow_email[
-                        'subject'] % (request.user.username)
-                    content = email_templates.follow_email['content'] % (
-                        user.username,
-                        request.user.username,
-                        "http://eyebrowse.csail.mit.edu/users/" +
-                        request.user.username,
-                        "http://eyebrowse.csail.mit.edu/followers/" +
-                        user.username)
-                    new_follow_emails = [user.email]
-                    send_mail(
-                        subject, content,
-                        from_email=user.email,
-                        recipient_list=new_follow_emails)
+                    
+                    notice = NoticeType.objects.get(label="new_follower")
+                    Notification.objects.create(user=user, notice_type=notice)
+                    
+                    send_now([user], "new_follower", sender=request.user)
 
                 elif type == 'rm-follow' and req_prof.follows.filter(
                         user=user).exists():

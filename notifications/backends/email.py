@@ -23,7 +23,11 @@ class EmailBackend(BaseBackend):
             "recipient": recipient,
             "sender": sender,
             "notice": ugettext(notice_type.display),
+            "name": "Eyebrowse",
+            "notices_url": "/notifications",
+            "notices_settings": "/notifications/settings",
         })
+
         context.update(extra_context)
 
         messages = self.get_formatted_messages((

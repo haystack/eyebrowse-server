@@ -16,6 +16,7 @@ from django.contrib.contenttypes.models import ContentType
 from .compat import AUTH_USER_MODEL, GenericForeignKey
 from .conf import settings
 from .utils import load_media_defaults, notice_setting_for_user
+from django.contrib.auth.models import User
 
 
 NOTICE_MEDIA, NOTICE_MEDIA_DEFAULTS = load_media_defaults()
@@ -24,11 +25,10 @@ NOTICE_MEDIA, NOTICE_MEDIA_DEFAULTS = load_media_defaults()
 class LanguageStoreNotAvailable(Exception):
     pass
 
-
 @python_2_unicode_compatible
 class NoticeType(models.Model):
 
-    label = models.CharField(_("label"), max_length=40)
+    label = models.CharField(_("label"), max_length=40, unique=True)
     display = models.CharField(_("display"), max_length=50)
     description = models.CharField(_("description"), max_length=100)
 
@@ -70,6 +70,10 @@ class NoticeType(models.Model):
             if verbosity > 1:
                 print("Created %s NoticeType" % label)
 
+class Notification(models.Model):
+    user = models.ForeignKey(User)
+    notice_type = models.ForeignKey(NoticeType)
+    seen = models.BooleanField(default=False)
 
 class NoticeSetting(models.Model):
     """
