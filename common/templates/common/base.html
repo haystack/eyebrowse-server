@@ -7,7 +7,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title id="page_title"> eyebrowse | {{ page_title }} {% block title %} {% endblock %}</title>
+        <title id="page_title">{% if notification_count > 0 %}({{ notification_count }}){% endif %} Eyebrowse | {{ page_title }} {% block title %} {% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
@@ -93,7 +93,11 @@
                                 <a href="/live_stream/?filter=following">Home</a>
                             </li>
                             <li class={{ notify }}>
-                                <a href="/notifications">Notifications</a>
+                                <a href="/notifications">Notifications
+                                {% if notification_count > 0 %}
+                                	<span class="notification-badge">{{ notification_count }}</span>
+                                {% endif %}
+                                </a>
                             </li>
                             <li>
                                 <form id="navbar-search" class="navbar-search">

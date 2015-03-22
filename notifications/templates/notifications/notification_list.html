@@ -1,6 +1,6 @@
 <div class="span8 history-timeline-container2 live-stream-container">
     {% for n_item in notifications %}
-        {% include "stats/notification_item_template.html" with item=n_item %}
+        {% include "notifications/notification_item_template_new.html" with item=n_item %}
     {% endfor %}
     {% if notifications|length == 0 %}
         {% include "common/snippets/empty_search.html" with msg=empty_search_msg %}

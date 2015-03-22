@@ -1,0 +1,23 @@
+{% load filters %}
+{% load gravatar %}
+
+{% if item.seen %}
+<div class='row history-container span8 eye-hist-visited'>
+{% else %}
+<div class='row history-container span8 eye-hist'>
+{% endif %}
+    <div class="history-content">
+    			
+    	{% if item.notice_type.label == "new_follower" %}
+
+	    	<div>
+	    		<a href="/users/{{ item.sender.username }}">
+	    	 	<img class="author-pic img-rounded" data-content="{{ item.sender }}" src="{% gravatar_for_user item.sender %}"/> 
+	    	 	</a>
+	    			<a href="/users/{{ item.sender.username }}">{{ item.sender.username }}</a> followed you on {{ item.date_created }}
+	    	</div>
+		{% endif %}
+       
+    </div>
+
+</div>

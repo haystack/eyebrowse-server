@@ -348,7 +348,7 @@ def connect(request):
                     req_prof.follows.add(user.profile)
                     
                     notice = NoticeType.objects.get(label="new_follower")
-                    Notification.objects.create(user=user, notice_type=notice)
+                    Notification.objects.create(recipient=user, sender=request.user, notice_type=notice)
                     
                     send_now([user], "new_follower", sender=request.user)
 

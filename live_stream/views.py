@@ -16,6 +16,7 @@ from live_stream.query_managers import live_stream_query_manager
 from live_stream.query_managers import online_user
 from live_stream.query_managers import online_user_count
 from live_stream.query_managers import profile_stat_gen
+from notifications.models import Notification
 
 
 @login_required
@@ -37,8 +38,11 @@ def live_stream(request):
     following_count = user.profile.follows.count()
     follower_count = UserProfile.objects.filter(follows=user.profile).count()
 
+    not_count = Notification.objects.filter(recipient=user, seen=False).count()
+
     template_dict = {
         'username': user.username,
+        "notification_count": not_count,
         'following_count': following_count,
         'follower_count': follower_count,
         'query': query,

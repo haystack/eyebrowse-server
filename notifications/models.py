@@ -17,6 +17,7 @@ from .compat import AUTH_USER_MODEL, GenericForeignKey
 from .conf import settings
 from .utils import load_media_defaults, notice_setting_for_user
 from django.contrib.auth.models import User
+import datetime
 
 
 NOTICE_MEDIA, NOTICE_MEDIA_DEFAULTS = load_media_defaults()
@@ -71,9 +72,12 @@ class NoticeType(models.Model):
                 print("Created %s NoticeType" % label)
 
 class Notification(models.Model):
-    user = models.ForeignKey(User)
+    recipient = models.ForeignKey(User, related_name="notification_recipient")
+    sender = models.ForeignKey(User, related_name="notification_sender")
+    date_created = models.DateTimeField(default=datetime.datetime.utcnow())
     notice_type = models.ForeignKey(NoticeType)
     seen = models.BooleanField(default=False)
+    url = models.URLField(max_length=300, blank=False, null=True)
 
 class NoticeSetting(models.Model):
     """

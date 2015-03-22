@@ -61,8 +61,7 @@ urlpatterns = patterns('',
                            'stats.views.followers_data'),
 
                        url(r"^notifications/", include("notifications.urls")),
-                       
-                       url(r'^notifications', 'stats.views.notifications'),
+                       url(r'^notifications', 'notifications.views.notifications'),
 
                        url(r'^accounts/', include('accounts.urls')),
                        url(r'^live_stream/', include('live_stream.urls')),
