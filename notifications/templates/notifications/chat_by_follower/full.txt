@@ -1,0 +1,15 @@
+{% load i18n %}{% blocktrans %}
+Hi {{ recipient }},
+
+
+Your follower {{ sender }} posted on the Chat Board of a page you've visited before: {{ url }} 
+
+{{ sender }} posted: {{ message }} on {{ date }}.
+
+
+Check out their profile: {{ base_url }}/users/{{ sender }}.
+
+
+- the Eyebrowse team
+
+{% endblocktrans %}

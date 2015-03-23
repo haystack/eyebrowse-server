@@ -1,0 +1,3 @@
+{% load i18n %}{% blocktrans %}
+{{ sender }} posted on the Chat Board of {{ url }}
+{% endblocktrans %}

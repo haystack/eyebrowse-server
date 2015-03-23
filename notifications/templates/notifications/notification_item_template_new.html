@@ -26,7 +26,8 @@
 	    	 	</a>
 	    			<a href="/users/{{ item.sender.username }}">{{ item.sender.username }}</a> bumped into you on {{ item.date_created }}
 	    			<BR>
-	    				You were both on the page <a href="{{ item.url }}">{{ item.url }} <img class="favicon" src="{{ item.favIconUrl }}"></a>
+	    				You were both on the page <a href="{{ item.url }}">{{ item.url }} 
+	    					{% if item.description %}<img class="favicon" src="{{ item.favIconUrl }}">{% endif %}</a>
 	    			<br>
 	    			{% if item.description %}
 	    				
@@ -42,6 +43,30 @@
             	
 	    			
 	    			{% endif %}
+	    	</div>
+		{% endif %}
+		
+		{% if item.notice_type.label == "chat_by_follower" or item.notice_type.label == "note_by_follower" %}
+
+	    	<div>
+	    		<a href="/users/{{ item.sender.username }}">
+	    	 	<img class="author-pic img-rounded" data-content="{{ item.sender }}" src="{% gravatar_for_user item.sender %}"/> 
+	    	 	</a>
+	    			<a href="/users/{{ item.sender.username }}">{{ item.sender.username }}</a> posted the following 
+	    			{% if item.notice_type.label == "chat_by_follower" %}
+	    			 message on the Chat Board
+	    			 {% else %}
+	    			 Note on the Bulletin Board 
+	    			 {% endif %}
+	    			 of <a href="{{ item.url }}">{{ item.url }}</a> on {{ item.date_created }}:
+	    			<BR>
+	    				<div class="history-message">
+	    					{{ item.message }}
+	    				</div>
+	    				You have both visited the page <a href="{{ item.url }}">{{ item.url }} 
+	    					{% if item.description %}<img class="favicon" src="{{ item.favIconUrl }}">{% endif %}</a> in the past.
+	    			<br>
+	    			
 	    	</div>
 		{% endif %}
        

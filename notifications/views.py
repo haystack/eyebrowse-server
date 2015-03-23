@@ -88,9 +88,10 @@ def notifications(request):
 
 
 def notification_renderer(user, empty_search_msg):
+    url_notifications = ["bump_follower","chat_by_follower","note_by_follower"]
     notifications = Notification.objects.filter(recipient=user).select_related().order_by('-date_created')
     for notif in notifications:
-        if notif.notice_type.label == "bump_follower":
+        if notif.notice_type.label in url_notifications:
             pop = PopularHistoryInfo.objects.filter(url=notif.url)
             if pop.exists():
                 notif.description = pop[0].description
@@ -100,6 +101,7 @@ def notification_renderer(user, empty_search_msg):
                 notif.hum_date = humanize_time(timezone.now() - notif.date_created)
             else:
                 notif.description = None
+            
             
     template_dict = {'notifications': notifications,
                      'empty_search_msg': empty_search_msg, }

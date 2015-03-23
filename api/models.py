@@ -240,7 +240,7 @@ def notify_message(message=None, chat=None):
                 if user_prof in bump_prof.follows.all():
                     Notification.objects.create(recipient=user, notice_type=n, sender=bump.user, url=message.eyehistory.url, message=message.message)
                     queue([bump_prof], "note_by_follower", sender=user, extra_content={'url': message.eyehistory.url,
-                                                                                    'note': message.message,
+                                                                                    'message': message.message,
                                                                                    'date': datetime.datetime.now()})
     if chat:
         user = chat.author
@@ -253,7 +253,7 @@ def notify_message(message=None, chat=None):
                 if user_prof in bump_prof.follows.all():
                     Notification.objects.create(recipient=user, notice_type=n, sender=bump.user, url=chat.url, message=chat.message)
                     queue([bump_prof], "chat_by_follower", sender=user, extra_content={'url': chat.url,
-                                                                                    'note': chat.message,
+                                                                                    'message': chat.message,
                                                                                    'date': datetime.datetime.now()})
         
 
