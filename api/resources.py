@@ -16,7 +16,7 @@ from tastypie.resources import ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
 from api.defaults import DEFAULT_BLACKLIST
-from api.models import BlackListItem, check_bumps
+from api.models import BlackListItem, check_bumps, notify_message
 from api.models import ChatMessage
 from api.models import EyeHistory
 from api.models import EyeHistoryMessage
@@ -308,6 +308,7 @@ class EyeHistoryResource(ModelResource):
                 if message:
                     eye_message, created = EyeHistoryMessage.objects.get_or_create(
                         eyehistory=eye_his, message=message)
+                    notify_message(message=eye_message)
             else:
                # save_raw_eyehistory(request.user, url, title, start_event, end_event, start_time, end_time, src, domain, favicon_url)
                 dup_histories = EyeHistory.objects.filter(
@@ -317,6 +318,7 @@ class EyeHistoryResource(ModelResource):
                     if message:
                         eye_message, created = EyeHistoryMessage.objects.get_or_create(
                             eyehistory=obj, message=message)
+                        notify_message(message=eye_message)
                 else:
                     bundle_res = super(EyeHistoryResource, self).obj_create(
                         bundle, request, user=request.user, **kwargs)
@@ -325,6 +327,8 @@ class EyeHistoryResource(ModelResource):
                     if message:
                         eye_message, created = EyeHistoryMessage.objects.get_or_create(
                             eyehistory=bundle_res.obj, message=message)
+                        notify_message(message=eye_message)
+                        
                     return bundle_res
         except Exception, e:
             logger.exception(e)
@@ -369,6 +373,8 @@ class ChatMessageResource(ModelResource):
                 bundle.data['date']['_d'], '%Y-%m-%dT%H:%M:%S.%fZ')
             val = super(ChatMessageResource, self).obj_create(
                 bundle, request, **kwargs)
+            
+            notify_message(chat=val.obj)
         except Exception, e:
             logger.exception(e)
         return val

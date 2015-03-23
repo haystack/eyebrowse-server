@@ -228,6 +228,35 @@ def merge_histories(dup_histories, end_time, end_event):
 
     return earliest_eyehist
 
+def notify_message(message=None, chat=None):
+    if message:
+        user = message.eyehistory.user
+        bumps = EyeHistory.objects.filter(Q(url=message.eyehistory.url) & ~Q(user=user))
+        if bumps.count() > 0:
+            user_prof = UserProfile.objects.get(user=user)
+            n = NoticeType.objects.get(label="note_by_follower")
+            for bump in bumps:
+                bump_prof = UserProfile.objects.get(user=bump.user)
+                if user_prof in bump_prof.follows.all():
+                    Notification.objects.create(recipient=user, notice_type=n, sender=bump.user, url=message.eyehistory.url, message=message.message)
+                    queue([bump_prof], "note_by_follower", sender=user, extra_content={'url': message.eyehistory.url,
+                                                                                    'note': message.message,
+                                                                                   'date': datetime.datetime.now()})
+    if chat:
+        user = chat.author
+        bumps = EyeHistory.objects.filter(Q(url=chat.url) & ~Q(user=user))
+        if bumps.count() > 0:
+            user_prof = UserProfile.objects.get(user=user)
+            n = NoticeType.objects.get(label="chat_by_follower")
+            for bump in bumps:
+                bump_prof = UserProfile.objects.get(user=bump.user)
+                if user_prof in bump_prof.follows.all():
+                    Notification.objects.create(recipient=user, notice_type=n, sender=bump.user, url=chat.url, message=chat.message)
+                    queue([bump_prof], "chat_by_follower", sender=user, extra_content={'url': chat.url,
+                                                                                    'note': chat.message,
+                                                                                   'date': datetime.datetime.now()})
+        
+
 def check_bumps(user, start_time, end_time, url):
     earlier_time = start_time - datetime.timedelta(minutes=5)
     later_time = end_time + datetime.timedelta(minutes=5)
