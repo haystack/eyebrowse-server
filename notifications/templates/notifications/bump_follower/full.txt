@@ -1,0 +1,12 @@
+{% load i18n %}{% blocktrans %}
+Hi {{ recipient }},
+
+
+Your follower {{ sender }} bumped into you while you were both at {{ url }}! 
+You were both on the same page within 5 minutes of each other on {{ date }}.
+
+Check out their profile: {{ base_url }}/users/{{ sender }}.
+
+- the Eyebrowse team
+
+{% endblocktrans %}

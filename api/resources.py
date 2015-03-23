@@ -16,7 +16,7 @@ from tastypie.resources import ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
 from api.defaults import DEFAULT_BLACKLIST
-from api.models import BlackListItem
+from api.models import BlackListItem, check_bumps
 from api.models import ChatMessage
 from api.models import EyeHistory
 from api.models import EyeHistoryMessage
@@ -320,6 +320,8 @@ class EyeHistoryResource(ModelResource):
                 else:
                     bundle_res = super(EyeHistoryResource, self).obj_create(
                         bundle, request, user=request.user, **kwargs)
+                    check_bumps(request.user, start_time, end_time, url)
+                    
                     if message:
                         eye_message, created = EyeHistoryMessage.objects.get_or_create(
                             eyehistory=bundle_res.obj, message=message)

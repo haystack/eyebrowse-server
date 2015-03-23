@@ -5,24 +5,18 @@ from django.views.generic import TemplateView
 from .models import NoticeType, NOTICE_MEDIA
 from .utils import notice_setting_for_user
 
-from datetime import timedelta
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Q
+
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from django.utils import timezone
 
 from annoying.decorators import render_to
 
 from accounts.models import UserProfile
 
-from api.models import EyeHistory
-from api.models import EyeHistoryMessage
-from api.models import ChatMessage
-from api.utils import humanize_time
+from api.models import EyeHistory, PopularHistoryInfo
 
 from common.constants import EMPTY_SEARCH_MSG
 from common.view_helpers import _template_values
@@ -32,6 +26,10 @@ from live_stream.query_managers import online_user
 
 from stats.models import FavData
 from notifications.models import Notification
+from api.utils import humanize_time
+from eyebrowse.log import logger
+import datetime
+from django.utils import timezone
 
 
 
@@ -90,78 +88,19 @@ def notifications(request):
 
 
 def notification_renderer(user, empty_search_msg):
-
-#     timestamp = timezone.now() - timedelta(days=7)
-# 
-#     urls = EyeHistory.objects.filter(user=user,
-#                                      start_time__gt=timestamp).order_by(
-#         'end_time').values('url', 'end_time', 'start_time')
-# 
-#     url_list = {}
-#     for url in urls:
-#         url_list[url['url']] = (url['start_time'],
-#                                 url['end_time'])
-# 
-#     notifications = []
-# 
-#     for url in url_list:
-#         visits = EyeHistory.objects.filter(Q(url=url) &
-#                                            ~Q(user_id=user.id) &
-#                                            (Q(start_time__lte=url_list[url][1])
-#                                             & Q(end_time__gte=url_list[url][0])
-#                                             ))
-#         for visit in visits:
-#             tmp = {}
-#             tmp['type'] = 'bump domain'
-#             tmp['url'] = url
-#             tmp['author'] = visit.user
-#             tmp['title'] = visit.title
-#             tmp['date'] = url_list[url][1]
-#             tmp['visit_time'] = humanize_time(
-#                 timezone.now() - url_list[url][1])
-# 
-#             notifications.append(tmp)
-# 
-#     messages = EyeHistoryMessage.objects.filter(
-#         Q(eyehistory__url__in=url_list.keys()) &
-#         Q(post_time__gt=timestamp) &
-#         ~Q(eyehistory__user_id=user.id)).select_related()
-# 
-#     chat_messages = ChatMessage.objects.filter(
-#         Q(url__in=url_list.keys()) &
-#         Q(date__gt=timestamp) &
-#         ~Q(author_id=user.id)).select_related()
-# 
-#     for m in messages:
-#         notifications.append({'type': 'bulletin',
-#                               'message': m.message,
-#                               'date': m.post_time,
-#                               'date_hum': humanize_time(
-#                                   timezone.now() - m.post_time),
-#                               'url': m.eyehistory.url,
-#                               'author': m.eyehistory.user,
-#                               'title': m.eyehistory.title,
-#                               'visit_time': humanize_time(
-#                                   timezone.now() -
-#                                   url_list[m.eyehistory.url][1])
-#                               })
-#     for c in chat_messages:
-#         notifications.append({'type': 'chat',
-#                               'message': c.message,
-#                               'date': c.date,
-#                               'date_hum': humanize_time(
-#                                   timezone.now() - c.date),
-#                               'url': c.url,
-#                               'author': c.author,
-#                               'title': '',
-#                               'visit_time': humanize_time(
-#                                   timezone.now() - url_list[c.url][1])
-#                               })
-# 
-#     notifications = sorted(
-#         notifications, key=lambda x: x['date'], reverse=True)
-
-    notifications = Notification.objects.filter(recipient=user).order_by('-date_created')
+    notifications = Notification.objects.filter(recipient=user).select_related().order_by('-date_created')
+    for notif in notifications:
+        if notif.notice_type.label == "bump_follower":
+            pop = PopularHistoryInfo.objects.filter(url=notif.url)
+            if pop.exists():
+                notif.description = pop[0].description
+                notif.img_url = pop[0].img_url
+                notif.favIconUrl = pop[0].favIconUrl
+                notif.title = pop[0].title
+                notif.hum_date = humanize_time(timezone.now() - notif.date_created)
+            else:
+                notif.description = None
+            
     template_dict = {'notifications': notifications,
                      'empty_search_msg': empty_search_msg, }
 

@@ -17,6 +17,33 @@
 	    			<a href="/users/{{ item.sender.username }}">{{ item.sender.username }}</a> followed you on {{ item.date_created }}
 	    	</div>
 		{% endif %}
+		
+		{% if item.notice_type.label == "bump_follower" %}
+
+	    	<div>
+	    		<a href="/users/{{ item.sender.username }}">
+	    	 	<img class="author-pic img-rounded" data-content="{{ item.sender }}" src="{% gravatar_for_user item.sender %}"/> 
+	    	 	</a>
+	    			<a href="/users/{{ item.sender.username }}">{{ item.sender.username }}</a> bumped into you on {{ item.date_created }}
+	    			<BR>
+	    				You were both on the page <a href="{{ item.url }}">{{ item.url }} <img class="favicon" src="{{ item.favIconUrl }}"></a>
+	    			<br>
+	    			{% if item.description %}
+	    				
+		            	 <div class="cut-content pointer" data-content="{{ item.title }}">
+		            	 	<img align="left" class="popular_image img-rounded" src="{{ item.img_url }}">
+		            	 	  	<a class="pointer" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.url }}">
+			            	 	    <h4>
+					                {{ item.title }} 
+					            	</h4>
+				            	</a>
+				            	{{ item.description }}
+		                	</div>
+            	
+	    			
+	    			{% endif %}
+	    	</div>
+		{% endif %}
        
     </div>
 

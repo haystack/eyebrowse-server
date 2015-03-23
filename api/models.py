@@ -5,6 +5,9 @@ from django.db import models
 from django.utils import timezone
 
 from api.utils import humanize_time
+from django.db.models import Q
+from notifications.models import Notification, NoticeType, queue
+from accounts.models import UserProfile
 
 
 class MuteList(models.Model):
@@ -224,3 +227,24 @@ def merge_histories(dup_histories, end_time, end_event):
                 item.delete()
 
     return earliest_eyehist
+
+def check_bumps(user, start_time, end_time, url):
+    earlier_time = start_time - datetime.timedelta(minutes=5)
+    later_time = end_time + datetime.timedelta(minutes=5)
+    bumps = EyeHistory.objects.filter(url=url & ~Q(user=user) & (Q(end_time__gte=earlier_time) | Q(start_time__lte=later_time)))
+    if bumps.count() > 0:
+        user_prof = UserProfile.objects.get(user=user)
+        n = NoticeType.objects.get(label="bump_follower")
+        for bump in bumps:
+            bump_prof = UserProfile.objects.get(user=bump.user)
+            if bump_prof in user_prof.follows.all():
+                Notification.objects.create(recipient=user, notice_type=n, sender=bump.user, url=url)
+                queue([user], "bump_follower", sender=bump.user, extra_content={'url': url,
+                                                                                   'date': datetime.datetime.now()})
+            if user_prof in bump_prof.follows.all():
+                Notification.objects.create(recipient=bump.user, notice_type=n, sender=user, url=url)
+                queue([bump.user], "bump_follower", sender=user, extra_content={'url': url,
+                                                                                   'date': datetime.datetime.now()})
+                
+            
+    
