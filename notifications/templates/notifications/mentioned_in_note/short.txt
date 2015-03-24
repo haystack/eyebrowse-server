@@ -1,0 +1,3 @@
+{% load i18n %}{% blocktrans %}
+{{ sender }} mentioned you in their Note posted on {{ url }}
+{% endblocktrans %}

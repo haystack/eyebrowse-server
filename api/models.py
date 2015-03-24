@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -6,7 +7,7 @@ from django.utils import timezone
 
 from api.utils import humanize_time
 from django.db.models import Q
-from notifications.models import Notification, NoticeType, send, queue
+from notifications.models import Notification, NoticeType, send, queue, send_now
 from accounts.models import UserProfile
 from eyebrowse.log import logger
 
@@ -236,13 +237,28 @@ def notify_message(message=None, chat=None):
         message = message.message
         label = "note_by_follower"
         send_message_notice(user, url, message, label)
+        label = "mentioned_in_note"
+        check_message_mention(user, url, message, label)
     if chat:
         user = chat.author
         url = chat.url
         message = chat.message
         label = "chat_by_follower"
         send_message_notice(user, url, message, label)
+        label = "mentioned_in_chat"
+        check_message_mention(user, url, message, label)
         
+def check_message_mention(sender_user, url, message, label):
+    users = re.findall(r"(?<=@)\w+", message)
+    for user in list(set(users)):
+        notice = NoticeType.objects.get(label=label)
+        u = User.objects.filter(username=user)
+        if u.count() > 0:
+            Notification.objects.create(recipient=u[0], notice_type=notice, sender=sender_user, url=url, message=message)
+            send_now([u[0]], label, sender=sender_user, extra={'url': url,
+                                                               'message': message,
+                                                               'date': datetime.datetime.now()})
+
 def send_message_notice(user, url, message, label):
     bumps = EyeHistory.objects.filter(Q(url=url) & ~Q(user=user))
     if bumps.count() > 0:
@@ -267,14 +283,18 @@ def check_bumps(user, start_time, end_time, url):
     if bumps.count() > 0:
         user_prof = UserProfile.objects.get(user=user)
         n = NoticeType.objects.get(label="bump_follower")
+        sent_user = []
         for bump in bumps:
             bump_prof = UserProfile.objects.get(user=bump.user)
-            if bump_prof in user_prof.follows.all():
-                Notification.objects.create(recipient=user, notice_type=n, sender=bump.user, url=url)
-                queue([user], "bump_follower", sender=bump.user, extra={'url': url, 'date': datetime.datetime.now()})
-            if user_prof in bump_prof.follows.all():
-                Notification.objects.create(recipient=bump.user, notice_type=n, sender=user, url=url)
-                queue([bump.user], "bump_follower", sender=user, extra={'url': url, 'date': datetime.datetime.now()})
+            if user_prof not in sent_user:
+                if bump_prof in user_prof.follows.all():
+                    Notification.objects.create(recipient=user, notice_type=n, sender=bump.user, url=url)
+                    queue([user], "bump_follower", sender=bump.user, extra={'url': url, 'date': datetime.datetime.now()})
+                    sent_user.append(user_prof)
+            if bump_prof not in sent_user:
+                if user_prof in bump_prof.follows.all():
+                    Notification.objects.create(recipient=bump.user, notice_type=n, sender=user, url=url)
+                    queue([bump.user], "bump_follower", sender=user, extra={'url': url, 'date': datetime.datetime.now()})
+                    sent_user.append(bump_prof)
                 
-            
     

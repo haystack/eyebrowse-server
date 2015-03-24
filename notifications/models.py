@@ -134,7 +134,7 @@ def get_notification_language(user):
     raise LanguageStoreNotAvailable
 
 
-def send_now(users, label, extra_context=None, sender=None, scoping=None):
+def send_now(users, label, extra=None, sender=None, scoping=None):
     """
     Creates a new notice.
 
@@ -146,8 +146,8 @@ def send_now(users, label, extra_context=None, sender=None, scoping=None):
     )
     """
     sent = False
-    if extra_context is None:
-        extra_context = {}
+    if extra is None:
+        extra = {}
 
     notice_type = NoticeType.objects.get(label=label)
 
@@ -167,7 +167,7 @@ def send_now(users, label, extra_context=None, sender=None, scoping=None):
 
         for backend in settings.PINAX_NOTIFICATIONS_BACKENDS.values():
             if backend.can_send(user, notice_type, scoping=scoping):
-                backend.deliver(user, sender, notice_type, extra_context)
+                backend.deliver(user, sender, notice_type, extra)
                 sent = True
 
     # reset environment to original language

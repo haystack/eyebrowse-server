@@ -1,0 +1,19 @@
+{% load i18n %}{% blocktrans %}
+Hi {{ recipient }},
+
+
+{{ sender }} mentioned you in their Note on {{ url }} 
+
+{{ sender }} posted: 
+
+{{ message }} 
+
+on {{ date }}.
+
+
+Check out their profile: {{ base_url }}/users/{{ sender }}.
+
+
+- the Eyebrowse team
+
+{% endblocktrans %}
