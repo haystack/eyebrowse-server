@@ -170,6 +170,7 @@ class WhiteListItemResource(FilterSetItemResource):
     def obj_create(self, bundle, request=None, **kwargs):
         url = bundle.data['url']
         port = get_port(bundle)
+        bundle.data['port'] = port
 
         # check to see if this exists
         blacklist_item = get_BlackListItem(url, port)
@@ -199,6 +200,7 @@ class BlackListItemResource(FilterSetItemResource):
     def obj_create(self, bundle, request=None, **kwargs):
         url = bundle.data['url']
         port = get_port(bundle)
+        bundle.data['port'] = port
 
         # check to see if this exists
         whitelist_item = get_WhiteListItem(url, port)
@@ -323,12 +325,12 @@ class EyeHistoryResource(ModelResource):
                     bundle_res = super(EyeHistoryResource, self).obj_create(
                         bundle, request, user=request.user, **kwargs)
                     check_bumps(request.user, start_time, end_time, url)
-                    
+
                     if message:
                         eye_message, _ = EyeHistoryMessage.objects.get_or_create(
                             eyehistory=bundle_res.obj, message=message)
                         notify_message(message=eye_message)
-                        
+
                     return bundle_res
         except Exception, e:
             logger.info(e)
@@ -337,7 +339,6 @@ class EyeHistoryResource(ModelResource):
             logger.info(e)
             # multiple items created, delete duplicates
             call_command('remove_duplicate_history')
-            
 
         return bundle
 
@@ -375,7 +376,7 @@ class ChatMessageResource(ModelResource):
                 bundle.data['date']['_d'], '%Y-%m-%dT%H:%M:%S.%fZ')
             val = super(ChatMessageResource, self).obj_create(
                 bundle, request, **kwargs)
-            
+
             notify_message(chat=val.obj)
         except Exception, e:
             logger.exception(e)
