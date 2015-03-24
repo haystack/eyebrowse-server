@@ -306,17 +306,17 @@ class EyeHistoryResource(ModelResource):
                 eye_his.humanize_time = humanize_time(elapsed_time)
                 eye_his.save()
                 if message:
-                    eye_message, created = EyeHistoryMessage.objects.get_or_create(
+                    eye_message, _ = EyeHistoryMessage.objects.get_or_create(
                         eyehistory=eye_his, message=message)
                     notify_message(message=eye_message)
             else:
-               # save_raw_eyehistory(request.user, url, title, start_event, end_event, start_time, end_time, src, domain, favicon_url)
+                # save_raw_eyehistory(request.user, url, title, start_event, end_event, start_time, end_time, src, domain, favicon_url)
                 dup_histories = EyeHistory.objects.filter(
                     user=request.user, url=url, title=title, end_time__gt=start_time - datetime.timedelta(minutes=5))
                 if dup_histories.count() > 0:
                     obj = merge_histories(dup_histories, end_time, end_event)
                     if message:
-                        eye_message, created = EyeHistoryMessage.objects.get_or_create(
+                        eye_message, _ = EyeHistoryMessage.objects.get_or_create(
                             eyehistory=obj, message=message)
                         notify_message(message=eye_message)
                 else:
@@ -325,17 +325,19 @@ class EyeHistoryResource(ModelResource):
                     check_bumps(request.user, start_time, end_time, url)
                     
                     if message:
-                        eye_message, created = EyeHistoryMessage.objects.get_or_create(
+                        eye_message, _ = EyeHistoryMessage.objects.get_or_create(
                             eyehistory=bundle_res.obj, message=message)
                         notify_message(message=eye_message)
                         
                     return bundle_res
         except Exception, e:
-            logger.exception(e)
+            logger.info(e)
 
         except MultipleObjectsReturned:
+            logger.info(e)
             # multiple items created, delete duplicates
             call_command('remove_duplicate_history')
+            
 
         return bundle
 
