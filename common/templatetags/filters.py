@@ -40,7 +40,7 @@ def date_fmt(dt):
 
 @register.filter
 def add_twitter(message):
-    return twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/%s">%s</a>' % (m.group(1), m.group(0)), message)
+    return twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/users/%s">%s</a>' % (m.group(1), m.group(0)), message)
             
 
 
