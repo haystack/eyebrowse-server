@@ -61,7 +61,7 @@
 	    			 of <a href="{{ item.url }}">{{ item.url }}</a> on {{ item.date_created }}:
 	    			<BR>
 	    				<div class="history-message">
-	    					{% autoescape off %}{{ item.message }}{% endautoescape %}
+	    					{% autoescape off %}{{ item.message|add_twitter }}{% endautoescape %}
 	    				</div>
 	    				You have both visited the page <a href="{{ item.url }}">{{ item.url }} 
 	    					{% if item.description %}<img class="favicon" src="{{ item.favIconUrl }}">{% endif %}</a> in the past.

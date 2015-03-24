@@ -247,6 +247,29 @@ def profilepic(request):
     return redirect_to(request, gravatar_for_user(request.user))
 
 
+      
+@login_required
+@ajax_request
+def get_friends(request):
+    
+    query = request.GET.get('query', None)
+    
+    user_prof = UserProfile.objects.get(user=request.user)
+    friends = user_prof.follows.all()
+    
+    data = []
+    
+    for friend in friends:
+        if not query or query in friend.user.username:
+            data.append({'id': friend.id,
+                         'name': '@%s' % (friend.user.username),
+                         'avatar': gravatar_for_user(friend.user),
+                         'type': 'contact'})
+            if len(data) > 5:
+                break
+    
+    return {'res': data}
+
 @login_required
 @ajax_request
 def get_messages(request):
@@ -262,7 +285,10 @@ def get_messages(request):
     message_list = []
     for message in messages:
         eye_hist = message.eyehistory
-        message_list.append({'message': message.message,
+        
+        m = twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/users/%s">%s</a>' % (m.group(1), m.group(0)), message.message)
+        
+        message_list.append({'message': m,
                              'post_time': str(message.post_time),
                              'username': eye_hist.user.username,
                              'pic_url': gravatar_for_user(eye_hist.user),
