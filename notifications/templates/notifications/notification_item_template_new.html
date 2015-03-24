@@ -69,6 +69,28 @@
 	    			
 	    	</div>
 		{% endif %}
+		
+		{% if item.notice_type.label == "mentioned_in_chat" or item.notice_type.label == "mentioned_in_note" %}
+
+	    	<div>
+	    		<a href="/users/{{ item.sender.username }}">
+	    	 	<img class="author-pic img-rounded" data-content="{{ item.sender }}" src="{% gravatar_for_user item.sender %}"/> 
+	    	 	</a>
+	    			<a href="/users/{{ item.sender.username }}">{{ item.sender.username }}</a> mentioned you in the following 
+	    			{% if item.notice_type.label == "mentioned_in_chat" %}
+		    			 message on the Chat Board
+		    		{% else %}
+		    			 Note on the Bulletin Board 
+	    			{% endif %}
+	    			of <a href="{{ item.url }}">{{ item.url }}{% if item.description %} <img class="favicon" src="{{ item.favIconUrl }}">{% endif %}</a> on {{ item.date_created }}:
+	    			<BR>
+	    				<div class="history-message">
+	    					{{ item.message }}
+	    				</div>
+	    			<br>
+	    			
+	    	</div>
+		{% endif %}
        
     </div>
 
