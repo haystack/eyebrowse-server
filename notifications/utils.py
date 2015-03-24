@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib.contenttypes.models import ContentType
 
-from .conf import settings
+from notifications.conf import settings
 
 
 def load_media_defaults():

@@ -71,6 +71,7 @@ __all__ = ["Error", "LockError", "LockTimeout", "AlreadyLocked",
 
 
 class Error(Exception):
+
     """
     Base class for other exceptions.
 
@@ -83,6 +84,7 @@ class Error(Exception):
 
 
 class LockError(Error):
+
     """
     Base class for error arising from attempts to acquire the lock.
 
@@ -95,6 +97,7 @@ class LockError(Error):
 
 
 class LockTimeout(LockError):
+
     """Raised when lock creation fails within a user-defined period of time.
 
     >>> try:
@@ -106,6 +109,7 @@ class LockTimeout(LockError):
 
 
 class AlreadyLocked(LockError):
+
     """Some other thread/process is locking the file.
 
     >>> try:
@@ -117,6 +121,7 @@ class AlreadyLocked(LockError):
 
 
 class LockFailed(LockError):
+
     """Lock file creation failed for some other reason.
 
     >>> try:
@@ -128,6 +133,7 @@ class LockFailed(LockError):
 
 
 class UnlockError(Error):
+
     """
     Base class for errors arising from attempts to release the lock.
 
@@ -140,6 +146,7 @@ class UnlockError(Error):
 
 
 class NotLocked(UnlockError):
+
     """Raised when an attempt is made to unlock an unlocked file.
 
     >>> try:
@@ -151,6 +158,7 @@ class NotLocked(UnlockError):
 
 
 class NotMyLock(UnlockError):
+
     """Raised when an attempt is made to unlock a file someone else locked.
 
     >>> try:
@@ -162,7 +170,9 @@ class NotMyLock(UnlockError):
 
 
 class LockBase:
+
     """Base class for platform-specific lock classes."""
+
     def __init__(self, path, threaded=True):
         """
         >>> lock = LockBase("somefile")
@@ -240,6 +250,7 @@ class LockBase:
 
 
 class LinkFileLock(LockBase):
+
     """Lock access to a file using atomic property of link(2)."""
 
     def acquire(self, timeout=None):
@@ -298,7 +309,9 @@ class LinkFileLock(LockBase):
 
 
 class MkdirFileLock(LockBase):
+
     """Lock file by creating a directory."""
+
     def __init__(self, path, threaded=True):
         """
         >>> lock = MkdirFileLock("somefile")
@@ -376,6 +389,7 @@ class MkdirFileLock(LockBase):
 
 
 class SQLiteFileLock(LockBase):
+
     """Demonstration of using same SQL-based locking."""
 
     import tempfile

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.conf import settings  # noqa
 from django.core.exceptions import ImproperlyConfigured
 
-from .compat import get_model, importlib
+from notifications.compat import get_model, importlib
 
 from appconf import AppConf
 
@@ -25,11 +25,13 @@ def load_path_attr(path):
     try:
         mod = importlib.import_module(module)
     except ImportError as e:
-        raise ImproperlyConfigured("Error importing {0}: '{1}'".format(module, e))
+        raise ImproperlyConfigured(
+            "Error importing {0}: '{1}'".format(module, e))
     try:
         attr = getattr(mod, attr)
     except AttributeError:
-        raise ImproperlyConfigured("Module '{0}' does not define a '{1}'".format(module, attr))
+        raise ImproperlyConfigured(
+            "Module '{0}' does not define a '{1}'".format(module, attr))
     return attr
 
 
@@ -63,7 +65,8 @@ class PinaxNotificationsAppConf(AppConf):
                 raise ImproperlyConfigured(
                     "NOTIFICATION_BACKENDS does not contain enough data."
                 )
-            backend_instance = load_path_attr(backend_path)(medium_id, spam_sensitivity)
+            backend_instance = load_path_attr(
+                backend_path)(medium_id, spam_sensitivity)
             backends.append(((medium_id, label), backend_instance))
         return dict(backends)
 

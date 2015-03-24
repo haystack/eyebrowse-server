@@ -3,14 +3,16 @@ from django.template.loader import render_to_string
 
 from django.contrib.sites.models import Site
 
-from ..conf import settings
-from ..utils import notice_setting_for_user
+from notifications.conf import settings
+from notifications.utils import notice_setting_for_user
 
 
 class BaseBackend(object):
+
     """
     The base backend.
     """
+
     def __init__(self, medium_id, spam_sensitivity=None):
         self.medium_id = medium_id
         if spam_sensitivity is not None:
@@ -48,7 +50,8 @@ class BaseBackend(object):
         use_ssl = getattr(settings, "PINAX_USE_SSL", False)
         default_http_protocol = "https" if use_ssl else "http"
         current_site = Site.objects.get_current()
-        base_url = "{0}://{1}".format(default_http_protocol, current_site.domain)
+        base_url = "{0}://{1}".format(default_http_protocol,
+                                      current_site.domain)
         return Context({
             "default_http_protocol": default_http_protocol,
             "current_site": current_site,

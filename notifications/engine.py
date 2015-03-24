@@ -8,13 +8,13 @@ from django.core.mail import mail_admins
 from django.contrib.sites.models import Site
 from django.utils.six.moves import cPickle as pickle  # pylint: disable-msg=F
 
-from .lockfile import FileLock, AlreadyLocked, LockTimeout
-from .models import NoticeQueueBatch
-from .signals import emitted_notices
-from . import models as notification
+from notifications.lockfile import FileLock, AlreadyLocked, LockTimeout
+from notifications.models import NoticeQueueBatch
+from notifications.signals import emitted_notices
+from notifications import models as notification
 
-from .compat import get_user_model
-from .conf import settings
+from notifications.compat import get_user_model
+from notifications.conf import settings
 
 
 def acquire_lock(*args):
@@ -45,11 +45,13 @@ def send_all(*args):
         # nesting the try statement to be Python 2.4
         try:
             for queued_batch in NoticeQueueBatch.objects.all():
-                notices = pickle.loads(base64.b64decode(queued_batch.pickled_data))
+                notices = pickle.loads(
+                    base64.b64decode(queued_batch.pickled_data))
                 for user, label, extra_context, sender in notices:
                     try:
                         user = get_user_model().objects.get(pk=user)
-                        logging.info("emitting notice {0} to {1}".format(label, user))
+                        logging.info(
+                            "emitting notice {0} to {1}".format(label, user))
                         # call this once per user to be atomic and allow for logging to
                         # accurately show how long each takes.
                         if notification.send_now([user], label, extra_context, sender):
@@ -78,7 +80,8 @@ def send_all(*args):
             current_site = Site.objects.get_current()
             subject = "[{0} emit_notices] {1}".format(current_site.name, e)
             message = "\n".join(
-                traceback.format_exception(*sys.exc_info())  # pylint: disable-msg=W0142
+                traceback.format_exception(
+                    *sys.exc_info())  # pylint: disable-msg=W0142
             )
             mail_admins(subject, message, fail_silently=True)
             # log it as critical

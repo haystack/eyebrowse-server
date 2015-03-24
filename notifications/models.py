@@ -2,22 +2,22 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import base64
+import datetime
 
 from django.db import models
 from django.db.models.query import QuerySet
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import get_language, activate
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.six.moves import cPickle as pickle  # pylint: disable-msg=F
 
-from django.contrib.contenttypes.models import ContentType
 
-from .compat import AUTH_USER_MODEL, GenericForeignKey
-from .conf import settings
-from .utils import load_media_defaults, notice_setting_for_user
-from django.contrib.auth.models import User
-import datetime
+from notifications.compat import AUTH_USER_MODEL, GenericForeignKey
+from notifications.conf import settings
+from notifications.utils import load_media_defaults, notice_setting_for_user
 
 
 NOTICE_MEDIA, NOTICE_MEDIA_DEFAULTS = load_media_defaults()
@@ -26,6 +26,7 @@ NOTICE_MEDIA, NOTICE_MEDIA_DEFAULTS = load_media_defaults()
 class LanguageStoreNotAvailable(Exception):
     pass
 
+
 @python_2_unicode_compatible
 class NoticeType(models.Model):
 
@@ -33,7 +34,8 @@ class NoticeType(models.Model):
     display = models.CharField(_("display"), max_length=50)
     description = models.CharField(_("description"), max_length=100)
 
-    # by default only on for media with sensitivity less than or equal to this number
+    # by default only on for media with sensitivity less than or equal to this
+    # number
     default = models.IntegerField(_("default"))
 
     def __str__(self):
@@ -67,9 +69,11 @@ class NoticeType(models.Model):
                 if verbosity > 1:
                     print("Updated %s NoticeType" % label)
         except cls.DoesNotExist:
-            cls(label=label, display=display, description=description, default=default).save()
+            cls(label=label, display=display,
+                description=description, default=default).save()
             if verbosity > 1:
                 print("Created %s NoticeType" % label)
+
 
 class Notification(models.Model):
     recipient = models.ForeignKey(User, related_name="notification_recipient")
@@ -80,7 +84,9 @@ class Notification(models.Model):
     url = models.URLField(max_length=300, blank=False, null=True)
     message = models.CharField(max_length=2000, blank=False, null=True)
 
+
 class NoticeSetting(models.Model):
+
     """
     Indicates, for a given user, whether to send notifications
     of a given type to a given medium.
@@ -90,7 +96,8 @@ class NoticeSetting(models.Model):
     notice_type = models.ForeignKey(NoticeType, verbose_name=_("notice type"))
     medium = models.CharField(_("medium"), max_length=1, choices=NOTICE_MEDIA)
     send = models.BooleanField(_("send"), default=False)
-    scoping_content_type = models.ForeignKey(ContentType, null=True, blank=True)
+    scoping_content_type = models.ForeignKey(
+        ContentType, null=True, blank=True)
     scoping_object_id = models.PositiveIntegerField(null=True, blank=True)
     scoping = GenericForeignKey("scoping_content_type", "scoping_object_id")
 
@@ -106,10 +113,12 @@ class NoticeSetting(models.Model):
     class Meta:
         verbose_name = _("notice setting")
         verbose_name_plural = _("notice settings")
-        unique_together = ("user", "notice_type", "medium", "scoping_content_type", "scoping_object_id")
+        unique_together = (
+            "user", "notice_type", "medium", "scoping_content_type", "scoping_object_id")
 
 
 class NoticeQueueBatch(models.Model):
+
     """
     A queued notice.
     Denormalized data for a notice.
@@ -184,7 +193,8 @@ def send(*args, **kwargs):
     """
     queue_flag = kwargs.pop("queue", False)
     now_flag = kwargs.pop("now", False)
-    assert not (queue_flag and now_flag), "'queue' and 'now' cannot both be True."
+    assert not (
+        queue_flag and now_flag), "'queue' and 'now' cannot both be True."
     if queue_flag:
         return queue(*args, **kwargs)
     elif now_flag:
@@ -211,4 +221,5 @@ def queue(users, label, extra=None, sender=None):
     notices = []
     for user in users:
         notices.append((user, label, extra, sender))
-    NoticeQueueBatch(pickled_data=base64.b64encode(pickle.dumps(notices))).save()
+    NoticeQueueBatch(
+        pickled_data=base64.b64encode(pickle.dumps(notices))).save()

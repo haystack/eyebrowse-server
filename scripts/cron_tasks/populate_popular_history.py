@@ -19,11 +19,11 @@ from accounts.models import UserProfile
 
 def reset_values():
     print 'resetting values'
-    
+
     p = PopularHistory.objects.all()
 
     for pop in p.iterator():
-        
+
         pop.total_time_spent = 0
         pop.total_time_ago = 0
         pop.save()
@@ -73,10 +73,10 @@ def create_pop(ehist, url):
 
 
 def populate_popular_history():
-    
+
     month_ago = datetime.datetime.now() - datetime.timedelta(weeks=10)
     timezone.make_aware(month_ago, timezone.get_current_timezone())
-    
+
     e = EyeHistory.objects.filter(start_time__gt=month_ago)
 
     for ehist in e.iterator():
@@ -90,10 +90,10 @@ def populate_popular_history():
         else:
             p = p[0]
 
-        
         pop_items = PopularHistory.objects.filter(popular_history=p, user=None)
         if pop_items.count() == 0:
-            total_pop = PopularHistory.objects.create(popular_history=p, user=None)
+            total_pop = PopularHistory.objects.create(
+                popular_history=p, user=None)
         elif pop_items.count() > 1:
             total_pop = pop_items[0]
             for i in pop_items[1:]:
@@ -112,12 +112,10 @@ def populate_popular_history():
         total_pop.total_time_spent += ehist.total_time
 
         time_diff = timezone.now() - ehist.end_time
-        total_pop.total_time_ago += int(round(float(time_diff.total_seconds()) / 3600.0))
+        total_pop.total_time_ago += int(
+            round(float(time_diff.total_seconds()) / 3600.0))
 
         total_pop.save()
-        
-        
-        
 
         follow_users = list(
             UserProfile.objects.filter(
@@ -132,7 +130,7 @@ def populate_popular_history():
                 popular_history=p, user=u)
 
             if not user_pop.eye_hists.filter(pk=ehist.id).exists():
-                
+
                 user_pop.eye_hists.add(ehist)
                 user_pop.visitors.add(ehist.user)
 
@@ -153,7 +151,7 @@ def populate_popular_history():
     p = PopularHistory.objects.filter(total_time_ago=0)
     print 'count %s' % p.count()
     p.delete()
-    
+
     print "deleting total spent should be 0"
     p = PopularHistory.objects.filter(total_time_spent=0)
     print 'count %s' % p.count()
@@ -192,7 +190,8 @@ def calculate_scores():
             continue
 
         time = pop.total_time_ago / float(pop.eye_hists.count())
-        pop.avg_time_ago = datetime.datetime.now() - datetime.timedelta(hours=time)
+        pop.avg_time_ago = datetime.datetime.now(
+        ) - datetime.timedelta(hours=time)
 
         time_spent = pop.total_time_spent / float(pop.eye_hists.count())
         pop.humanize_avg_time = humanize_time(
@@ -234,6 +233,7 @@ def calculate_scores():
             pop.save()
         except:
             continue
+
 
 def update_popular_history():
     reset_values()

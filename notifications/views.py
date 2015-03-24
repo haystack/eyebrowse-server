@@ -1,9 +1,8 @@
+import datetime
+
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-
-from .models import NoticeType, NOTICE_MEDIA
-from .utils import notice_setting_for_user
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -11,25 +10,28 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 from annoying.decorators import render_to
 
 from accounts.models import UserProfile
 
 from api.models import EyeHistory, PopularHistoryInfo
+from api.utils import humanize_time
 
 from common.constants import EMPTY_SEARCH_MSG
 from common.view_helpers import _template_values
 
+from eyebrowse.log import logger
+
 from live_stream.query_managers import profile_stat_gen
 from live_stream.query_managers import online_user
 
-from stats.models import FavData
 from notifications.models import Notification
-from api.utils import humanize_time
-from eyebrowse.log import logger
-import datetime
-from django.utils import timezone
+from notifications.models import NoticeType, NOTICE_MEDIA
+from notifications.utils import notice_setting_for_user
+
+from stats.models import FavData
 
 
 @login_required
@@ -64,7 +66,6 @@ def notifications(request):
         n.seen = True
         n.save()
 
-    
     template_dict = {
         "username": user.username,
         "following_count": following_count,
@@ -86,7 +87,8 @@ def notifications(request):
 
 
 def notification_renderer(user, empty_search_msg):
-    notifications = Notification.objects.filter(recipient=user).select_related().order_by('-date_created')
+    notifications = Notification.objects.filter(
+        recipient=user).select_related().order_by('-date_created')
     for notif in notifications:
         if notif.notice_type.label != "new_follower":
             pop = PopularHistoryInfo.objects.filter(url=notif.url)
@@ -95,15 +97,15 @@ def notification_renderer(user, empty_search_msg):
                 notif.img_url = pop[0].img_url
                 notif.favIconUrl = pop[0].favIconUrl
                 notif.title = pop[0].title
-                notif.hum_date = humanize_time(timezone.now() - notif.date_created)
+                notif.hum_date = humanize_time(
+                    timezone.now() - notif.date_created)
             else:
                 notif.description = None
-             
+
     template_dict = {'notifications': notifications,
                      'empty_search_msg': empty_search_msg, }
 
     return render_to_string('notifications/notification_list.html', template_dict)
-
 
 
 class NoticeSettingsView(TemplateView):
@@ -118,8 +120,8 @@ class NoticeSettingsView(TemplateView):
         context['nav_account'] = 'active'
         context['email_notifications'] = 'active'
         context['user'] = request.user
-        context['page_title'] = "Set Email Notifications"
-        
+        context['page_title'] = 'Set Email Notifications'
+
         return self.render_to_response(context)
 
     @property

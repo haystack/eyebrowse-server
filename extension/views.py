@@ -119,7 +119,7 @@ def popup_info(request):
         for c in chat_messages:
             if c.author in followers:
                 about_message = humanize_time(timezone.now() - c.date) + ' ago'
-                message = ''%s'' % (c.message)
+                message = '"%s"' % (c.message)
                 user_url = '%s/users/%s' % (BASE_URL, c.author.username)
                 username = c.author.username
                 break
@@ -217,7 +217,7 @@ def get_info(request):
         for c in chat_messages:
             if c.author in followers:
                 about_message = humanize_time(timezone.now() - c.date) + ' ago'
-                message = ''%s'' % (c.message)
+                message = '"%s"' % (c.message)
                 user_url = '%s/users/%s' % (BASE_URL, c.author.username)
                 username = c.author.username
 

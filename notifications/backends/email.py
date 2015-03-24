@@ -3,14 +3,15 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext
 
-from .base import BaseBackend
+from notifications.backends.base import BaseBackend
 
 
 class EmailBackend(BaseBackend):
     spam_sensitivity = 2
 
     def can_send(self, user, notice_type, scoping):
-        can_send = super(EmailBackend, self).can_send(user, notice_type, scoping)
+        can_send = super(EmailBackend, self).can_send(
+            user, notice_type, scoping)
         if can_send and user.email:
             return True
         return False
@@ -43,4 +44,5 @@ class EmailBackend(BaseBackend):
             "message": messages["full.txt"],
         }, context)
 
-        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [recipient.email])
+        send_mail(
+            subject, body, settings.DEFAULT_FROM_EMAIL, [recipient.email])
