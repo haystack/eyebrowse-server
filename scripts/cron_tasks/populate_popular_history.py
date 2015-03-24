@@ -15,6 +15,9 @@ from api.models import PopularHistoryInfo
 from api.utils import humanize_time
 
 from accounts.models import UserProfile
+import re
+
+twitter_username_re = re.compile(r'@([A-Za-z0-9_]+)')
 
 
 def reset_values():
@@ -107,6 +110,7 @@ def populate_popular_history():
 
             messages = ehist.eyehistorymessage_set.all()
             for message in messages:
+                message.message = twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/%s">%s</a>' % (m.group(1), m.group(0)), message.message)
                 total_pop.messages.add(message)
 
         total_pop.total_time_spent += ehist.total_time
@@ -139,6 +143,7 @@ def populate_popular_history():
                 messages = ehist.eyehistorymessage_set.all()
 
                 for message in messages:
+                    message.message = twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/%s">%s</a>' % (m.group(1), m.group(0)), message.message)
                     user_pop.messages.add(message)
 
             user_pop.total_time_spent += ehist.total_time
@@ -214,7 +219,7 @@ def calculate_scores():
                     float(pop.eye_hists.count())) ** 1.2)
         pop.unique_visitor_score = v
 
-        num_time = float(pop.total_time_spent) / float(pop.eye_hists.count())
+        num_time = max(0, float(pop.total_time_spent) / float(pop.eye_hists.count()))
 
         t = float((num_time ** .8) / 1000.0) / \
             float(

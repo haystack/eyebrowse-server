@@ -9,7 +9,9 @@
     <div id="history_item_{{ item.id }}_content" class="history-content">
     	<span>
     		{% for m in item.first_item.messages %}
-    			<div class="history-message">{{ m.message }}</div>
+    			<div class="history-message">
+    				{% autoescape off %}{{ m.message }}{% endautoescape %}
+    			</div>
     		{% endfor %}
     	</span>
     	
@@ -96,7 +98,9 @@
 	        {% for h_item in item.get_items %}
 	            <span>
 		    		{% for m in h_item.messages %}
-		    			<div class="history-message2">{{ m.message }}</div>
+		    			<div class="history-message2">
+		    				{% autoescape off %}{{ m.message }}{% endautoescape %}
+		    			</div>
 		    		{% endfor %}
 		    	</span>
 	        	<div id="history_item_{{ h_item.id }}_lower_item" class="lower-item">

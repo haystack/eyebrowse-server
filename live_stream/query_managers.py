@@ -16,6 +16,9 @@ from api.models import PopularHistory
 from common.pagination import paginator
 
 from live_stream.renderers import history_renderer
+import re
+
+twitter_username_re = re.compile(r'@([A-Za-z0-9_]+)')
 
 
 def live_stream_query_manager(get_dict, req_user, return_type="html", empty_search_msg=None):
@@ -345,7 +348,11 @@ class GroupHistory(object):
         self.user = history_item.user
 
     def add_item(self, history_item):
-        history_item.messages = history_item.eyehistorymessage_set.all()
+        history_item.messages = list(history_item.eyehistorymessage_set.all())
+        for i in range(len(history_item.messages)):
+            message = history_item.messages[i].message
+            history_item.messages[i].message = twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/%s">%s</a>' % (m.group(1), m.group(0)), message)
+            
         self.history_items.append(history_item)
 
     def get_items(self):

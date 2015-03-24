@@ -106,11 +106,11 @@
     <div class="collapse span7" id="message_details_{{ item.id }}">
     		{% for m in messages %}
 	            <span class="span5">
-				    		<a href="/users/{{ m.eyehistory.user.username }}">
-			           			<img class="author-pic img-rounded" data-content="{{ m.eyehistory.user }}" src="{% gravatar_for_user m.eyehistory.user %}"/> 
-			           		</a>
-		    				
-		    				{{ m.message }}
+		    		<a href="/users/{{ m.eyehistory.user.username }}">
+	           			<img class="author-pic img-rounded" data-content="{{ m.eyehistory.user }}" src="{% gravatar_for_user m.eyehistory.user %}"/> 
+	           		</a>
+    				
+    				{% autoescape off %}{{ m.message }}{% endautoescape %}
 
 		    	</span>
 	        	
