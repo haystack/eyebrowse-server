@@ -110,7 +110,7 @@
 	           			<img class="author-pic img-rounded" data-content="{{ m.eyehistory.user }}" src="{% gravatar_for_user m.eyehistory.user %}"/> 
 	           		</a>
     				
-    				{% autoescape off %}{{ m.message }}{% endautoescape %}
+    				{% autoescape off %}{{ m.message|add_twitter }}{% endautoescape %}
 
 		    	</span>
 	        	

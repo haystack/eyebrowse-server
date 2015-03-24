@@ -4,6 +4,9 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from urlparse import urlparse
 
 import time
+import re
+
+twitter_username_re = re.compile(r'@([A-Za-z0-9_]+)')
 
 register = template.Library()
 
@@ -34,6 +37,11 @@ def date_ms(dt):
 @register.filter
 def date_fmt(dt):
     return str(dt).split("+")[0]
+
+@register.filter
+def add_twitter(message):
+    return twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/%s">%s</a>' % (m.group(1), m.group(0)), message)
+            
 
 
 @register.simple_tag

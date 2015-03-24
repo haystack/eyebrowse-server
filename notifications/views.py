@@ -30,9 +30,6 @@ from api.utils import humanize_time
 from eyebrowse.log import logger
 import datetime
 from django.utils import timezone
-import re
-
-twitter_username_re = re.compile(r'@([A-Za-z0-9_]+)')
 
 
 @login_required
@@ -101,9 +98,7 @@ def notification_renderer(user, empty_search_msg):
                 notif.hum_date = humanize_time(timezone.now() - notif.date_created)
             else:
                 notif.description = None
-            if notif.message:
-                notif.message = twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/%s">%s</a>' % (m.group(1), m.group(0)), notif.message)
-            
+             
     template_dict = {'notifications': notifications,
                      'empty_search_msg': empty_search_msg, }
 

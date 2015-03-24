@@ -10,7 +10,7 @@
     	<span>
     		{% for m in item.first_item.messages %}
     			<div class="history-message">
-    				{% autoescape off %}{{ m.message }}{% endautoescape %}
+    				{% autoescape off %}{{ m.message|add_twitter }}{% endautoescape %}
     			</div>
     		{% endfor %}
     	</span>
@@ -99,7 +99,7 @@
 	            <span>
 		    		{% for m in h_item.messages %}
 		    			<div class="history-message2">
-		    				{% autoescape off %}{{ m.message }}{% endautoescape %}
+		    				{% autoescape off %}{{ m.message|add_twitter }}{% endautoescape %}
 		    			</div>
 		    		{% endfor %}
 		    	</span>
