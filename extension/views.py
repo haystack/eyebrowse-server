@@ -25,18 +25,18 @@ from eyebrowse.settings import BASE_URL
 
 
 @xframe_options_exempt
-@render_to("extension/track_prompt.html")
+@render_to('extension/track_prompt.html')
 def prompt(request):
-    site = request.GET.get("site", '')
+    site = request.GET.get('site', '')
     return {
         'site': site
     }
 
 
 @xframe_options_exempt
-@render_to("extension/login_prompt.html")
+@render_to('extension/login_prompt.html')
 def login(request):
-    src = request.GET.get("src", "chrome")
+    src = request.GET.get('src', 'chrome')
     return {
         'src': src
     }
@@ -44,15 +44,15 @@ def login(request):
 
 def logged_in(request):
     if request.user.is_authenticated():
-        return JSONResponse({"res": True,
-                             "username": request.user.username})
+        return JSONResponse({'res': True,
+                             'username': request.user.username})
     else:
-        return JSONResponse({"res": False})
+        return JSONResponse({'res': False})
 
 
 @login_required
 def popup_info(request):
-    url = request.POST.get("url")
+    url = request.POST.get('url', '')
 
     domain = url_domain(url)
 
@@ -98,7 +98,7 @@ def popup_info(request):
     messages = EyeHistoryMessage.objects.filter(
         Q(eyehistory__url=url) &
         Q(post_time__gt=timestamp)
-    ).order_by("-post_time").select_related()
+    ).order_by('-post_time').select_related()
     about_message = None
     user_url = None
     username = None
@@ -115,11 +115,11 @@ def popup_info(request):
 
     if not about_message:
         chat_messages = ChatMessage.objects.filter(
-            url=url).order_by("-date").select_related()
+            url=url).order_by('-date').select_related()
         for c in chat_messages:
             if c.author in followers:
                 about_message = humanize_time(timezone.now() - c.date) + ' ago'
-                message = '"%s"' % (c.message)
+                message = ''%s'' % (c.message)
                 user_url = '%s/users/%s' % (BASE_URL, c.author.username)
                 username = c.author.username
                 break
@@ -139,7 +139,7 @@ def popup_info(request):
 
 
 @xframe_options_exempt
-@render_to("extension/info_prompt.html")
+@render_to('extension/info_prompt.html')
 def get_info(request):
 
     if not request.user.is_authenticated():
@@ -153,7 +153,7 @@ def get_info(request):
             'username': None,
         }
 
-    url = request.GET.get("url")
+    url = request.GET.get('url', '')
 
     domain = url_domain(url)
 
@@ -217,7 +217,7 @@ def get_info(request):
         for c in chat_messages:
             if c.author in followers:
                 about_message = humanize_time(timezone.now() - c.date) + ' ago'
-                message = '"%s"' % (c.message)
+                message = ''%s'' % (c.message)
                 user_url = '%s/users/%s' % (BASE_URL, c.author.username)
                 username = c.author.username
 
@@ -237,7 +237,7 @@ def get_info(request):
 
 
 @xframe_options_exempt
-@render_to("extension/ticker_info_prompt.html")
+@render_to('extension/ticker_info_prompt.html')
 def get_ticker_info(request):
     return {}
 
@@ -250,7 +250,7 @@ def profilepic(request):
 @login_required
 @ajax_request
 def get_messages(request):
-    url = request.GET.get("url")
+    url = request.GET.get('url', '')
 
     timestamp = timezone.now() - datetime.timedelta(days=7)
 
@@ -281,7 +281,7 @@ def get_messages(request):
 @login_required
 @ajax_request
 def active(request):
-    url = request.GET.get("url", '')
+    url = request.GET.get('url', '')
 
     domain = url_domain(url)
 
@@ -357,7 +357,7 @@ def get_stats(visits):
 @login_required
 @ajax_request
 def stats(request):
-    url = request.GET.get("url", '')
+    url = request.GET.get('url', '')
     my_user = get_object_or_404(User, username=request.user.username)
 
     my_visits = EyeHistory.objects.filter(user=my_user, url=url)

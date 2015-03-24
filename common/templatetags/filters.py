@@ -18,6 +18,8 @@ def fill(template, path):
 
 @register.filter
 def url_domain(url):
+    if url is None:
+        url = ''
     domain = urlparse(url).netloc
     if domain:
         return domain
@@ -38,10 +40,10 @@ def date_ms(dt):
 def date_fmt(dt):
     return str(dt).split("+")[0]
 
+
 @register.filter
 def add_twitter(message):
     return twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/users/%s">%s</a>' % (m.group(1), m.group(0)), message)
-            
 
 
 @register.simple_tag
