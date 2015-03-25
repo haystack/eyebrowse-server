@@ -12,6 +12,7 @@ from django.views.generic.simple import redirect_to
 from annoying.decorators import ajax_request
 from annoying.decorators import render_to
 
+from accounts.models import UserProfile
 from api.models import ChatMessage
 from api.models import EyeHistory
 from api.models import EyeHistoryMessage
@@ -22,6 +23,10 @@ from common.templatetags.gravatar import gravatar_for_user
 from common.templatetags.filters import url_domain
 
 from eyebrowse.settings import BASE_URL
+
+import re
+
+twitter_username_re = re.compile(r'@([A-Za-z0-9_]+)')
 
 
 @xframe_options_exempt
