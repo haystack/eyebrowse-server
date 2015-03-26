@@ -61,11 +61,25 @@ make install
 make run
 ```
 
-The `make install` command has two arguments for setting up the envirnoment
+The `make install` command has two arguments for setting up the environment
 ```bash
 make install debug=[true|false] env=[prod|dev]
 ```
 The default options are `debug=true` and `env=dev`.
+
+There are several cron tasks that eyebrowse uses. If you want to install them, run
+```
+python manage.py installtasks
+```
+Most of them are not important for development purposes. The one exception 
+would be the script for updating the popular feeds which should be run to
+populate them initially. Run the following at the python command line (with
+your eyebrowse virtual environment enabled):
+```
+from scripts.cron_tasks.populate_popular_history import *
+populate_popular_history()
+```
+
 
 Common problems:
 
