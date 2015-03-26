@@ -76,6 +76,10 @@
 					{{ person.user.username }}</a>
 			</td>
 			<td>
+				{{ person.bio }}<BR>
+					<a href="{{ person.website }}">{{ person.website }}</a>
+			</td>
+			<td>
 				<a href="/followers/{{ person.user.username }}" target="_blank">
 					{{ person.num_followed }}
 					{% if person.num_followed == 1 %}
