@@ -723,7 +723,7 @@ function setupDropdown() {
         var button = $(event.relatedTarget);
         var item = button.data("item");
 
-        var text = "<fieldset><input type='checkbox class='checkall'> &emsp;Check All <div id='checkboxes'>";
+        var text = "<fieldset><input type='checkbox' class='checkall'> &emsp;Check All <div id='checkboxes'>";
 
         var url = $("#history_item_" + item + "_content").children()[1].children[1].href;
         var title = $("#history_item_" + item + "_content").children()[1].children[1].children[0].innerHTML;
