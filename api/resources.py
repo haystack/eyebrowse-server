@@ -371,6 +371,7 @@ class ChatMessageResource(ModelResource):
         return base_object_list
 
     def obj_create(self, bundle, request=None, **kwargs):
+        val = None
         try:
             bundle.data['date'] = datetime.datetime.strptime(
                 bundle.data['date']['_d'], '%Y-%m-%dT%H:%M:%S.%fZ')
