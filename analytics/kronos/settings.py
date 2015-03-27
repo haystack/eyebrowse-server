@@ -1,14 +1,7 @@
 import multiprocessing
 import re
-import os
-from os.path import dirname as parent
-import sys
-
-APPROOT = parent(parent(parent((os.path.realpath(__file__)))))
-sys.path.append(APPROOT)
 
 from uuid import getnode
-from analytics.config import SECRET_KEY
 
 # In debug mode, print every request to standard out.
 debug = False
@@ -39,18 +32,30 @@ storage = {
         'backend': 'kronos.storage.memory.InMemoryStorage',
         'max_items': 100000,
     },
-    'cassandra': {
-        'backend': 'kronos.storage.cassandra.CassandraStorage',
-        'hosts': ['127.0.0.1'],
-        'keyspace_prefix': 'kronos_test',
-        # Set to a value greater than 0 or you will get an UnavailableException
-        'replication_factor': 1,
-        'timewidth_seconds': 2,  # Keep this small for test environment.
-        'shards_per_bucket': 3,
-        'read_size': 10
-    },
+    # 'cassandra': {
+    #     'backend': 'kronos.storage.cassandra.CassandraStorage',
+    #     'hosts': ['127.0.0.1'],
+    #     'keyspace_prefix': 'kronos_test',
+    #     # Set to a value greater than 0 or you will get an
+    #     # UnavailableException
+    #     'replication_factor': 1,
+    #     'timewidth_seconds': 2,  # Keep this small for test environment.
+    #     'shards_per_bucket': 3,
+    #     'read_size': 10
+    # },
+    'elasticsearch': {
+        'backend': 'kronos.storage.elasticsearch.ElasticSearchStorage',
+        'hosts': [{'host': 'localhost', 'port': 9200}],
+        'index_template': 'kronos_test',
+        'index_prefix': 'kronos_test',
+        'shards': 1,
+        'replicas': 0,
+        'force_refresh': True,
+        'read_size': 10,
+        'rollover_size': 100,
+        'rollover_check_period_seconds': 2
+    }
 }
-
 # Default namespace for clients that don't specify one on their requests.
 default_namespace = 'kronos'
 
@@ -101,12 +106,13 @@ namespace_to_streams_configuration = {
     default_namespace: {
         '': {
             'backends': {
-                'cassandra': {
-                    'timewidth_seconds': 60 * 60 * 24 * 7  # 1 week.
-                },
+                #'cassandra': {
+                #    'timewidth_seconds': 60 * 60 * 24 * 7  # 1 week.
+                #},
+                'elasticsearch': None,
                 'memory': None
             },
-            'read_backend': 'cassandra'
+            'read_backend': 'elasticsearch'
         },
     }
 }

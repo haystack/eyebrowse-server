@@ -10,3 +10,4 @@ venv26
 config.py
 .project
 .pydevproject
+logs/*

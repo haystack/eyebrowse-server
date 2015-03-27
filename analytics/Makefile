@@ -1,14 +1,28 @@
-.PHONY: cassandra-install kronos-install metis-install jia-install install cassandra-run kronos-run metis-run jia-run run
+.PHONY: cassandra-install kronos-install metis-install jia-install install cassandra-run kronos-run metis-run jia-run run installdeps
 
+PUBLIC_PORT=80
+PWD=$(shell pwd)
+KRONOS_ROOT=$(PWD)/kronos
+METIS_ROOT=$(PWD)/metis
+JIA_ROOT=$(PWD)/jia
 # TODO(joshblum): use latest tags
 KRONOS_VERSION = "v0.7.2"
 METIS_VERSION = "v0.7.1"
 JIA_VERSION = "v0.7.1"
-APPROOT = "/home/ubuntu/eyebrowse-server/analytics"
 
 default: install
 
-install: cassandra-install kronos-install metis-install jia-install
+install: installdeps cassandra-install kronos-install metis-install jia-install
+
+installdeps:
+	# https://docs.docker.com/installation/ubuntulinux/#installing-docker-on-ubuntu
+	wget -qO- https://get.docker.com/ | sh
+
+	# https://www.digitalocean.com/community/tutorials/how-to-install-java-on-ubuntu-with-apt-get
+	sudo apt-get install python-software-properties
+	sudo add-apt-repository ppa:webupd8team/java
+	sudo apt-get update
+	sudo apt-get install oracle-java8-installer
 
 run: cassandra-run kronos-run metis-run jia-run
 
@@ -21,19 +35,19 @@ cassandra-run:
 	sudo docker run -d -v /srv/cassandra:/data tobert/cassandra
 
 kronos-install:
-	sudo mkdir -p /var/log/kronos
+	mkdir -p $(KRONOS_ROOT)/logs
 
 kronos-run:
-	sudo docker run -d -p 8150:8150 -v /etc/kronos:$(APPROOT)/kronos/ -v /var/log/kronos:/var/log/kronos chronology/kronos:$(KRONOS_VERSION)
+	sudo docker run -d -v $(KRONOS_ROOT):/etc/kronos -v $(KRONOS_ROOT)/logs:/var/log/kronos -p 8150:8150 chronology/kronos:$(KRONOS_VERSION)
 
 metis-install:
-	sudo mkdir -p /var/log/metis
+	mkdir -p $(METIS_ROOT)/logs
 
 metis-run:
-	sudo docker run -d -v /etc/metis:$(APPROOT)/metis/ -v /var/log/metis/:/var/log/metis/ -p 80 chronology/metis:$(METIS_VERSION)
+	sudo docker run -d -v $(METIS_ROOT):/etc/metis -v $(METIS_ROOT)/logs:/var/log/metis/ -p 8151:8151 chronology/metis:$(METIS_VERSION)
 
 jia-install:
-	sudo mkdir -p /var/log/jia
+	mkdir -p $(JIA_ROOT)/logs
 
 jia-run:
-	sudo docker run -d -v /etc/jia:$(APPROOT)/jia/ -v /var/log/jia/:/var/log/jia/ -p 80 chronology/jia:$(JIA_VERSION)
+	sudo docker run -d -v $(JIA_ROOT):/etc/jia -v $(JIA_ROOT)/logs:/var/log/jia/ -p $(PUBLIC_PORT):80 chronology/jia:$(JIA_VERSION)

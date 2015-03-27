@@ -3,7 +3,7 @@ import re
 from os.path import dirname as parent
 import sys
 
-APPROOT = parent(parent(parent((os.path.realpath(__file__)))))
+APPROOT = '/home/ubuntu/eyebrowse-server.py'
 sys.path.append(APPROOT)
 
 from analytics.config import ANALYTICS_EMAILS
