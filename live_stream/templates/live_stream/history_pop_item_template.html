@@ -30,17 +30,6 @@
         </span>
             
         <span class="pull-right author-container"> 
-
-		
-           <span>
-           	{% for v in item.visitors.all %}
-           		{% if filter == "firehose" or v != user %}
-		           	<a href="/users/{{ v.username }}">
-		           		<img class="author-pic img-rounded" data-content="{{ v }}" src="{% gravatar_for_user v %}"/> 
-		           	</a>
-		        {% endif %}
-	        {% endfor %}
-           </span>
 	        <span class="dropdown timeline-options pull-right">
 	        	<a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
 	        	<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
@@ -68,6 +57,16 @@
 				  </ul>
 				{% endif %}
 	        </span>
+	        
+	        <span>
+           	{% for v in item.visitors.all %}
+           		{% if filter == "firehose" or v != user %}
+		           	<a href="/users/{{ v.username }}">
+		           		<img class="author-pic img-rounded" data-content="{{ v }}" src="{% gravatar_for_user v %}"/> 
+		           	</a>
+		        {% endif %}
+	        {% endfor %}
+           </span>
 	        
 	        <br />
 	        <span class="date">
