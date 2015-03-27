@@ -56,7 +56,7 @@ def logged_in(request):
 
 
 @login_required
-def popup_info(request):
+def bubble_info(request):
     url = request.POST.get('url', '')
 
     domain = url_domain(url)
