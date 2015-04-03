@@ -280,12 +280,7 @@ def get_friends(request):
 def get_messages(request):
     url = request.GET.get('url', '')
 
-    timestamp = timezone.now() - datetime.timedelta(days=7)
-
-    messages = EyeHistoryMessage.objects.filter(
-        Q(eyehistory__url=url) &
-        Q(post_time__gt=timestamp)
-    ).order_by('-post_time').select_related()
+    messages = EyeHistoryMessage.objects.filter(eyehistory__url=url).order_by('-post_time').select_related()
 
     message_list = []
     for message in messages:
