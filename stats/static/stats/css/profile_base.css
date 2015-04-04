@@ -1,4 +1,4 @@
-.user-name{
+.user-name {
     font-size: 30px;
     line-height: 40px;
     margin: 10px 0;
@@ -6,60 +6,50 @@
     font-weight: bold;
     color: inherit;
     text-rendering: optimizelegibility;
-    display:table;
-	margin:0 auto;
+    display: table;
+    margin: 0 auto;
 }
-
 .bulletin-color {
-	color: green;
+    color: green;
 }
-
 .chat-color {
-	color: orange;
+    color: orange;
 }
-
 .you-visit {
-	float: right;
-	font-size: 10px;
-	color:#777777;
+    float: right;
+    font-size: 10px;
+    color: #777777;
 }
-
-.upper-header{
+.upper-header {
     align: center;
-    display:table-cell;
+    display: table-cell;
     text-align: center;
     display: block;
 }
-
-.lower-header{
-	display:table-cell;
+.lower-header {
+    display: table-cell;
     align: center;
     display: block;
     text-align: center;
 }
-
-.user-metadata{
-	padding-top: 10px;
+.user-metadata {
+    padding-top: 10px;
     text-align: center;
     align: center;
 }
-
-.btn-prof-header{
+.btn-prof-header {
     margin-top: -10px;
 }
-
 #left-nav {
-	z-index: 1;
+    z-index: 1;
 }
-
 .followlink {
-	position: relative;
-	top: 8px;
+    position: relative;
+    top: 8px;
 }
-
 .widget-code-text {
-	padding: 0px;
-	border: 0px;
-	width: 100%;
-	height: 100px;
+    padding: 0px;
+    border: 0px;
+    width: 100%;
+    height: 100px;
 }

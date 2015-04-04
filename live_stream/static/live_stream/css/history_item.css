@@ -1,5 +1,5 @@
 .history-container {
-    padding:10px;
+    padding: 10px;
     margin-left: 0px;
     margin-right: 0px;
     margin-top: 5px;
@@ -7,117 +7,99 @@
     color: #555;
     word-wrap: break-word;
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15)!important;
-    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.15)!important;
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15)!important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15)!important;
     -webkit-border-radius: 5px!important;
     -moz-border-radius: 5px!important;
     border-radius: 5px!important;
     background-color: #ffffff;
 }
-
 .history-container .author-pic {
     width: 20px;
     height: 20px;
 }
-
 .history-container .history-content {
-    color:#000;
+    color: #000;
     font-size: 1.1em;
 }
-
 .history-container .author-name {
     vertical-align: middle;
     font-size: 1.3em;
-    color:#444;
+    color: #444;
 }
-
 .history-container .date {
     font-size: .8em;
 }
-
 .center {
-    margin-left:270px;
+    margin-left: 270px;
 }
-
 .connection-container {
-    margin-top:20px;
+    margin-top: 20px;
 }
-
 .tag-area {
-	display: inline-block;
-	width: auto;
-	float: right;
-	padding-right: 3px;
+    display: inline-block;
+    width: auto;
+    float: right;
+    padding-right: 3px;
 }
-
-.author-container{
-    width:160px;
+.author-container {
+    width: 160px;
 }
-
 .history-container .left {
-	width: auto;
-	overflow: hidden;
-	float: none;
+    width: auto;
+    overflow: hidden;
+    float: none;
 }
-
 .history-container .lower-item {
-	height: auto;
-	overflow: hidden;
-    color:#000;
-    padding-left:23px;
+    height: auto;
+    overflow: hidden;
+    color: #000;
+    padding-left: 23px;
     font-size: 1.1em;
- }
-
+}
 .history-container .history-message {
-	height: auto;
-	overflow: hidden;
-    color:#000;
+    height: auto;
+    overflow: hidden;
+    color: #000;
     padding-left: 43px;
     padding-right: 43px;
     font-size: 1.3em;
     padding-top: 5px;
     padding-bottom: 5px;
- }
-
- .history-container .history-message2 {
-	height: auto;
-	overflow: hidden;
-    color:#000;
+}
+.history-container .history-message2 {
+    height: auto;
+    overflow: hidden;
+    color: #000;
     padding-left: 43px;
     padding-right: 43px;
     font-size: 1.3em;
     padding-top: 15px;
     padding-bottom: 5px;
- }
-
+}
 #left-nav {
-	z-index: 1;
+    z-index: 1;
 }
-
 .timeline-options {
-	margin-left: 25px;
-	cursor: pointer;
-	cursor: hand;
+    margin-left: 25px;
+    cursor: pointer;
+    cursor: hand;
 }
-
 .popular_image {
-	max-width: 100px;
-	max-height: 100px;
-	margin-left: 0px;
-	padding: 0px;
-	margin-right: 10px;
-	margin-bottom: 5px;
+    max-width: 100px;
+    max-height: 100px;
+    margin-left: 0px;
+    padding: 0px;
+    margin-right: 10px;
+    margin-bottom: 5px;
 }
-
 .eye-hist-visited {
-	background-color: #DDD !important;
-	border: #e3e3e3 1px solid!important;
+    background-color: #DDD !important;
+    border: #e3e3e3 1px solid!important;
 }
-
 .eye-hist {
     border: #DDD 1px solid!important;
     background-color: white!important;
-	border-top-color: #EEE 1px solid !important;
-	border-bottom-color: #BBB 1px solid !important;	
+    border-top-color: #EEE 1px solid !important;
+    border-bottom-color: #BBB 1px solid !important;
 }
-

@@ -1,111 +1,98 @@
-{% load staticfiles %}
-
-body {
-    background:url({% static "extension/img/bg-trans.gif" %});
-}
-
-.small-pic {
-	width: 20px;
-	height: 20px;
-	margin: 1px;
-	border: 0px;
-	padding: 0px;
-	z-index: 2;
-}
-
-.bubble
 {
-	position: relative;
-	max-width: 390px;
-	min-width: 40px;
-	height: 32px;
-	position: absolute;
-	top: 12px;
-	right: 23px;
-	text-align: center;
-	padding: 0px;
-	padding-top: 2px;
-	padding-right: 4px;
-	padding-left: 4px;
-	background: #FFFFFF;
-	-webkit-border-radius: 13px;
-	-moz-border-radius: 13px;
-	border-radius: 13px;
-	border: #333333 solid 3px;
-	visibility: hidden;
+    % load staticfiles %
 }
-
+body {
+    background: url({% static "extension/img/bg-trans.gif" %});
+}
+.small-pic {
+    width: 20px;
+    height: 20px;
+    margin: 1px;
+    border: 0px;
+    padding: 0px;
+    z-index: 2;
+}
+.bubble {
+    position: relative;
+    max-width: 390px;
+    min-width: 40px;
+    height: 32px;
+    position: absolute;
+    top: 12px;
+    right: 23px;
+    text-align: center;
+    padding: 0px;
+    padding-top: 2px;
+    padding-right: 4px;
+    padding-left: 4px;
+    background: #FFFFFF;
+    -webkit-border-radius: 13px;
+    -moz-border-radius: 13px;
+    border-radius: 13px;
+    border: #333333 solid 3px;
+    visibility: hidden;
+}
 .older0 {
-	border: #ffff00 solid 2px;
-	margin: 0px;
+    border: #ffff00 solid 2px;
+    margin: 0px;
 }
-
 .older1 {
-	opacity: .9;
+    opacity: .9;
 }
-
 .older2 {
-	opacity: .75;
+    opacity: .75;
 }
-
 .older3 {
-	opacity: .6;
+    opacity: .6;
 }
-
 #imgs {
-	max-width: 190px;
-	min-width: 35px;
-	height: 26px;
-	display: block;
-	padding: 0px;
-	margin: 0px;
-	float: right;
-	text-align: center;
+    max-width: 190px;
+    min-width: 35px;
+    height: 26px;
+    display: block;
+    padding: 0px;
+    margin: 0px;
+    float: right;
+    text-align: center;
     position: relative;
     top: 50%;
     -ms-transform: translateY(-50%);
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
 }
-
 #message {
-	font-size: 10px;
-	line-height: 11px;
-	padding: 0px;
-	margin: 0px;
+    font-size: 10px;
+    line-height: 11px;
+    padding: 0px;
+    margin: 0px;
 }
-
 #about-message {
-	font-size: 8px;
-	line-height: 9px;
-	padding: 0px;
-	margin: 0px;
+    font-size: 8px;
+    line-height: 9px;
+    padding: 0px;
+    margin: 0px;
 }
-
 #user-message {
-	font-size: 8px;
-	line-height: 9px;
-	padding: 0px;
-	margin: 0px;
+    font-size: 8px;
+    line-height: 9px;
+    padding: 0px;
+    margin: 0px;
 }
-
 #user-message a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
-
 #messageholder {
-	display: block;
-	margin-bottom:2px;
-	margin-top: 0px;
-	height: 34px;
-	float: left;
+    display: block;
+    margin-bottom: 2px;
+    margin-top: 0px;
+    height: 34px;
+    float: left;
 }
-
 #messagebox {
-	max-width: 190px;
-	min-width: 40px;
-	padding: 0px;
-	margin: 0px;
+    max-width: 190px;
+    min-width: 40px;
+    padding: 0px;
+    margin: 0px;
     text-align: center;
     position: relative;
     top: 50%;
@@ -114,40 +101,33 @@ body {
     transform: translateY(-50%);
     cursor: pointer;
 }
-
-.bubble:after
-{
-	content: '';
-	position: absolute;
-	border-style: solid;
-	border-width: 0 10px 10px;
-	border-color: #FFFFFF transparent;
-	display: block;
-	width: 0;
-	z-index: 1;
-	top: -7px;
-	right: 10px;
+.bubble:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 10px 10px;
+    border-color: #FFFFFF transparent;
+    display: block;
+    width: 0;
+    z-index: 1;
+    top: -7px;
+    right: 10px;
 }
-
-.bubble:before
-{
-	content: '';
-	position: absolute;
-	border-style: solid;
-	border-width: 0 12px 12px;
-	border-color: #333333 transparent;
-	display: block;
-	width: 0;
-	z-index: 0;
-	top: -13px;
-	right: 8px;
+.bubble:before {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 12px 12px;
+    border-color: #333333 transparent;
+    display: block;
+    width: 0;
+    z-index: 0;
+    top: -13px;
+    right: 8px;
 }
-
 .track-container {
-    margin-left:100px !important;
+    margin-left: 100px !important;
 }
-
 .gritter-title {
     text-align: center
 }
-

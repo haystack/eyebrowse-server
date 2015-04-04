@@ -1,62 +1,53 @@
-{% load staticfiles %}
-
-body {
-    background:url({% static "extension/img/bg-trans.gif" %});
-}
-
-.small-pic {
-  width: 20px;
-  height: 20px;
-  margin: 1px;
-  border: 0px;
-  padding: 0px;
-  z-index: 2;
-}
-
-.author-pic {
-  height: 20px;
-  width: 20px;
-}
-
-.favicon {
-  width: 19px;
-  height: 19px;
-}
-
-.bubble
 {
-  position: relative;
-/*  max-width: 450px;
+    % load staticfiles %
+}
+body {
+    background: url({% static "extension/img/bg-trans.gif" %});
+}
+.small-pic {
+    width: 20px;
+    height: 20px;
+    margin: 1px;
+    border: 0px;
+    padding: 0px;
+    z-index: 2;
+}
+.author-pic {
+    height: 20px;
+    width: 20px;
+}
+.favicon {
+    width: 19px;
+    height: 19px;
+}
+.bubble {
+    position: relative;
+    /*  max-width: 450px;
   min-width: 40px;*/
-  height: 22px;
-  width: 400px;
-  position: absolute;
-  bottom: 0px;
-  right: 0px;
-  text-align: center;
-  padding: 0px;
-  background: #FFFFFF;
-  border: #333333 solid 1px;
-  visibility: hidden;
+    height: 22px;
+    width: 400px;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    text-align: center;
+    padding: 0px;
+    background: #FFFFFF;
+    border: #333333 solid 1px;
+    visibility: hidden;
 }
-
 .older0 {
-  border: #ffff00 solid 2px;
-  margin: 0px;
+    border: #ffff00 solid 2px;
+    margin: 0px;
 }
-
 .older1 {
-  opacity: .9;
+    opacity: .9;
 }
-
 .older2 {
-  opacity: .75;
+    opacity: .75;
 }
-
 .older3 {
-  opacity: .6;
+    opacity: .6;
 }
-
 /*#imgs {
   max-width: 190px;
   min-width: 35px;
@@ -74,43 +65,38 @@ body {
 }*/
 
 #message {
-  font-size: 10px;
-  line-height: 11px;
-  padding: 0px;
-  margin: 0px;
+    font-size: 10px;
+    line-height: 11px;
+    padding: 0px;
+    margin: 0px;
 }
-
 #about-message {
-  font-size: 8px;
-  line-height: 9px;
-  padding: 0px;
-  margin: 0px;
+    font-size: 8px;
+    line-height: 9px;
+    padding: 0px;
+    margin: 0px;
 }
-
 #user-message {
-  font-size: 8px;
-  line-height: 9px;
-  padding: 0px;
-  margin: 0px;
+    font-size: 8px;
+    line-height: 9px;
+    padding: 0px;
+    margin: 0px;
 }
-
 #user-message a:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
-
 #messageholder {
-  display: block;
-  margin-bottom:2px;
-  margin-top: 0px;
-  height: 34px;
-  float: left;
+    display: block;
+    margin-bottom: 2px;
+    margin-top: 0px;
+    height: 34px;
+    float: left;
 }
-
 #messagebox {
-  max-width: 190px;
-  min-width: 40px;
-  padding: 0px;
-  margin: 0px;
+    max-width: 190px;
+    min-width: 40px;
+    padding: 0px;
+    margin: 0px;
     text-align: center;
     position: relative;
     top: 50%;
@@ -119,17 +105,13 @@ body {
     transform: translateY(-50%);
     cursor: pointer;
 }
-
 .row {
-  width: 400px;
-  margin-left: 0px !important;
+    width: 400px;
+    margin-left: 0px !important;
 }
-
 .track-container {
-    margin-left:100px !important;
+    margin-left: 100px !important;
 }
-
 .gritter-title {
     text-align: center
 }
-

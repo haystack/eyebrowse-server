@@ -1,14 +1,12 @@
 .controls-wrap {
-    margin:10px;
+    margin: 10px;
 }
-
 .form-horizontal .control-label {
-	padding-top: 7px;
-	margin-bottom: 0;
-	text-align: left;
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: left;
 }
-
 .tag-domain {
-	padding-top: 5px;
-	margin-top: 5px;
+    padding-top: 5px;
+    margin-top: 5px;
 }
