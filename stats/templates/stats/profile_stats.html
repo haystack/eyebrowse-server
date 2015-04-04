@@ -14,23 +14,23 @@
             {% include "common/snippets/empty_search.html" with msg=empty_search_msg %}
         {% else %}
         
-        <div class="profile-statbox light-well">
+        <div class="profile-statbox well">
             <div class="header">history item count</div>
             <div class="content">{{ item_count }}</div>
         </div>
-        <div class="profile-statbox light-well">
+        <div class="profile-statbox well">
             <div class="header">total time logged</div>
             <div class="content time-stat" data-time={{ tot_time }}></div>
         </div>
 
-        <div class="profile-statbox light-well">
+        <div class="profile-statbox well">
             <div class="content">
                     <a href="http://{{ fav_data.domain }}" target="_blank" data-content="{{ fav_data.domain }}" class="pointer fav-site"><img class="fav-icon" src="{{ fav_data.favicon_url }}"></a>
                     {{ fav_data.visit_count }} visits                
             </div>
             <div class="stat-footer">favorite site</div>
         </div>
-        <div class="profile-statbox light-well">
+        <div class="profile-statbox well">
             <div class="content time-stat" data-time="{{ fav_data.total_time }}"> 
             </div>
             <div class="stat-footer">favorite site time spent</div>

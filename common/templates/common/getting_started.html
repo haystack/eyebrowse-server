@@ -30,7 +30,7 @@
 	<P>
 		<table>
 		{% for list in top_whitelists %}
-		<tr class="light-well">
+		<tr class="well">
 			<td>
 				<a target="_blank" href="{{ list.url }}">{{ list.url }}</a>
 			</td>
@@ -69,7 +69,7 @@
 	<P>
 		<table>
 		{% for person in top_people %}
-		<tr class="light-well">
+		<tr class="well">
 			<td>
 				<a href="/users/{{ person.user.username }}" target="_blank">
 					<img class="nav-prof-img img-rounded" src="{% gravatar_for_user person.user %}">

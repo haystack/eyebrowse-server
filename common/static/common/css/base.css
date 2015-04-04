@@ -47,10 +47,6 @@ a:hover {
 .navbar .nav > .active > a:focus {
     color: #555555;
     text-decoration: none;
-    background-color: #e5e5e5;
-    -webkit-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
-    -moz-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
-    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
 }
 .navbar .nav > li > a {
     float: none;
@@ -76,7 +72,7 @@ input[type="tel"],
 input[type="color"],
 .uneditable-input {
     background-color: #ffffff;
-    border: 1px solid #cccccc;
+    border: 1px solid #DDD;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -111,9 +107,9 @@ input[type="color"],
     font-size: 13px;
     font-weight: normal;
     line-height: 1;
-    -webkit-border-radius: 15px;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
 .nav > li > a {
     display: block;
@@ -162,9 +158,6 @@ input[type="color"],
 li {
     margin-right: 5px;
 }
-body {
-    background: url(http://eyebrowse.csail.mit.edu/static/common/img/bg-body.png) repeat top left;
-}
 .container {
     padding-top: 100px;
 }
@@ -181,14 +174,16 @@ body {
     margin-top: 11px !important;
 }
 .navbar {
-    background: url(http://eyebrowse.csail.mit.edu/static/common/img/bg-nav.png) repeat top left;
+    background: #f5f5f5;
 }
 .icon {
     width: 16px;
     height: 16px;
 }
 .well {
-    background-color: #DDD !important;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
 }
 ul.errorlist {
     display: none;
@@ -240,10 +235,6 @@ ul.errorlist {
 }
 .centered {
     text-align: center;
-}
-.light-well {
-    border: 1px solid #ddd;
-    background-color: #f5f5f5;
 }
 .home-statbox {
     border-radius: 3px;
