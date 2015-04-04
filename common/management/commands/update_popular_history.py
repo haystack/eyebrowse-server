@@ -8,6 +8,8 @@ from urllib2 import urlopen
 from django.utils import timezone
 from django.core.management.base import NoArgsCommand
 
+from bulk_update.helper import bulk_update
+
 from api.models import EyeHistory
 from api.models import PopularHistory
 from api.models import PopularHistoryInfo
@@ -35,9 +37,10 @@ class Command(NoArgsCommand):
 
     def _reset_values(self):
         self.log('resetting values')
-        
-        #set total time ago (sum of time ago for all eyebrowse visits to this page in last 10 weeks) to 0
-        #set total time spent (sum of time spend for all eyebrowse visits to this page in last 10 weeks) to 0
+
+        # set total time ago (sum of time ago for all eyebrowse visits to this page in last 10 weeks) to 0
+        # set total time spent (sum of time spend for all eyebrowse visits to
+        # this page in last 10 weeks) to 0
         PopularHistory.objects.update(total_time_ago=0, total_time_spent=0)
 
     def _create_pop(self, ehist, url):
@@ -88,7 +91,8 @@ class Command(NoArgsCommand):
         timezone.make_aware(month_ago, timezone.get_current_timezone())
 
         # get all eyehistory events from 10 weeks ago to today
-        e = EyeHistory.objects.filter(start_time__gt=month_ago)
+        e = EyeHistory.objects.filter(
+            start_time__gt=month_ago).select_related()
 
         for ehist in e.iterator():
             url = ehist.url
@@ -105,11 +109,11 @@ class Command(NoArgsCommand):
                 p = p[0]
 
             # each popularhistory is associated with a popularhistoryitem
-            # popularhistory contains scoring info and is tied either to 
+            # popularhistory contains scoring info and is tied either to
             # no user (so scoring for the firehose) or to a particular user
             # (so scoring for their following feed)
             pop_items = PopularHistory.objects.filter(
-                popular_history=p, user=None)
+                popular_history=p, user=None).prefetch_related('eye_hists')
             if pop_items.count() == 0:
                 total_pop = PopularHistory.objects.create(
                     popular_history=p, user=None)
@@ -119,26 +123,7 @@ class Command(NoArgsCommand):
                     i.delete()
             else:
                 total_pop = pop_items[0]
-
-            # we add every eyehistory to the firehose popularhistory counterpoint
-            # and also keep track of the users and messages to that page
-            if not total_pop.eye_hists.filter(pk=ehist.id).exists():
-                total_pop.eye_hists.add(ehist)
-                total_pop.visitors.add(ehist.user)
-
-                messages = ehist.eyehistorymessage_set.all()
-                for message in messages:
-                    total_pop.messages.add(message)
-
-            # we increment the total time spent and total time ago
-            total_pop.total_time_spent += ehist.total_time
-
-            time_diff = timezone.now() - ehist.end_time
-            total_pop.total_time_ago += int(
-                round(float(time_diff.total_seconds()) / 3600.0))
-
-            total_pop.save()
-
+            self._add_users_and_messages(total_pop, ehist)
 
             # for each of the users that are following the person
             # in this eyehistory, we add this eyehistory to the
@@ -150,29 +135,51 @@ class Command(NoArgsCommand):
             follow_users.append(ehist.user.profile)
 
             for user_prof in follow_users:
-                u = user_prof.user
-
                 user_pop, _ = PopularHistory.objects.get_or_create(
-                    popular_history=p, user=u)
+                    popular_history=p, user=user_prof.user)
+                self._add_users_and_messages(user_pop, ehist)
 
-                if not user_pop.eye_hists.filter(pk=ehist.id).exists():
+        self._delete_old()
 
-                    user_pop.eye_hists.add(ehist)
-                    user_pop.visitors.add(ehist.user)
+        # we're interested in including one's own visits to the score in
+        # one's own feed, but don't want to include in list of users
+        for p in PopularHistory.objects.filter(user__isnull=False).prefetch_related('visitors').select_related():
+            if p.visitors.count() == 1:
+                if p.visitors.all()[0] == p.user:
+                    p.delete()
 
-                    messages = ehist.eyehistorymessage_set.all()
+        # remove eyehistories that are from over 10 weeks ago
+        # if everything gets removed then delete the popularhistory
+        # though this shouldn't happen (see above)
+        for i in PopularHistory.objects.all().prefetch_related('eye_hists'):
+            i.eye_hists.remove(*i.eye_hists.filter(start_time__lt=month_ago))
 
-                    for message in messages:
-                        user_pop.messages.add(message)
+        # if there are any popularhistoryinfo items now that have
+        # no corresponding popularhistory objects (because they've been
+        # deleted for being stale presumably) then delete
+        PopularHistoryInfo.objects.filter(popularhistory=None).delete()
 
-                user_pop.total_time_spent += ehist.total_time
+    def _add_users_and_messages(self, popular_history_item, ehist):
+        # we add every eyehistory to the firehose popularhistory counterpoint
+        # and also keep track of the users and messages to that page
+        if not popular_history_item.eye_hists.filter(pk=ehist.id).exists():
+            popular_history_item.eye_hists.add(ehist)
+            popular_history_item.visitors.add(ehist.user)
 
-                time_diff = timezone.now() - ehist.end_time
-                user_pop.total_time_ago += int(
-                    round(float(time_diff.total_seconds()) / 3600.0))
+            messages = ehist.eyehistorymessage_set.all()
+            for message in messages:
+                popular_history_item.messages.add(message)
 
-                user_pop.save()
+        # we increment the total time spent and total time ago
+        popular_history_item.total_time_spent += ehist.total_time
 
+        time_diff = timezone.now() - ehist.end_time
+        popular_history_item.total_time_ago += int(
+            round(time_diff.total_seconds() / 3600.0))
+
+        popular_history_item.save()
+
+    def _delete_old(self):
         # if there are any popularhistory items that still have
         # total_time_ago or total_time_spent as 0 then that means
         # that no eyehistories in the preceeding loop
@@ -188,101 +195,73 @@ class Command(NoArgsCommand):
         self.log('count %s' % p.count())
         p.delete()
 
-        # we're interested in including one's own visits to the score in
-        # one's own feed, but don't want to include in list of users
-        p = PopularHistory.objects.filter(user__isnull=False)
-
-        for pop in p.iterator():
-            if pop.visitors.count() == 1:
-                if pop.visitors.all()[0] == pop.user:
-                    pop.delete()
-
-        # remove eyehistories that are from over 10 weeks ago
-        # if everything gets removed then delete the popularhistory
-        # though this shouldn't happen (see above)
-        p = PopularHistory.objects.all()
-        for i in p.iterator():
-            for e in i.eye_hists.filter(start_time__lt=month_ago):
-                i.eye_hists.remove(e)
-            if i.eye_hists.count() == 0:
-                self.log('shouldn\'t even get here...')
-                i.delete()
-
-        # if there are any popularhistoryinfo items now that have
-        # no corresponding popularhistory objects (because they've been
-        # deleted for being stale presumably) then delete
-        p = PopularHistoryInfo.objects.all()
-        for pop in p.iterator():
-            if len(list(pop.popularhistory_set.all())) == 0:
-                self.log('delete pop hist info')
-                pop.delete()
-
     def _calculate_scores(self):
 
         # we should have lists of eyehistories, list of users,
-        # list of messages, total time ago, and total time spent 
+        # list of messages, total time ago, and total time spent
         # populated for each popularhistory. Now we calculate
         # scores based on these things.
-        p = PopularHistory.objects.all()
-
-        for pop in p.iterator():
+        popular_history = PopularHistory.objects.all().prefetch_related(
+            'eye_hists', 'messages', 'visitors')
+        for p in popular_history:
             try:
-                if pop.eye_hists.count() == 0:
-                    pop.delete()
+                eye_hist_count = p.eye_hists.count()
+                if eye_hist_count == 0:
+                    p.delete()
                     continue
 
                 # avg time ago is total time ago / number of eyehistories
-                time = pop.total_time_ago / float(pop.eye_hists.count())
-                pop.avg_time_ago = datetime.datetime.now(
+                time = p.total_time_ago / float(eye_hist_count)
+                p.avg_time_ago = datetime.datetime.now(
                 ) - datetime.timedelta(hours=time)
 
                 # avg time spent is total time spent / eyehistories
-                time_spent = pop.total_time_spent / \
-                    float(pop.eye_hists.count())
-                pop.humanize_avg_time = humanize_time(
+                time_spent = p.total_time_spent / \
+                    float(eye_hist_count)
+                p.humanize_avg_time = humanize_time(
                     datetime.timedelta(milliseconds=time_spent))
 
                 # num comment score gives score based on num
                 # comments with a time decay factor
-                num_comments = pop.messages.count()
-                c = float(num_comments * 40.0) / \
+                num_comments = p.messages.count()
+                comment_score = float(num_comments * 40.0) / \
                     float(
                         ((
-                            float(pop.total_time_ago) + 1.0) /
-                            float(pop.eye_hists.count())) ** 1.2)
-                pop.num_comment_score = c
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1.2)
+                p.num_comment_score = comment_score
 
                 # num visitors score gives score based on num
                 # visitors with a time decay factor
-                num_vistors = pop.visitors.count()
-                v = float((num_vistors - 1.0) * 50.0) / \
+                num_vistors = p.visitors.count()
+                visitor_score = float((num_vistors - 1.0) * 50.0) / \
                     float(
                         ((
-                            float(pop.total_time_ago) + 1.0) /
-                            float(pop.eye_hists.count())) ** 1.2)
-                pop.unique_visitor_score = v
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1.2)
+                p.unique_visitor_score = vistor_score
 
                 # num time score gives score based on avg time
                 # spent with a time decay factor
-                num_time = float(pop.total_time_spent) / \
-                    float(pop.eye_hists.count())
+                num_time = float(p.total_time_spent) / \
+                    float(eye_hist_count)
 
-                t = float((num_time ** .8) / 1000.0) / \
+                time_score = float((num_time ** .8) / 1000.0) / \
                     float(
                         ((
-                            float(pop.total_time_ago) + 1.0) /
-                            float(pop.eye_hists.count())) ** 1.5)
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1.5)
 
-                t2 = float((num_time - 5000) / 1000.0) / \
+                time_score_2 = float((num_time - 5000) / 1000.0) / \
                     float(
                         ((
-                            float(pop.total_time_ago) + 1.0) /
-                            float(pop.eye_hists.count())) ** 1)
-                pop.avg_time_spent_score = t2
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1)
+                p.avg_time_spent_score = time_score_2
 
                 # top score combines all the scores together
-                pop.top_score = float(c + v + t)
-                pop.save()
+                p.top_score = float(comment_score + vistor_score + time_score)
             except Exception, e:
                 self.log(e)
                 continue
+        bulk_update(popular_history, batch_size=50000)
