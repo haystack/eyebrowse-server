@@ -143,7 +143,9 @@ class Command(NoArgsCommand):
 
         # we're interested in including one's own visits to the score in
         # one's own feed, but don't want to include in list of users
-        for p in PopularHistory.objects.filter(user__isnull=False).prefetch_related('visitors').select_related():
+        for p in PopularHistory.objects.filter(
+            user__isnull=False).prefetch_related(
+                'visitors').select_related():
             if p.visitors.count() == 1:
                 if p.visitors.all()[0] == p.user:
                     p.delete()
