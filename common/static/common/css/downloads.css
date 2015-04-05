@@ -2,21 +2,26 @@
     width: 50%;
     margin: 0px auto;
 }
+
 .hero-unit {
     background-color: #DDD !important;
     margin-bottom: 15px;
 }
+
 .download-unit {
     padding: 20px 0 0;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
 }
+
 .hero-unit .heading {
     margin-bottom: 22px;
 }
+
 .hero-unit .heading h1 {
     padding-top: 6px;
 }
+
 .hero-unit .heading h2 {
     font-weight: 200;
     font-size: 18px;
@@ -24,36 +29,45 @@
     vertical-align: top;
     margin-top: 5px;
 }
+
 .hero-unit h5 {
     color: #666;
     text-align: center;
 }
+
 .share {
     clear: both;
     height: 25px;
     text-align: center;
     padding: 15px 0px 0px;
 }
+
 .subshare {
     display: none;
 }
+
 .fb-like {
     top: -3px;
     padding-right: 35px;
 }
+
 .hn-share-button {
     padding-right: 30px;
 }
+
 .hero-unit .desc {
     text-align: justify;
 }
+
 .preview {
     border-top: 1px solid #CCC;
 }
+
 .navbar .nav > li > a {
     padding-right: 6px;
     padding-left: 6px;
 }
+
 .chrome,
 .firefox {
     margin-left: 0px;

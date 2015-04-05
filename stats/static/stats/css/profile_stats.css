@@ -5,18 +5,21 @@
     margin: 8px 2%;
     border-radius: 3px;
 }
+
 .profile-statbox .header {
     font-size: 2em;
     font-weight: bolder;
     text-align: center;
     margin-top: 11px;
 }
+
 .profile-statbox .stat-footer {
     font-size: 2em;
     font-weight: bolder;
     text-align: center;
     padding-top: 65px;
 }
+
 .profile-statbox .content {
     font-size: 5.53em;
     font-weight: bolder;
@@ -24,6 +27,7 @@
     margin-top: 90px;
     height: 50px;
 }
+
 .fav-icon {
     height: 24px;
     width: 24px;

@@ -1,9 +1,11 @@
 {
     % load staticfiles %
 }
+
 body {
     background: url({% static "extension/img/bg-trans.gif" %});
 }
+
 #popup {
     width: 200px;
     height: 100px;
@@ -15,19 +17,24 @@ body {
     border-radius: 25px;
     background-color: #e8e7e5;
 }
+
 .track-container {
     margin-left: 100px !important;
 }
+
 .gritter-title {
     text-align: center
 }
+
 .firefox-msg {
     text-align: center;
     font-size: 12px;
 }
+
 .firefox {
     margin-left: 110px !important;
 }
+
 .chrome {
     margin-left: 110px !important;
 }

@@ -1,9 +1,11 @@
 {
     % load staticfiles %
 }
+
 body {
     background: url({% static "extension/img/bg-trans.gif" %});
 }
+
 .small-pic {
     width: 20px;
     height: 20px;
@@ -12,18 +14,22 @@ body {
     padding: 0px;
     z-index: 2;
 }
+
 .author-pic {
     height: 20px;
     width: 20px;
 }
+
 .favicon {
     width: 19px;
     height: 19px;
 }
+
 .bubble {
     position: relative;
     /*  max-width: 450px;
   min-width: 40px;*/
+    
     height: 22px;
     width: 400px;
     position: absolute;
@@ -35,16 +41,20 @@ body {
     border: #333333 solid 1px;
     visibility: hidden;
 }
+
 .older0 {
     border: #ffff00 solid 2px;
     margin: 0px;
 }
+
 .older1 {
     opacity: .9;
 }
+
 .older2 {
     opacity: .75;
 }
+
 .older3 {
     opacity: .6;
 }
@@ -70,21 +80,25 @@ body {
     padding: 0px;
     margin: 0px;
 }
+
 #about-message {
     font-size: 8px;
     line-height: 9px;
     padding: 0px;
     margin: 0px;
 }
+
 #user-message {
     font-size: 8px;
     line-height: 9px;
     padding: 0px;
     margin: 0px;
 }
+
 #user-message a:hover {
     text-decoration: none;
 }
+
 #messageholder {
     display: block;
     margin-bottom: 2px;
@@ -92,6 +106,7 @@ body {
     height: 34px;
     float: left;
 }
+
 #messagebox {
     max-width: 190px;
     min-width: 40px;
@@ -105,13 +120,16 @@ body {
     transform: translateY(-50%);
     cursor: pointer;
 }
+
 .row {
     width: 400px;
     margin-left: 0px !important;
 }
+
 .track-container {
     margin-left: 100px !important;
 }
+
 .gritter-title {
     text-align: center
 }

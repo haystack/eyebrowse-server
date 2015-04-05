@@ -14,42 +14,52 @@
     border-radius: 5px!important;
     background-color: #ffffff;
 }
+
 .history-container .author-pic {
     width: 20px;
     height: 20px;
 }
+
 .history-container .history-content {
     color: #000;
     font-size: 1.1em;
 }
+
 .history-container .author-name {
     vertical-align: middle;
     font-size: 1.3em;
     color: #444;
 }
+
 .history-container .date {
     font-size: .8em;
 }
+
 .center {
     margin-left: 270px;
 }
+
 .connection-container {
     margin-top: 20px;
 }
+
 .tag-area {
     display: inline-block;
     width: auto;
     float: right;
     padding-right: 3px;
 }
+
 .author-container {
     width: 160px;
 }
+
 .history-container .left {
     width: auto;
     overflow: hidden;
     float: none;
 }
+
 .history-container .lower-item {
     height: auto;
     overflow: hidden;
@@ -57,6 +67,7 @@
     padding-left: 23px;
     font-size: 1.1em;
 }
+
 .history-container .history-message {
     height: auto;
     overflow: hidden;
@@ -67,6 +78,7 @@
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
 .history-container .history-message2 {
     height: auto;
     overflow: hidden;
@@ -77,14 +89,17 @@
     padding-top: 15px;
     padding-bottom: 5px;
 }
+
 #left-nav {
     z-index: 1;
 }
+
 .timeline-options {
     margin-left: 25px;
     cursor: pointer;
     cursor: hand;
 }
+
 .popular_image {
     max-width: 100px;
     max-height: 100px;
@@ -93,10 +108,12 @@
     margin-right: 10px;
     margin-bottom: 5px;
 }
+
 .eye-hist-visited {
     background-color: #DDD !important;
     border: #e3e3e3 1px solid!important;
 }
+
 .eye-hist {
     border: #DDD 1px solid!important;
     background-color: white!important;
