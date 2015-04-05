@@ -28,5 +28,5 @@ try:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(LOG_LEVEL)
-except IOError:
-    pass  # no log file
+except IOError as e:
+  print e

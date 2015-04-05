@@ -28,7 +28,7 @@ requirements:
 
 log:
 	sudo mkdir -p $(log_path)
-	touch $(log_path)/eyebrowse.log
+	sudo touch $(log_path)/eyebrowse.log
 
 env:
 	sudo mkdir -p $(root_path)
