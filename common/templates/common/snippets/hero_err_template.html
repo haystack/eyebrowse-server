@@ -2,14 +2,14 @@
 
 {% block content %}
 
-<div class="hero-unit span6 well offset3 text-center" style="background-color:#DDD;">
-   
+<div class="hero-unit span6 well offset3 text-center">
+
   <h1 id="hero"> {% block hero_title %} {% endblock %} {{ hero_err_title }} </h1>
-  {% block hero_content %} 
-    <p> 
+  {% block hero_content %}
+    <p>
     Looks like an error.
     </p>
-   <p> 
+   <p>
     Head back <a href="/"> home</a> or <a href="mailto:eyebrowse@mit.edu"> email us </a> if this is a bug.
    </p>
    {% endblock %}
@@ -21,7 +21,7 @@
 {% block helper %}
 <script type="text/javascript">
   $(document).ready(function() {
-    var error_val = $("#hero").text(); 
+    var error_val = $("#hero").text();
     $('#page_title').html(error_val + " Error");
     $('#user_prof').attr("href", "/");
   });
