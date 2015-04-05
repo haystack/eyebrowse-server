@@ -3,6 +3,7 @@
 root_path="/opt/eyebrowse"
 env_path="$(ROOT_PATH)/env"
 debug_path="$(ROOT_PATH)/debug"
+log_path="/var/opt/eyebrowse/logs/"
 
 ifndef env
 	env=dev
@@ -26,6 +27,7 @@ requirements:
 	pip install -r requirements.txt
 
 env:
+	sudo mkdir -p $(log_path)
 	sudo mkdir -p $(root_path)
 	echo $(env) | sudo tee $(env_path) > /dev/null
 	echo $(debug) | sudo tee $(debug_path) > /dev/null
