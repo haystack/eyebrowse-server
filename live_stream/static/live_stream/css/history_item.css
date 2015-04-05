@@ -6,11 +6,7 @@
     margin-bottom: 5px;
     color: #555;
     word-wrap: break-word;
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15)!important;
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15)!important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15)!important;
-    -webkit-border-radius: 5px!important;
-    -moz-border-radius: 5px!important;
     border-radius: 5px!important;
     background-color: #ffffff;
 }
