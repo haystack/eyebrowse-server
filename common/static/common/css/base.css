@@ -465,3 +465,27 @@ td {
     width: 110px;
     height: 85px;
 }
+/* prevent expansion on medium width */
+
+@media (min-width:979px) and (max-width:1200px) {
+    [class*="span"] {
+        float: left;
+        min-height: 1px;
+        margin-left: 20px;
+    }
+    .span8 {
+        max-width: 660px;
+    }
+    .span3 {
+        max-width: 270px;
+    }
+    .container {
+      width:979px;
+    }
+}
+
+@media (max-width:979px) {
+  .container {
+    padding-top:0px;
+  }
+}
