@@ -1,4 +1,4 @@
-.PHONY: run clean requirements env config install pylint jslint lint shell db deploy
+.PHONY: run clean requirements env config install pylint jslint lint shell db deploy log
 
 root_path="/opt/eyebrowse"
 env_path="$(ROOT_PATH)/env"
@@ -26,8 +26,11 @@ clean:
 requirements:
 	pip install -r requirements.txt
 
-env:
+log:
 	sudo mkdir -p $(log_path)
+	touch $(log_path)/eyebrowse.log
+
+env:
 	sudo mkdir -p $(root_path)
 	echo $(env) | sudo tee $(env_path) > /dev/null
 	echo $(debug) | sudo tee $(debug_path) > /dev/null
@@ -41,7 +44,7 @@ db:
 	python manage.py syncdb
 	python manage.py migrate
 
-install: clean requirements env config db
+install: clean requirements env log config db
 
 pylint:
 	-flake8 .
