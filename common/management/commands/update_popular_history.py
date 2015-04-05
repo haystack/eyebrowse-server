@@ -17,8 +17,11 @@ from api.utils import humanize_time
 
 from accounts.models import UserProfile
 
+from common.helpers import queryset_iterator
+
 from eyebrowse.log import logger
 
+CHUNK_SIZE = 1000
 
 class Command(NoArgsCommand):
     help = 'Updates popular history whoo!'
@@ -43,16 +46,16 @@ class Command(NoArgsCommand):
         # this page in last 10 weeks) to 0
         PopularHistory.objects.update(total_time_ago=0, total_time_spent=0)
 
-    def _create_pop(self, ehist, url):
-        self.log("_create_pop, %s" % ehist.title)
+    def _create_pop(self, e, url):
+        self.log("_create_pop, %s" % e.title)
         p, _ = PopularHistoryInfo.objects.get_or_create(url=url,
-                                                        domain=ehist.domain,
-                                                        favicon_url=ehist.favicon_url,
-                                                        title=ehist.title)
+                                                        domain=e.domain,
+                                                        favicon_url=e.favicon_url,
+                                                        title=e.title)
 
         try:
             try:
-                conn = urlopen(ehist.url)
+                conn = urlopen(e.url)
             except urllib2.HTTPError:
                 p.save()
                 return p
@@ -92,11 +95,12 @@ class Command(NoArgsCommand):
         timezone.make_aware(month_ago, timezone.get_current_timezone())
 
         # get all eyehistory events from 10 weeks ago to today
-        e = EyeHistory.objects.filter(
+        eye_history = EyeHistory.objects.filter(
             start_time__gt=month_ago).select_related()
 
-        for ehist in e.iterator():
-            url = ehist.url
+        i = 0 # in case we try to log but there is no eye_history
+        for i, e in enumerate(queryset_iterator(eye_history)):
+            url = e.url
             url = url[:min(255, len(url))]
 
             # popularhistoryinfo stores general information about this page
@@ -105,7 +109,7 @@ class Command(NoArgsCommand):
             if not p.exists():
                 # try to extract description, title, etc from the page and
                 # create a popularhistoryinfo item from it
-                p = self._create_pop(ehist, url)
+                p = self._create_pop(e, url)
             else:
                 p = p[0]
 
@@ -124,29 +128,37 @@ class Command(NoArgsCommand):
                     i.delete()
             else:
                 total_pop = pop_items[0]
-            self._add_users_and_messages(total_pop, ehist)
+            self._add_users_and_messages(total_pop, e)
 
             # for each of the users that are following the person
             # in this eyehistory, we add this eyehistory to the
             # the popularhistory item for that user
-            follow_users = list(
-                UserProfile.objects.filter(
-                    follows=ehist.user.profile).select_related())
+            follow_users = UserProfile.objects.filter(
+                follows=e.user.profile).select_related()
 
-            follow_users.append(ehist.user.profile)
+            # do this outside of the loop so we can use an iterator
+            user_pop, _ = PopularHistory.objects.get_or_create(
+                popular_history=p, user=e.user)
+            self._add_users_and_messages(user_pop, e)
 
-            for user_prof in follow_users:
+            for user_prof in queryset_iterator(follow_users):
                 user_pop, _ = PopularHistory.objects.get_or_create(
                     popular_history=p, user=user_prof.user)
-                self._add_users_and_messages(user_pop, ehist)
+                self._add_users_and_messages(user_pop, e)
 
+            if i != 0 and i % CHUNK_SIZE == 0:
+                self.log("Completed %d updates." % i)
+
+        self.log("Completed %d updates [populate_history]." % i)
         self._delete_old()
 
         # we're interested in including one's own visits to the score in
         # one's own feed, but don't want to include in list of users
-        for p in PopularHistory.objects.filter(
+        popular_history = PopularHistory.objects.filter(
             user__isnull=False).prefetch_related(
-                'visitors').select_related():
+                'visitors').select_related()
+
+        for p in queryset_iterator(popular_history):
             if p.visitors.count() == 1:
                 if p.visitors.all()[0] == p.user:
                     p.delete()
@@ -154,7 +166,9 @@ class Command(NoArgsCommand):
         # remove eyehistories that are from over 10 weeks ago
         # if everything gets removed then delete the popularhistory
         # though this shouldn't happen (see above)
-        for i in PopularHistory.objects.all().prefetch_related('eye_hists'):
+        popular_history = PopularHistory.objects.all().prefetch_related(
+            'eye_hists')
+        for i in queryset_iterator(popular_history):
             i.eye_hists.remove(*i.eye_hists.filter(start_time__lt=month_ago))
 
         # if there are any popularhistoryinfo items now that have
@@ -162,21 +176,19 @@ class Command(NoArgsCommand):
         # deleted for being stale presumably) then delete
         PopularHistoryInfo.objects.filter(popularhistory=None).delete()
 
-    def _add_users_and_messages(self, popular_history_item, ehist):
+    def _add_users_and_messages(self, popular_history_item, e):
         # we add every eyehistory to the firehose popularhistory counterpoint
         # and also keep track of the users and messages to that page
-        if not popular_history_item.eye_hists.filter(pk=ehist.id).exists():
-            popular_history_item.eye_hists.add(ehist)
-            popular_history_item.visitors.add(ehist.user)
+        if not popular_history_item.eye_hists.filter(pk=e.id).exists():
+            popular_history_item.eye_hists.add(e)
+            popular_history_item.visitors.add(e.user)
 
-            messages = ehist.eyehistorymessage_set.all()
-            for message in messages:
-                popular_history_item.messages.add(message)
+            popular_history_item.messages.add(*e.eyehistorymessage_set.all())
 
         # we increment the total time spent and total time ago
-        popular_history_item.total_time_spent += ehist.total_time
+        popular_history_item.total_time_spent += e.total_time
 
-        time_diff = timezone.now() - ehist.end_time
+        time_diff = timezone.now() - e.end_time
         popular_history_item.total_time_ago += int(
             round(time_diff.total_seconds() / 3600.0))
 
@@ -206,7 +218,8 @@ class Command(NoArgsCommand):
         # scores based on these things.
         popular_history = PopularHistory.objects.all().prefetch_related(
             'eye_hists', 'messages', 'visitors')
-        for p in popular_history:
+        i = 0 # in case we try to log but there is no eye_history
+        for i, p in enumerate(queryset_iterator(popular_history)):
             try:
                 eye_hist_count = p.eye_hists.count()
                 if eye_hist_count == 0:
@@ -264,7 +277,12 @@ class Command(NoArgsCommand):
 
                 # top score combines all the scores together
                 p.top_score = float(comment_score + visitor_score + time_score)
+
+                if i != 0 and i % CHUNK_SIZE == 0:
+                    self.log("Completed %d updates." % i)
             except Exception, e:
                 self.log(e)
                 continue
+
         bulk_update(popular_history, batch_size=50000)
+        self.log("Completed %d updates. [calculate_scores]" % i)
