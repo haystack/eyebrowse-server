@@ -86,6 +86,7 @@ class Command(NoArgsCommand):
         return p
 
     def _populate_popular_history(self):
+        self.log('_populate_popular_history')
 
         month_ago = datetime.datetime.now() - datetime.timedelta(weeks=10)
         timezone.make_aware(month_ago, timezone.get_current_timezone())
@@ -198,7 +199,7 @@ class Command(NoArgsCommand):
         p.delete()
 
     def _calculate_scores(self):
-
+        self.log('_calculate_scores')
         # we should have lists of eyehistories, list of users,
         # list of messages, total time ago, and total time spent
         # populated for each popularhistory. Now we calculate
