@@ -184,10 +184,14 @@ class WhiteListItemResource(FilterSetItemResource):
         try:
             WhiteListItem.objects.get(user=request.user, url=url, port=port)
         except WhiteListItem.DoesNotExist:
-            return super(WhiteListItemResource,
-                         self).obj_create(
-                bundle, request,
-                user=request.user, **kwargs)
+            try:
+                return super(WhiteListItemResource,
+                             self).obj_create(
+                    bundle, request,
+                    user=request.user, **kwargs)
+            except MultipleObjectsReturned as e:
+                logger.info(e)
+                return bundle
         return bundle
 
     class Meta(FilterSetItemResource.Meta):
@@ -209,9 +213,13 @@ class BlackListItemResource(FilterSetItemResource):
         try:
             BlackListItem.objects.get(user=request.user, url=url, port=port)
         except BlackListItem.DoesNotExist:
-            return super(BlackListItemResource, self
-                         ).obj_create(
-                bundle, request, user=request.user, **kwargs)
+            try:
+                return super(BlackListItemResource, self
+                             ).obj_create(
+                    bundle, request, user=request.user, **kwargs)
+            except MultipleObjectsReturned as e:
+                logger.info(e)
+                return bundle
 
         return bundle
 
@@ -332,10 +340,7 @@ class EyeHistoryResource(ModelResource):
                         notify_message(message=eye_message)
 
                     return bundle_res
-        except Exception, e:
-            logger.info(e)
-
-        except MultipleObjectsReturned:
+        except MultipleObjectsReturned as e:
             logger.info(e)
             # multiple items created, delete duplicates
             call_command('remove_duplicate_history')
