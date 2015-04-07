@@ -215,7 +215,7 @@ class Command(NoArgsCommand):
 
                 # avg time ago is total time ago / number of eyehistories
                 time = p.total_time_ago / float(eye_hist_count)
-                p.avg_time_ago = datetime.datetime.now(
+                p.avg_time_ago = timezone.now(
                 ) - datetime.timedelta(hours=time)
 
                 # avg time spent is total time spent / eyehistories
@@ -242,7 +242,7 @@ class Command(NoArgsCommand):
                         ((
                             float(p.total_time_ago) + 1.0) /
                             float(eye_hist_count)) ** 1.2)
-                p.unique_visitor_score = vistor_score
+                p.unique_visitor_score = visitor_score
 
                 # num time score gives score based on avg time
                 # spent with a time decay factor
@@ -263,7 +263,7 @@ class Command(NoArgsCommand):
                 p.avg_time_spent_score = time_score_2
 
                 # top score combines all the scores together
-                p.top_score = float(comment_score + vistor_score + time_score)
+                p.top_score = float(comment_score + visitor_score + time_score)
             except Exception, e:
                 self.log(e)
                 continue
