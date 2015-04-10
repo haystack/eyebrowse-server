@@ -50,6 +50,18 @@ def _set_key(b, username, filename):
 
     return k
 
+def queryset_iterator_chunkify(queryset, chunksize=1000):
+    if not queryset.exists():
+      return
+    pk = 0
+    last_pk = queryset.order_by('-pk')[0].pk
+    queryset = queryset.order_by('pk')
+    while pk < last_pk:
+        batch = queryset.filter(pk__gt=pk)[:chunksize]
+        pk = batch[batch.count()-1].pk
+        yield batch
+        gc.collect()
+
 
 def queryset_iterator(queryset, chunksize=1000):
     # https://djangosnippets.org/snippets/1949/
@@ -63,11 +75,7 @@ def queryset_iterator(queryset, chunksize=1000):
 
     Note that the implementation of the iterator does not support ordered query sets.
     """
-    pk = 0
-    last_pk = queryset.order_by('-pk')[0].pk
-    queryset = queryset.order_by('pk')
-    while pk < last_pk:
-        for row in queryset.filter(pk__gt=pk)[:chunksize]:
-            pk = row.pk
-            yield row
-        gc.collect()
+    for batch in queryset_iterator_chunkify(queryset, chunksize=chunksize):
+      for row in batch:
+        yield row
+
