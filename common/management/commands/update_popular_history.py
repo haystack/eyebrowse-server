@@ -291,7 +291,5 @@ class Command(NoArgsCommand):
                 self.log(e)
                 continue
 
-        for i, batch in enumerate(queryset_iterator_chunkify(popular_history, chunksize=CHUNK_SIZE)):
-            self._log_updates(i, total_updates, 'calculate_scores:::save_objs')
-            bulk_update(batch, batch_size=CHUNK_SIZE)
+        bulk_update(popular_history, batch_size=CHUNK_SIZE)
         self._log_updates(i, total_updates, 'calculate_scores')
