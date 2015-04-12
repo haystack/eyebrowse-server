@@ -235,8 +235,7 @@ class Command(NoArgsCommand):
 
                 # avg time ago is total time ago / number of eyehistories
                 time = p.total_time_ago / float(eye_hist_count)
-                p.avg_time_ago = datetime.datetime.now(
-                ) - datetime.timedelta(hours=time)
+                p.avg_time_ago = timezone.now() - datetime.timedelta(hours=time)
 
                 # avg time spent is total time spent / eyehistories
                 time_spent = p.total_time_spent / \
@@ -284,6 +283,8 @@ class Command(NoArgsCommand):
 
                 # top score combines all the scores together
                 p.top_score = float(comment_score + visitor_score + time_score)
+                
+                p.save()
 
                 if i != 0 and i % CHUNK_SIZE == 0:
                     self._log_updates(i, total_updates, 'calculate_scores')
@@ -291,5 +292,5 @@ class Command(NoArgsCommand):
                 self.log(e)
                 continue
 
-        bulk_update(popular_history, batch_size=CHUNK_SIZE)
+       # bulk_update(popular_history, batch_size=CHUNK_SIZE)
         self._log_updates(i, total_updates, 'calculate_scores')

@@ -5,7 +5,7 @@ from fabric.api import env, sudo, local, \
 def prod():
     env.user = 'ubuntu'
     env.hosts = ['eyebrowse.csail.mit.edu']
-    env.key_filename = '~/.ssh/id_rsa.pub'
+    #env.key_filename = '~/.ssh/id_rsa.pub'
     env.server_path = '/eyebrowse-server'
     env.python_path = '/eyebrowse-virtualenv/bin'
     env.graceful = True
