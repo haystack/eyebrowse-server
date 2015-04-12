@@ -249,6 +249,12 @@ TRACK_ANONYMOUS_USERS = True
 TRACK_PAGEVIEWS = True
 TRACK_REFERER = False
 TRACK_QUERY_STRING = True
+TRACK_IGNORE_URLS = ['static.*?',
+                     'ext/bubbleInfo',
+                     'accounts/login',
+                     'tracking',
+                     'api/v1.*?',
+                     'accounts/logout']
 TRACK_IGNORE_STATUS_CODES = [400, 404, 403, 405, 410, 500]
 
 

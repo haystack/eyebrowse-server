@@ -26,4 +26,4 @@ ipython==3.0.0
 flake8==2.4.0
 django-bulk-update==1.1.0
 django-tracking2==0.2.3
-django-evolution==0.6
+django-ipware==1.0.0
