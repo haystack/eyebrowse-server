@@ -26,14 +26,14 @@
 	    	 	</a>
 	    			<a href="/users/{{ item.sender.username }}">{{ item.sender.username }}</a> bumped into you on {{ item.date_created }}
 	    			<BR>
-	    				You were both on the page <a href="{{ item.url }}">{{ item.url }} 
+	    				You were both on the page <a href="{{ item.url }}" onclick="clickItem('{{ item.url }}'); return false;">{{ item.url }} 
 	    					{% if item.description %}<img class="favicon" src="{{ item.favIconUrl }}">{% endif %}</a>
 	    			<br>
 	    			{% if item.description %}
 	    				
 		            	 <div class="cut-content pointer" data-content="{{ item.title }}">
 		            	 	<img align="left" class="popular_image img-rounded" src="{{ item.img_url }}">
-		            	 	  	<a class="pointer" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.url }}">
+		            	 	  	<a class="pointer" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.url }}" onclick="clickItem('{{ item.url }}'); return false;">
 			            	 	    <h4>
 					                {{ item.title }} 
 					            	</h4>
@@ -58,12 +58,12 @@
 	    			 {% else %}
 	    			 Note on the Bulletin Board 
 	    			 {% endif %}
-	    			 of <a href="{{ item.url }}">{{ item.url }}</a> on {{ item.date_created }}:
+	    			 of <a href="{{ item.url }}" onclick="clickItem('{{ item.url }}'); return false;">{{ item.url }}</a> on {{ item.date_created }}:
 	    			<BR>
 	    				<div class="history-message">
 	    					{% autoescape off %}{{ item.message|add_twitter }}{% endautoescape %}
 	    				</div>
-	    				You have both visited the page <a href="{{ item.url }}">{{ item.url }} 
+	    				You have both visited the page <a href="{{ item.url }}" onclick="clickItem('{{ item.url }}'); return false;">{{ item.url }} 
 	    					{% if item.description %}<img class="favicon" src="{{ item.favIconUrl }}">{% endif %}</a> in the past.
 	    			<br>
 	    			
@@ -82,7 +82,7 @@
 		    		{% else %}
 		    			 Note on the Bulletin Board 
 	    			{% endif %}
-	    			of <a href="{{ item.url }}">{{ item.url }}{% if item.description %} <img class="favicon" src="{{ item.favIconUrl }}">{% endif %}</a> on {{ item.date_created }}:
+	    			of <a href="{{ item.url }}" onclick="clickItem('{{ item.url }}'); return false;">{{ item.url }}{% if item.description %} <img class="favicon" src="{{ item.favIconUrl }}">{% endif %}</a> on {{ item.date_created }}:
 	    			<BR>
 	    				<div class="history-message">
 	    					{% autoescape off %}{{ item.message|add_twitter }}{% endautoescape %}

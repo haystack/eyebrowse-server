@@ -2,6 +2,15 @@
 
 var TEMPLATE_BASE = "api/js_templates/";
 
+function clickItem(click_url) {
+	$.post("/stats/click_item", {
+		"url_refer": window.location.href,
+        "url_click": click_url,
+    });
+    var win = window.open(click_url, '_blank');
+  	win.focus();
+}
+
 function submitFeedBack(e, d) {
     $("#submit_success").fadeIn();
     $.post("/feedback", {

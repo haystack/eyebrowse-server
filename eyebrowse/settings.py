@@ -160,6 +160,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'common.middleware.crossdomainxhr.XsSharing',
     'common.middleware.proxy.ProxyMiddleware',
+    'tracking.middleware.VisitorTrackingMiddleware',
+    
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -207,6 +209,7 @@ INSTALLED_APPS = (
     'south',
     'notifications',
     'languages',
+    'tracking',
 
     # eyebrowse
     'accounts',
@@ -215,6 +218,7 @@ INSTALLED_APPS = (
     'live_stream',
     'stats',
     'extension',
+
 )
 
 APPEND_SLASH = False
@@ -234,10 +238,18 @@ ACCOUNT_ACTIVATION_DAYS = 14  # Two-week activation window;
 
 
 # Tastypie settings:
-
 API_LIMIT_PER_PAGE = 0  # no default
 TASTYPIE_FULL_DEBUG = DEBUG
 TASTYPIE_ALLOW_MISSING_SLASH = True
+
+
+#django-tracking settings
+TRACK_AJAX_REQUESTS = False
+TRACK_ANONYMOUS_USERS = True
+TRACK_PAGEVIEWS = True
+TRACK_REFERER = False
+TRACK_QUERY_STRING = True
+TRACK_IGNORE_STATUS_CODES = [400, 404, 403, 405, 410, 500]
 
 
 # gravatar settings

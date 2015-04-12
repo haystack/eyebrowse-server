@@ -16,10 +16,10 @@
     	</span>
     	
         <span>
-            <a href="http://{{ item.first_item.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.first_item.url|url_domain }}">
+            <a href="http://{{ item.first_item.url|url_domain }}" onclick="clickItem('http://{{ item.first_item.url|url_domain }}'); return false;" class="cut-url pointer" data-content="{{ item.first_item.url|url_domain }}">
                 <img class="favicon" src="{{ item.favicon_url }}"> {{ item.first_item.url|url_domain|truncatechars:30 }} 
             </a> 
-            | <a class="pointer" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.first_item.url }}">
+            | <a class="pointer" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.first_item.url }}" onclick="clickItem('{{ item.first_item.url }}'); return false;">
             	<span class="cut-content pointer" data-content="{{ item.first_item.title}}">
                 {{ item.first_item.title|truncatechars:40 }} 
             	</span>
@@ -110,7 +110,7 @@
 		        	</span>
 		        	
 	        		<span class="left">
-	        			<a class="pointer" onclick="trackOutboundLink('{{ h_item.url }}'); return false;" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ h_item.url }}">
+	        			<a class="pointer" style="color:black; text-decoration:none;cursor:pointer" href="{{ h_item.url }}" onclick="clickItem('{{ h_item.url }}'); return false;">
 				        	<span class="cut-content pointer" data-content="{{ h_item.title}}"> 
 				                	{{ h_item.title|truncatechars:60 }} 
 				            </span>	

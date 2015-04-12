@@ -89,4 +89,5 @@ urlpatterns += patterns('eyebrowse.views',
                         url(r'^color_tag$', 'color_tag'),
                         url(r'^downloads$', 'downloads'),
                         url(r'^$', 'home'),
+                        url(r'^tracking/', include('tracking.urls')),
                         )

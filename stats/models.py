@@ -2,6 +2,15 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+    
+class ClickItem(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False)
+    ip_address = models.CharField(max_length=39, editable=False)
+    url_referrer = models.URLField(max_length=1000, default='')
+    url_clicked = models.URLField(max_length=1000, default='')
+    time = models.DateTimeField(auto_now_add=True)
+    
+
 class FavData(models.Model):
 
     """

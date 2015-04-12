@@ -9,16 +9,16 @@
     <div id="history_item_{{ item.id }}_content" class="history-content">
     	
         <span class="span6" style="margin-left: 0px">
-            <a href="http://{{ item.popular_history.url|url_domain }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url|url_domain }}">
+            <a href="http://{{ item.popular_history.url|url_domain }}" onclick="clickItem('http://{{ item.popular_history.url|url_domain }}'); return false;" class="cut-url pointer" data-content="{{ item.popular_history.url|url_domain }}">
                 <img class="favicon" src="{{ item.popular_history.favicon_url }}"> {{ item.popular_history.url|url_domain|truncatechars:30 }} 
             </a> | 
-            <a href="{{ item.popular_history.url }}" target="_blank" class="cut-url pointer" data-content="{{ item.popular_history.url }}">
+            <a href="{{ item.popular_history.url }}" onclick="clickItem('{{ item.popular_history.url }}'); return false;" class="cut-url pointer" data-content="{{ item.popular_history.url }}">
                 {{ item.popular_history.url|truncatechars:43 }} 
             </a>
             <br />     	
             	 <div class="cut-content pointer" data-content="{{ item.popular_history.title}}">
             	 	<img align="left" class="popular_image img-rounded" src="{{ item.popular_history.img_url }}">
-            	 	  	<a class="pointer" target="_blank" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.popular_history.url }}">
+            	 	  	<a class="pointer" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.popular_history.url }}" onclick="clickItem('{{ item.popular_history.url }}'); return false;">
 	            	 	    <h4>
 			                {{ item.popular_history.title|truncatechars:150 }} 
 			            	</h4>

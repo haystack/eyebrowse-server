@@ -11,7 +11,8 @@ from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.views.generic.simple import redirect_to
 
-from annoying.decorators import render_to
+from ipware.ip import get_ip
+from annoying.decorators import render_to, ajax_request
 
 from accounts.models import UserProfile
 
@@ -27,7 +28,7 @@ from live_stream.query_managers import live_stream_query_manager
 from live_stream.query_managers import profile_stat_gen
 from live_stream.query_managers import online_user
 
-from stats.models import FavData
+from stats.models import FavData, ClickItem
 
 @login_required
 @render_to('stats/follow_data.html')
@@ -383,6 +384,24 @@ def _profile_info(user=None, username=None, following=False, followers=False):
 
     return username, follows, profile_user, empty_search_msg, nav_bar
 
+@ajax_request
+def clicked_item(request):
+    try:
+        logger.info(request)
+        if request.user.is_authenticated():
+            user = get_object_or_404(User, username=request.user.username)
+        else:
+            user = None
+        ip = get_ip(request)
+        url_click = request.POST.get('url_click')
+        url_refer = request.POST.get('url_refer')
+        
+        _ = ClickItem.objects.create(user=user, ip_address=ip, url_clicked=url_click, url_referrer=url_refer)
+        
+    except Exception, e:
+        logger.info(e)
+        
+    return {'res': True}
 
 def follow_list(follows, req_user, empty_search_msg):
 
