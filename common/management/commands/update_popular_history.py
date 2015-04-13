@@ -227,7 +227,7 @@ class Command(NoArgsCommand):
         total_updates = popular_history.count()
         i = 0  # in case we try to log but there is no eye_history
         for batch_no, batch in enumerate(queryset_iterator_chunkify(popular_history, CHUNK_SIZE)):
-            for i, e in enumerate(batch):
+            for i, p in enumerate(batch):
                 i += batch_no * CHUNK_SIZE
                 try:
                     eye_hist_count = p.eye_hists.count()
