@@ -38,6 +38,43 @@ def logged_in(request):
 
 
 @login_required
+def ticker_info(request):
+    timestamp = timezone.now() - datetime.timedelta(minutes=5)
+    
+    followers = User.objects.filter(userprofile__followed_by=request.user)
+
+    history = EyeHistory.objects.filter(
+        start_time__gt=timestamp).order_by('-start_time').select_related()
+
+    most_recent_hist = None
+
+    users = []
+    for h in history:
+        if h.user not in users and h.user in followers:
+            if most_recent_hist == None:
+                most_recent_hist = h
+            users.append({ 'username': h.user.username,
+                           'pic_url': gravatar_for_user(h.user),
+                           'url': '%s/users/%s' % (BASE_URL, h.user.username),
+                           })
+    
+    res = {}
+    res['online_users'] = sorted(users, key=lambda u: u.username)
+    if most_recent_hist != None:
+        res['history_item'] = { 'username': most_recent_hist.user.username,
+                               'pic_url': gravatar_for_user(most_recent_hist.user),
+                               'user_url': '%s/users/%s' % (BASE_URL, most_recent_hist.user.username),
+                               'url': most_recent_hist.url,
+                               'title': most_recent_hist.title,
+                               'favicon': most_recent_hist.favIconUrl,
+                               'start_time': most_recent_hist.start_time,
+                               }
+    else:
+        res['history_item'] = None
+    return JSONResponse(res)
+    
+
+@login_required
 def bubble_info(request):
     url = request.POST.get('url', '')
 
