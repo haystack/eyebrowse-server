@@ -95,8 +95,8 @@ def ticker_info(request):
                
         t = Tag.objects.filter(user=request.user, domain=most_recent_hist.domain)
         if t.exists():
-            res['history_item']['tag'] = {'name': t.name,
-                                          'color': t.color}
+            res['history_item']['tag'] = {'name': t[0].name,
+                                          'color': t[0].color}
     else:
         res['history_item'] = None
     return JSONResponse(res)
