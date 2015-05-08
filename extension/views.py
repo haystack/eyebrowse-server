@@ -13,7 +13,7 @@ from annoying.decorators import ajax_request
 from annoying.decorators import render_to
 
 from accounts.models import UserProfile
-from api.models import ChatMessage
+from api.models import ChatMessage, MuteList, Tag
 from api.models import EyeHistory
 from api.models import EyeHistoryMessage
 from api.utils import humanize_time
@@ -36,6 +36,71 @@ def logged_in(request):
     else:
         return JSONResponse({'res': False})
 
+
+@login_required
+def ticker_info(request):
+    timestamp = timezone.now() - datetime.timedelta(minutes=5)
+    
+    followers = User.objects.filter(userprofile__followed_by=request.user)
+
+    history = EyeHistory.objects.filter(
+        start_time__gt=timestamp).order_by('-start_time').select_related()
+
+    most_recent_hist = None
+
+    mutelist_urls = MuteList.objects.filter(
+                    user=request.user,
+                    url__isnull=False
+                ).values_list('url', flat=True)
+
+    mutelist_words = MuteList.objects.filter(
+                    user=request.user, word__isnull=False
+                ).values_list('word', flat=True)
+
+    users = []
+    for h in history:
+        if h.user not in users and h.user in followers:
+            if most_recent_hist == None:
+                show = True
+                if len(mutelist_urls) > 0:
+                    for m in mutelist_urls:
+                        if m in h.url:
+                            show = False
+                if show and len(mutelist_words) > 0:
+                    for m in mutelist_words:
+                        if m in h.title:
+                            show = False
+                
+                if show:
+                    most_recent_hist = h
+                    
+            users.append({ 'username': h.user.username,
+                           'pic_url': gravatar_for_user(h.user),
+                           'url': '%s/users/%s' % (BASE_URL, h.user.username),
+                           })
+    
+    res = {}
+    res['online_users'] = sorted(users, key=lambda u: u['username'])
+    
+    if most_recent_hist != None:
+        
+        res['history_item'] = { 'username': most_recent_hist.user.username,
+                               'pic_url': gravatar_for_user(most_recent_hist.user),
+                               'user_url': '%s/users/%s' % (BASE_URL, most_recent_hist.user.username),
+                               'url': most_recent_hist.url,
+                               'title': most_recent_hist.title,
+                               'favicon': most_recent_hist.favIconUrl,
+                               'time_ago': humanize_time(timezone.now() - most_recent_hist.start_time)
+                               }
+               
+        t = Tag.objects.filter(user=request.user, domain=most_recent_hist.domain)
+        if t.exists():
+            res['history_item']['tag'] = {'name': t.name,
+                                          'color': t.color}
+    else:
+        res['history_item'] = None
+    return JSONResponse(res)
+    
 
 @login_required
 def bubble_info(request):
