@@ -244,17 +244,20 @@ TASTYPIE_ALLOW_MISSING_SLASH = True
 
 
 #django-tracking settings
-TRACK_AJAX_REQUESTS = False
+TRACK_AJAX_REQUESTS = True
 TRACK_ANONYMOUS_USERS = True
 TRACK_PAGEVIEWS = True
-TRACK_REFERER = False
+TRACK_REFERER = True
 TRACK_QUERY_STRING = True
 TRACK_IGNORE_URLS = ['static.*?',
                      'ext/bubbleInfo',
                      'accounts/login',
                      'tracking',
-                     'api/v1.*?',
-                     'accounts/logout']
+                     'api/v1/whitelist',
+                     'api/v1/blacklist',
+                     'api/v1/history-data',
+                     'accounts/logout',
+                     'robots.txt']
 TRACK_IGNORE_STATUS_CODES = [400, 404, 403, 405, 410, 500]
 
 
