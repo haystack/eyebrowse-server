@@ -13,7 +13,7 @@ from annoying.decorators import ajax_request
 from annoying.decorators import render_to
 
 from accounts.models import UserProfile
-from api.models import ChatMessage, MuteList
+from api.models import ChatMessage, MuteList, Tag
 from api.models import EyeHistory
 from api.models import EyeHistoryMessage
 from api.utils import humanize_time
@@ -83,6 +83,7 @@ def ticker_info(request):
     res['online_users'] = sorted(users, key=lambda u: u['username'])
     
     if most_recent_hist != None:
+        
         res['history_item'] = { 'username': most_recent_hist.user.username,
                                'pic_url': gravatar_for_user(most_recent_hist.user),
                                'user_url': '%s/users/%s' % (BASE_URL, most_recent_hist.user.username),
@@ -91,6 +92,11 @@ def ticker_info(request):
                                'favicon': most_recent_hist.favIconUrl,
                                'time_ago': humanize_time(timezone.now() - most_recent_hist.start_time)
                                }
+               
+        t = Tag.objects.filter(user=request.user, domain=most_recent_hist.domain)
+        if t.exists():
+            res['history_item']['tag'] = {'name': t.name,
+                                          'color': t.color}
     else:
         res['history_item'] = None
     return JSONResponse(res)
