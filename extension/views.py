@@ -13,7 +13,7 @@ from annoying.decorators import ajax_request
 from annoying.decorators import render_to
 
 from accounts.models import UserProfile
-from api.models import ChatMessage
+from api.models import ChatMessage, MuteList
 from api.models import EyeHistory
 from api.models import EyeHistoryMessage
 from api.utils import humanize_time
@@ -48,18 +48,40 @@ def ticker_info(request):
 
     most_recent_hist = None
 
+    mutelist_urls = MuteList.objects.filter(
+                    user=request.user,
+                    url__isnull=False
+                ).values_list('url', flat=True)
+
+    mutelist_words = MuteList.objects.filter(
+                    user=request.user, word__isnull=False
+                ).values_list('word', flat=True)
+
     users = []
     for h in history:
         if h.user not in users and h.user in followers:
             if most_recent_hist == None:
-                most_recent_hist = h
+                show = True
+                if len(mutelist_urls) > 0:
+                    for m in mutelist_urls:
+                        if m in h.url:
+                            show = False
+                if show and len(mutelist_words) > 0:
+                    for m in mutelist_words:
+                        if m in h.title:
+                            show = False
+                
+                if show:
+                    most_recent_hist = h
+                    
             users.append({ 'username': h.user.username,
                            'pic_url': gravatar_for_user(h.user),
                            'url': '%s/users/%s' % (BASE_URL, h.user.username),
                            })
     
     res = {}
-    res['online_users'] = sorted(users, key=lambda u: u.username)
+    res['online_users'] = sorted(users, key=lambda u: u['username'])
+    
     if most_recent_hist != None:
         res['history_item'] = { 'username': most_recent_hist.user.username,
                                'pic_url': gravatar_for_user(most_recent_hist.user),
@@ -67,7 +89,7 @@ def ticker_info(request):
                                'url': most_recent_hist.url,
                                'title': most_recent_hist.title,
                                'favicon': most_recent_hist.favIconUrl,
-                               'start_time': most_recent_hist.start_time,
+                               'time_ago': humanize_time(timezone.now() - most_recent_hist.start_time)
                                }
     else:
         res['history_item'] = None
