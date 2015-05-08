@@ -73,10 +73,15 @@ def bubble_info(request):
                     (timezone.now() - datetime.timedelta(hours=24)):
                 old_level = 2
 
+            url_level = "site-level"
+            if eyehist.url == url:
+                url_level = "page-level"
+                
             active.append({'username': user.username,
                            'pic_url': gravatar_for_user(user),
                            'url': '%s/users/%s' % (BASE_URL, user.username),
                            'old_level': old_level,
+                           'url_level': url_level,
                            'time_ago': humanize_time(
                                timezone.now() - eyehist.end_time)
                            })
