@@ -13,8 +13,8 @@ def prod():
 
 
 def deploy():
-    sudo('rm -rf %s/*' % env.server_path)
     local('zip -r code.zip * -x "*.pyc" "*.git"')
+    sudo('rm -rf %s/*' % env.server_path)
     put('code.zip', '%s/' % env.server_path, use_sudo=True)
     sudo('cd %s; unzip -o code.zip' % env.server_path)
     sudo('cd %s; rm -f code.zip' % env.server_path)
