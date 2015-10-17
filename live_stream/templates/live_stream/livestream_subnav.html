@@ -6,16 +6,13 @@
         <ul class="nav nav-list well">
         {% include 'live_stream/subnav_content.html' %}
         </ul>
-
-        {% include "stats/statboxes/tot_history.html" %}
-        
-        {% include "stats/statboxes/follows.html" %}
-        
-        {% include "stats/statboxes/tot_time.html" %}
-        
-        {% include "stats/statboxes/tot_online.html" %}
-        
-        {% include "live_stream/subnav_footer.html" %}
+        {% if user.is_authenticated %}
+          {% include "stats/statboxes/tot_history.html" %}
+          {% include "stats/statboxes/follows.html" %}
+          {% include "stats/statboxes/tot_time.html" %}
+          {% include "stats/statboxes/tot_online.html" %}
+          {% include "live_stream/subnav_footer.html" %}
+        {% endif %}
 
     </div>
 </div>

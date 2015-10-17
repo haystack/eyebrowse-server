@@ -265,6 +265,8 @@ def _online_users():
 
 
 def set_tags(history, req_user):
+    if not req_user.is_authenticated():
+        return
     history = list(history)
     for h in history:
         t = Tag.objects.filter(user=req_user, domain=h.popular_history.domain)

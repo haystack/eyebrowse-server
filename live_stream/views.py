@@ -19,24 +19,23 @@ from live_stream.query_managers import profile_stat_gen
 from notifications.models import Notification
 
 
-@login_required
 @render_to('live_stream/live_stream.html')
 def live_stream(request):
 
-    user = get_object_or_404(User, username=request.user.username)
-    userprof = UserProfile.objects.get(user=user)
-    confirmed = userprof.confirmed
-    if not confirmed:
-        return redirect('/consent')
+    user = request.user
 
     get_dict, query, date, sort, filter = _get_query(request)
-
-    tot_time, num_history, num_online = _get_stats(user, filter=filter)
-
     hist, history_stream = live_stream_query_manager(get_dict, user)
 
-    following_count = user.profile.follows.count()
-    follower_count = UserProfile.objects.filter(follows=user.profile).count()
+    if user.is_authenticated():
+        following_count = user.profile.follows.count()
+        follower_count = UserProfile.objects.filter(follows=user.profile).count()
+        tot_time, num_history = _get_stats(user, filter=filter)
+    else:
+        following_count = 0
+        follower_count = 0
+        tot_time = None
+        num_history = None
 
     template_dict = {
         'username': user.username,
@@ -49,7 +48,7 @@ def live_stream(request):
         'history_stream': history_stream,
         'tot_time': tot_time,
         'num_history': num_history,
-        'num_online': num_online,
+        'num_online': online_user_count(),
     }
 
     return _template_values(request,
@@ -100,9 +99,7 @@ def _get_stats(user, filter=filter):
     else:
         tot_time, num_history = profile_stat_gen(user, username="")
 
-    num_online = online_user_count()
-
-    return tot_time, num_history, num_online
+    return tot_time, num_history
 
 
 def _get_subnav(request):
