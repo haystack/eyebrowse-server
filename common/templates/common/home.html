@@ -3,27 +3,18 @@
 
 {% block content %}
  <div class="hero-unit text-center">
- 
-            <a class="btn btn-primary btn-large" href="/accounts/register/">Register &raquo;</a>
-            <a class="btn btn-primary btn-large" <a href="{% url django.contrib.auth.views.login %}">Login</a>
-	
-	<a href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">
-	<img style="margin-left: 20px;" class="ext-icon" src='{% static "common/img/chrome-logo.png" %}'></a>
-	    <a class="btn btn-large" href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">Get it for Chrome &raquo;</a> 
 
+  {% include 'common/snippets/home_buttons.html' %}
 	<div id="inner-header">
-	        <br />
-	        <br />
+	        <br>
 	        <h1>Welcome to Eyebrowse!</h1>
-	        <BR />
-	        <p> When we go outside, a lot of the fun comes from seeing what other people are doing.  
+	        <p>
+          When we go outside, a lot of the fun comes from seeing what other people are doing.  
 	        We can follow (or steer away from) the crowd. We can bump into friends. 
 	        We can simply sit back and enjoy observing the ebb and flow of people.
 			</p>
 		<p style="font-style: italic;"> Wouldn't it be interesting to do the same on the web? </p>
-	
-		<p> Eyebrowse aims to create a social outdoors for your web browsing.
-		</p>
+		<p> Eyebrowse aims to create a social outdoors for your web browsing. </p>
 	<br>
 
 	<div class="row text-center">
@@ -66,29 +57,13 @@
 			
 		</div>
 	</div>
-	<br />
-
-<P>
-Screenshots of the website and Chrome Extension:
-</P>
-<P>
-
-<img class="screenshot1" src="{% static "common/img/screenshot.png" %}">
-<img class="screenshot2" src="{% static "common/img/screenshot2.png" %}">
-</P>
+	<br>
 
 <p>
 Curious? Read more at the <a href="/about">About</a> page or our <a href="/faq">FAQ</a>.
 	</p>
 
-            <a class="btn btn-primary btn-large" href="/accounts/register/">Register &raquo;</a>
-
-            <a class="btn btn-primary btn-large" <a href="{% url django.contrib.auth.views.login %}">Login</a>
-
-        
-    	<a href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">
-	<img style="margin-left: 20px;" class="ext-icon" src='{% static "common/img/chrome-logo.png" %}'></a>
-	    <a class="btn btn-large" href="https://chrome.google.com/webstore/detail/eyebrowse/akhbhgcioeledicnkpmjpmkkecohhicf" target="_blank">Get it for Chrome &raquo;</a> 
+  {% include 'common/snippets/home_buttons.html' %}
 
 </div>
 </div>
