@@ -36,13 +36,13 @@
 	<h4> Questions about how to use Eyebrowse </h4>
 	<ul>
 		<li>
-			<a href="#how_whitelist">How do I add a website to my whitelist?</a>
+			<a href="#how_sharelist">How do I share a website?</a>
 		</li>
 		<li>
-			<a href="#how_whitelist_delete">How do I delete a website from my whitelist?</a>
+			<a href="#how_sharelist_delete">How do I stop sharing a website?</a>
 		</li>
 		<li>
-			<a href="#mark_visit">Can I mark a visit to a webpage without putting it on my whitelist?</a>
+			<a href="#mark_visit">Can I mark a visit to a webpage without always sharing it?</a>
 		</li>
 		<li>
 			<a href="#how_incognito">How do I temporarily turn off Eyebrowse?</a>
@@ -57,8 +57,8 @@
 </p>
 
 <a name="what_is_eyebrowse">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> What is Eyebrowse? </h3>
 Eyebrowse is a social web browsing tool. It allows you to pick websites that you consider like 
 public spaces in real life and makes you publicly visible on them. Just like in real life,
@@ -70,8 +70,8 @@ that are on the same webpage as you and chat or leave comments on any pages.
 </p>
 
 <a name="why_eyebrowse">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> Why would I use Eyebrowse? </h3>
 There are a lot of fun and interesting uses and opportunities that Eyebrowse can provide.
 First, you can now have discussions and leave notes on any webpage, not just the ones that have
@@ -88,28 +88,28 @@ computing, and human-computer interaction.
 </p>
 
 <a name="motivation">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> What's your motivation for building Eyebrowse? </h3>
 
 We have built Eyebrowse for many reasons. 
 
-<BR />
-<BR />
+<br>
+<br>
 First, we're really interested in the possibilities for social
 interaction, sharing, and content discovery that Eyebrowse can provide.
 We also think that there is a lot of opportunity in being able to visualize the paths and ebbs and flows of 
 traffic on the web.
-<BR />
-<BR />
+<br>
+<br>
 Second, in building this system, we wish to demonstrate that it is possible to have a system
 that asks users permission before tracking them instead of indiscriminately tracking all websites
 that users go to, including the ones that they prefer to keep private. We believe that there are some
 websites that users do not mind being tracked on and others where they do mind, but it is currently cumbersome
 or difficult for users to take control. This system is a proof-of-concept to show that browser tracking can be
 permission-based without being annoying or tiresome for users.
-<BR />
-<BR />
+<br>
+<br>
 Finally, we hope by releasing the data that Eyebrowse collects, we can help researchers, data scientists, software engineers,
 and designers learn and create interesting and useful things. We think that areas like quantified self, 
 information retrieval, social computing, human-computer interaction, and many more could benefit from the data we collect.
@@ -117,60 +117,60 @@ information retrieval, social computing, human-computer interaction, and many mo
 </p>
 
 <a name="how_much">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> How much of my browsing data does Eyebrowse collect? </h3>
 
 Eyebrowse only collects data from the domains that you give it permission to collect. You give 
-Eyebrowse permission when you add a domain to your whitelist. After you've done that, anytime you
+Eyebrowse permission when you add a domain to your sharelist. After you've done that, anytime you
 visit a webpage that is a part of that domain, you will show up as present on that domain within
 the Eyebrowse Chrome plugin, and your Eyebrowse feed will register a visit to that webpage.
 
 </p>
 
 <a name="public">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> Is the data I put on my Eyebrowse feed public? </h3>
 
 Yes. At this moment, all the data that goes to your Eyebrowse is publicly available, as in any person
 can create an Eyebrowse account and see it. Likewise, your data will show up in the public API
-and in the link to the Eyebrowse firehose from your home page. Only add domains to your whitelist
+and in the link to the Eyebrowse firehose from your home page. Only add domains to your sharelist
 that you are comfortable sharing publicly.
 
 </p>
 
 <a name="exactly">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> Exactly what fields are collected with each visit? </h3>
 
 From every visit that is collected from Eyebrowse, we collect the time you entered the page and the time
 you leave the page. From the webpage, we store the url, the domain, 
 the title, and the favIcon of the domain. Finally, the visit is associated with your Eyebrowse account.
 We don't store any other information such as IP address or referrer. We also don't track the clicks that you
-make while on a whitelisted domain.
+make while on a shared domain.
 
 </p>
 
 
 <a name="anonymous">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> Is it possible for me to use Eyebrowse anonymously? </h3>
 
 It is possible for you to create an account and not use a username or profile image that links back to you or reveal
 your email. However, it is often easy to reveal your identity from your online traces without realizing it.
-Therefore, we can not guarantee that your anonymity will be preserved if you are whitelisting any domains.
-We recommend that you only whitelist the domains that you are comfortable associating with yourself.
+Therefore, we can not guarantee that your anonymity will be preserved if you are sharing any domains.
+We recommend that you only share the domains that you are comfortable associating with yourself.
 
 </p>
 
 
 
 <a name="delete">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> Can I delete my data on Eyebrowse? </h3>
 
 If you ever want to delete your entire account or remove certain Eyebrowse history items from your Eyebrowse
@@ -188,48 +188,48 @@ in real-time from our API could have potentially already downloaded that data be
 
 
 
-<a name="how_whitelist">&nbsp;</a>
-<BR>
-<P>
-<h3> How do I add a website to my whitelist? </h3>
+<a name="how_sharelist">&nbsp;</a>
+<br>
+<p>
+<h3> How do I add a website to my sharelist? </h3>
 
 <img class="prompt-img right-img about-img" src="{% static "common/img/prompt.png" %}">
-There are several ways you can add a website to your whitelist. The first way is by simply browsing the
+There are several ways you can add a website to your sharelist. The first way is by simply browsing the
 web with the Eyebrowse Chrome extension on. Occasionally, the plugin will ask you via a small window in the top
-right of your browser window whether you would like to add the current domain you are on to your whitelist.
+right of your browser window whether you would like to add the current domain you are on to your sharelist
 If you click yes, that current visit and future visits to webpages within that domain will be logged to 
 Eyebrowse. If you click no, the extension will not ask you about that domain again.
 
-<BR />
-<BR />
+<br>
+<br>
 <img class="ext-links-img right-img about-img" src="{% static "common/img/ext-links.png" %}">
-If at any time you want to whitelist the domain you are currently on but you didn't receive a prompt,
-you can click on the Eyebrowse extension logo and then click "Whitelist this domain".
-<BR />
-<BR />
-Finally, you can go to Settings in the top right corner of the Eyebrowse website and then click on Whitelist.
-From here, you can add and delete items that are on your whitelist.
+If at any time you want to share the domain you are currently on but you didn't receive a prompt,
+you can click on the Eyebrowse extension logo and then click "Share this domain".
+<br>
+<br>
+Finally, you can go to Settings in the top right corner of the Eyebrowse website and then click on Sharelist.
+From here, you can add and delete items that are on your sharelist.
 </p>
 
-<img class="whitelist-img left-img about-img" src="{% static "common/img/whitelist.png" %}">
-<a name="how_whitelist_delete">&nbsp;</a>
-<BR>
-<P>
-<h3> How do I delete a website from my whitelist? </h3>
+<img class="sharelist-img left-img about-img" src="{% static "common/img/sharelist.png" %}">
+<a name="how_sharelist">&nbsp;</a>
+<br>
+<p>
+<h3> How do I delete a website from my sharelist? </h3>
 
-If you go to Settings in the top right corner of the Eyebrowse website and then click on Whitelist, you
-can see all the websites that are currently in your whitelist. Click the red X button in order to 
-remove an item from your whitelist.
+If you go to Settings in the top right corner of the Eyebrowse website and then click on Sharelist, you
+can see all the websites that are currently in your sharelist. Click the red X button in order to 
+remove an item from your sharelist.
 
 </p>
 
 
 <a name="mark_visit">&nbsp;</a>
-<BR>
-<P>
-<h3> Can I mark a visit to a webpage without putting it on my whitelist? </h3>
-Yes, you can. If you are currently on a webpage that's not on your whitelist, but you want to mark your 
-current visit just this one time without putting the webpage onto your whitelist, simply click "Mark a 
+<br>
+<p>
+<h3> Can I mark a visit to a webpage without putting it on my sharelist </h3>
+Yes, you can. If you are currently on a webpage that's not on your sharelist, but you want to mark your 
+current visit just this one time without putting the webpage onto your sharelist, simply click "Mark a 
 visit to this page" from within the Eyebrowse Chrome extension.
 
 </p>
@@ -237,12 +237,12 @@ visit to this page" from within the Eyebrowse Chrome extension.
 <img class="ext-links-img right-img about-img" src="{% static "common/img/ext-links.png" %}">
 
 <a name="how_incognito">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> How do I temporarily turn off Eyebrowse? </h3>
 
 If, while you're browsing the web, decide that you want to go incognito and stop Eyebrowse
-from logging any of your whitelists or showing you as online on Eyebrowse or any webpage, 
+from logging any of your shared domains or showing you as online on Eyebrowse or any webpage, 
 you can go incognito. Simply click the "Eyebrowse: On" link from the Chrome
 extension to toggle Eyebrowse on or off. When incognito mode is on, the eye in the Chrome extension icon should look
 closed. You can still mark a visit to a particular site, publish a Note, or post a Chat message
@@ -253,8 +253,8 @@ Don't forget to toggle Eyebrowse back on when you're ready to join the public!
 
 
 <a name="difference">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> What's the difference between a Note and a Chat message and how do I post one? </h3>
 <img class="bulletin-img left-img about-img" src="{% static "common/img/bulletin.png" %}">
 You can post either a Note or a Chat message anytime you are browsing the web. Simply click on the Eyebrowse
@@ -274,8 +274,8 @@ like you would a Twitter or Facebook post, it would make more sense to publish a
 </p>
 
 <a name="edit_chat">&nbsp;</a>
-<BR>
-<P>
+<br>
+<p>
 <h3> Is it possible to delete or edit Notes or Chat messages? </h3>
 
 Yes! If there are some Eyebrowse visits or Notes you would really like to be deleted, there is a down-arrow to the right of

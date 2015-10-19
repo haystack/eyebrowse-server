@@ -6,7 +6,7 @@ urlpatterns = patterns('accounts.views',
 
                        url(r'', include('registration.backends.default.urls')),
 
-                       url(r'^profile/whitelist$', 'whitelist'),
+                       url(r'^profile/sharelist$', 'whitelist'),
                        url(r'^profile/account$', 'account'),
                        url(r'^profile/mutelist', 'mutelist'),
                        url(r'^profile/edit_tags', 'edit_tags'),
