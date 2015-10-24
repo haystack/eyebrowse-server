@@ -4,6 +4,7 @@ import django
 
 from registration_defaults.settings import *
 from django.core.urlresolvers import get_resolver
+import languages
 
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -231,6 +232,8 @@ APPEND_SLASH = False
 #notification settings
 PINAX_NOTIFICATIONS_LANGUAGE_MODEL = "languages.Language"
 
+def PINAX_NOTIFICATIONS_GET_LANGUAGE_MODEL():
+    return languages.models.Language
 
 # email settings from sendgrid.com
 EMAIL_HOST = EMAIL["EMAIL_HOST"]
