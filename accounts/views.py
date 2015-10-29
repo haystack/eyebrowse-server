@@ -42,8 +42,8 @@ def whitelist(request):
     whitelist = WhiteListItem.objects.filter(user=request.user)
 
     return _template_values(request,
-                            page_title="edit whitelist",
-                            header="whitelist",
+                            page_title="edit sharelist",
+                            header="sharelist",
                             navbar='nav_account',
                             sub_navbar="subnav_whitelist",
                             whitelist=whitelist)
@@ -122,7 +122,7 @@ def account(request):
         return JSONResponse(resp)
 
     return _template_values(request,
-                            page_title="edit whitelist",
+                            page_title="edit sharelist",
                             header="account info",
                             navbar='nav_account',
                             sub_navbar="subnav_account_info")

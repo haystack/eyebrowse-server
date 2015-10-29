@@ -3,6 +3,8 @@ import os
 import django
 
 from registration_defaults.settings import *
+from django.core.urlresolvers import get_resolver
+
 
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -120,6 +122,10 @@ MEDIA_URL = '/media/'
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
 
+AUTHENTICATION_BACKENDS = [
+    'eyebrowse.backends.EmailOrUsernameBackend',
+]
+
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
@@ -202,7 +208,6 @@ INSTALLED_APPS = (
     # third party
     'compressor',
     'gunicorn',
-    'django_evolution',
     'registration',
     'tastypie',
     'kronos',
@@ -210,6 +215,7 @@ INSTALLED_APPS = (
     'notifications',
     'languages',
     'tracking',
+    'proofread.contrib.django_proofread',
 
     # eyebrowse
     'accounts',
@@ -225,6 +231,14 @@ APPEND_SLASH = False
 
 #notification settings
 PINAX_NOTIFICATIONS_LANGUAGE_MODEL = "languages.Language"
+
+def PINAX_NOTIFICATIONS_GET_LANGUAGE_MODEL():
+    import languages
+    return languages.models.Language
+
+PINAX_NOTIFICATIONS_BACKENDS = [("email", "notifications.backends.email.EmailBackend")]
+
+PINAX_NOTIFICATIONS_QUEUE_ALL = False
 
 
 # email settings from sendgrid.com
@@ -270,6 +284,51 @@ GRAVATAR_IMG_CLASS = "img-polaroid"
 XS_SHARING_ALLOWED_HEADERS = [
     "x-csrftoken",
 ]
+
+COMPRESS_DEBUG_TOGGLE = None
+COMPRESS_ENABLED = not DEBUG
+COMPRESS_PRECOMPILERS = ()
+
+
+def get_proofread_urls(exclusion_patterns=None):
+    if exclusion_patterns is None:
+        exclusion_patterns = {}
+
+    patterns = []
+    for group in get_resolver(None).reverse_dict.itervalues():
+        pattern = '/' + group[0][0][0]
+        if '%' in pattern:
+            continue
+        skip = False
+        for excluded in exclusion_patterns:
+            if excluded in pattern:
+                skip = True
+                break
+        if not skip:
+            patterns.append(pattern)
+
+
+    return patterns
+
+exclusion_patterns = ['/consent', '/getting_started', '/add_tag',
+'/accounts/profile/connections', '/accounts/password/change/',
+'/consent_accept', '/ext/getFriends', '/notifications/settings/', '/color_tag',
+'/password_change/done/', '/notifications', '/password_change/',
+'/ext/profilepic', '/accounts/profile/sync_delicious',
+'/accounts/profile/edit_tags', '/accounts/profile/whitelist',
+'/accounts/connect', '/delete_tag', '/accounts/profile/mutelist',
+'/password_change/', '/api/delete_eyehistory', '/notifications/settings/',
+'/password_change/done/', '/accounts/profile/sync_twitter', '/ext/getStats',
+'/tracking/', '/live_stream/', '/tracking/', '/ext/tickerInfo', '/feedback',
+'/ext/bubbleInfo', '/api/mutelist/add/', '/ext/getActiveUsers',
+'/accounts/password/change/done/', '/ext/getMessages',
+'/accounts/profile/account', '/api/whitelist/add/']
+
+PROOFREAD_SUCCESS = get_proofread_urls(exclusion_patterns=exclusion_patterns)
+exclusion_patterns.remove('/ext/profilepic')
+PROOFREAD_ENDPOINTS = map(lambda x: (x, 302), exclusion_patterns)
+
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

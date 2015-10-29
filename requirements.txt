@@ -9,7 +9,6 @@ django-admin-bootstrapped==0.3.2
 django-registration-defaults==0.3
 django-appconf==0.5
 django-compressor==1.4
-django-evolution==0.6.7
 django-tastypie==0.9.11
 django-kronos==0.6
 python-dateutil==1.5
@@ -17,13 +16,14 @@ mimeparse==0.1.3
 requests==2.0.0
 boto==2.8.0
 pyparsing==1.5.6
-Fabric==1.4.3
+Fabric==1.10.2
 ConcurrentLogHandler==0.9.1
 South==1.0
 pytz==2014.1
 tweepy==3.2.0
-ipython==3.0.0
+ipython==4.0.0
 flake8==2.4.0
 django-bulk-update==1.1.0
 django-tracking2==0.2.3
 django-ipware==1.0.0
+proofread==0.1.2

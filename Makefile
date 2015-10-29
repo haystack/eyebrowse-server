@@ -1,4 +1,4 @@
-.PHONY: run clean requirements env config install pylint jslint lint shell db deploy log
+.PHONY: run clean requirements env config install pylint jslint lint shell db deploy log test
 
 root_path="/opt/eyebrowse"
 env_path="$(ROOT_PATH)/env"
@@ -55,4 +55,4 @@ jslint:
 lint: clean pylint jslint
 
 deploy: lint
-	fab -i prod deploy restart_apache
+	fab prod deploy restart_apache
