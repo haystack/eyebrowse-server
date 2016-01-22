@@ -1,0 +1,55 @@
+{% extends 'accounts/edit_profile_base.html' %}
+{% load filters %}
+{% load gravatar %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+ <div class="span6">
+	<h3>Connect to Google</h3>
+	{{ synced }}
+	
+	{% if connected %}
+		<br />
+		<br />
+		
+		<div class="well">
+			<h4>Friends on Google also on Eyebrowse:</h4>
+			
+			<table>
+				{% for friend in google_friends %}
+					<tr>
+					    <td> 
+					    	
+					        <a href="/users/{{ friend.user.username }}"> 
+					            {% gravatar_img_for_user friend.user 45 %} {{ friend.user.username }}
+					        </a>
+					    </td>
+					    <td> 
+					        <a class="btn btn-info connection">
+					            {% include 'common/snippets/follow-btn.html' with follows=friend.follows username=friend.user.username %} 
+					        </a>
+					    </td>
+					</tr>
+				{% endfor %}
+			</table>
+			
+		</div>
+		
+	{% else %}
+		<br />
+		<a href="/accounts/profile/sync_google">Connect with Google</a>
+		
+		
+	{% endif %}
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% include_script "accounts/js/twitter" %}
+{% endblock %}

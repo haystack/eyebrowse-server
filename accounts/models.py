@@ -9,6 +9,9 @@ class TwitterInfo(models.Model):
     access_token = models.CharField(max_length=140, default='')
     access_token_secret = models.CharField(max_length=140, default='')
 
+class GoogleInfo(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False)
+    access_token = models.CharField(max_length=140, default='')
 
 class DeliciousInfo(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
