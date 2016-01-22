@@ -244,7 +244,7 @@ def get_twitter_info(request, api, twit_obj, template_dict):
     
     eye_friends = UserProfile.objects.get(user=request.user).follows.all().values_list('user__username', flat=True)
     
-    friends = api.frieds_ids()
+    friends = api.friends_ids()
     twitter_friends = TwitterInfo.objects.filter(twitter_id__in=friends)
     
     for friend in twitter_friends:
