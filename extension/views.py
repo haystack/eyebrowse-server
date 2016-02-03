@@ -205,7 +205,7 @@ def profilepic(request):
 @ajax_request
 def get_friends(request):
     
-    query = request.GET.get('query', None)
+    query = request.GET.get('query', None).lower()
     
     user_prof = UserProfile.objects.get(user=request.user)
     friends = user_prof.follows.all()
@@ -213,7 +213,7 @@ def get_friends(request):
     data = []
     
     for friend in friends:
-        if not query or query in friend.user.username:
+        if not query or query in friend.user.username.lower():
             data.append({'id': friend.id,
                          'name': '@%s' % (friend.user.username),
                          'avatar': gravatar_for_user(friend.user),
