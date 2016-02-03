@@ -17,7 +17,7 @@ from django.utils.six.moves import cPickle as pickle  # pylint: disable-msg=F
 
 from notifications.compat import AUTH_USER_MODEL, GenericForeignKey
 from notifications.conf import settings
-from notifications.utils import load_media_defaults, notice_setting_for_user
+from notifications.utils import load_media_defaults, notice_setting_for_user, my_import
 
 
 NOTICE_MEDIA, NOTICE_MEDIA_DEFAULTS = load_media_defaults()
@@ -174,7 +174,9 @@ def send_now(users, label, extra=None, sender=None, scoping=None):
             # activate the user's language
             activate(language)
 
-        for backend in settings.PINAX_NOTIFICATIONS_BACKENDS.values():
+        for i, backend_tuple in enumerate(settings.PINAX_NOTIFICATIONS_BACKENDS):
+            backend_name, backend_path = backend_tuple
+            backend = my_import(backend_path)(i)
             if backend.can_send(user, notice_type, scoping=scoping):
                 backend.deliver(user, sender, notice_type, extra)
                 sent = True
