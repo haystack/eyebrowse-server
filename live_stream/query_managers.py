@@ -149,11 +149,11 @@ def history_search(req_user, timestamp=None,
                     Q(title__icontains=query) | Q(url__icontains=query))
 
             if filter == "following" and req_user.is_authenticated():
-                history = req_user.profile.get_following_history(
-                    history=history)
+                following_ids = req_user.userprofile.follows.values_list("user", flat=True)
+                history = history.filter(user_id__in=following_ids)
 
             if username:
-                history = history.filter(user__username=username)
+                history = history.filter(user=req_user)
             else:
                 if req_user.is_authenticated():
                     mutelist = MuteList.objects.filter(
