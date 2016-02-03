@@ -60,10 +60,10 @@ function submitForm(e, d) {
     $.post(url, $form.serialize(), function(res) {
         if (res.success) {
             addClass = "alert-success";
-            removeClass = "alert-error";
+            removeClass = "alert-danger";
             text = "<p>" + res.success + "</p>";
         } else {
-            addClass = "alert-error";
+            addClass = "alert-danger";
             removeClass = "alert-success";
             text = "";
             for (var i = 0, max = res.errors[id].length; i < max; i++) {
