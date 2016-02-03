@@ -1,14 +1,16 @@
 {% extends "registration/registration_base.html" %}
 
 {% block title %}
-Activation complete
+activation complete
 {% endblock %}
 
 {% block content %}
 
-<div class="span4 offset4 well">
+<div class="span4 offset4 well center">
     <p>
         <strong> Activation complete! </strong>
+    </p>
+    <p>
         <a class="btn btn-primary" href='{% url auth_login %}'> login</a>
     </p>
 </div>

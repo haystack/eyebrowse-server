@@ -489,3 +489,7 @@ td {
     padding-top:0px;
   }
 }
+
+.center {
+  text-align: center;
+}
