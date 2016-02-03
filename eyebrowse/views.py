@@ -75,7 +75,7 @@ def getting_started(request):
         'url').annotate(count=Count('url')).order_by('-count')[0:5]
     user_prof = UserProfile.objects.get(user=request.user)
     user_follows = list(
-        user_prof.followed_by.all().values_list('user__username', flat=True))
+        user_prof.follows.all().values_list('user__username', flat=True))
     user_follows.append(request.user.username)
     top_people = UserProfile.objects.filter(~Q(user__username__in=user_follows)).annotate(
         num_followed=Count('followed_by')).order_by('-num_followed')[0:5]
