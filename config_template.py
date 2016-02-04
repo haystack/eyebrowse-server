@@ -5,15 +5,15 @@ ADMIN_INFO = (
 
 SECRET_KEY = ''
 
-# ####### MYSQL #########
-MYSQL_PROD = {
+# ####### DB_CONF #########
+DB_CONF_PROD = {
     'NAME': '',
     'USER': '',
     'PASSWORD': '',
     'HOST': '',
 }
 
-MYSQL_LOCAL = {
+DB_CONF_LOCAL = {
     'NAME': '',
     'USER': '',
     'PASSWORD': '',
