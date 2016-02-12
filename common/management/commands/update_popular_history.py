@@ -223,77 +223,87 @@ class Command(NoArgsCommand):
         # populated for each popularhistory. Now we calculate
         # scores based on these things.
         popular_history = PopularHistory.objects.all().prefetch_related(
-            'eye_hists', 'messages', 'visitors')
-        total_updates = popular_history.count()
-        i = 0  # in case we try to log but there is no eye_history
-        for batch_no, batch in enumerate(queryset_iterator_chunkify(popular_history, CHUNK_SIZE)):
-            for i, p in enumerate(batch):
-                i += batch_no * CHUNK_SIZE
-                try:
-                    eye_hist_count = p.eye_hists.count()
-                    if eye_hist_count == 0:
-                        p.delete()
-                        continue
+            'eye_hists', 'messages', 'visitors', 'popular_history')
 
-                    # avg time ago is total time ago / number of eyehistories
-                    time = p.total_time_ago / float(eye_hist_count)
-                    p.avg_time_ago = timezone.now() - \
-                        datetime.timedelta(hours=time)
-
-                    # avg time spent is total time spent / eyehistories
-                    time_spent = p.total_time_spent / \
-                        float(eye_hist_count)
-                    p.humanize_avg_time = humanize_time(
-                        datetime.timedelta(milliseconds=time_spent))
-
-                    # num comment score gives score based on num
-                    # comments with a time decay factor
-                    num_comments = p.messages.count()
-                    comment_score = float(num_comments * 40.0) / \
-                        float(
-                            ((
-                                float(p.total_time_ago) + 1.0) /
-                                float(eye_hist_count)) ** 1.2)
-                    p.num_comment_score = comment_score
-
-                    # num visitors score gives score based on num
-                    # visitors with a time decay factor
-                    num_vistors = p.visitors.count()
-                    visitor_score = float((num_vistors - 1.0) * 50.0) / \
-                        float(
-                            ((
-                                float(p.total_time_ago) + 1.0) /
-                                float(eye_hist_count)) ** 1.2)
-                    p.unique_visitor_score = visitor_score
-
-                    # num time score gives score based on avg time
-                    # spent with a time decay factor
-                    num_time = float(p.total_time_spent) / \
-                        float(eye_hist_count)
-
-                    time_score = float((num_time ** .8) / 1000.0) / \
-                        float(
-                            ((
-                                float(p.total_time_ago) + 1.0) /
-                                float(eye_hist_count)) ** 1.5)
-
-                    time_score_2 = float((num_time - 5000) / 1000.0) / \
-                        float(
-                            ((
-                                float(p.total_time_ago) + 1.0) /
-                                float(eye_hist_count)) ** 1)
-                    p.avg_time_spent_score = time_score_2
-
-                    # top score combines all the scores together
-                    p.top_score = float(
-                        comment_score + visitor_score + time_score)
-
-                    if i != 0 and i % CHUNK_SIZE == 0:
-                        self._log_updates(i, total_updates, 'calculate_scores')
-                except Exception, e:
-                    self.log(e)
+        for p in popular_history:
+            try:
+                eye_hist_count = p.eye_hists.count()
+                if eye_hist_count == 0:
+                    p.delete()
                     continue
 
-            # try to avoid memory issues by batching smaller chunks
-            bulk_update(batch, batch_size=CHUNK_SIZE)
-        self._log_updates(i, total_updates, 'calculate_scores')
+                # avg time ago is total time ago / number of eyehistories
+                time = p.total_time_ago / float(eye_hist_count)
+                p.avg_time_ago = timezone.now() - \
+                    datetime.timedelta(hours=time)
+
+                # avg time spent is total time spent / eyehistories
+                time_spent = p.total_time_spent / \
+                    float(eye_hist_count)
+                p.humanize_avg_time = humanize_time(
+                    datetime.timedelta(milliseconds=time_spent))
+
+                # num comment score gives score based on num
+                # comments with a time decay factor
+                num_comments = p.messages.count()
+                comment_score = float(num_comments * 40.0) / \
+                    float(
+                        ((
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1.2)
+                p.num_comment_score = comment_score
+
+                # num visitors score gives score based on num
+                # visitors with a time decay factor
+                num_vistors = p.visitors.count()
+                visitor_score = float((num_vistors - 1.0) * 50.0) / \
+                    float(
+                        ((
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1.2)
+                p.unique_visitor_score = visitor_score
+
+                # num time score gives score based on avg time
+                # spent with a time decay factor
+                
+                tot_time = 0
+                if p.total_time_spent > 20000:
+                    tot_time = 20000
+                else:
+                    tot_time = p.total_time_spent
+                
+                num_time1 = float(tot_time) / \
+                    float(eye_hist_count)
+                    
+                num_time2 = float(p.total_time_spent) / \
+                    float(eye_hist_count)
+
+                time_score = float((num_time1) / 1000.0) / \
+                    (float(p.total_time_ago) + 1.0)
+
+                time_score_2 = float((num_time2 - 5000) / 1000.0) / \
+                    float(
+                        ((
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1)
+                p.avg_time_spent_score = time_score_2
+                
+                domain_score = 0.0
+                
+                # decrease factor if domain is popular
+                if p.popular_history.domain != 'www.nytimes.com':
+                    num_domain_visits = EyeHistory.objects.filter(domain=p.popular_history.domain).count()
+                    domain_score = float(num_domain_visits) / 5000.0
+                
+                if p.popular_history.url.endswith('.com/') and p.visitors.count() > 4:
+                    domain_score += 1.0
+                
+
+                # top score combines all the scores together
+                p.top_score = float(
+                    comment_score + visitor_score + time_score - domain_score)
+
+                p.save()
+            except Exception, e:
+                self.log(e)
+                continue
