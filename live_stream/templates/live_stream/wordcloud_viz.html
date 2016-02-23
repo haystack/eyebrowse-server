@@ -35,7 +35,9 @@
        		
        		Save static image as: <button id="download-png">PNG</button>
        		 <br />
-       		Insert this visualization on any page: <button id="get-widget">Get Widget Code</button>
+       		{% if filter != "following" %}
+       			Insert this visualization on any page: <button id="get-widget">Get Widget Code</button>
+       		{% endif %}
        		</div>
        </div>
        

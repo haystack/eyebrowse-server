@@ -23,10 +23,12 @@ from django.views.generic.simple import redirect_to
 
 @render_to('live_stream/wordcloud_viz.html')
 def word_cloud_viz(request):
+
     if request.GET.get("date") is None or request.GET.get("date") == "null" or request.GET.get("date") == "":
         return redirect_to(request,
-                           "/visualizations/word_cloud/?date=last week&query=%s" %
-                           (request.GET.get("query", "")))
+                           "/visualizations/word_cloud/?filter=%s&date=last week&query=%s" %
+                           (request.GET.get("filter"),
+                            request.GET.get("query", "")))
 
     template_dict = viz_page(request)
     template_dict['viz'] = 'word'
@@ -42,8 +44,9 @@ def word_cloud_viz(request):
 def hod_viz(request):
     if request.GET.get("date") is None or request.GET.get("date") == "null" or request.GET.get("date") == "":
         return redirect_to(request,
-                           "/visualizations/hour_of_day/?date=last week&query=%s" %
-                           (request.GET.get("query", "")))
+                           "/visualizations/hour_of_day/?filter=%s&date=last week&query=%s" %
+                           (request.GET.get("filter"),
+                            request.GET.get("query", "")))
 
     template_dict = viz_page(request)
     template_dict['viz'] = 'hod'
@@ -59,8 +62,9 @@ def hod_viz(request):
 def dow_viz(request):
     if request.GET.get("date") is None or request.GET.get("date") == "null" or request.GET.get("date") == "":
         return redirect_to(request,
-                           "/visualizations/day_of_week/?date=last week&query=%s" %
-                           (request.GET.get("query", "")))
+                           "/visualizations/day_of_week/?filter=%s&date=last week&query=%s" %
+                           (request.GET.get("filter"),
+                            request.GET.get("query", "")))
 
     template_dict = viz_page(request)
     template_dict['viz'] = 'dow'

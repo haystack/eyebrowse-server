@@ -33,8 +33,10 @@
        		<br />
        		Save static image as: <button id="download-bar-png">PNG</button>
       		 <br />
-       		Insert this visualization on any page: <button id="get-widget-bar">Get Widget Code</button>
-       		</div>
+       		       		{% if filter != "following" %}
+       			Insert this visualization on any page: <button id="get-widget-bar1">Get Widget Code</button>
+       		{% endif %}
+       		       		</div>
        </div>
        
        <div id="widget-code-bar" class="collapse">
