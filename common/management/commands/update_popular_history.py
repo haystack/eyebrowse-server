@@ -113,34 +113,29 @@ class Command(NoArgsCommand):
 
     # create popular history feed for a particular user
     # only 1 week back to make it faster
-    def user_populate_history(self, user):
+    def user_populate_history(self, user, follow_user):
         
         week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
         timezone.make_aware(week_ago, timezone.get_current_timezone())
         
-        # for each of the people that user follows
-        following = user.userprofile.follows.all().select_related()
-        for follow_prof in following:
-            follow_user = follow_prof.user
-        
-            # get all the visits that each followee has
-            eyehists = follow_user.eyehistory_set.filter(
-                start_time__gt=week_ago).select_related()
-            for e in queryset_iterator(eyehists):
-                url = e.url
-                url = url[:min(255, len(url))]
+        # get all the visits that the new followee has
+        eyehists = follow_user.eyehistory_set.filter(
+            start_time__gt=week_ago).select_related()
+        for e in queryset_iterator(eyehists):
+            url = e.url
+            url = url[:min(255, len(url))]
 
-                # popularhistoryinfo stores general information about this page
-                # such as description, title, domain, image, etc.
-                p = PopularHistoryInfo.objects.filter(url=url)
-                if p.exists():
-                    p = p[0]
-                    
-                    # create a popular history item for the user and the visit that
-                    # that user's followee has been to
-                    user_pop, _ = PopularHistory.objects.get_or_create(
-                        popular_history=p, user=user)
-                    self._add_users_and_messages(user_pop, e)
+            # popularhistoryinfo stores general information about this page
+            # such as description, title, domain, image, etc.
+            p = PopularHistoryInfo.objects.filter(url=url)
+            if p.exists():
+                p = p[0]
+                
+                # create a popular history item for the user and the visit that
+                # that user's followee has been to
+                user_pop, _ = PopularHistory.objects.get_or_create(
+                    popular_history=p, user=user)
+                self._add_users_and_messages(user_pop, e)
                     
                     
         # Next, go through all the popular history items created for this user

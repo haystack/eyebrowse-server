@@ -350,7 +350,7 @@ def connect(request):
                     
                     try:
                         c = Command()
-                        c.user_populate_history(request.user)
+                        c.user_populate_history(request.user, user)
                     except Exception, e:
                         print e
                         
