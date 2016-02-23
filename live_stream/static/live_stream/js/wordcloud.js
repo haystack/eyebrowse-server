@@ -174,9 +174,17 @@ function load(f) {
         return;
     } else {
         if (query !== null) {
-            window.location.href = "http://eyebrowse.csail.mit.edu/users/" + username + "?query=" + query + " " + f + "&date=" + date;
+        	if (filter != null) {
+        		window.location.href = "http://eyebrowse.csail.mit.edu/visualizations/word_cloud/?filter=" + filter + "&query=" + query + " " + f + "&date=" + date;
+        	} else {
+            	window.location.href = "http://eyebrowse.csail.mit.edu/users/" + username + "?query=" + query + " " + f + "&date=" + date;
+        	}
         } else {
-            window.location.href = "http://eyebrowse.csail.mit.edu/users/" + username + "?query=" + f + "&date=" + date;
+        	if (filter != null) {
+        		window.location.href = "http://eyebrowse.csail.mit.edu/visualizations/word_cloud/?filter=" + filter + "&query=" + f + "&date=" + date;
+        	} else {
+            	window.location.href = "http://eyebrowse.csail.mit.edu/users/" + username + "?query=" + f + "&date=" + date;
+        	}
         }
 
     }
