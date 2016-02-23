@@ -45,7 +45,7 @@ class Command(NoArgsCommand):
     def log(self, msg):
         msg = 'update_popular_history:::%s\n' % msg
         logger.info(msg)
-        self.stdout.write(msg)
+        #self.stdout.write(msg)
 
     def _log_updates(self, i, total_updates, function):
         self.log(
@@ -99,6 +99,53 @@ class Command(NoArgsCommand):
         p.save()
 
         return p
+
+    # When a user unfollows a user, need to update popular history
+    def remove_user_populate_history(self, user, remove_user):
+        
+        user_pops = PopularHistory.objects.filter(user=user).select_related()
+        
+        for user_pop in queryset_iterator(user_pops):
+            self._remove_users_and_messages(user, user_pop, remove_user)
+        
+        self._calculate_scores(user)
+        
+
+    # create popular history feed for a particular user
+    def user_populate_history(self, user):
+        
+        month_ago = datetime.datetime.now() - datetime.timedelta(weeks=10)
+        timezone.make_aware(month_ago, timezone.get_current_timezone())
+        
+        # for each of the people that user follows
+        following = user.userprofile.follows.all().select_related()
+        for follow_prof in following:
+            follow_user = follow_prof.user
+        
+            # get all the visits that each followee has
+            eyehists = follow_user.eyehistory_set.filter(
+                start_time__gt=month_ago).select_related()
+            for e in queryset_iterator(eyehists):
+                url = e.url
+                url = url[:min(255, len(url))]
+
+                # popularhistoryinfo stores general information about this page
+                # such as description, title, domain, image, etc.
+                p = PopularHistoryInfo.objects.filter(url=url)
+                if p.exists():
+                    p = p[0]
+                    
+                    # create a popular history item for the user and the visit that
+                    # that user's followee has been to
+                    user_pop, _ = PopularHistory.objects.get_or_create(
+                        popular_history=p, user=user)
+                    self._add_users_and_messages(user_pop, e)
+                    
+                    
+        # Next, go through all the popular history items created for this user
+        # and score them
+        self._calculate_scores(user)
+        
 
     def _populate_popular_history(self):
         self.log('_populate_popular_history')
@@ -189,6 +236,44 @@ class Command(NoArgsCommand):
         # deleted for being stale presumably) then delete
         PopularHistoryInfo.objects.filter(popularhistory=None).delete()
 
+
+    # when unfollowing a user, remove that user and their visits, messages
+    def _remove_users_and_messages(self, user, popular_history_item, remove_user):
+        popular_history_item.visitors.remove(remove_user)
+        
+        visitors = popular_history_item.visitors.all()
+        if visitors.count() == 0 or (visitors.count() == 1 and visitors[0] == user):
+            popular_history_item.delete()
+        else:
+            
+            remove_e = []
+            for eye_hist in popular_history_item.eye_hists.all():
+                if eye_hist.user == remove_user:
+                    remove_e.append(eye_hist)
+                    
+            
+            for e in remove_e:
+                popular_history_item.eye_hists.remove(e)
+                
+                # we decrement the total time spent and total time ago
+                popular_history_item.total_time_spent -= e.total_time
+                time_diff = timezone.now() - e.end_time
+                
+                popular_history_item.total_time_ago -= int(
+                round(time_diff.total_seconds() / 3600.0))
+    
+
+            remove_m = []
+            for message in popular_history_item.messages.all():
+                if message.eyehistory.user == remove_user:
+                    remove_m.append(message)
+            
+            for m in remove_m:
+                popular_history_item.messages.remove(m)
+    
+            popular_history_item.save()
+            
+
     def _add_users_and_messages(self, popular_history_item, e):
         # we add every eyehistory to the firehose popularhistory counterpoint
         # and also keep track of the users and messages to that page
@@ -223,14 +308,19 @@ class Command(NoArgsCommand):
         self.log('count %s' % p.count())
         p.delete()
 
-    def _calculate_scores(self):
+    def _calculate_scores(self, user=None):
         self.log('_calculate_scores')
         # we should have lists of eyehistories, list of users,
         # list of messages, total time ago, and total time spent
         # populated for each popularhistory. Now we calculate
         # scores based on these things.
-        popular_history = PopularHistory.objects.all().prefetch_related(
-            'eye_hists', 'messages', 'visitors', 'popular_history')
+        
+        if user:
+            popular_history = PopularHistory.objects.filter(user=user).prefetch_related(
+                'eye_hists', 'messages', 'visitors', 'popular_history')
+        else:
+            popular_history = PopularHistory.objects.all().prefetch_related(
+                'eye_hists', 'messages', 'visitors', 'popular_history')
 
         for p in popular_history:
             try:
@@ -297,13 +387,14 @@ class Command(NoArgsCommand):
                 
                 domain_score = 0.0
                 
-                # decrease factor if domain is popular
-                if p.popular_history.domain not in news_list:
-                    num_domain_visits = EyeHistory.objects.filter(domain=p.popular_history.domain).count()
-                    domain_score = float(num_domain_visits) / 5000.0
-                
-                if p.popular_history.url.endswith('.com/') and p.visitors.count() > 4:
-                    domain_score += 1.0
+                if not user: # only do this for cron, not for user-specific since it adds time
+                    # decrease factor if domain is popular
+                    if p.popular_history.domain not in news_list:
+                        num_domain_visits = EyeHistory.objects.filter(domain=p.popular_history.domain).count()
+                        domain_score = float(num_domain_visits) / 5000.0
+                    
+                    if p.popular_history.url.endswith('.com/') and p.visitors.count() > 4:
+                        domain_score += 1.0
                 
 
                 # top score combines all the scores together

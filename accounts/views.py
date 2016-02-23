@@ -30,6 +30,7 @@ from eyebrowse.settings import TWITTER_CONSUMER_SECRET
 from eyebrowse.settings import DELICIOUS_CONSUMER_KEY
 from eyebrowse.settings import DELICIOUS_CONSUMER_SECRET
 from notifications.models import Notification, NoticeType, send_now
+from common.management.commands.update_popular_history import Command
 
 
 @login_required
@@ -347,6 +348,12 @@ def connect(request):
                 if type == 'add-follow':
                     req_prof.follows.add(user.profile)
                     
+                    try:
+                        c = Command()
+                        c.user_populate_history(request.user)
+                    except Exception, e:
+                        print e
+                    
                     notice = NoticeType.objects.get(label="new_follower")
                     Notification.objects.create(recipient=user, sender=request.user, notice_type=notice)
                     
@@ -355,6 +362,12 @@ def connect(request):
                 elif type == 'rm-follow' and req_prof.follows.filter(
                         user=user).exists():
                     req_prof.follows.remove(user)
+                    
+                    try:
+                        c = Command()
+                        c.remove_user_populate_history(request.user, user)
+                    except Exception, e:
+                        print e
 
             success = True
             data = {
