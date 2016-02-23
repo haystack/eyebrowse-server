@@ -31,7 +31,7 @@ var startTime,
 
 var week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-d3.json("http://eyebrowse.csail.mit.edu/api/graphs/timeline_days?username=" + username + "&date=" + date + "&query=" + query,
+d3.json("http://eyebrowse.csail.mit.edu/api/graphs/timeline_days?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query,
     function(error, data) {
         var dayList = data.week_days;
         var domainList = data.domain_list;

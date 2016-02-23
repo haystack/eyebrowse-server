@@ -6,8 +6,9 @@ var startTime,
 var username = getURLUsername();
 var date = getURLParameter("date");
 var query = getURLParameter("query");
+var filter = getURLParameter("filter");
 
-d3.json("/api/graphs/word_cloud?username=" + username + "&date=" + date + "&query=" + query,
+d3.json("/api/graphs/word_cloud?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query,
     function(error, data) {
         var wordList = data.week_words;
 
@@ -74,12 +75,13 @@ function showWidget() {
     query = query || "";
     username = username || "";
     date = date || "";
+    filter = filter || "";
 
     $("#widget-code-text-word").text("<div id=\"wordle\"></div>\n" +
         "<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
         "<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
         "<script src=\"http://eyebrowse.csail.mit.edu/static/common/js/d3.layout.cloud.min.js\" charset=\"utf-8\"></script>\n" +
-        "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/word_cloud?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
+        "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/word_cloud?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
 
     $collapse.collapse("toggle");
 }

@@ -20,11 +20,17 @@
     {% include "live_stream/sort_stream.html" %}
 
        	
-       	<div class="well" id="by-day1">
+    <div id="by-day1">
        	<div class="user-metadata">
        		<h4>
        			Aggregate eyebrowse visits per day broken down by top-visited domains.
        		</h4>
+       		Time-span: <strong>{{ date }}</strong> (adjust search above to change timespan)
+       		<br />
+       		Search Query: <strong>{% if query %}{{query}}{% else %}None{% endif %}</strong> (adjust search above to change query)
+       		
+       		<br />
+       		<br />
        		Save static image as: <button id="download-bar2-png">PNG</button>
        		 <br />
        		Insert this visualization on any page: <button id="get-widget-bar2">Get Widget Code</button>

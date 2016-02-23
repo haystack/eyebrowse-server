@@ -408,9 +408,10 @@ function getURLUsername() {
     var str = window.location.pathname;
     if (endsWith(str, "/visualizations")) {
         str = str.substring(0, str.length - 15);
-    }
-    if (startsWith(str, "/users/")) {
+    } else if (startsWith(str, "/users/")) {
         str = str.substring(7, str.length);
+    } else {
+    	str = '';
     }
     return str;
 }

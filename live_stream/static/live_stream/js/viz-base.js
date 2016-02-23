@@ -19,6 +19,7 @@ var colors = d3.scale.category10();
 var username = getURLUsername();
 var date = getURLParameter("date");
 var query = getURLParameter("query");
+var filter = getURLParameter("filter");
 
 var svg,
     groups,
@@ -71,12 +72,12 @@ function showBarWidget(version) {
         $(textBox).text("<div id=\"stackedbar-chart\"></div>\n" +
             "<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
             "<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
+            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
     } else {
         $(textBox).text("<div id=\"stackedbar-chart2\"></div>\n" +
             "<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
             "<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
+            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
     }
     $collapse.collapse("toggle");
 }
