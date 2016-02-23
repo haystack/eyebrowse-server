@@ -24,6 +24,13 @@ from eyebrowse.log import logger
 
 CHUNK_SIZE = 5000
 
+news_list = ['www.nytimes.com',
+             'www.buzzfeed.com',
+             'www.cnn.com',
+             'www.vox.com',
+             'medium.com',
+             'www.huffingtonpost.com']
+
 
 class Command(NoArgsCommand):
     help = 'Updates popular history whoo!'
@@ -291,7 +298,7 @@ class Command(NoArgsCommand):
                 domain_score = 0.0
                 
                 # decrease factor if domain is popular
-                if p.popular_history.domain != 'www.nytimes.com':
+                if p.popular_history.domain not in news_list:
                     num_domain_visits = EyeHistory.objects.filter(domain=p.popular_history.domain).count()
                     domain_score = float(num_domain_visits) / 5000.0
                 
