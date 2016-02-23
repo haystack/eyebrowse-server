@@ -412,7 +412,7 @@ function getURLUsername() {
     if (startsWith(str, "/users/")) {
         str = str.substring(7, str.length);
     }
- 	if (startsWith(str, "/livestream/")) {
+ 	if (startsWith(str, "/visualizations/")) {
     	str = '';
     }
     return str;
