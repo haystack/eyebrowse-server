@@ -30,3 +30,23 @@
 		  <a href="/live_stream/?sort=time&filter={{ filter }}&date={{ date }}&query={{ query }}">Most Recent</a>
 		 {% endif %}
 </div>
+<div class="viz_stream">
+	Visualize Eyebrowse by:
+		{% if viz == "word" %}
+			<b>Wordcloud</b>
+		{% else %}
+			<a href="/visualizations/word_cloud/?filter={{ filter }}&date={{ date }}&query={{ query }}">Wordcloud</a>
+		{% endif %}
+		 | 
+		 {% if viz == "dow" %}
+		 	<b>Day of Week</b>
+		 {% else %}
+			<a href="/visualizations/day_of_week/?filter={{ filter }}&date={{ date }}&query={{ query }}">Day of Week</a>
+		{% endif %}
+		 | 
+		 {% if viz == "hod" %}
+		 	<b>Hour of Day</b>
+		 {% else %}
+			<a href="/visualizations/hour_of_day/?filter={{ filter }}&date={{ date }}&query={{ query }}">Hour of Day</a>
+		{% endif %}
+</div>

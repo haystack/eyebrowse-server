@@ -65,6 +65,12 @@ urlpatterns = patterns('',
 
                        url(r'^accounts/', include('accounts.urls')),
                        url(r'^live_stream/', include('live_stream.urls')),
+                       
+                       url(r'^visualizations/word_cloud/$', 'live_stream.views.word_cloud_viz'),
+                        url(r'^visualizations/hour_of_day/$', 'live_stream.views.hod_viz'),
+                        url(r'^visualizations/day_of_week/$', 'live_stream.views.dow_viz'),
+                       
+                       
                        url(r'^stats/', include('stats.urls')),
                        url(r'^api/', include('api.urls')),
                        url(r'^api/', include(v1_api.urls)),

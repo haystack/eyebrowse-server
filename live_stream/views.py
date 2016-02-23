@@ -17,7 +17,97 @@ from live_stream.query_managers import online_user
 from live_stream.query_managers import online_user_count
 from live_stream.query_managers import profile_stat_gen
 from notifications.models import Notification
+from django.views.generic.simple import redirect_to
 
+
+
+@render_to('live_stream/wordcloud_viz.html')
+def word_cloud_viz(request):
+
+    template_dict = viz_page(request)
+    template_dict['viz'] = 'word'
+    
+    return _template_values(
+        request,
+        page_title="live stream",
+        navbar="nav_home",
+        sub_navbar=_get_subnav(request),
+        **template_dict)
+    
+@render_to('live_stream/hod_viz.html')
+def hod_viz(request):
+
+    template_dict = viz_page(request)
+    template_dict['viz'] = 'hod'
+    
+    return _template_values(
+        request,
+        page_title="live stream",
+        navbar="nav_home",
+        sub_navbar=_get_subnav(request),
+        **template_dict)
+    
+@render_to('live_stream/dow_viz.html')
+def dow_viz(request):
+
+    template_dict = viz_page(request)
+    template_dict['viz'] = 'dow'
+    
+    return _template_values(
+        request,
+        page_title="live stream",
+        navbar="nav_home",
+        sub_navbar=_get_subnav(request),
+        **template_dict)
+
+   
+def viz_page(request): 
+    user = request.user
+
+    if request.GET.get("date") is None or request.GET.get("date") == "null":
+        return redirect_to(request,
+                           "/visualizations/word_cloud/?date=last week&query=%s" %
+                           (request.GET.get("date", "")))
+
+
+    get_dict, query, date, sort, filter = _get_query(request)
+
+    get_dict["orderBy"] = "end_time"
+    get_dict["direction"] = "hl"
+    get_dict["filter"] = ""
+    get_dict["page"] = request.GET.get("page", 1)
+    get_dict["sort"] = "time"
+
+    hist, history_stream = live_stream_query_manager(get_dict, user)
+
+
+    if user.is_authenticated():
+        following_count = user.profile.follows.count()
+        follower_count = UserProfile.objects.filter(follows=user.profile).count()
+        tot_time, num_history = _get_stats(user, filter=filter)
+    else:
+        following_count = 0
+        follower_count = 0
+        tot_time = None
+        num_history = None
+
+    # stats
+    template_dict = {
+        'visualization': True,
+        'username': user.username,
+        "history_stream": history_stream,
+        "query": query,
+        "date": date,
+        'following_count': following_count,
+        'follower_count': follower_count,
+        'sort': '',
+        'filter': filter,
+        'tot_time': tot_time,
+        'num_history': num_history,
+        'num_online': online_user_count(),
+    }
+    
+    return template_dict
 
 @render_to('live_stream/live_stream.html')
 def live_stream(request):
