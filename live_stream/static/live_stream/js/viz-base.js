@@ -20,6 +20,8 @@ var username = getURLUsername();
 var date = getURLParameter("date");
 var query = getURLParameter("query");
 var filter = getURLParameter("filter");
+var startTime = $('#start_time').text();
+var endTime = $('#end_time').text();
 
 var svg,
     groups,
@@ -112,16 +114,24 @@ function downloadbarPNG(version) {
 
     var text;
     if (version === 1) {
-        text = "Time spent per hour of day | Collected from " + username + "'s web visits";
+        text = "Time per hour of day";
     } else {
-        text = "Time spent per day of week | Collected from " + username + "'s web visits";
+        text = "Time per day of week";
+    }
+    
+    if (username != null && username != "") {
+    	text += " | " + username + "'s visits";
+    } else if (filter == "following"){
+    	text += " | My followees' visits";
+    } else if (filter == "firehose"){
+    	text += " | Firehose visits";
     }
 
     if (startTime !== null && endTime !== null) {
-        text = text + " | " + startTime + " to " + endTime;
+        text = text + " | " + startTime + " - " + endTime;
     }
     if (query !== null) {
-        text = text + " | filtered by \"" + query + "\"";
+        text = text + " | Query: \"" + query + "\"";
     }
     c.restore();
     c.textAlign = "start";

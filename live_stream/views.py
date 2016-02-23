@@ -107,6 +107,8 @@ def viz_page(request):
         'visualization': True,
         'username': user.username,
         "history_stream": history_stream,
+        "start_time": get_dict["start_time"],
+        "end_time": get_dict["end_time"],
         "query": query,
         "date": date,
         'following_count': following_count,

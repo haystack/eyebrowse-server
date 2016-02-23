@@ -112,12 +112,21 @@ function downloadPNG() {
     c.save();
 
 
-    var text = "Word cloud of page titles | Collected from " + username + "'s web visits";
+    var text = "Word cloud of titles";
+    
+    if (username != null && username != '') {
+    	text += " | " + username + "'s visits";
+    } else if (filter == "following") {
+    	text += " | My followees' visits";
+    } else if (filter == "firehose") {
+    	text += " | Firehose visits";
+    } 
+    
     if (startTime !== null && endTime !== null) {
         text = text + " | " + startTime + " to " + endTime;
     }
     if (query !== null) {
-        text = text + " | filtered by \"" + query + "\"";
+        text = text + " | Query: \"" + query + "\"";
     }
 
     c.restore();
