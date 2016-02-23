@@ -133,7 +133,7 @@ def profile_viz(request, username=None):
     if request.GET.get("date") is None or request.GET.get("date") == "null":
         return redirect_to(request,
                            "/users/%s/visualizations?date=last week&query=%s" %
-                           (username, request.GET.get("date", "")))
+                           (username, request.GET.get("query", "")))
 
     if request.user.is_authenticated():
         user = get_object_or_404(User, username=request.user.username)
