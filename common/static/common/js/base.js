@@ -316,7 +316,9 @@ function addItem(resource, url) {
 function follow(e) {
     var $icon = $(e.currentTarget).children();
     var type = $icon.data("type");
+    $('#loading_gif').show();
     $.post("/accounts/connect", $icon.data(), function(res) {
+    	$('#loading_gif').hide();
         if (res.success) {
             $.each($(".connection"), function(index, item) {
                 var $item = $(item).children();

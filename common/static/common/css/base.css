@@ -490,3 +490,7 @@ td {
   }
 }
 
+#loading_gif {
+	width: 20px;
+	height: 20px;
+}
