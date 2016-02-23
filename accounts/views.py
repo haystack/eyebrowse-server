@@ -353,10 +353,9 @@ def connect(request):
                         c.user_populate_history(request.user)
                     except Exception, e:
                         print e
-                    
+                        
                     notice = NoticeType.objects.get(label="new_follower")
                     Notification.objects.create(recipient=user, sender=request.user, notice_type=notice)
-                    
                     send_now([user], "new_follower", sender=request.user)
 
                 elif type == 'rm-follow' and req_prof.follows.filter(
@@ -385,5 +384,7 @@ def connect(request):
         'errors': errors,
         'data': data,
     }
+
+
 
     return resp
