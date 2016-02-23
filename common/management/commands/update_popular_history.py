@@ -112,10 +112,11 @@ class Command(NoArgsCommand):
         
 
     # create popular history feed for a particular user
+    # only 1 week back to make it faster
     def user_populate_history(self, user):
         
-        month_ago = datetime.datetime.now() - datetime.timedelta(weeks=10)
-        timezone.make_aware(month_ago, timezone.get_current_timezone())
+        week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
+        timezone.make_aware(week_ago, timezone.get_current_timezone())
         
         # for each of the people that user follows
         following = user.userprofile.follows.all().select_related()
@@ -124,7 +125,7 @@ class Command(NoArgsCommand):
         
             # get all the visits that each followee has
             eyehists = follow_user.eyehistory_set.filter(
-                start_time__gt=month_ago).select_related()
+                start_time__gt=week_ago).select_related()
             for e in queryset_iterator(eyehists):
                 url = e.url
                 url = url[:min(255, len(url))]
