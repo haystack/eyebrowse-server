@@ -108,7 +108,7 @@ class Command(NoArgsCommand):
         for user_pop in queryset_iterator(user_pops):
             self._remove_users_and_messages(user, user_pop, remove_user)
         
-        self._calculate_scores(user)
+       # self._calculate_scores(user)
         
 
     # create popular history feed for a particular user
@@ -140,7 +140,7 @@ class Command(NoArgsCommand):
                     
         # Next, go through all the popular history items created for this user
         # and score them
-        self._calculate_scores(user)
+       # self._calculate_scores(user)
         
 
     def _populate_popular_history(self):
@@ -235,39 +235,37 @@ class Command(NoArgsCommand):
 
     # when unfollowing a user, remove that user and their visits, messages
     def _remove_users_and_messages(self, user, popular_history_item, remove_user):
-        popular_history_item.visitors.remove(remove_user)
         
         visitors = popular_history_item.visitors.all()
-        if visitors.count() == 0 or (visitors.count() == 1 and visitors[0] == user):
+        
+        count = 0
+        found = False
+        for visitor in visitors:
+            if visitor == remove_user:
+                found = True
+            elif visitor != user:
+                count += 1
+        if count == 0:
             popular_history_item.delete()
-        else:
-            
+            return
+        
+        if found:
+            popular_history_item.visitors.remove(remove_user)
+        
             remove_e = []
             for eye_hist in popular_history_item.eye_hists.all():
                 if eye_hist.user == remove_user:
                     remove_e.append(eye_hist)
                     
-            
-            for e in remove_e:
-                popular_history_item.eye_hists.remove(e)
-                
-                # we decrement the total time spent and total time ago
-                popular_history_item.total_time_spent -= e.total_time
-                time_diff = timezone.now() - e.end_time
-                
-                popular_history_item.total_time_ago -= int(
-                round(time_diff.total_seconds() / 3600.0))
-    
+            popular_history_item.eye_hists.remove(*remove_e)
 
             remove_m = []
             for message in popular_history_item.messages.all():
                 if message.eyehistory.user == remove_user:
                     remove_m.append(message)
             
-            for m in remove_m:
-                popular_history_item.messages.remove(m)
+            popular_history_item.messages.remove(*remove_m)
     
-            popular_history_item.save()
             
 
     def _add_users_and_messages(self, popular_history_item, e):
