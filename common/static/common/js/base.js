@@ -60,10 +60,10 @@ function submitForm(e, d) {
     $.post(url, $form.serialize(), function(res) {
         if (res.success) {
             addClass = "alert-success";
-            removeClass = "alert-error";
+            removeClass = "alert-danger";
             text = "<p>" + res.success + "</p>";
         } else {
-            addClass = "alert-error";
+            addClass = "alert-danger";
             removeClass = "alert-success";
             text = "";
             for (var i = 0, max = res.errors[id].length; i < max; i++) {
@@ -316,7 +316,11 @@ function addItem(resource, url) {
 function follow(e) {
     var $icon = $(e.currentTarget).children();
     var type = $icon.data("type");
+    $('#loading_gif_' + $icon.data().user).show();
+
     $.post("/accounts/connect", $icon.data(), function(res) {
+    	$('#loading_gif_' + $icon.data().user).hide();
+    
         if (res.success) {
             $.each($(".connection"), function(index, item) {
                 var $item = $(item).children();
@@ -411,6 +415,9 @@ function getURLUsername() {
     }
     if (startsWith(str, "/users/")) {
         str = str.substring(7, str.length);
+    }
+ 	if (startsWith(str, "/visualizations/")) {
+    	str = '';
     }
     return str;
 }

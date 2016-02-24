@@ -24,6 +24,13 @@ from eyebrowse.log import logger
 
 CHUNK_SIZE = 5000
 
+news_list = ['www.nytimes.com',
+             'www.buzzfeed.com',
+             'www.cnn.com',
+             'www.vox.com',
+             'medium.com',
+             'www.huffingtonpost.com']
+
 
 class Command(NoArgsCommand):
     help = 'Updates popular history whoo!'
@@ -38,7 +45,7 @@ class Command(NoArgsCommand):
     def log(self, msg):
         msg = 'update_popular_history:::%s\n' % msg
         logger.info(msg)
-        self.stdout.write(msg)
+        #self.stdout.write(msg)
 
     def _log_updates(self, i, total_updates, function):
         self.log(
@@ -92,6 +99,49 @@ class Command(NoArgsCommand):
         p.save()
 
         return p
+
+    # When a user unfollows a user, need to update popular history
+    def remove_user_populate_history(self, user, remove_user):
+        
+        user_pops = PopularHistory.objects.filter(user=user).select_related()
+        
+        for user_pop in queryset_iterator(user_pops):
+            self._remove_users_and_messages(user, user_pop, remove_user)
+        
+        self._calculate_scores(user)
+        
+
+    # create popular history feed for a particular user
+    # only 1 week back to make it faster
+    def user_populate_history(self, user, follow_user):
+        
+        week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
+        timezone.make_aware(week_ago, timezone.get_current_timezone())
+        
+        # get all the visits that the new followee has
+        eyehists = follow_user.eyehistory_set.filter(
+            start_time__gt=week_ago).select_related()
+        for e in queryset_iterator(eyehists):
+            url = e.url
+            url = url[:min(255, len(url))]
+
+            # popularhistoryinfo stores general information about this page
+            # such as description, title, domain, image, etc.
+            p = PopularHistoryInfo.objects.filter(url=url)
+            if p.exists():
+                p = p[0]
+                
+                # create a popular history item for the user and the visit that
+                # that user's followee has been to
+                user_pop, _ = PopularHistory.objects.get_or_create(
+                    popular_history=p, user=user)
+                self._add_users_and_messages(user_pop, e)
+                    
+                    
+        # Next, go through all the popular history items created for this user
+        # and score them
+        self._calculate_scores(user)
+        
 
     def _populate_popular_history(self):
         self.log('_populate_popular_history')
@@ -182,6 +232,44 @@ class Command(NoArgsCommand):
         # deleted for being stale presumably) then delete
         PopularHistoryInfo.objects.filter(popularhistory=None).delete()
 
+
+    # when unfollowing a user, remove that user and their visits, messages
+    def _remove_users_and_messages(self, user, popular_history_item, remove_user):
+        popular_history_item.visitors.remove(remove_user)
+        
+        visitors = popular_history_item.visitors.all()
+        if visitors.count() == 0 or (visitors.count() == 1 and visitors[0] == user):
+            popular_history_item.delete()
+        else:
+            
+            remove_e = []
+            for eye_hist in popular_history_item.eye_hists.all():
+                if eye_hist.user == remove_user:
+                    remove_e.append(eye_hist)
+                    
+            
+            for e in remove_e:
+                popular_history_item.eye_hists.remove(e)
+                
+                # we decrement the total time spent and total time ago
+                popular_history_item.total_time_spent -= e.total_time
+                time_diff = timezone.now() - e.end_time
+                
+                popular_history_item.total_time_ago -= int(
+                round(time_diff.total_seconds() / 3600.0))
+    
+
+            remove_m = []
+            for message in popular_history_item.messages.all():
+                if message.eyehistory.user == remove_user:
+                    remove_m.append(message)
+            
+            for m in remove_m:
+                popular_history_item.messages.remove(m)
+    
+            popular_history_item.save()
+            
+
     def _add_users_and_messages(self, popular_history_item, e):
         # we add every eyehistory to the firehose popularhistory counterpoint
         # and also keep track of the users and messages to that page
@@ -216,84 +304,100 @@ class Command(NoArgsCommand):
         self.log('count %s' % p.count())
         p.delete()
 
-    def _calculate_scores(self):
+    def _calculate_scores(self, user=None):
         self.log('_calculate_scores')
         # we should have lists of eyehistories, list of users,
         # list of messages, total time ago, and total time spent
         # populated for each popularhistory. Now we calculate
         # scores based on these things.
-        popular_history = PopularHistory.objects.all().prefetch_related(
-            'eye_hists', 'messages', 'visitors')
-        total_updates = popular_history.count()
-        i = 0  # in case we try to log but there is no eye_history
-        for batch_no, batch in enumerate(queryset_iterator_chunkify(popular_history, CHUNK_SIZE)):
-            for i, p in enumerate(batch):
-                i += batch_no * CHUNK_SIZE
-                try:
-                    eye_hist_count = p.eye_hists.count()
-                    if eye_hist_count == 0:
-                        p.delete()
-                        continue
+        
+        if user:
+            popular_history = PopularHistory.objects.filter(user=user).prefetch_related(
+                'eye_hists', 'messages', 'visitors', 'popular_history')
+        else:
+            popular_history = PopularHistory.objects.all().prefetch_related(
+                'eye_hists', 'messages', 'visitors', 'popular_history')
 
-                    # avg time ago is total time ago / number of eyehistories
-                    time = p.total_time_ago / float(eye_hist_count)
-                    p.avg_time_ago = timezone.now() - \
-                        datetime.timedelta(hours=time)
-
-                    # avg time spent is total time spent / eyehistories
-                    time_spent = p.total_time_spent / \
-                        float(eye_hist_count)
-                    p.humanize_avg_time = humanize_time(
-                        datetime.timedelta(milliseconds=time_spent))
-
-                    # num comment score gives score based on num
-                    # comments with a time decay factor
-                    num_comments = p.messages.count()
-                    comment_score = float(num_comments * 40.0) / \
-                        float(
-                            ((
-                                float(p.total_time_ago) + 1.0) /
-                                float(eye_hist_count)) ** 1.2)
-                    p.num_comment_score = comment_score
-
-                    # num visitors score gives score based on num
-                    # visitors with a time decay factor
-                    num_vistors = p.visitors.count()
-                    visitor_score = float((num_vistors - 1.0) * 50.0) / \
-                        float(
-                            ((
-                                float(p.total_time_ago) + 1.0) /
-                                float(eye_hist_count)) ** 1.2)
-                    p.unique_visitor_score = visitor_score
-
-                    # num time score gives score based on avg time
-                    # spent with a time decay factor
-                    num_time = float(p.total_time_spent) / \
-                        float(eye_hist_count)
-
-                    time_score = float((num_time ** .8) / 1000.0) / \
-                        float(
-                            ((
-                                float(p.total_time_ago) + 1.0) /
-                                float(eye_hist_count)) ** 1.5)
-
-                    time_score_2 = float((num_time - 5000) / 1000.0) / \
-                        float(
-                            ((
-                                float(p.total_time_ago) + 1.0) /
-                                float(eye_hist_count)) ** 1)
-                    p.avg_time_spent_score = time_score_2
-
-                    # top score combines all the scores together
-                    p.top_score = float(
-                        comment_score + visitor_score + time_score)
-
-                    if i != 0 and i % CHUNK_SIZE == 0:
-                        self._log_updates(i, total_updates, 'calculate_scores')
-                except Exception, e:
-                    self.log(e)
+        for p in popular_history:
+            try:
+                eye_hist_count = p.eye_hists.count()
+                if eye_hist_count == 0:
+                    p.delete()
                     continue
 
-            # try to avoid memory issues by batching smaller chunks
-            bulk_update(batch, batch_size=CHUNK_SIZE)
-        self._log_updates(i, total_updates, 'calculate_scores')
+                # avg time ago is total time ago / number of eyehistories
+                time = p.total_time_ago / float(eye_hist_count)
+                p.avg_time_ago = timezone.now() - \
+                    datetime.timedelta(hours=time)
+
+                # avg time spent is total time spent / eyehistories
+                time_spent = p.total_time_spent / \
+                    float(eye_hist_count)
+                p.humanize_avg_time = humanize_time(
+                    datetime.timedelta(milliseconds=time_spent))
+
+                # num comment score gives score based on num
+                # comments with a time decay factor
+                num_comments = p.messages.count()
+                comment_score = float(num_comments * 40.0) / \
+                    float(
+                        ((
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1.2)
+                p.num_comment_score = comment_score
+
+                # num visitors score gives score based on num
+                # visitors with a time decay factor
+                num_vistors = p.visitors.count()
+                visitor_score = float((num_vistors - 1.0) * 50.0) / \
+                    float(
+                        ((
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1.2)
+                p.unique_visitor_score = visitor_score
+
+                # num time score gives score based on avg time
+                # spent with a time decay factor
+                
+                tot_time = 0
+                if p.total_time_spent > 20000:
+                    tot_time = 20000
+                else:
+                    tot_time = p.total_time_spent
+                
+                num_time1 = float(tot_time) / \
+                    float(eye_hist_count)
+                    
+                num_time2 = float(p.total_time_spent) / \
+                    float(eye_hist_count)
+
+                time_score = float((num_time1) / 1000.0) / \
+                    (float(p.total_time_ago) + 1.0)
+
+                time_score_2 = float((num_time2 - 5000) / 1000.0) / \
+                    float(
+                        ((
+                            float(p.total_time_ago) + 1.0) /
+                            float(eye_hist_count)) ** 1)
+                p.avg_time_spent_score = time_score_2
+                
+                domain_score = 0.0
+                
+                if not user: # only do this for cron, not for user-specific since it adds time
+                    # decrease factor if domain is popular
+                    if p.popular_history.domain not in news_list:
+                        num_domain_visits = EyeHistory.objects.filter(domain=p.popular_history.domain).count()
+                        domain_score = float(num_domain_visits) / 5000.0
+                    
+                    if p.popular_history.url.endswith('.com/') and p.visitors.count() > 4:
+                        domain_score += 1.0
+                
+
+                # top score combines all the scores together
+                p.top_score = float(
+                    comment_score + visitor_score + time_score - domain_score)
+
+                p.save()
+            except Exception, e:
+                self.log(e)
+                continue

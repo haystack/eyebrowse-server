@@ -19,6 +19,9 @@ var colors = d3.scale.category10();
 var username = getURLUsername();
 var date = getURLParameter("date");
 var query = getURLParameter("query");
+var filter = getURLParameter("filter");
+var startTime = $('#start_time').text();
+var endTime = $('#end_time').text();
 
 var svg,
     groups,
@@ -71,12 +74,12 @@ function showBarWidget(version) {
         $(textBox).text("<div id=\"stackedbar-chart\"></div>\n" +
             "<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
             "<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
+            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
     } else {
         $(textBox).text("<div id=\"stackedbar-chart2\"></div>\n" +
             "<script src=\"http://code.jquery.com/jquery-1.11.2.min.js\"></script>\n" +
             "<script src=\"http://d3js.org/d3.v3.min.js\" charset=\"utf-8\"></script>\n" +
-            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
+            "<script src=\"http://eyebrowse.csail.mit.edu/api/graphs/js/" + apiCall + "?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query + "\" charset=\"utf-8\"></script>");
     }
     $collapse.collapse("toggle");
 }
@@ -111,16 +114,24 @@ function downloadbarPNG(version) {
 
     var text;
     if (version === 1) {
-        text = "Time spent per hour of day | Collected from " + username + "'s web visits";
+        text = "Time per hour of day";
     } else {
-        text = "Time spent per day of week | Collected from " + username + "'s web visits";
+        text = "Time per day of week";
+    }
+    
+    if (username != null && username != "") {
+    	text += " | " + username + "'s visits";
+    } else if (filter == "following"){
+    	text += " | My followees' visits";
+    } else if (filter == "firehose"){
+    	text += " | Firehose visits";
     }
 
     if (startTime !== null && endTime !== null) {
-        text = text + " | " + startTime + " to " + endTime;
+        text = text + " | " + startTime + " - " + endTime;
     }
     if (query !== null) {
-        text = text + " | filtered by \"" + query + "\"";
+        text = text + " | Query: \"" + query + "\"";
     }
     c.restore();
     c.textAlign = "start";

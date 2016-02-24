@@ -17,7 +17,8 @@ from django.utils.six.moves import cPickle as pickle  # pylint: disable-msg=F
 
 from notifications.compat import AUTH_USER_MODEL, GenericForeignKey
 from notifications.conf import settings
-from notifications.utils import load_media_defaults, notice_setting_for_user
+from notifications.utils import load_media_defaults, notice_setting_for_user, my_import
+from notifications.backends.email import EmailBackend
 
 
 NOTICE_MEDIA, NOTICE_MEDIA_DEFAULTS = load_media_defaults()
@@ -174,10 +175,12 @@ def send_now(users, label, extra=None, sender=None, scoping=None):
             # activate the user's language
             activate(language)
 
-        for backend in settings.PINAX_NOTIFICATIONS_BACKENDS.values():
-            if backend.can_send(user, notice_type, scoping=scoping):
-                backend.deliver(user, sender, notice_type, extra)
-                sent = True
+        # Since we only have 1 medium, just hardcode it in (was getting some weird 
+        # 'module' object is not callable error)
+        backend = EmailBackend(0)
+        if backend.can_send(user, notice_type, scoping=scoping):
+            backend.deliver(user, sender, notice_type, extra)
+            sent = True
 
     # reset environment to original language
     activate(current_language)

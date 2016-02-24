@@ -1,6 +1,6 @@
 "use strict";
 
-d3.json("/api/graphs/timeline_hours?username=" + username + "&date=" + date + "&query=" + query,
+d3.json("/api/graphs/timeline_hours?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query,
     function(error, data) {
         var hourList = data.week_hours;
         var domainList = data.domain_list;

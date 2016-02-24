@@ -3,7 +3,7 @@
 var startTime,
     endTime;
 
-d3.json("http://eyebrowse.csail.mit.edu/api/graphs/word_cloud?username=" + username + "&date=" + date + "&query=" + query,
+d3.json("http://eyebrowse.csail.mit.edu/api/graphs/word_cloud?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query,
     function(error, data) {
         var wordList = data.week_words;
 

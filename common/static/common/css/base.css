@@ -224,7 +224,7 @@ ul.errorlist {
     left: -10px;
     color: #ffffff;
     padding-left: 2px;
-    width: 12px;
+    padding-right: 2px;
     height: 15px;
     line-height: 15px;
     font-size: 12px;
@@ -488,4 +488,9 @@ td {
   .container {
     padding-top:0px;
   }
+}
+
+.loading {
+	width: 20px;
+	height: 20px;
 }

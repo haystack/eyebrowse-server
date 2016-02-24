@@ -150,12 +150,18 @@ def whitelist_add(request):
 
 def search_graph_data(request):
     username = request.GET.get('username', None)
+    
     query = request.GET.get("query", None)
     if query == "null":
         query = None
+    
     date = request.GET.get("date", None)
     if date == "null":
         date = None
+    
+    filter = request.GET.get("filter", None)
+    if filter == "null":
+        filter = None
 
     start_time = None
     end_time = None
@@ -164,7 +170,7 @@ def search_graph_data(request):
         start_time, end_time = DateRangeParser().parse(date)
 
     hist_type, hist = history_search(request.user, sort="time",
-                                     query=query, filter=None,
+                                     query=query, filter=filter,
                                      username=username, start_time=start_time,
                                      end_time=end_time)
     if start_time is None:
@@ -203,10 +209,12 @@ def load_js_file(request, filename):
     username = request.GET.get("username", "")
     date = request.GET.get("date", "")
     query = request.GET.get("query", "")
+    filter = request.GET.get("filter", "")
 
     text = "var username=\"%s\";" % username
     text += "var date = \"%s\";" % date
     text += "var query = \"%s\";" % query
+    text += "var filter = \"%s\";" % filter
 
     module_dir = os.path.dirname(__file__)
     file_path = module_dir + '/static/api/js/' + filename

@@ -1,0 +1,66 @@
+{% extends "common/base.html" %}
+{% load filters %}
+{% load staticfiles %}
+{% load gravatar %}
+
+{% block styles %}
+    {% include_style 'live_stream/css/history_item' %}
+    {% include_style "stats/css/profile_base" %}
+{% endblock %}
+
+{% block content %} 
+
+
+<div class="row span12 user-info">
+    {% include "live_stream/livestream_subnav.html" %}
+
+  <div class="span8 profile-header">
+    {% include "live_stream/search_bar.html" %}
+
+    {% include "live_stream/sort_stream.html" %}
+
+	<span id="start_time" style="display: none;">{{ start_time }}</span>
+	<span id="end_time" style="display: none;">{{ end_time }}</span>
+       	
+    <div id="by-day1">
+       	<div class="user-metadata">
+       		<h4>
+       			Aggregate eyebrowse visits per day broken down by top-visited domains.
+       		</h4>
+       		Time-span: <strong>{{ date }}</strong> (adjust search above to change timespan)
+       		<br />
+       		Search Query: <strong>{% if query %}{{query}}{% else %}None{% endif %}</strong> (adjust search above to change query)
+       		
+       		<br />
+       		<br />
+       		Save static image as: <button id="download-bar2-png">PNG</button>
+       		 <br />
+       		       		{% if filter != "following" %}
+       			Insert this visualization on any page: <button id="get-widget-bar2">Get Widget Code</button>
+       		{% endif %}
+       		
+       		</div>
+       </div>
+       
+       <div id="widget-code-bar2" class="collapse">
+       	Copy and paste the code below where you want the widget to appear. 
+       	This code snippet uses the external JavaScript libraries jQuery and d3.
+       	
+       	<textarea class="widget-code-text" id="widget-code-text-bar2"></textarea>
+       </div>
+       	{% include "live_stream/aggregate_stats_day.html" %}
+       	
+
+   </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {% include_script "live_stream/js/jsapi.min" %}
+    {% include_script "live_stream/js/barchart" %}
+    {% include_script "common/js/d3.min" %}
+    {% include_script "common/js/d3.layout.cloud.min" %}
+    {% include_script "live_stream/js/viz-base" %}
+    {% include_script "live_stream/js/bar-day" %}
+{% endblock %}

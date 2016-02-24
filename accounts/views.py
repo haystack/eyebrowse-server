@@ -38,8 +38,7 @@ from eyebrowse.settings import GOOGLE_CLIENT_ID
 from eyebrowse.settings import GOOGLE_CLIENT_SECRET
 from eyebrowse.settings import GOOGLE_SCOPE
 from notifications.models import Notification, NoticeType, send_now
-import code
-
+from common.management.commands.update_popular_history import Command
 
 @login_required
 @render_to('accounts/whitelist.html')
@@ -437,14 +436,25 @@ def connect(request):
                 if type == 'add-follow':
                     req_prof.follows.add(user.profile)
                     
+                    try:
+                        c = Command()
+                        c.user_populate_history(request.user, user)
+                    except Exception, e:
+                        print e
+                        
                     notice = NoticeType.objects.get(label="new_follower")
                     Notification.objects.create(recipient=user, sender=request.user, notice_type=notice)
-                    
                     send_now([user], "new_follower", sender=request.user)
 
                 elif type == 'rm-follow' and req_prof.follows.filter(
                         user=user).exists():
                     req_prof.follows.remove(user)
+                    
+                    try:
+                        c = Command()
+                        c.remove_user_populate_history(request.user, user)
+                    except Exception, e:
+                        print e
 
             success = True
             data = {
@@ -462,5 +472,7 @@ def connect(request):
         'errors': errors,
         'data': data,
     }
+
+
 
     return resp

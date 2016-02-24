@@ -47,12 +47,12 @@ except IOError:
 
 if ENV == 'prod':
     BASE_URL = 'http://eyebrowse.csail.mit.edu'
-    MYSQL = MYSQL_PROD
+    DB_CONF = DB_CONF_PROD
 else:
     BASE_URL = 'http://localhost:8000'
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     AWS["BUCKET"] = AWS["BUCKET_DEV"]
-    MYSQL = MYSQL_LOCAL
+    DB_CONF = DB_CONF_LOCAL
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -73,12 +73,12 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': MYSQL["NAME"],  # Or path to database file if using sqlite3.
-        'USER': MYSQL["USER"],  # Not used with sqlite3.
-        'PASSWORD': MYSQL["PASSWORD"],  # Not used with sqlite3.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': DB_CONF["NAME"],  # Or path to database file if using sqlite3.
+        'USER': DB_CONF["USER"],  # Not used with sqlite3.
+        'PASSWORD': DB_CONF["PASSWORD"],  # Not used with sqlite3.
         # Set to empty string for localhost. Not used with sqlite3.
-        'HOST': MYSQL["HOST"],
+        'HOST': DB_CONF["HOST"],
         'PORT': '',  # Set to empty string for default. Not used with sqlite3.
         'STORAGE_ENGINE': 'MyISAM'
     }

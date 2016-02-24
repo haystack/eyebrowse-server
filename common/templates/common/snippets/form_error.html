@@ -1,12 +1,16 @@
 {% if form.errors %}
-    <div class='form-errors alert alert-error'>
+    <div class='alert alert-danger'>
         <strong> Sorry, there were some errors...</strong>
         <div>
-        {% for key, value in form.errors.items %}
-            {% for v in value %}
-                <p> {{ key }} : {{ v }} </p>
-            {% endfor %}
-        {% endfor %}
+          {% for key, value in form.errors.items %}
+              {% for v in value %}
+                {% if v == "This field is required." %}
+                    <p> {{ key }} : {{ v }} </p>
+                {% else %}
+                    <p> {{ v }} </p>
+                {% endif %}
+              {% endfor %}
+          {% endfor %}
         </div>
     </div>
 {% endif %}

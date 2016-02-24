@@ -322,9 +322,12 @@ def get_stats(visits):
     if count == 0:
         time = '0 seconds'
     else:
+        avg_time = float(visits.aggregate(Sum('total_time'))['total_time__sum'])/float(count)
         time = humanize_time(datetime.timedelta(
-            milliseconds=visits.aggregate(Sum('total_time'))['total_time__sum']))
-
+            milliseconds=avg_time))
+        time = re.sub('minutes', 'min', time)
+        time = re.sub('minute', 'min', time)
+        
     return count_text, time
 
 

@@ -4,10 +4,24 @@ from django.contrib.contenttypes.models import ContentType
 
 from notifications.conf import settings
 
+def my_import(name):
+    components = name.split('.')
+    mod = __import__(components[0])
+    for comp in components[1:]:
+        mod = getattr(mod, comp)
+    return mod
+
 
 def load_media_defaults():
     media = []
     defaults = {}
+    # wtf.
+    if isinstance(settings.PINAX_NOTIFICATIONS_BACKENDS, list):
+        backends = {}
+        for i, backend_tuple in enumerate(settings.PINAX_NOTIFICATIONS_BACKENDS):
+            backend_name, backend_path = backend_tuple
+            backends[(i, backend_name)] = my_import(backend_path)(i)
+        settings.PINAX_NOTIFICATIONS_BACKENDS = backends
     for key, backend in settings.PINAX_NOTIFICATIONS_BACKENDS.items():
         # key is a tuple (medium_id, backend_label)
         media.append(key)

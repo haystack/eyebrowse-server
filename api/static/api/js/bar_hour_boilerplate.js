@@ -28,7 +28,7 @@ var svg,
 var startTime,
     endTime;
 
-d3.json("http://eyebrowse.csail.mit.edu/api/graphs/timeline_hours?username=" + username + "&date=" + date + "&query=" + query,
+d3.json("http://eyebrowse.csail.mit.edu/api/graphs/timeline_hours?filter=" + filter + "&username=" + username + "&date=" + date + "&query=" + query,
     function(error, data) {
         var hourList = data.week_hours;
         var domainList = data.domain_list;

@@ -32,7 +32,7 @@
 		{% for list in top_whitelists %}
 		<tr class="well">
 			<td>
-				<a target="_blank" href="{{ list.url }}">{{ list.url }}</a>
+				<a target="_blank" href="http://{{ list.url }}">{{ list.url }}</a>
 			</td>
 			<td>
 				{% if list.count == 1 %}
@@ -63,7 +63,9 @@
 		<h4>Find Friends and Interesting People to Follow</h4>
 		Follow people to see what they're sharing online and find new content that is interesting to you.<br><br>
 		One way to find friends is by <a href="/accounts/profile/sync_twitter"><img src="https://si0.twimg.com/favicons/favicon.ico"> connecting your Twitter account</a>.<BR />
+    {% if top_people %}
 		Also, below are some people in Eyebrowse that currently have the most followers:
+    {% endif %}
 		
 	</P>
 	<P>
@@ -93,6 +95,7 @@
 				<a class="btn btn-info connection">
 		             <span data-user="{{ person.user.username }}" class="icon-white glyphicon glyphicon-ok" data-type="add-follow">
 		             	Follow  
+		             <img src="/static/accounts/img/loading.gif" class="loading" id="loading_gif_{{ person.user.username }}" style="display:none"/ >
 		        </span></a>
         	</td>
 		</tr>
