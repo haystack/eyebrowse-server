@@ -388,4 +388,3 @@ def connect(request):
 
 
     return resp
-    
