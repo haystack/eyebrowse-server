@@ -116,3 +116,10 @@
     border-top-color: #EEE 1px solid !important;
     border-bottom-color: #BBB 1px solid !important;
 }
+
+#hide-visited-domain {
+    float: right;
+    background-color: #DDD;
+    border-color: #e3e3e3;
+    color: inherit;
+}
