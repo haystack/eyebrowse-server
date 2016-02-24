@@ -1,11 +1,7 @@
 import json
 import tweepy
-import gdata.gauth
-import gdata.contacts
 import urllib
 import urllib2
-import httplib2
-import atom.http_core
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -17,7 +13,6 @@ from annoying.decorators import render_to
 
 from accounts.models import TwitterInfo, UserProfile
 from accounts.models import DeliciousInfo
-from accounts.models import GoogleInfo
 from accounts.renderers import connection_table_renderer
 
 from api.models import MuteList
@@ -34,11 +29,9 @@ from eyebrowse.settings import TWITTER_CONSUMER_KEY
 from eyebrowse.settings import TWITTER_CONSUMER_SECRET
 from eyebrowse.settings import DELICIOUS_CONSUMER_KEY
 from eyebrowse.settings import DELICIOUS_CONSUMER_SECRET
-from eyebrowse.settings import GOOGLE_CLIENT_ID
-from eyebrowse.settings import GOOGLE_CLIENT_SECRET
-from eyebrowse.settings import GOOGLE_SCOPE
 from notifications.models import Notification, NoticeType, send_now
 from common.management.commands.update_popular_history import Command
+
 
 @login_required
 @render_to('accounts/whitelist.html')
@@ -321,87 +314,6 @@ def sync_twitter(request):
                             page_title="Connect Twitter",
                             navbar='nav_account',
                             sub_navbar="subnav_sync_twitter",
-                            **template_dict)
-
-def get_google_info(request, gd_client, google_obj, template_dict):
-    template_dict['connected'] = True
-      
-    eye_friends = UserProfile.objects.get(user=request.user).follows.all().values_list('user__username', flat=True)
-      
-    friends = gd_client.GetContacts()
-    google_friends = GoogleInfo.objects.filter()
-      
-    for friend in friends:
-        friend.follows = str(friend.user.username in eye_friends)
-      
-    template_dict['google_friends'] = google_friends
-         
-@login_required
-@render_to('accounts/sync_google.html')
-def sync_google(request):
-          
-    user = request.user
-          
-    template_dict = {"connected": False,
-                     "synced": "You are not connected to Eyebrowse."}
-
-    auth_token = gdata.gauth.OAuth2Token(
-            client_id=GOOGLE_CLIENT_ID,
-            client_secret=GOOGLE_CLIENT_SECRET,
-            scope=GOOGLE_SCOPE,
-            user_agent='myself'
-            )
-    
-    google_info = GoogleInfo.objects.filter(user=user)
-    if len(google_info) > 0:
-        access_token = google_info[0].access_token
-        gd_client = gdata.contacts.service.ContactsService()
-        access_token.authorize(gd_client)
-        
-        template_dict["synced"] = "Your Google account is already connected to Eyebrowse."
-        
-        get_google_info(request, gdclient, google_obj, template_dict)
-        
-    else:
-        if "code" in request.GET:
-            code = request.GET.get("code")
-             
-            auth_token.get_access_token(code)
-                 
-            gd_client = gdata.contacts.service.ContactsService()
-            auth_token.authorize(gd_client)
-                 
-            google_obj = GoogleInfo.objects.create(
-                    user=user, access_token=auth_token)
-            template_dict["synced"] = "Your Google account is now connected to Eyebrowse."
-                 
-            get_google_info(request, gdclient, google_obj, template_dict)
-             
-        else:
-            APPLICATION_REDIRECT_URI = 'http://eyebrowse.csail.mit.edu/accounts/profile/sync_google'
-            authorize_url = auth_token.generate_authorize_url(
-                redirect_uri=APPLICATION_REDIRECT_URI)
-            return redirect_to(request, authorize_url)
-        
-#             url = atom.http_core.ParseUri(authorize_url)
-#             if 'error' in url.query:
-#                 pass
-#             else:
-#                 auth_token.get_access_token(url.query)
-#                 gd_client = gdata.contacts.service.ContactsService()
-#                 access_token.authorize(gd_client)
-#                 request.session["request_token"] = access_token
-#             
-#                 template_dict["synced"] = "Your Google account is now connected to Eyebrowse."
-#             
-#                 get_google_info(request, gdclient, google_obj, template_dict)
-#                 
-#                 return redirect_to(request, APPLICATION_REDIRECT_URI)
-                
-    return _template_values(request,
-                            page_title="Connect Google",
-                            navbar='nav_account',
-                            sub_navbar="subnav_sync_google",
                             **template_dict)
 
 

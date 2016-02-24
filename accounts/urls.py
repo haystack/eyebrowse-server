@@ -12,7 +12,6 @@ urlpatterns = patterns('accounts.views',
                        url(r'^profile/edit_tags', 'edit_tags'),
                        url(r'^profile/sync_twitter', 'sync_twitter'),
                        url(r'^profile/sync_delicious', 'sync_delicious'),
-                       url(r'^profile/sync_google', 'sync_google'),
                        url(r'^profile/edit$', 'account'),  # old extensions
                        url(r'^profile/connections$', 'connections'),
                        url(r'^connect$', 'connect')
