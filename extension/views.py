@@ -6,6 +6,7 @@ from django.db.models.aggregates import Sum
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.views.generic.simple import redirect_to
 
@@ -101,7 +102,7 @@ def ticker_info(request):
         res['history_item'] = None
     return JSONResponse(res)
     
-
+@csrf_exempt
 @login_required
 def bubble_info(request):
     url = request.POST.get('url', '')
