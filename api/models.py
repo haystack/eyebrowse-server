@@ -38,6 +38,10 @@ class Topic(Tag):
     position = models.SmallIntegerField(null=True)
 
 
+class Value(Tag):
+    pass
+
+
 class Vote(models.Model):
     date = models.DateTimeField(auto_now_add=True, blank=True)
     value_tag = models.ForeignKey(Tag, on_delete=models.CASCADE) # one valuetag to many votes
