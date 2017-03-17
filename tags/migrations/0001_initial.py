@@ -11,7 +11,7 @@ class Migration(SchemaMigration):
         # Adding model 'Domain'
         db.create_table('tags_domain', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=100)),
+            ('name', self.gf('django.db.models.fields.CharField')(default='', max_length=100)),
             ('url', self.gf('django.db.models.fields.URLField')(max_length=300)),
         ))
         db.send_create_signal('tags', ['Domain'])
@@ -54,7 +54,7 @@ class Migration(SchemaMigration):
         'tags.domain': {
             'Meta': {'object_name': 'Domain'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '300'})
         },
         'tags.highlight': {
