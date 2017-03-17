@@ -8,8 +8,21 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting model 'Values'
-        db.delete_table('api_values')
+        # Adding model 'Vote'
+        db.create_table('api_vote', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Tag'])),
+            ('voter', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+        ))
+        db.send_create_signal('api', ['Vote'])
+
+        # Adding model 'Topic'
+        db.create_table('api_topic', (
+            ('tag_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['api.Tag'], unique=True, primary_key=True)),
+            ('position', self.gf('django.db.models.fields.SmallIntegerField')(null=True)),
+        ))
+        db.send_create_signal('api', ['Topic'])
 
         # Adding model 'Value'
         db.create_table('api_value', (
@@ -17,22 +30,86 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('api', ['Value'])
 
+        # Adding field 'Tag.description'
+        db.add_column('api_tag', 'description',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=10000),
+                      keep_default=False)
+
+        # Adding field 'Tag.is_private'
+        db.add_column('api_tag', 'is_private',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
+        # Adding field 'Tag.page'
+        db.add_column('api_tag', 'page',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Page'], null=True),
+                      keep_default=False)
+
+        # Adding field 'Tag.domain_obj'
+        db.add_column('api_tag', 'domain_obj',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Domain'], null=True),
+                      keep_default=False)
+
+        # Adding field 'Tag.vote_count'
+        db.add_column('api_tag', 'vote_count',
+                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      keep_default=False)
+
+        # Adding field 'Tag.highlight'
+        db.add_column('api_tag', 'highlight',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Highlight'], null=True),
+                      keep_default=False)
+
+        # Adding field 'PopularHistoryInfo.page'
+        db.add_column('api_popularhistoryinfo', 'page',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Page'], null=True, on_delete=models.SET_NULL),
+                      keep_default=False)
+
+        # Adding field 'EyeHistory.page'
+        db.add_column('api_eyehistory', 'page',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Page'], null=True, on_delete=models.SET_NULL),
+                      keep_default=False)
+
 
     def backwards(self, orm):
-        # Adding model 'Values'
-        db.create_table('api_values', (
-            ('tag_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['api.Tag'], unique=True, primary_key=True)),
-        ))
-        db.send_create_signal('api', ['Values'])
+        # Deleting model 'Vote'
+        db.delete_table('api_vote')
+
+        # Deleting model 'Topic'
+        db.delete_table('api_topic')
 
         # Deleting model 'Value'
         db.delete_table('api_value')
+
+        # Deleting field 'Tag.description'
+        db.delete_column('api_tag', 'description')
+
+        # Deleting field 'Tag.is_private'
+        db.delete_column('api_tag', 'is_private')
+
+        # Deleting field 'Tag.page'
+        db.delete_column('api_tag', 'page_id')
+
+        # Deleting field 'Tag.domain_obj'
+        db.delete_column('api_tag', 'domain_obj_id')
+
+        # Deleting field 'Tag.vote_count'
+        db.delete_column('api_tag', 'vote_count')
+
+        # Deleting field 'Tag.highlight'
+        db.delete_column('api_tag', 'highlight_id')
+
+        # Deleting field 'PopularHistoryInfo.page'
+        db.delete_column('api_popularhistoryinfo', 'page_id')
+
+        # Deleting field 'EyeHistory.page'
+        db.delete_column('api_eyehistory', 'page_id')
 
 
     models = {
         'api.blacklistitem': {
             'Meta': {'unique_together': "(('user', 'url'),)", 'object_name': 'BlackListItem'},
-            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2017, 3, 16, 0, 0)'}),
+            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2017, 3, 21, 0, 0)'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'port': ('django.db.models.fields.IntegerField', [], {'default': '80'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
@@ -151,12 +228,12 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Vote'},
             'date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'value_tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Tag']"}),
+            'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Tag']"}),
             'voter': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'api.whitelistitem': {
             'Meta': {'unique_together': "(('user', 'url'),)", 'object_name': 'WhiteListItem'},
-            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2017, 3, 16, 0, 0)'}),
+            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2017, 3, 21, 0, 0)'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'port': ('django.db.models.fields.IntegerField', [], {'default': '80'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
