@@ -84,7 +84,7 @@ urlpatterns = patterns('',
                        url(r'^getting_started$', getting_started),
 
                        url(r'^ext/', include("extension.urls")),
-                       
+                       url(r'^tags/', include("tags.urls")),
                        )
 
 urlpatterns += patterns('eyebrowse.views',
