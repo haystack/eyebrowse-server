@@ -6,4 +6,6 @@ urlpatterns = patterns('tags.views',
                         url(r'^tags/page', 'tags_by_page'),
                         url(r'^page$', 'page'),
                         url(r'^initialize_page$', 'initialize_page'),
+                        url(r'^vote/add$', 'add_vote'),
+                        url(r'^vote/remove$', 'remove_vote'),
                       )
