@@ -11,4 +11,5 @@ urlpatterns = patterns('tags.views',
                         url(r'^vote/remove$', 'remove_vote'),
                         url(r'^highlight$', 'highlight'),
                         url(r'^highlights$', 'highlights'),
+                        url(r'^page/related_stories$', 'related_stories'),
                       )
