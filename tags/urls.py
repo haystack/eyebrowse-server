@@ -12,4 +12,5 @@ urlpatterns = patterns('tags.views',
                         url(r'^highlight$', 'highlight'),
                         url(r'^highlights$', 'highlights'),
                         url(r'^page/related_stories$', 'related_stories'),
+                        url(r'^user/tags$', 'user_value_tags'),
                       )
