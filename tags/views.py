@@ -482,6 +482,64 @@ def highlights(request):
     'highlights': highlights,
   }
 
+'''
+Get related stories
+'''
+@login_required
+@ajax_request
+def related_stories(request):
+  success = False
+  errors = {}
+  page_info = {}
+  data = {}
+  errors['related_stories'] = []
+
+  if request.GET:
+    url = process_url(request.GET.get('url'))
+    api_url = "https://api.newsapi.aylien.com/api/v1/related_stories"
+
+    payload = {
+      "story_url": url,
+      "return[]": ["id", "summary", "title", "source", "links", "body"],
+      "source.rankings.alexa.rank.max": 2000,
+      "language": ["en"],
+      "per_page": 5,
+    }
+
+    headers = {
+      "Access-Control-Allow-Origin": "*",
+      "X-AYLIEN-NewsAPI-Application-ID": "6373daf3",
+      "X-AYLIEN-NewsAPI-Application-Key": "5dd8483b654cbba292494175cfa601e9",
+    }
+
+    r = requests.get(api_url, params=payload, headers=headers)
+
+    if r.status_code == 200:
+      for item in r.json()["related_stories"]:
+        if "logo_url" in item["source"]:
+          logo = item["source"]["logo_url"]
+        else:
+          logo = ""
+
+        data[item["id"]] = {
+          "title": item["title"],
+          "link": item["links"]["permalink"],
+          "source": item["source"]["name"],
+          "domain": item["source"]["domain"],
+          "logo": logo,
+          "summary": item["body"]
+        }
+
+      success = True
+    else:
+      errors['related_stories'].append("Could not fetch related stories")
+
+  return {
+    'success': success,
+    'errors': errors,
+    'data': data,
+  }
+
 
 # Helper function to parse urls minus query strings
 def process_url(url):
