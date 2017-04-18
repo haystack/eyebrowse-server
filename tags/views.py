@@ -585,6 +585,30 @@ def user_value_tags(request):
     'data': data,
   }
 
+@login_required
+@ajax_request
+def base_tags(request):
+  success = False
+  user = request.user
+  base_tags = {}
+  errors = {}
+  errors['base_tags'] = []
+
+  bts = BaseTag.objects.all()
+  for bt in bts:
+    base_tags[bt.name] = {
+      'description': bt.description,
+      'color': bt.color,
+    }
+
+  success = True
+
+  return {
+    'success': success,
+    'errors': errors,
+    'base_tags': base_tags,
+  }
+
 
 # Helper function to parse urls minus query strings
 def process_url(url):
