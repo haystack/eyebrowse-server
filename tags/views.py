@@ -107,7 +107,7 @@ def tags_by_page(request):
   '''
   success = False
   errors = {}
-  value_tags = {}
+  tags = {}
   user = request.user
 
   if request.GET:
@@ -132,7 +132,7 @@ def tags_by_page(request):
             'vote_count': vt.vote_count,
           }
 
-          value_tags[vt.base_tag.name] = vt_info
+          tags[vt.base_tag.name] = vt_info
           success = True
 
         if success == False:
@@ -143,7 +143,7 @@ def tags_by_page(request):
   return {
     'success': success,
     'errors': errors,
-    'value_tags': value_tags,
+    'tags': tags,
   }
 
 '''
@@ -154,7 +154,7 @@ Get all tags associated with a highlight
 def tags_by_highlight(request):
   success = False
   errors = {}
-  value_tags = {}
+  tags = {}
   user = request.user
 
   if request.GET:
@@ -198,12 +198,12 @@ def tags_by_highlight(request):
           })
         vt_info['votes'] = votes
 
-        value_tags[vt.base_tag.name] = vt_info
+        tags[vt.base_tag.name] = vt_info
 
   return {
     'success': success,
     'errors': errors,
-    'value_tags': value_tags,
+    'tags': tags,
   }
 
 
@@ -218,7 +218,7 @@ Returns value tags for page
 @login_required
 @ajax_request
 def initialize_page(request):
-  value_tags = {}
+  tags = {}
   errors = {}
   user = request.user
 
@@ -249,7 +249,7 @@ def initialize_page(request):
           'vote_count': vt.vote_count,
         }
 
-        value_tags[vt.base_tag.name] = vt_info
+        tags[vt.base_tag.name] = vt_info
 
     else: 
       if domain_name == "":
@@ -305,7 +305,7 @@ def initialize_page(request):
                 errors['add_valuetags'].append("Could not get base tag")
 
             if len(errors['add_valuetags']) == 0:
-              value_tags[name] = {
+              tags[name] = {
                 'name': name,
                 'color': vt.base_tag.color,
                 'description': vt.base_tag.description,
@@ -322,7 +322,7 @@ def initialize_page(request):
     return {
       'success': success,
       'errors': errors,
-      'value_tags': value_tags,
+      'tags': tags,
     }
 
 '''
