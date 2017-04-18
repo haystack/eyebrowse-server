@@ -18,12 +18,18 @@ class MuteList(models.Model):
     url = models.URLField(max_length=300, blank=False, null=True)
     word = models.URLField(max_length=300, blank=False, null=True)
 
+class TagCollection(models.Model):
+    name = models.CharField(max_length=80, blank=False, null=False)
+    trie_blob = models.TextField(blank=False, null=False)
+    subscribers = models.ManyToManyField(User)
 
 class BaseTag(models.Model):
     name = models.CharField(max_length=80, blank=False, null=False)
     color = models.CharField(max_length=10, blank=False, null=False)
     domain = models.URLField(max_length=300, default='')
     description = models.CharField(max_length=10000, default='')
+    tag_collection = models.ForeignKey(TagCollection, on_delete=models.CASCADE, blank=True, null=True)
+    subscribers = models.ManyToManyField(User)
 
 class Tag(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
