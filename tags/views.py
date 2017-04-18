@@ -158,7 +158,7 @@ def tags_by_highlight(request):
   user = request.user
 
   if request.GET:
-    highlight = urllib.unquote(request.GET.get('highlight')).decode('utf8')
+    highlight = request.GET.get('highlight')
     url = process_url(request.GET.get('url'))
     errors['get_tags'] = []
 
@@ -339,7 +339,7 @@ def add_vote(request):
   if request.POST:
     tag_name = request.POST.get('valuetag')
     url = process_url(request.POST.get('url'))
-    highlight = urllib.unquote(request.POST.get('highlight')).decode('utf8')
+    highlight = request.POST.get('highlight')
     errors['add_vote'] = []
 
     try:
@@ -385,7 +385,7 @@ def remove_vote(request):
   if request.POST:
     tag_name = request.POST.get('valuetag')
     url = process_url(request.POST.get('url'))
-    highlight = urllib.unquote(request.POST.get('highlight')).decode('utf8')
+    highlight = request.POST.get('highlight')
     errors['remove_vote'] = []
 
     try:
