@@ -153,6 +153,7 @@ def tags_by_highlight(request):
   success = False
   errors = {}
   tags = {}
+  sorted_tags = []
   user = request.user
 
   if request.GET:
@@ -169,6 +170,7 @@ def tags_by_highlight(request):
 
       # get relevant info for each value tag
       for vt in vts:
+        print vt
         vt_info = {
           'user_voted': False,
           'name': vt.base_tag.name,
@@ -195,13 +197,14 @@ def tags_by_highlight(request):
             'pic': pic,
           })
         vt_info['votes'] = votes
+        sorted_tags.append(vt_info)
 
-        tags[vt.base_tag.name] = vt_info
+  sorted_tags = sorted(sorted_tags, key=lambda x: x["vote_count"], reverse=True)
 
   return {
     'success': success,
     'errors': errors,
-    'tags': tags,
+    'tags': sorted_tags,
   }
 
 
@@ -399,6 +402,7 @@ def remove_vote(request):
 
       if len(old_votes) > 0:
         vt.vote_count -= len(old_votes)
+        vt.save()
         old_votes.delete()
         success = True
 
@@ -433,11 +437,14 @@ def highlight(request):
     if not len(errors['add_highlight']) and highlight != "":
       p = Page.objects.get(url=url)
 
-      if not len(Highlight.objects.filter(page=p, highlight=highlight)):
+      try:
+        h = Highlight.objects.get(page=p, highlight=highlight)
+      except:
         h = Highlight(page=p, highlight=highlight)
         h.save()
 
-        for tag in tags:
+      for tag in tags:
+        if len(Tag.objects.filter(highlight=h, base_tag__name=tag)) == 0:
           try:
             base_tag = BaseTag.objects.get(name=tag)
             vt = Value(
@@ -450,7 +457,7 @@ def highlight(request):
           except BaseTag.DoesNotExist:
             errors['add_highlight'].append("Base tag " + tag + " does not exist")
 
-        success = True
+          success = True
 
   return {
     'success': success,
