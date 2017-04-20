@@ -224,7 +224,6 @@ INSTALLED_APPS = (
     'live_stream',
     'stats',
     'extension',
-    'tags',
 
 )
 
