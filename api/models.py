@@ -23,31 +23,31 @@ class TagCollection(models.Model):
     trie_blob = models.TextField(blank=False, null=False)
     subscribers = models.ManyToManyField(User)
 
-class BaseTag(models.Model):
+class CommonTag(models.Model):
     name = models.CharField(max_length=80, blank=False, null=False)
     color = models.CharField(max_length=10, blank=False, null=False)
-    domain = models.URLField(max_length=300, default='')
     description = models.CharField(max_length=10000, default='')
     tag_collection = models.ForeignKey(TagCollection, on_delete=models.CASCADE, blank=True, null=True)
     subscribers = models.ManyToManyField(User)
 
 class Tag(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=80, blank=False, null=False)
+    color = models.CharField(max_length=10, blank=False, null=False)
+    domain = models.URLField(max_length=300, default='')
+    description = models.CharField(max_length=10000, default='')
     is_private = models.BooleanField(default=False)
+    position = models.SmallIntegerField(null=True)
+    vote_count = models.IntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="creator")
 
     page = models.ForeignKey(Page, on_delete=models.CASCADE, null=True)
     domain_obj = models.ForeignKey(Domain, on_delete=models.CASCADE, null=True)
 
-    vote_count = models.IntegerField(default=0)
     highlight = models.ForeignKey(Highlight, null=True, on_delete=models.CASCADE)
     
-    base_tag = models.ForeignKey(BaseTag, on_delete=models.CASCADE, null=False, blank=False)
-
-class Topic(Tag):
-    position = models.SmallIntegerField(null=True)
-
-class Value(Tag):
-    pass
+    common_tag = models.ForeignKey(CommonTag, on_delete=models.CASCADE, null=True, blank=True)
+    tag_collection = models.ForeignKey(TagCollection, on_delete=models.CASCADE, blank=True, null=True)
+    subscribers = models.ManyToManyField(User, related_name="subscribers")
 
 
 class Vote(models.Model):
@@ -336,4 +336,3 @@ def check_bumps(user, start_time, end_time, url):
                     queue([bump.user], "bump_follower", sender=user, extra={'url': url, 'date': datetime.datetime.now()})
                     sent_user.append(bump_prof)
                 
-    

@@ -1,6 +1,6 @@
 import setup_django
 import json
-from api.models import BaseTag, TagCollection
+from api.models import CommonTag, TagCollection
 from django.contrib.auth.models import User
 
 TAGS = {
@@ -65,9 +65,9 @@ def create_tag_collections(tag_collections):
       trie_blob=tag_collections[tc]["trie_blob"]
     )
 
-def populate_base_tags(tags):
+def populate_common_tags(tags):
   for tag in tags:
-    BaseTag.objects.get_or_create(
+    CommonTag.objects.get_or_create(
       name=tag, 
       color=tags[tag]["color"],
       description=tags[tag]["description"]
@@ -83,5 +83,5 @@ def subscribe_users(collection_name):
 
 if __name__ == '__main__':
   create_tag_collections(TAG_COLLECTIONS)
-  populate_base_tags(TAGS)
+  populate_common_tags(TAGS)
   subscribe_users('moral_foundations')

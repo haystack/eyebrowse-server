@@ -11,8 +11,8 @@ from urlparse import urlparse
 from common.templatetags.gravatar import gravatar_for_user
 
 from tags.models import Domain, Page, Highlight
-from api.models import BaseTag, TagCollection
-from api.models import Tag, Value, Vote, UserTagInfo
+from api.models import CommonTag, TagCollection
+from api.models import Tag, Vote, UserTagInfo
 from accounts.models import UserProfile
 
 '''
@@ -34,19 +34,19 @@ def value_tag(request):
     try:
       page = Page.objects.get(url=url)
 
-      if len(Tag.objects.filter(base_tag__name=tag_name, page__url=url)) > 0:
+      if len(Tag.objects.filter(common_tag__name=tag_name, page__url=url)) > 0:
         errors['add_tag'].append("Tag " + tag_name + " already exists")
       else:
         try:
-          base_tag = BaseTag.objects.get(name=tag_name)
+          common_tag = CommonTag.objects.get(name=tag_name)
           new_tag = Tag(
             user=user, 
             page=page,
-            base_tag=base_tag
+            common_tag=common_tag
           )
           new_tag.save()
           success = True
-        except BaseTag.DoesNotExist:
+        except CommonTag.DoesNotExist:
           errors['add_tag'].append("Could not find base tag " + tag_name)
 
     except Page.DoesNotExist:
@@ -122,15 +122,14 @@ def tags_by_page(request):
         for vt in vts:
           vt_info = {
             'user_voted': False,
-            'name': vt.base_tag.name,
-            'color': vt.base_tag.color,
-            'domain': vt.base_tag.domain,
-            'description': vt.base_tag.description,
+            'name': vt.common_tag.name,
+            'color': vt.common_tag.color,
+            'description': vt.common_tag.description,
             'is_private': vt.is_private,
             'vote_count': vt.vote_count,
           }
 
-          tags[vt.base_tag.name] = vt_info
+          tags[vt.common_tag.name] = vt_info
           success = True
 
         if success == False:
@@ -166,17 +165,15 @@ def tags_by_highlight(request):
       errors['get_tags'].append("Highlight " + highlight + "doesn't exist!")
 
     if not len(errors['get_tags']):
-      vts = Value.objects.filter(highlight=h, page__url=url)
+      vts = Tag.objects.filter(highlight=h, page__url=url)
 
       # get relevant info for each value tag
       for vt in vts:
-        print vt
         vt_info = {
           'user_voted': False,
-          'name': vt.base_tag.name,
-          'color': vt.base_tag.color,
-          'domain': vt.base_tag.domain,
-          'description': vt.base_tag.description,
+          'name': vt.common_tag.name,
+          'color': vt.common_tag.color,
+          'description': vt.common_tag.description,
           'is_private': vt.is_private,
           'vote_count': vt.vote_count,
         }
@@ -242,15 +239,14 @@ def initialize_page(request):
       for vt in vts:
         vt_info = {
           'user_voted': False,
-          'name': vt.base_tag.name,
-          'color': vt.base_tag.color,
-          'domain': vt.base_tag.domain,
-          'description': vt.base_tag.description,
+          'name': vt.common_tag.name,
+          'color': vt.common_tag.color,
+          'description': vt.common_tag.description,
           'is_private': vt.is_private,
           'vote_count': vt.vote_count,
         }
 
-        tags[vt.base_tag.name] = vt_info
+        tags[vt.common_tag.name] = vt_info
 
     else: 
       if domain_name == "":
@@ -286,14 +282,14 @@ def initialize_page(request):
 
             # Add tag to page
             try:
-              vt = Value.objects.get(page__url=url, base_tag__name=name, highlight=None)
-            except Value.DoesNotExist:
+              vt = Tag.objects.get(page__url=url, common_tag__name=name, highlight=None)
+            except Tag.DoesNotExist:
               try:
-                base_tag = BaseTag.objects.get(name=name)
-                vt = Value(
+                common_tag = CommonTag.objects.get(name=name)
+                vt = Tag(
                   user=user,
                   page=page,
-                  base_tag=base_tag
+                  common_tag=common_tag
                 )
                 vt.save()
 
@@ -305,14 +301,14 @@ def initialize_page(request):
                     uto = UserTagInfo(user=user, page=page, tag=vt)
                     uto.save()
                 success = True
-              except BaseTag.DoesNotExist:
+              except CommonTag.DoesNotExist:
                 errors['add_valuetags'].append("Could not get base tag")
 
             if len(errors['add_valuetags']) == 0:
               tags[name] = {
                 'name': name,
-                'color': vt.base_tag.color,
-                'description': vt.base_tag.description,
+                'color': vt.common_tag.color,
+                'description': vt.common_tag.description,
               }
 
       except:
@@ -347,8 +343,8 @@ def add_vote(request):
     errors['add_vote'] = []
 
     try:
-      vt = Value.objects.get(
-        base_tag__name=tag_name, 
+      vt = Tag.objects.get(
+        common_tag__name=tag_name, 
         highlight__highlight=highlight, 
         page__url=url,
       )
@@ -366,8 +362,8 @@ def add_vote(request):
 
       vote_count = len(Vote.objects.filter(tag=vt))
 
-    except Value.DoesNotExist:
-      errors['add_vote'].append("Value tag " + tag_name + " does not exist")
+    except Tag.DoesNotExist:
+      errors['add_vote'].append("Tag " + tag_name + " does not exist")
 
   return {
     'success': success,
@@ -393,8 +389,8 @@ def remove_vote(request):
     errors['remove_vote'] = []
 
     try:
-      vt = Value.objects.get(
-        base_tag__name=tag_name, 
+      vt = Tag.objects.get(
+        common_tag__name=tag_name, 
         highlight__highlight=highlight, 
         page__url=url,
       )
@@ -408,8 +404,8 @@ def remove_vote(request):
 
       vote_count = len(Vote.objects.filter(tag=vt))
 
-    except Value.DoesNotExist:
-      errors['remove_vote'].append("Value tag " + tag_name + " does not exist")
+    except Tag.DoesNotExist:
+      errors['remove_vote'].append("Tag " + tag_name + " does not exist")
 
   return {
     'success': success,
@@ -444,17 +440,17 @@ def highlight(request):
         h.save()
 
       for tag in tags:
-        if len(Tag.objects.filter(highlight=h, base_tag__name=tag)) == 0:
+        if len(Tag.objects.filter(highlight=h, common_tag__name=tag)) == 0:
           try:
-            base_tag = BaseTag.objects.get(name=tag)
-            vt = Value(
+            common_tag = CommonTag.objects.get(name=tag)
+            vt = Tag(
               page=p, 
               highlight=h, 
-              base_tag=base_tag,
+              common_tag=common_tag,
               user=user, 
             )
             vt.save()
-          except BaseTag.DoesNotExist:
+          except CommonTag.DoesNotExist:
             errors['add_highlight'].append("Base tag " + tag + " does not exist")
 
           success = True
@@ -487,11 +483,11 @@ def highlights(request):
         max_tag = ()
         max_tag_count = 0
 
-        vts = Value.objects.filter(highlight=h, page__url=url)
+        vts = Tag.objects.filter(highlight=h, page__url=url)
         for vt in vts:
           if vt.vote_count >= max_tag_count:
             max_tag_count = vt.vote_count
-            max_tag = (vt.base_tag.name, vt.base_tag.color)
+            max_tag = (vt.common_tag.name, vt.common_tag.color)
         highlights[h.highlight] = max_tag
       success = True
 
@@ -577,10 +573,10 @@ def user_value_tags(request):
 
     if len(uts) != 0:
       for ut in uts:
-        if ut.tag.base_tag.name in tag_counts:
-          tag_counts[ut.tag.base_tag.name] += 1
+        if ut.tag.common_tag.name in tag_counts:
+          tag_counts[ut.tag.common_tag.name] += 1
         else:
-          tag_counts[ut.tag.base_tag.name] = 1
+          tag_counts[ut.tag.common_tag.name] = 1
       data['tag_counts'] = tag_counts
       success = True
 
@@ -595,16 +591,16 @@ def user_value_tags(request):
 
 @login_required
 @ajax_request
-def base_tags(request):
+def common_tags(request):
   success = False
   user = request.user
-  base_tags = {}
+  common_tags = {}
   errors = {}
-  errors['base_tags'] = []
+  errors['common_tags'] = []
 
-  bts = BaseTag.objects.all()
+  bts = CommonTag.objects.all()
   for bt in bts:
-    base_tags[bt.name] = {
+    common_tags[bt.name] = {
       'description': bt.description,
       'color': bt.color,
     }
@@ -614,7 +610,7 @@ def base_tags(request):
   return {
     'success': success,
     'errors': errors,
-    'base_tags': base_tags,
+    'common_tags': common_tags,
   }
 
 

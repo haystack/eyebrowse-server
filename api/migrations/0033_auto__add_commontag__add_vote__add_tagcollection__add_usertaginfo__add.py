@@ -8,6 +8,25 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'CommonTag'
+        db.create_table('api_commontag', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=80)),
+            ('color', self.gf('django.db.models.fields.CharField')(max_length=10)),
+            ('description', self.gf('django.db.models.fields.CharField')(default='', max_length=10000)),
+            ('tag_collection', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.TagCollection'], null=True, blank=True)),
+        ))
+        db.send_create_signal('api', ['CommonTag'])
+
+        # Adding M2M table for field subscribers on 'CommonTag'
+        m2m_table_name = db.shorten_name('api_commontag_subscribers')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('commontag', models.ForeignKey(orm['api.commontag'], null=False)),
+            ('user', models.ForeignKey(orm['auth.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['commontag_id', 'user_id'])
+
         # Adding model 'Vote'
         db.create_table('api_vote', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -17,28 +36,22 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('api', ['Vote'])
 
-        # Adding model 'BaseTag'
-        db.create_table('api_basetag', (
+        # Adding model 'TagCollection'
+        db.create_table('api_tagcollection', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=80)),
-            ('color', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('domain', self.gf('django.db.models.fields.URLField')(default='', max_length=300)),
-            ('description', self.gf('django.db.models.fields.CharField')(default='', max_length=10000)),
+            ('trie_blob', self.gf('django.db.models.fields.TextField')()),
         ))
-        db.send_create_signal('api', ['BaseTag'])
+        db.send_create_signal('api', ['TagCollection'])
 
-        # Adding model 'Topic'
-        db.create_table('api_topic', (
-            ('tag_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['api.Tag'], unique=True, primary_key=True)),
-            ('position', self.gf('django.db.models.fields.SmallIntegerField')(null=True)),
+        # Adding M2M table for field subscribers on 'TagCollection'
+        m2m_table_name = db.shorten_name('api_tagcollection_subscribers')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('tagcollection', models.ForeignKey(orm['api.tagcollection'], null=False)),
+            ('user', models.ForeignKey(orm['auth.user'], null=False))
         ))
-        db.send_create_signal('api', ['Topic'])
-
-        # Adding model 'Value'
-        db.create_table('api_value', (
-            ('tag_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['api.Tag'], unique=True, primary_key=True)),
-        ))
-        db.send_create_signal('api', ['Value'])
+        db.create_unique(m2m_table_name, ['tagcollection_id', 'user_id'])
 
         # Adding model 'UserTagInfo'
         db.create_table('api_usertaginfo', (
@@ -49,18 +62,19 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('api', ['UserTagInfo'])
 
-        # Deleting field 'Tag.domain'
-        db.delete_column('api_tag', 'domain')
-
-        # Deleting field 'Tag.name'
-        db.delete_column('api_tag', 'name')
-
-        # Deleting field 'Tag.color'
-        db.delete_column('api_tag', 'color')
+        # Adding field 'Tag.description'
+        db.add_column('api_tag', 'description',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=10000),
+                      keep_default=False)
 
         # Adding field 'Tag.is_private'
         db.add_column('api_tag', 'is_private',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
+        # Adding field 'Tag.position'
+        db.add_column('api_tag', 'position',
+                      self.gf('django.db.models.fields.SmallIntegerField')(null=True),
                       keep_default=False)
 
         # Adding field 'Tag.page'
@@ -73,24 +87,33 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Domain'], null=True),
                       keep_default=False)
 
-        # Adding field 'Tag.vote_count'
-        db.add_column('api_tag', 'vote_count',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
-                      keep_default=False)
-
         # Adding field 'Tag.highlight'
         db.add_column('api_tag', 'highlight',
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Highlight'], null=True),
                       keep_default=False)
 
-        # Adding field 'Tag.base_tag'
-        db.add_column('api_tag', 'base_tag',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['api.BaseTag']),
+        # Adding field 'Tag.common_tag'
+        db.add_column('api_tag', 'common_tag',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.CommonTag'], null=True, blank=True),
                       keep_default=False)
+
+        # Adding field 'Tag.tag_collection'
+        db.add_column('api_tag', 'tag_collection',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.TagCollection'], null=True, blank=True),
+                      keep_default=False)
+
+        # Adding M2M table for field subscribers on 'Tag'
+        m2m_table_name = db.shorten_name('api_tag_subscribers')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('tag', models.ForeignKey(orm['api.tag'], null=False)),
+            ('user', models.ForeignKey(orm['auth.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['tag_id', 'user_id'])
 
 
         # Changing field 'Tag.user'
-        db.alter_column('api_tag', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))
+        db.alter_column('api_tag', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
         # Adding field 'PopularHistoryInfo.page'
         db.add_column('api_popularhistoryinfo', 'page',
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Page'], null=True, on_delete=models.SET_NULL),
@@ -103,38 +126,32 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+        # Deleting model 'CommonTag'
+        db.delete_table('api_commontag')
+
+        # Removing M2M table for field subscribers on 'CommonTag'
+        db.delete_table(db.shorten_name('api_commontag_subscribers'))
+
         # Deleting model 'Vote'
         db.delete_table('api_vote')
 
-        # Deleting model 'BaseTag'
-        db.delete_table('api_basetag')
+        # Deleting model 'TagCollection'
+        db.delete_table('api_tagcollection')
 
-        # Deleting model 'Topic'
-        db.delete_table('api_topic')
-
-        # Deleting model 'Value'
-        db.delete_table('api_value')
+        # Removing M2M table for field subscribers on 'TagCollection'
+        db.delete_table(db.shorten_name('api_tagcollection_subscribers'))
 
         # Deleting model 'UserTagInfo'
         db.delete_table('api_usertaginfo')
 
-        # Adding field 'Tag.domain'
-        db.add_column('api_tag', 'domain',
-                      self.gf('django.db.models.fields.URLField')(default='', max_length=300),
-                      keep_default=False)
-
-        # Adding field 'Tag.name'
-        db.add_column('api_tag', 'name',
-                      self.gf('django.db.models.fields.CharField')(default=1, max_length=80),
-                      keep_default=False)
-
-        # Adding field 'Tag.color'
-        db.add_column('api_tag', 'color',
-                      self.gf('django.db.models.fields.CharField')(default='', max_length=10),
-                      keep_default=False)
+        # Deleting field 'Tag.description'
+        db.delete_column('api_tag', 'description')
 
         # Deleting field 'Tag.is_private'
         db.delete_column('api_tag', 'is_private')
+
+        # Deleting field 'Tag.position'
+        db.delete_column('api_tag', 'position')
 
         # Deleting field 'Tag.page'
         db.delete_column('api_tag', 'page_id')
@@ -142,14 +159,17 @@ class Migration(SchemaMigration):
         # Deleting field 'Tag.domain_obj'
         db.delete_column('api_tag', 'domain_obj_id')
 
-        # Deleting field 'Tag.vote_count'
-        db.delete_column('api_tag', 'vote_count')
-
         # Deleting field 'Tag.highlight'
         db.delete_column('api_tag', 'highlight_id')
 
-        # Deleting field 'Tag.base_tag'
-        db.delete_column('api_tag', 'base_tag_id')
+        # Deleting field 'Tag.common_tag'
+        db.delete_column('api_tag', 'common_tag_id')
+
+        # Deleting field 'Tag.tag_collection'
+        db.delete_column('api_tag', 'tag_collection_id')
+
+        # Removing M2M table for field subscribers on 'Tag'
+        db.delete_table(db.shorten_name('api_tag_subscribers'))
 
 
         # Changing field 'Tag.user'
@@ -162,17 +182,9 @@ class Migration(SchemaMigration):
 
 
     models = {
-        'api.basetag': {
-            'Meta': {'object_name': 'BaseTag'},
-            'color': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'description': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10000'}),
-            'domain': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '300'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '80'})
-        },
         'api.blacklistitem': {
             'Meta': {'unique_together': "(('user', 'url'),)", 'object_name': 'BlackListItem'},
-            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2017, 4, 13, 0, 0)'}),
+            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2017, 4, 23, 0, 0)'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'port': ('django.db.models.fields.IntegerField', [], {'default': '80'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
@@ -185,6 +197,15 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'message': ('django.db.models.fields.CharField', [], {'max_length': '2000'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '300'})
+        },
+        'api.commontag': {
+            'Meta': {'object_name': 'CommonTag'},
+            'color': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'description': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10000'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '80'}),
+            'subscribers': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'}),
+            'tag_collection': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.TagCollection']", 'null': 'True', 'blank': 'True'})
         },
         'api.eyehistory': {
             'Meta': {'object_name': 'EyeHistory'},
@@ -266,19 +287,27 @@ class Migration(SchemaMigration):
         },
         'api.tag': {
             'Meta': {'object_name': 'Tag'},
-            'base_tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.BaseTag']"}),
+            'color': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'common_tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.CommonTag']", 'null': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10000'}),
+            'domain': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '300'}),
             'domain_obj': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tags.Domain']", 'null': 'True'}),
             'highlight': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tags.Highlight']", 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_private': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '80'}),
             'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tags.Page']", 'null': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'vote_count': ('django.db.models.fields.IntegerField', [], {'default': '0'})
-        },
-        'api.topic': {
-            'Meta': {'object_name': 'Topic', '_ormbases': ['api.Tag']},
             'position': ('django.db.models.fields.SmallIntegerField', [], {'null': 'True'}),
-            'tag_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['api.Tag']", 'unique': 'True', 'primary_key': 'True'})
+            'subscribers': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'subscribers'", 'symmetrical': 'False', 'to': "orm['auth.User']"}),
+            'tag_collection': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.TagCollection']", 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'creator'", 'null': 'True', 'to': "orm['auth.User']"})
+        },
+        'api.tagcollection': {
+            'Meta': {'object_name': 'TagCollection'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '80'}),
+            'subscribers': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'}),
+            'trie_blob': ('django.db.models.fields.TextField', [], {})
         },
         'api.usertaginfo': {
             'Meta': {'object_name': 'UserTagInfo'},
@@ -286,10 +315,6 @@ class Migration(SchemaMigration):
             'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tags.Page']"}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Tag']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        },
-        'api.value': {
-            'Meta': {'object_name': 'Value', '_ormbases': ['api.Tag']},
-            'tag_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['api.Tag']", 'unique': 'True', 'primary_key': 'True'})
         },
         'api.vote': {
             'Meta': {'object_name': 'Vote'},
@@ -300,7 +325,7 @@ class Migration(SchemaMigration):
         },
         'api.whitelistitem': {
             'Meta': {'unique_together': "(('user', 'url'),)", 'object_name': 'WhiteListItem'},
-            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2017, 4, 13, 0, 0)'}),
+            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2017, 4, 23, 0, 0)'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'port': ('django.db.models.fields.IntegerField', [], {'default': '80'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
