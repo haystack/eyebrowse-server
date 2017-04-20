@@ -11,19 +11,55 @@ from notifications.models import Notification, NoticeType, send, queue, send_now
 from accounts.models import UserProfile
 from eyebrowse.log import logger
 
+from tags.models import Domain, Page, Highlight
 
 class MuteList(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     url = models.URLField(max_length=300, blank=False, null=True)
     word = models.URLField(max_length=300, blank=False, null=True)
 
+class TagCollection(models.Model):
+    name = models.CharField(max_length=80, blank=False, null=False)
+    trie_blob = models.TextField(blank=False, null=False)
+    subscribers = models.ManyToManyField(User)
 
-class Tag(models.Model):
-    user = models.ForeignKey(User, null=False, blank=False)
+class BaseTag(models.Model):
     name = models.CharField(max_length=80, blank=False, null=False)
     color = models.CharField(max_length=10, blank=False, null=False)
     domain = models.URLField(max_length=300, default='')
+    description = models.CharField(max_length=10000, default='')
+    tag_collection = models.ForeignKey(TagCollection, on_delete=models.CASCADE, blank=True, null=True)
+    subscribers = models.ManyToManyField(User)
 
+class Tag(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    is_private = models.BooleanField(default=False)
+
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, null=True)
+    domain_obj = models.ForeignKey(Domain, on_delete=models.CASCADE, null=True)
+
+    vote_count = models.IntegerField(default=0)
+    highlight = models.ForeignKey(Highlight, null=True, on_delete=models.CASCADE)
+    
+    base_tag = models.ForeignKey(BaseTag, on_delete=models.CASCADE, null=False, blank=False)
+
+class Topic(Tag):
+    position = models.SmallIntegerField(null=True)
+
+class Value(Tag):
+    pass
+
+
+class Vote(models.Model):
+    date = models.DateTimeField(auto_now_add=True, blank=True)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE) # one valuetag to many votes
+    voter = models.ForeignKey(User, null=False, blank=False) 
+
+
+class UserTagInfo(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False)
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, null=False)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=False)
 
 class ChatMessage(models.Model):
     author = models.ForeignKey(
@@ -109,6 +145,8 @@ class EyeHistory(models.Model):
 
     total_time = models.IntegerField()  # store in ms
 
+    page = models.ForeignKey(Page, null=True, on_delete=models.SET_NULL)
+
     # store as human readable according to moment.js library:
     # http://momentjs.com/docs/#/displaying/humanize-duration/
     humanize_time = models.CharField(max_length=200, default='')
@@ -136,6 +174,7 @@ class PopularHistoryInfo(models.Model):
 
     img_url = models.URLField(max_length=2000, default='')
     description = models.TextField(default='')
+    page = models.ForeignKey(Page, null=True, on_delete=models.SET_NULL)
 
     domain = models.URLField(max_length=100, default='')
     favicon_url = models.TextField(default='')
