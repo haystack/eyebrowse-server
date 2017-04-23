@@ -126,7 +126,7 @@ def tags_by_page(request):
             'color': vt.common_tag.color,
             'description': vt.common_tag.description,
             'is_private': vt.is_private,
-            'vote_count': vt.vote_count,
+            'vote_count': len(Vote.objects.filter(tag=vt)),
           }
 
           tags[vt.common_tag.name] = vt_info
@@ -169,14 +169,17 @@ def tags_by_highlight(request):
 
       # get relevant info for each value tag
       for vt in vts:
+        print vt
+        print len(Vote.objects.filter(tag=vt))
         vt_info = {
           'user_voted': False,
           'name': vt.common_tag.name,
           'color': vt.common_tag.color,
           'description': vt.common_tag.description,
           'is_private': vt.is_private,
-          'vote_count': vt.vote_count,
+          'vote_count': len(Vote.objects.filter(tag=vt)),
         }
+        print vt_info
 
         votes = []
         vs = Vote.objects.filter(tag=vt)
@@ -243,7 +246,7 @@ def initialize_page(request):
           'color': vt.common_tag.color,
           'description': vt.common_tag.description,
           'is_private': vt.is_private,
-          'vote_count': vt.vote_count,
+          'vote_count': len(Vote.objects.filter(tag=vt)),
         }
 
         tags[vt.common_tag.name] = vt_info
@@ -353,9 +356,6 @@ def add_vote(request):
       
       # Ensure user hasn't already voted
       if vote_count == 0:
-        vt.vote_count += 1
-        vt.save()
-
         vote = Vote(tag=vt, voter=user)
         vote.save()
         success = True
@@ -397,8 +397,6 @@ def remove_vote(request):
       old_votes = Vote.objects.filter(tag=vt, voter=user)
 
       if len(old_votes) > 0:
-        vt.vote_count -= len(old_votes)
-        vt.save()
         old_votes.delete()
         success = True
 
@@ -485,8 +483,9 @@ def highlights(request):
 
         vts = Tag.objects.filter(highlight=h, page__url=url)
         for vt in vts:
-          if vt.vote_count >= max_tag_count:
-            max_tag_count = vt.vote_count
+          vote_count = len(Vote.objects.filter(tag=vt))
+          if vote_count >= max_tag_count:
+            max_tag_count = vote_count
             max_tag = (vt.common_tag.name, vt.common_tag.color)
         highlights[h.highlight] = max_tag
       success = True

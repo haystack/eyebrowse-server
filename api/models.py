@@ -37,7 +37,6 @@ class Tag(models.Model):
     description = models.CharField(max_length=10000, default='')
     is_private = models.BooleanField(default=False)
     position = models.SmallIntegerField(null=True)
-    vote_count = models.IntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="creator")
 
     page = models.ForeignKey(Page, on_delete=models.CASCADE, null=True)
