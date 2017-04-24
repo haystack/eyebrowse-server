@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting model 'Tag'
-        db.delete_table('api_tag')
+        db.rename_table('api_tag', 'tags_tag')
 
         # Adding model 'Domain'
         db.create_table('api_domain', (
@@ -45,14 +45,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Adding model 'Tag'
-        db.create_table('api_tag', (
-            ('domain', self.gf('django.db.models.fields.URLField')(default='', max_length=300)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=80)),
-            ('color', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        ))
-        db.send_create_signal('api', ['Tag'])
+        db.rename_table('tags_tag', 'api_tag')
 
         # Deleting model 'Domain'
         db.delete_table('api_domain')

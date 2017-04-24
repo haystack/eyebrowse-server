@@ -53,23 +53,18 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['commontag_id', 'user_id'])
 
-        # Adding model 'Tag'
-        db.create_table('tags_tag', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=80)),
-            ('color', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('domain', self.gf('django.db.models.fields.URLField')(default='', max_length=300)),
-            ('description', self.gf('django.db.models.fields.CharField')(default='', max_length=10000)),
-            ('is_private', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('position', self.gf('django.db.models.fields.SmallIntegerField')(null=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='creator', null=True, to=orm['auth.User'])),
-            ('page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Page'], null=True)),
-            ('domain_obj', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Domain'], null=True)),
-            ('highlight', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Highlight'], null=True)),
-            ('common_tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.CommonTag'], null=True, blank=True)),
-            ('tag_collection', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.TagCollection'], null=True, blank=True)),
-        ))
-        db.send_create_signal('tags', ['Tag'])
+       # Adding model 'Tag'
+        db.add_column('tags_tag', 'description', self.gf('django.db.models.fields.CharField')(default='', max_length=10000), keep_default=False)
+        db.add_column('tags_tag', 'is_private', self.gf('django.db.models.fields.BooleanField')(default=False), keep_default=False)
+        db.add_column('tags_tag', 'position', self.gf('django.db.models.fields.SmallIntegerField')(null=True), keep_default=False)
+        db.add_column('tags_tag', 'page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Page'], null=True), keep_default=False)
+        db.add_column('tags_tag', 'domain_obj', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Domain'], null=True), keep_default=False)
+        db.add_column('tags_tag', 'highlight', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Highlight'], null=True), keep_default=False)
+        db.add_column('tags_tag', 'common_tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.CommonTag'], null=True, blank=True), keep_default=False)
+        db.add_column('tags_tag', 'tag_collection', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.TagCollection'], null=True, blank=True), keep_default=False)
+
+        db.alter_column('tags_tag', 'color', self.gf('django.db.models.fields.CharField')(max_length=10))
+        db.alter_column('tags_tag', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='creator', null=True, to=orm['auth.User']))
 
         # Adding M2M table for field subscribers on 'Tag'
         m2m_table_name = db.shorten_name('tags_tag_subscribers')
@@ -115,9 +110,6 @@ class Migration(SchemaMigration):
         # Removing M2M table for field subscribers on 'CommonTag'
         db.delete_table(db.shorten_name('tags_commontag_subscribers'))
 
-        # Deleting model 'Tag'
-        db.delete_table('tags_tag')
-
         # Removing M2M table for field subscribers on 'Tag'
         db.delete_table(db.shorten_name('tags_tag_subscribers'))
 
@@ -126,6 +118,18 @@ class Migration(SchemaMigration):
 
         # Deleting model 'UserTagInfo'
         db.delete_table('tags_usertaginfo')
+
+        db.delete_column('tags_tag', 'description')
+        db.delete_column('tags_tag', 'is_private')
+        db.delete_column('tags_tag', 'position')
+        db.delete_column('tags_tag', 'page')
+        db.delete_column('tags_tag', 'domain_obj')
+        db.delete_column('tags_tag', 'highlight')
+        db.delete_column('tags_tag', 'common_tag')
+        db.delete_column('tags_tag', 'tag_collection')
+
+        db.alter_column('tags_tag', 'color', self.gf('django.db.models.fields.CharField')(default=0, max_length=10))
+        db.alter_column('tags_tag', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User']))
 
 
     models = {
@@ -238,4 +242,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['tags']
+    complete_apps = ['auth', 'tags']
