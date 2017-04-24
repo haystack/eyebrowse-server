@@ -9,11 +9,13 @@ class Highlight(models.Model):
     highlight = models.CharField(max_length=10000, blank=False, null=False)
     page = models.ForeignKey(Page, on_delete=models.CASCADE)
 
+# Tag grouping model object for all types of tags
 class TagCollection(models.Model):
     name = models.CharField(max_length=80, blank=False, null=False)
     trie_blob = models.TextField(blank=False, null=False)
     subscribers = models.ManyToManyField(User)
 
+# Base Tag object for commonly-used or special tags
 class CommonTag(models.Model):
     name = models.CharField(max_length=80, blank=False, null=False)
     color = models.CharField(max_length=10, blank=False, null=False)
@@ -21,6 +23,7 @@ class CommonTag(models.Model):
     tag_collection = models.ForeignKey(TagCollection, on_delete=models.CASCADE, blank=True, null=True)
     subscribers = models.ManyToManyField(User)
 
+# General Tag class for all types of Eyebrowse tags
 class Tag(models.Model):
     name = models.CharField(max_length=80, blank=False, null=False)
     color = models.CharField(max_length=10, blank=False, null=False)
