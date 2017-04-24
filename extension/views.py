@@ -14,10 +14,11 @@ from annoying.decorators import ajax_request
 from annoying.decorators import render_to
 
 from accounts.models import UserProfile
-from api.models import ChatMessage, MuteList, Tag
+from api.models import ChatMessage, MuteList
 from api.models import EyeHistory
 from api.models import EyeHistoryMessage
 from api.utils import humanize_time
+from tags.models import Tag
 
 from common.view_helpers import JSONResponse
 from common.templatetags.gravatar import gravatar_for_user

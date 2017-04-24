@@ -14,8 +14,8 @@ from annoying.decorators import ajax_request
 from api.defaults import DEFAULT_BLACKLIST
 from api.models import EyeHistory
 from api.models import MuteList
-from api.models import Tag
 from api.models import WhiteListItem
+from tags.models import Tag
 
 from common.templatetags.gravatar import gravatar_img_for_user
 from common.view_helpers import validate_url

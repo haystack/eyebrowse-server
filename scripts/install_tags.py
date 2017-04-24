@@ -1,6 +1,6 @@
 import setup_django
 import json
-from api.models import CommonTag, TagCollection
+from tags.models import CommonTag, TagCollection
 from django.contrib.auth.models import User
 
 TAGS = {

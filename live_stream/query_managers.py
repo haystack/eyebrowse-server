@@ -10,8 +10,8 @@ from accounts.models import UserProfile
 
 from api.models import EyeHistory
 from api.models import MuteList
-from api.models import Tag
 from api.models import PopularHistory
+from tags.models import Tag
 
 from common.pagination import paginator
 

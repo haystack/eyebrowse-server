@@ -10,9 +10,9 @@ from annoying.decorators import ajax_request
 from urlparse import urlparse
 from common.templatetags.gravatar import gravatar_for_user
 
-from tags.models import Domain, Page, Highlight
-from api.models import CommonTag, TagCollection
-from api.models import Tag, Vote, UserTagInfo
+from api.models import Domain, Page
+from tags.models import Highlight, CommonTag, TagCollection
+from tags.models import Tag, Vote, UserTagInfo
 from accounts.models import UserProfile
 
 '''
@@ -169,8 +169,6 @@ def tags_by_highlight(request):
 
       # get relevant info for each value tag
       for vt in vts:
-        print vt
-        print len(Vote.objects.filter(tag=vt))
         vt_info = {
           'user_voted': False,
           'name': vt.common_tag.name,
@@ -179,7 +177,6 @@ def tags_by_highlight(request):
           'is_private': vt.is_private,
           'vote_count': len(Vote.objects.filter(tag=vt)),
         }
-        print vt_info
 
         votes = []
         vs = Vote.objects.filter(tag=vt)
