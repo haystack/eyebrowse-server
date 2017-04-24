@@ -206,12 +206,19 @@ def tags_by_highlight(request):
 
 
 '''
-Adds domain
-Adds page; if page already exists, get value tags for page
-Count value tags in page content
-Add value tags to page
-Add value tags to user
-Returns value tags for page
+A: 
+  Adds domain
+  Adds page; 
+    if page already exists;
+      get value tags for page
+      if value tags don't exist;
+        do B
+
+B:
+  Count value tags in page content
+  Add value tags to page
+  Add value tags to user
+  Returns value tags for page
 '''
 @login_required
 @ajax_request
@@ -219,6 +226,7 @@ def initialize_page(request):
   tags = {}
   errors = {}
   user = request.user
+  count_tags = False
 
   if request.POST:
     url = process_url(request.POST.get('url'))
@@ -229,12 +237,15 @@ def initialize_page(request):
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=urlparse(url))
 
     errors['add_page'] = []
+    page = None
 
-    if len(Page.objects.filter(url=url)) != 0:
-      errors['add_page'].append("Page already exists!")
-
-      # Get value tags for page
+    try:
+      page = Page.objects.get(url=url)
       vts = Tag.objects.filter(page__url=url, highlight=None)
+
+      if len(vts) == 0:
+        # Need to generate tags for page
+        count_tags = True
 
       for vt in vts:
         vt_info = {
@@ -248,11 +259,18 @@ def initialize_page(request):
 
         tags[vt.common_tag.name] = vt_info
 
-    else: 
-      if domain_name == "":
-        domain_name = domain
-      if title == "":
-        title = url
+        # Add tag to user
+        if add_usertags == "true":
+          try:
+            UserTagInfo.objects.get(user=user, page=page, tag=vt)
+          except UserTagInfo.DoesNotExist:  
+            uto = UserTagInfo(user=user, page=page, tag=vt)
+            uto.save()
+    except:
+      count_tags = True
+
+      domain_name = domain if domain_name == "" else domain_name
+      title = url if title == "" else title
 
       # Add domain
       d, created = Domain.objects.get_or_create(url=domain, name=domain_name)
@@ -265,54 +283,54 @@ def initialize_page(request):
       try:
         page = Page(url=url, domain=d, title=title)
         page.save()
-
-        tc = TagCollection.objects.get(subscribers=user)
-        trie = json.loads(tc.trie_blob)
-
-        # Count value tags for page
-        r = requests.get(url)
-        emotes = countEmote(r.text, trie)
-        ts = [(e, emotes[e]) for e in emotes if e]
-        sorted(ts, key=lambda x: x[1], reverse=True)
-
-        errors['add_valuetags'] = []
-        for tag in ts:
-          if tag[1] > 2:
-            name = tag[0]
-
-            # Add tag to page
-            try:
-              vt = Tag.objects.get(page__url=url, common_tag__name=name, highlight=None)
-            except Tag.DoesNotExist:
-              try:
-                common_tag = CommonTag.objects.get(name=name)
-                vt = Tag(
-                  user=user,
-                  page=page,
-                  common_tag=common_tag
-                )
-                vt.save()
-
-                # Add tag to user
-                if add_usertags == "true":
-                  try:
-                    UserTagInfo.objects.get(user=user, page=page, tag=vt)
-                  except UserTagInfo.DoesNotExist:  
-                    uto = UserTagInfo(user=user, page=page, tag=vt)
-                    uto.save()
-                success = True
-              except CommonTag.DoesNotExist:
-                errors['add_valuetags'].append("Could not get base tag")
-
-            if len(errors['add_valuetags']) == 0:
-              tags[name] = {
-                'name': name,
-                'color': vt.common_tag.color,
-                'description': vt.common_tag.description,
-              }
-
       except:
         errors['add_page'].append("Could not create page")
+        count_tags = False
+
+    if count_tags:
+      tc = TagCollection.objects.get(subscribers=user)
+      trie = json.loads(tc.trie_blob)
+
+      # Count value tags for page
+      r = requests.get(url)
+      emotes = countEmote(r.text, trie)
+      ts = [(e, emotes[e]) for e in emotes if e]
+      sorted(ts, key=lambda x: x[1], reverse=True)
+
+      errors['add_valuetags'] = []
+      for tag in ts:
+        if tag[1] > 2:
+          name = tag[0]
+
+          # Add tag to page
+          try:
+            vt = Tag.objects.get(page__url=url, common_tag__name=name, highlight=None)
+          except Tag.DoesNotExist:
+            try:
+              common_tag = CommonTag.objects.get(name=name)
+              vt = Tag(
+                user=user,
+                page=page,
+                common_tag=common_tag
+              )
+              vt.save()
+
+              # Add tag to user
+              if add_usertags == "true":
+                try:
+                  UserTagInfo.objects.get(user=user, page=page, tag=vt)
+                except UserTagInfo.DoesNotExist:  
+                  uto = UserTagInfo(user=user, page=page, tag=vt)
+                  uto.save()
+            except CommonTag.DoesNotExist:
+              errors['add_valuetags'].append("Could not get base tag")
+
+          if len(errors['add_valuetags']) == 0:
+            tags[name] = {
+              'name': name,
+              'color': vt.common_tag.color,
+              'description': vt.common_tag.description,
+            }
 
     success = True
     for error_field in errors:
