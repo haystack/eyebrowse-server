@@ -16,8 +16,8 @@ from accounts.models import DeliciousInfo
 from accounts.renderers import connection_table_renderer
 
 from api.models import MuteList
-from api.models import Tag
 from api.models import WhiteListItem
+from tags.models import Tag
 
 
 from common.view_helpers import _template_values, JSONResponse

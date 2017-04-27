@@ -13,8 +13,8 @@ from annoying.decorators import render_to
 
 from accounts.models import UserProfile
 
-from api.models import Tag
 from api.models import WhiteListItem
+from tags.models import Tag
 
 from common.admin import email_templates
 from common.view_helpers import _template_values

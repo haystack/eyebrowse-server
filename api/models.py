@@ -11,19 +11,28 @@ from notifications.models import Notification, NoticeType, send, queue, send_now
 from accounts.models import UserProfile
 from eyebrowse.log import logger
 
-
 class MuteList(models.Model):
     user = models.ForeignKey(User, null=False, blank=False)
     url = models.URLField(max_length=300, blank=False, null=True)
     word = models.URLField(max_length=300, blank=False, null=True)
 
+# Domain and page objects
+class Domain(models.Model):
+    name = models.CharField(max_length=100, default='', unique=False)
+    url = models.URLField(max_length=300, blank=False, null=False)
 
-class Tag(models.Model):
-    user = models.ForeignKey(User, null=False, blank=False)
-    name = models.CharField(max_length=80, blank=False, null=False)
-    color = models.CharField(max_length=10, blank=False, null=False)
-    domain = models.URLField(max_length=300, default='')
+class Page(models.Model):
+    url = models.URLField(max_length=300, blank=False, null=False)
+    domain = models.ForeignKey(Domain, on_delete=models.CASCADE)
 
+    #from eyehistory
+    title = models.CharField(max_length=2000, default='')
+    favicon_url = models.TextField(default='')
+    favIconUrl = models.URLField(max_length=2000, default='')
+
+    #from popularhistory
+    description = models.TextField(default='')
+    img_url = models.URLField(max_length=2000, default='')
 
 class ChatMessage(models.Model):
     author = models.ForeignKey(
@@ -109,6 +118,8 @@ class EyeHistory(models.Model):
 
     total_time = models.IntegerField()  # store in ms
 
+    page = models.ForeignKey(Page, null=True, on_delete=models.SET_NULL)
+
     # store as human readable according to moment.js library:
     # http://momentjs.com/docs/#/displaying/humanize-duration/
     humanize_time = models.CharField(max_length=200, default='')
@@ -136,6 +147,7 @@ class PopularHistoryInfo(models.Model):
 
     img_url = models.URLField(max_length=2000, default='')
     description = models.TextField(default='')
+    page = models.ForeignKey(Page, null=True, on_delete=models.SET_NULL)
 
     domain = models.URLField(max_length=100, default='')
     favicon_url = models.TextField(default='')
@@ -297,4 +309,3 @@ def check_bumps(user, start_time, end_time, url):
                     queue([bump.user], "bump_follower", sender=user, extra={'url': url, 'date': datetime.datetime.now()})
                     sent_user.append(bump_prof)
                 
-    
