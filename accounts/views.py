@@ -213,7 +213,7 @@ def sync_delicious(request):
 @render_to('accounts/edit_tag.html')
 def edit_tags(request):
     user = request.user
-    tags = Tag.objects.filter(user=user)
+    tags = Tag.objects.filter(user=user, is_private=True)
     tag_dict = {}
     for tag in tags:
         if tag.name in tag_dict:
