@@ -339,6 +339,7 @@ def add_vote(request):
     url = process_url(request.POST.get('url'))
     highlight = request.POST.get('highlight')
     errors['add_vote'] = []
+    vt = None
 
     try:
       vt = Tag.objects.get(
@@ -346,19 +347,15 @@ def add_vote(request):
         highlight__highlight=highlight, 
         page__url=url,
       )
-
-      vote_count = len(Vote.objects.filter(tag=vt, voter=user))
-      
-      # Ensure user hasn't already voted
-      if vote_count == 0:
-        vote = Vote(tag=vt, voter=user)
-        vote.save()
-        success = True
-
-      vote_count = len(Vote.objects.filter(tag=vt))
-
     except Tag.DoesNotExist:
       errors['add_vote'].append("Tag " + tag_name + " does not exist")
+
+    if vt is not None:
+      v, created = Vote.objects.get_or_create(tag=vt, voter=user)
+      v.save()
+
+      vote_count = len(Vote.objects.filter(tag=vt))
+      success = True
 
   return {
     'success': success,
