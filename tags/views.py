@@ -235,57 +235,40 @@ def initialize_page(request):
     add_usertags = request.POST.get('add_usertags')
 
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=urlparse(url))
-
     errors['add_page'] = []
-    page = None
 
-    try:
-      page = Page.objects.get(url=url)
-      vts = Tag.objects.filter(page__url=url, highlight=None)
+    domain_name = domain if domain_name == "" else domain_name
+    title = url if title == "" else title
 
-      if len(vts) == 0:
-        # Need to generate tags for page
-        count_tags = True
+    # Add domain
+    d, d_created = Domain.objects.get_or_create(url=domain, name=domain_name)
+    d.save()
 
-      for vt in vts:
-        vt_info = {
-          'user_voted': False,
-          'name': vt.common_tag.name,
-          'color': vt.common_tag.color,
-          'description': vt.common_tag.description,
-          'is_private': vt.is_private,
-          'vote_count': len(Vote.objects.filter(tag=vt)),
-        }
+    # Add page
+    p, p_created = Page.objects.get_or_create(url=url, domain=d, title=title)
+    p.save()
 
-        tags[vt.common_tag.name] = vt_info
+    vts = Tag.objects.filter(page__url=url, highlight=None)
 
-        # Add tag to user
-        if add_usertags == "true":
-          try:
-            UserTagInfo.objects.get(user=user, page=page, tag=vt)
-          except UserTagInfo.DoesNotExist:  
-            uto = UserTagInfo(user=user, page=page, tag=vt)
-            uto.save()
-    except:
+    if p_created or len(vts) == 0:
       count_tags = True
 
-      domain_name = domain if domain_name == "" else domain_name
-      title = url if title == "" else title
+    for vt in vts:
+      vt_info = {
+        'user_voted': False,
+        'name': vt.common_tag.name,
+        'color': vt.common_tag.color,
+        'description': vt.common_tag.description,
+        'is_private': vt.is_private,
+        'vote_count': len(Vote.objects.filter(tag=vt)),
+      }
 
-      # Add domain
-      d, created = Domain.objects.get_or_create(url=domain, name=domain_name)
-      d.save()
+      tags[vt.common_tag.name] = vt_info
 
-      if not created:
-        errors['add_domain'] = ["Domain already exists"]
-
-      # Add page
-      try:
-        page = Page(url=url, domain=d, title=title)
-        page.save()
-      except:
-        errors['add_page'].append("Could not create page")
-        count_tags = False
+      # Add tag to user
+      if add_usertags == "true":
+        uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
+        uti.save()
 
     if count_tags:
       tc = TagCollection.objects.get(subscribers=user)
@@ -310,18 +293,15 @@ def initialize_page(request):
               common_tag = CommonTag.objects.get(name=name)
               vt = Tag(
                 user=user,
-                page=page,
+                page=p,
                 common_tag=common_tag
               )
               vt.save()
 
               # Add tag to user
               if add_usertags == "true":
-                try:
-                  UserTagInfo.objects.get(user=user, page=page, tag=vt)
-                except UserTagInfo.DoesNotExist:  
-                  uto = UserTagInfo(user=user, page=page, tag=vt)
-                  uto.save()
+                uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
+                uti.save()
             except CommonTag.DoesNotExist:
               errors['add_valuetags'].append("Could not get base tag")
 
