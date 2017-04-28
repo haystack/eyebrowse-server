@@ -291,7 +291,6 @@ def initialize_page(request):
             try:
               common_tag = CommonTag.objects.get(name=name)
               vt = Tag(
-                user=user,
                 page=p,
                 common_tag=common_tag
               )
