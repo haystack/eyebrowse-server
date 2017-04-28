@@ -160,12 +160,8 @@ def tags_by_highlight(request):
     url = process_url(request.GET.get('url'))
     errors['get_tags'] = []
 
-    h = Highlight.objects.get(highlight=highlight, page__url=url)
-    if not h:
-      errors['get_tags'].append("Highlight " + highlight + "doesn't exist!")
-
     if not len(errors['get_tags']):
-      vts = Tag.objects.filter(highlight=h, page__url=url)
+      vts = Tag.objects.filter(highlight__id=highlight, page__url=url)
 
       # get relevant info for each value tag
       for vt in vts:
@@ -344,7 +340,7 @@ def add_vote(request):
     try:
       vt = Tag.objects.get(
         common_tag__name=tag_name, 
-        highlight__highlight=highlight, 
+        highlight__id=highlight, 
         page__url=url,
       )
     except Tag.DoesNotExist:
@@ -383,7 +379,7 @@ def remove_vote(request):
     try:
       vt = Tag.objects.get(
         common_tag__name=tag_name, 
-        highlight__highlight=highlight, 
+        highlight__id=highlight, 
         page__url=url,
       )
       old_votes = Vote.objects.filter(tag=vt, voter=user)
@@ -417,37 +413,44 @@ def highlight(request):
   if request.POST:
     url = process_url(request.POST.get('url'))
     highlight = request.POST.get('highlight')
+    hl_id = request.POST.get('highlight_id')
     tags = json.loads(request.POST.get('tags'))
     errors['add_highlight'] = []
 
     if not len(errors['add_highlight']) and highlight != "":
       p = Page.objects.get(url=url)
 
-      try:
-        h = Highlight.objects.get(page=p, highlight=highlight)
-      except:
-        h = Highlight(page=p, highlight=highlight)
+      if hl_id:
+        try:
+          h = Highlight.objects.get(page=p, id=hl_id)
+        except:
+          errors['add_highlight'].append('Could not get highlight')
+      else:
+        h, created = Highlight.objects.get_or_create(page=p, highlight=highlight)
         h.save()
 
-      for tag in tags:
-        if len(Tag.objects.filter(highlight=h, common_tag__name=tag)) == 0:
-          try:
-            common_tag = CommonTag.objects.get(name=tag)
-            vt = Tag(
-              page=p, 
-              highlight=h, 
-              common_tag=common_tag,
-              user=user, 
-            )
-            vt.save()
-          except CommonTag.DoesNotExist:
-            errors['add_highlight'].append("Base tag " + tag + " does not exist")
+      if not len(errors['add_highlight']):
+        for tag in tags:
+          if len(Tag.objects.filter(highlight=h, common_tag__name=tag)) == 0:
+            try:
+              common_tag = CommonTag.objects.get(name=tag)
+              vt = Tag(
+                page=p, 
+                highlight=h, 
+                common_tag=common_tag,
+                user=user, 
+              )
+              vt.save()
+            except CommonTag.DoesNotExist:
+              errors['add_highlight'].append("Base tag " + tag + " does not exist")
 
-          success = True
+        success = True
+        data['highlight_id'] = h.id
 
   return {
     'success': success,
     'errors': errors,
+    'data': data,
   }
 
 '''
@@ -479,7 +482,10 @@ def highlights(request):
           if vote_count >= max_tag_count:
             max_tag_count = vote_count
             max_tag = (vt.common_tag.name, vt.common_tag.color)
-        highlights[h.highlight] = max_tag
+        highlights[h.highlight] = {
+          'max_tag': max_tag,
+          'id': h.id
+        }
       success = True
 
   return {
