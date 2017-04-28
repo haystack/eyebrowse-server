@@ -140,6 +140,7 @@ def add_tag(request):
         if tags.count() > 0:
             tag = tags[0]
             tag.name = name
+            tag.is_private = True
             tag.save()
         else:
 
