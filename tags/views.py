@@ -244,7 +244,9 @@ def initialize_page(request):
     d.save()
 
     # Add page
-    p, p_created = Page.objects.get_or_create(url=url, domain=d, title=title)
+    p, p_created = Page.objects.get_or_create(url=url)
+    p.domain = d
+    p.title = title
     p.save()
 
     vts = Tag.objects.filter(page__url=url, highlight=None)
