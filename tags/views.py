@@ -244,78 +244,85 @@ def initialize_page(request):
     d.save()
 
     # Add page
-    p, p_created = Page.objects.get_or_create(url=url)
-    p.domain = d
-    p.title = title
-    p.save()
+    try: 
+      p = Page.objects.get(url=url)
+    except:
+      if len(Page.objects.filter(url=url)) == 0:
+        p = Page(url=url, domain=d)
+        p.title = title
+        p.save()
+        count_tags = True
+      else:
+        errors['add_page'].append("More than one page exists")
 
-    vts = Tag.objects.filter(page__url=url, highlight=None)
+    if len(errors['add_page']) == 0:
+      vts = Tag.objects.filter(page__url=url, highlight=None)
 
-    if p_created or len(vts) == 0:
-      count_tags = True
+      if len(vts) == 0:
+        count_tags = True
 
-    for vt in vts:
-      vt_info = {
-        'user_voted': False,
-        'name': vt.common_tag.name,
-        'color': vt.common_tag.color,
-        'description': vt.common_tag.description,
-        'is_private': vt.is_private,
-        'vote_count': len(Vote.objects.filter(tag=vt)),
-      }
+      for vt in vts:
+        vt_info = {
+          'user_voted': False,
+          'name': vt.common_tag.name,
+          'color': vt.common_tag.color,
+          'description': vt.common_tag.description,
+          'is_private': vt.is_private,
+          'vote_count': len(Vote.objects.filter(tag=vt)),
+        }
 
-      tags[vt.common_tag.name] = vt_info
+        tags[vt.common_tag.name] = vt_info
 
-      # Add tag to user
-      if add_usertags == "true":
-        uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
-        uti.save()
+        # Add tag to user
+        if add_usertags == "true":
+          uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
+          uti.save()
 
-    if count_tags:
-      tc = TagCollection.objects.get(subscribers=user)
-      trie = json.loads(tc.trie_blob)
+      if count_tags:
+        tc = TagCollection.objects.get(subscribers=user)
+        trie = json.loads(tc.trie_blob)
 
-      # Count value tags for page
-      r = requests.get(url)
-      emotes = countEmote(r.text, trie)
-      ts = [(e, emotes[e]) for e in emotes if e]
-      sorted(ts, key=lambda x: x[1], reverse=True)
+        # Count value tags for page
+        r = requests.get(url)
+        emotes = countEmote(r.text, trie)
+        ts = [(e, emotes[e]) for e in emotes if e]
+        sorted(ts, key=lambda x: x[1], reverse=True)
 
-      errors['add_valuetags'] = []
-      for tag in ts:
-        if tag[1] > 2:
-          name = tag[0]
+        errors['add_valuetags'] = []
+        for tag in ts:
+          if tag[1] > 2:
+            name = tag[0]
 
-          # Add tag to page
-          try:
-            vt = Tag.objects.get(page__url=url, common_tag__name=name, highlight=None)
-          except Tag.DoesNotExist:
+            # Add tag to page
             try:
-              common_tag = CommonTag.objects.get(name=name)
-              vt = Tag(
-                page=p,
-                common_tag=common_tag
-              )
-              vt.save()
+              vt = Tag.objects.get(page__url=url, common_tag__name=name, highlight=None)
+            except Tag.DoesNotExist:
+              try:
+                common_tag = CommonTag.objects.get(name=name)
+                vt = Tag(
+                  page=p,
+                  common_tag=common_tag
+                )
+                vt.save()
 
-              # Add tag to user
-              if add_usertags == "true":
-                uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
-                uti.save()
-            except CommonTag.DoesNotExist:
-              errors['add_valuetags'].append("Could not get base tag")
+                # Add tag to user
+                if add_usertags == "true":
+                  uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
+                  uti.save()
+              except CommonTag.DoesNotExist:
+                errors['add_valuetags'].append("Could not get base tag")
 
-          if len(errors['add_valuetags']) == 0:
-            tags[name] = {
-              'name': name,
-              'color': vt.common_tag.color,
-              'description': vt.common_tag.description,
-            }
+            if len(errors['add_valuetags']) == 0:
+              tags[name] = {
+                'name': name,
+                'color': vt.common_tag.color,
+                'description': vt.common_tag.description,
+              }
 
-    success = True
-    for error_field in errors:
-      if errors[error_field] != []:
-        success = False
+      success = True
+      for error_field in errors:
+        if errors[error_field] != []:
+          success = False
 
     return {
       'success': success,
