@@ -226,6 +226,7 @@ def initialize_page(request):
 
   if request.POST:
     url = process_url(request.POST.get('url'))
+    favIconUrl = request.POST.get('favIconUrl')
     domain_name = request.POST.get('domain_name')
     title = request.POST.get('title')
     add_usertags = request.POST.get('add_usertags')
@@ -233,11 +234,13 @@ def initialize_page(request):
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=urlparse(url))
     errors['add_page'] = []
 
-    domain_name = domain if domain_name == "" else domain_name
     title = url if title == "" else title
 
     # Add domain
-    d, d_created = Domain.objects.get_or_create(url=domain, name=domain_name)
+    d, d_created = Domain.objects.get_or_create(url=domain)
+    if domain_name is not None:
+      d.name = domain_name
+
     d.save()
 
     # Add page
