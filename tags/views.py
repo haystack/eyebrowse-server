@@ -438,6 +438,7 @@ def highlight(request):
           errors['add_highlight'].append('Could not get highlight')
       else:
         h, created = Highlight.objects.get_or_create(page=p, highlight=highlight)
+        h.user = user
         h.save()
 
       if not len(errors['add_highlight']):
@@ -472,6 +473,7 @@ Get all highlights for a page
 def highlights(request):
   success = False
   errors = {}
+  user = request.user
   data = {}
   highlights = {}
   max_tag = ()
@@ -495,7 +497,8 @@ def highlights(request):
             max_tag = (vt.common_tag.name, vt.common_tag.color)
         highlights[h.highlight] = {
           'max_tag': max_tag,
-          'id': h.id
+          'id': h.id,
+          'is_owner': h.user == user,
         }
       success = True
 
@@ -504,6 +507,37 @@ def highlights(request):
     'errors': errors,
     'highlights': highlights,
   }
+
+'''
+Delete a highlight
+'''
+@login_required
+@ajax_request
+def delete_highlight(request):
+  success = False
+  errors = {}
+  user = request.user
+  errors['delete_highlight'] = []
+
+  if request.POST:
+    highlight = request.POST.get('highlight')
+    h = None
+
+    try:
+      h = Highlight.objects.get(id=highlight)
+    except:
+      errors['delete_highlight'].append("Highlight does not exist")
+
+    if len(errors['delete_highlight']) == 0:
+      if h.user == user:
+        h.delete()
+        success = True
+
+  return {
+    'success': success,
+    'errors': errors,
+  }
+
 
 '''
 Get related stories
