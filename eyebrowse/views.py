@@ -179,11 +179,15 @@ def color_tag(request):
 def delete_tag(request):
     domain = request.POST.get('domain', None)
     name = request.POST.get('tag', None)
+    page_url = request.POST.get('url', None)
 
     user = request.user
 
     if domain and name:
         tags = Tag.objects.filter(user=user, domain=domain, name=name)
+        tags.delete()
+    elif name and page_url:
+        tags = Tag.objects.filter(user=user, common_tag__name=name, page__url=page_url)
         tags.delete()
     elif name:
         tags = Tag.objects.filter(user=user, name=name)

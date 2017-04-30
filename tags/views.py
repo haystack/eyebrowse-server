@@ -15,47 +15,6 @@ from tags.models import Highlight, CommonTag, TagCollection
 from tags.models import Tag, Vote, UserTagInfo
 from accounts.models import UserProfile
 
-'''
-Add a value tag
-'''
-@login_required
-@ajax_request
-def value_tag(request):
-  user = request.user
-  success = False
-  errors = {}
-
-  # Add a new tag
-  if request.POST:
-    tag_name = request.POST.get('name')
-    url = process_url(request.POST.get('url'))
-    errors['add_tag'] = []
-
-    try:
-      page = Page.objects.get(url=url)
-
-      if len(Tag.objects.filter(common_tag__name=tag_name, page__url=url)) > 0:
-        errors['add_tag'].append("Tag " + tag_name + " already exists")
-      else:
-        try:
-          common_tag = CommonTag.objects.get(name=tag_name)
-          new_tag = Tag(
-            user=user, 
-            page=page,
-            common_tag=common_tag
-          )
-          new_tag.save()
-          success = True
-        except CommonTag.DoesNotExist:
-          errors['add_tag'].append("Could not find base tag " + tag_name)
-
-    except Page.DoesNotExist:
-      errors['add_tag'].append("Page " + url + " does not exist")
-
-  return {
-    'success': success,
-    'errors': errors,
-  }
 
 '''
 Get page info
