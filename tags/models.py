@@ -8,6 +8,7 @@ class Highlight(models.Model):
     date = models.DateTimeField(auto_now_add=True, blank=True)
     highlight = models.CharField(max_length=10000, blank=False, null=False)
     page = models.ForeignKey(Page, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
 # Tag grouping model object for all types of tags
 class TagCollection(models.Model):
