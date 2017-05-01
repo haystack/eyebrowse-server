@@ -191,7 +191,7 @@ def initialize_page(request):
     title = request.POST.get('title')
     add_usertags = request.POST.get('add_usertags')
 
-    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=urlparse(url))
+    domain = '{uri.netloc}'.format(uri=urlparse(url))
     errors['add_page'] = []
 
     title = url if title == "" else title
@@ -217,10 +217,9 @@ def initialize_page(request):
 
     if len(errors['add_page']) == 0:
       vts = Tag.objects.filter(page__url=url, highlight=None)
-
       if len(vts) == 0:
         count_tags = True
-
+      
       for vt in vts:
         vt_info = {
           'user_voted': False,
