@@ -150,6 +150,7 @@ def tags_by_highlight(request):
           })
         vt_info['votes'] = votes
         sorted_tags.append(vt_info)
+        success = True
 
   sorted_tags = sorted(sorted_tags, key=lambda x: x["vote_count"], reverse=True)
 
@@ -447,13 +448,13 @@ def highlights(request):
       for h in hs:
         max_tag = ()
         max_tag_count = 0
-
         vts = Tag.objects.filter(highlight=h, page__url=url)
         for vt in vts:
           vote_count = len(Vote.objects.filter(tag=vt))
           if vote_count >= max_tag_count:
             max_tag_count = vote_count
             max_tag = (vt.common_tag.name, vt.common_tag.color)
+
         highlights[h.highlight] = {
           'max_tag': max_tag,
           'id': h.id,
