@@ -19,7 +19,7 @@ class MuteList(models.Model):
 # Domain and page objects
 class Domain(models.Model):
     name = models.CharField(max_length=100, default='', unique=False)
-    url = models.URLField(max_length=300, blank=False, null=False)
+    url = models.URLField(blank=False, null=False, unique=True)
 
 class Page(models.Model):
     url = models.URLField(max_length=300, blank=False, null=False)
