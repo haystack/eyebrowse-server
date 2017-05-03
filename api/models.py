@@ -21,9 +21,15 @@ class Domain(models.Model):
     name = models.CharField(max_length=100, default='', unique=False)
     url = models.URLField(blank=False, null=False, unique=True)
 
+class Summary(models.Model):
+    summary = models.CharField(max_length=2000, default='')
+    last_editor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
 class Page(models.Model):
     url = models.URLField(max_length=300, blank=False, null=False)
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE)
+    summary = models.ForeignKey(Summary, on_delete=models.SET_NULL, null=True, blank=True)
 
     #from eyehistory
     title = models.CharField(max_length=2000, default='')
