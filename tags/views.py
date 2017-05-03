@@ -131,6 +131,7 @@ def tags_by_highlight(request):
           'description': vt.common_tag.description,
           'is_private': vt.is_private,
           'vote_count': len(Vote.objects.filter(tag=vt)),
+          'is_owner': (vt.user == user),
         }
 
         votes = []
