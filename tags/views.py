@@ -186,6 +186,7 @@ def initialize_page(request):
   errors = {}
   user = request.user
   count_tags = False
+  highlights = 0
 
   if request.POST:
     url = process_url(request.POST.get('url'))
@@ -219,6 +220,7 @@ def initialize_page(request):
         errors['add_page'].append("More than one page exists")
 
     if len(errors['add_page']) == 0:
+      highlights = len(Highlight.objects.filter(page__url=url))
       vts = Tag.objects.filter(page__url=url, highlight=None)
       if len(vts) == 0:
         count_tags = True
@@ -295,6 +297,7 @@ def initialize_page(request):
       'success': success,
       'errors': errors,
       'tags': tags,
+      'highlights': highlights,
     }
 
 '''
@@ -551,7 +554,7 @@ def related_stories(request):
           "source": item["source"]["name"],
           "domain": item["source"]["domain"],
           "logo": logo,
-          "summary": item["body"]
+          "summary": item["body"],
         }
 
       success = True
