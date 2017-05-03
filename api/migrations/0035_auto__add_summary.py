@@ -14,21 +14,14 @@ class Migration(SchemaMigration):
             ('summary', self.gf('django.db.models.fields.CharField')(default='', max_length=2000)),
             ('last_editor', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, on_delete=models.SET_NULL, blank=True)),
             ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Page'])),
         ))
         db.send_create_signal('api', ['Summary'])
-
-        # Adding field 'Page.summary'
-        db.add_column('api_page', 'summary',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Summary'], null=True, on_delete=models.SET_NULL, blank=True),
-                      keep_default=False)
 
 
     def backwards(self, orm):
         # Deleting model 'Summary'
         db.delete_table('api_summary')
-
-        # Deleting field 'Page.summary'
-        db.delete_column('api_page', 'summary_id')
 
 
     models = {
@@ -111,7 +104,6 @@ class Migration(SchemaMigration):
             'favicon_url': ('django.db.models.fields.TextField', [], {'default': "''"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'img_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '2000'}),
-            'summary': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Summary']", 'null': 'True', 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2000'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '300'})
         },
@@ -149,6 +141,7 @@ class Migration(SchemaMigration):
             'date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'last_editor': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Page']"}),
             'summary': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2000'})
         },
         'api.whitelistitem': {

@@ -2,8 +2,6 @@ import json
 import os
 import urllib
 import requests
-import tz
-import date
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -11,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from annoying.decorators import ajax_request
 from urlparse import urlparse
 from common.templatetags.gravatar import gravatar_for_user
+from dateutil import tz
+from datetime import datetime
 
 from api.models import Domain, Page, Summary
 from tags.models import Highlight, CommonTag, TagCollection
@@ -639,7 +639,7 @@ def page_summary(request):
 
     try:
       p = Page.objects.get(url=url)
-      s = Summary.objects.get_or_create(page=p)
+      s, s_created = Summary.objects.get_or_create(page=p)
 
       from_zone = tz.tzutc()
       to_zone = tz.tzlocal()
@@ -662,26 +662,26 @@ def page_summary(request):
 
     try:
       p = Page.objects.get(url=url)
-      s = Summary(summary=summary, last_editor=user)
+      s, s_created = Summary.objects.get_or_create(page=p)
+      s.summary = summary
+      s.last_editor = user
+      s.date = datetime.now()
       s.save()
 
       from_zone = tz.tzutc()
       to_zone = tz.tzlocal()
 
-      date = s.date.replace(tzinfo=from_zone)
-      local = date.astimezone(to_zone)
+      local = s.date.replace(tzinfo=from_zone)
 
       data['summary'] = {
         'summary': summary,
         'user': user.username,
         'date': local.strftime('%b %m, %Y,  %I:%M %p'),
       }
-      print "hereee"
       success = True
     except: 
       errors['page_summary'].append('Could not get page ' + url)
 
-  print data
   return {
     'success': success,
     'errors': errors,
