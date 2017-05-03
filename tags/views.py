@@ -243,7 +243,7 @@ def initialize_page(request):
         trie = json.loads(tc.trie_blob)
 
         # Count value tags for page
-        r = requests.get(url)
+        r = requests.get(url, verify=False)
         emotes = countEmote(r.text, trie)
         ts = [(e, emotes[e]) for e in emotes if e]
         sorted(ts, key=lambda x: x[1], reverse=True)
