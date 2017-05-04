@@ -9,8 +9,10 @@ from django.contrib.auth.decorators import login_required
 from annoying.decorators import ajax_request
 from urlparse import urlparse
 from common.templatetags.gravatar import gravatar_for_user
+from dateutil import tz
+from datetime import datetime
 
-from api.models import Domain, Page
+from api.models import Domain, Page, Summary, SummaryHistory
 from tags.models import Highlight, CommonTag, TagCollection
 from tags.models import Tag, Vote, UserTagInfo
 from accounts.models import UserProfile
@@ -184,6 +186,7 @@ def initialize_page(request):
   errors = {}
   user = request.user
   count_tags = False
+  highlights = 0
 
   if request.POST:
     url = process_url(request.POST.get('url'))
@@ -201,12 +204,13 @@ def initialize_page(request):
     d, d_created = Domain.objects.get_or_create(url=domain)
     if domain_name is not None:
       d.name = domain_name
-
     d.save()
 
     # Add page
     try: 
       p = Page.objects.get(url=url)
+      p.title = title
+      p.save()
     except:
       if len(Page.objects.filter(url=url)) == 0:
         p = Page(url=url, domain=d)
@@ -217,6 +221,7 @@ def initialize_page(request):
         errors['add_page'].append("More than one page exists")
 
     if len(errors['add_page']) == 0:
+      highlights = len(Highlight.objects.filter(page__url=url))
       vts = Tag.objects.filter(page__url=url, highlight=None)
       if len(vts) == 0:
         count_tags = True
@@ -239,45 +244,53 @@ def initialize_page(request):
           uti.save()
 
       if count_tags:
-        tc = TagCollection.objects.get(subscribers=user)
-        trie = json.loads(tc.trie_blob)
+        errors['get_tc'] = []
+        try:
+          tc = TagCollection.objects.get(subscribers=user)
+          trie = json.loads(tc.trie_blob)
+        except: 
+          errors['get_tc'].append('User not subscribed')
 
-        # Count value tags for page
-        r = requests.get(url)
-        emotes = countEmote(r.text, trie)
-        ts = [(e, emotes[e]) for e in emotes if e]
-        sorted(ts, key=lambda x: x[1], reverse=True)
+        if len(errors['get_tc']) == 0:
+          # Count value tags for page
+          r = requests.get(url, verify=False)
+          emotes = countEmote(r.text, trie)
+          ts = [(e, emotes[e]) for e in emotes if e]
+          sorted(ts, key=lambda x: x[1], reverse=True)
 
-        errors['add_valuetags'] = []
-        for tag in ts:
-          if tag[1] > 2:
-            name = tag[0]
+          errors['add_valuetags'] = []
 
-            # Add tag to page
-            try:
-              vt = Tag.objects.get(page__url=url, common_tag__name=name, highlight=None)
-            except Tag.DoesNotExist:
+          if len(ts) == 0:
+            errors['add_valuetags'].append('No tags counted')
+
+          count = 3
+          for tag in ts:
+            if tag[1] > 2 and count > 0:
+              count -= 1
+              name = tag[0]
+
+              # Add tag to page
               try:
-                common_tag = CommonTag.objects.get(name=name)
-                vt = Tag(
-                  page=p,
-                  common_tag=common_tag
-                )
-                vt.save()
+                vt = Tag.objects.get(page__url=url, common_tag__name=name, highlight=None)
+              except Tag.DoesNotExist:
+                try:
+                  common_tag = CommonTag.objects.get(name=name)
+                  vt = Tag(page=p, common_tag=common_tag, word_count=tag[1])
+                  vt.save()
 
-                # Add tag to user
-                if add_usertags == "true":
-                  uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
-                  uti.save()
-              except CommonTag.DoesNotExist:
-                errors['add_valuetags'].append("Could not get base tag")
+                  # Add tag to user
+                  if add_usertags == "true":
+                    uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
+                    uti.save()
+                except CommonTag.DoesNotExist:
+                  errors['add_valuetags'].append("Could not get base tag")
 
-            if len(errors['add_valuetags']) == 0:
-              tags[name] = {
-                'name': name,
-                'color': vt.common_tag.color,
-                'description': vt.common_tag.description,
-              }
+              if len(errors['add_valuetags']) == 0:
+                tags[name] = {
+                  'name': name,
+                  'color': vt.common_tag.color,
+                  'description': vt.common_tag.description,
+                }
 
       success = True
       for error_field in errors:
@@ -288,6 +301,7 @@ def initialize_page(request):
       'success': success,
       'errors': errors,
       'tags': tags,
+      'highlights': highlights,
     }
 
 '''
@@ -544,7 +558,7 @@ def related_stories(request):
           "source": item["source"]["name"],
           "domain": item["source"]["domain"],
           "logo": logo,
-          "summary": item["body"]
+          "summary": item["body"],
         }
 
       success = True
@@ -615,6 +629,84 @@ def common_tags(request):
     'common_tags': common_tags,
   }
 
+@login_required
+@ajax_request
+def page_summary(request):
+  success = False
+  user = request.user
+  data = {}
+  errors = {}
+  errors['page_summary'] = []
+  data['summary'] = {
+    'summary': '',
+  }
+
+  if request.GET:
+    url = process_url(request.GET.get('url'))
+
+    try:
+      p = Page.objects.get(url=url)
+      s, s_created = Summary.objects.get_or_create(page=p)
+
+      from_zone = tz.tzutc()
+      to_zone = tz.tzlocal()
+
+      date = s.date.replace(tzinfo=from_zone)
+      local = date.astimezone(to_zone)
+
+      data['summary'] = {
+        'summary': s.summary,
+        'user': s.last_editor.username,
+        'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+      }
+      success = True
+    except:
+      errors['page_summary'].append('Could not get page ' + url)
+
+  if request.POST:
+    url = process_url(request.POST.get('url'))
+    domain = '{uri.netloc}'.format(uri=urlparse(url))
+    summary = request.POST.get('summary')
+
+    try:
+      d, d_created = Domain.objects.get_or_create(url=domain)
+      d.save()
+
+      if len(Page.objects.filter(url=url)) == 0:
+        p = Page(url=url, domain=d)
+        p.save()
+      else:
+        p = Page.objects.get(url=url)
+
+      s, s_created = Summary.objects.get_or_create(page=p)
+      prev_summary = s.summary
+      sh = SummaryHistory(user=user, new_summary=summary, previous_summary=prev_summary, summary=s)
+      sh.save()
+
+      s.summary = summary
+      s.last_editor = user
+      s.date = datetime.now()
+      s.save()
+
+      from_zone = tz.tzutc()
+      to_zone = tz.tzlocal()
+
+      local = s.date.replace(tzinfo=from_zone)
+
+      data['summary'] = {
+        'summary': summary,
+        'user': user.username,
+        'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+      }
+      success = True
+    except: 
+      errors['page_summary'].append('Could not get page ' + url)
+
+  return {
+    'success': success,
+    'errors': errors,
+    'data': data,
+  }
 
 # Helper function to parse urls minus query strings
 def process_url(url):
@@ -644,15 +736,17 @@ def in_trie(trie, word):
       return False
 
 def countEmote(text, trie):
+  count = 0
   emote_dict = {}
   for word in text.split(" "):
     if word.isalpha():
+      count += 1
       state = in_trie(trie, word)
       if state in emote_dict:
         emote_dict[state] += 1
       else:
         emote_dict[state] = 1
-    
-  return emote_dict
+
+  return emote_dict if count > 500 else {}
 
 

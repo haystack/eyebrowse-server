@@ -34,6 +34,19 @@ class Page(models.Model):
     description = models.TextField(default='')
     img_url = models.URLField(max_length=2000, default='')
 
+class Summary(models.Model):
+    summary = models.CharField(max_length=2000, default='')
+    last_editor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+    page = models.ForeignKey(Page, on_delete=models.CASCADE)
+
+class SummaryHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    date = models.DateTimeField(auto_now_add=True)
+    previous_summary = models.CharField(max_length=2000, default='')
+    new_summary = models.CharField(max_length=2000, default='')
+    summary = models.ForeignKey(Summary, on_delete=models.CASCADE)
+
 class ChatMessage(models.Model):
     author = models.ForeignKey(
         User, related_name='author', null=False, blank=False)
