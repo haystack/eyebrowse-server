@@ -12,7 +12,7 @@ from common.templatetags.gravatar import gravatar_for_user
 from dateutil import tz
 from datetime import datetime
 
-from api.models import Domain, Page, Summary
+from api.models import Domain, Page, Summary, SummaryHistory
 from tags.models import Highlight, CommonTag, TagCollection
 from tags.models import Tag, Vote, UserTagInfo
 from accounts.models import UserProfile
@@ -679,6 +679,10 @@ def page_summary(request):
         p = Page.objects.get(url=url)
 
       s, s_created = Summary.objects.get_or_create(page=p)
+      prev_summary = s.summary
+      sh = SummaryHistory(user=user, new_summary=summary, previous_summary=prev_summary, summary=s)
+      sh.save()
+
       s.summary = summary
       s.last_editor = user
       s.date = datetime.now()

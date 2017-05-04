@@ -40,6 +40,12 @@ class Summary(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     page = models.ForeignKey(Page, on_delete=models.CASCADE)
 
+class SummaryHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    date = models.DateTimeField(auto_now_add=True)
+    previous_summary = models.CharField(max_length=2000, default='')
+    new_summary = models.CharField(max_length=2000, default='')
+    summary = models.ForeignKey(Summary, on_delete=models.CASCADE)
 
 class ChatMessage(models.Model):
     author = models.ForeignKey(

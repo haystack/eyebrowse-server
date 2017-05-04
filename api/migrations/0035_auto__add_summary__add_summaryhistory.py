@@ -18,10 +18,24 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('api', ['Summary'])
 
+        # Adding model 'SummaryHistory'
+        db.create_table('api_summaryhistory', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, on_delete=models.SET_NULL)),
+            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('previous_summary', self.gf('django.db.models.fields.CharField')(default='', max_length=2000)),
+            ('new_summary', self.gf('django.db.models.fields.CharField')(default='', max_length=2000)),
+            ('summary', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Summary'])),
+        ))
+        db.send_create_signal('api', ['SummaryHistory'])
+
 
     def backwards(self, orm):
         # Deleting model 'Summary'
         db.delete_table('api_summary')
+
+        # Deleting model 'SummaryHistory'
+        db.delete_table('api_summaryhistory')
 
 
     models = {
@@ -143,6 +157,15 @@ class Migration(SchemaMigration):
             'last_editor': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
             'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Page']"}),
             'summary': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2000'})
+        },
+        'api.summaryhistory': {
+            'Meta': {'object_name': 'SummaryHistory'},
+            'date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'new_summary': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2000'}),
+            'previous_summary': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2000'}),
+            'summary': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Summary']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'on_delete': 'models.SET_NULL'})
         },
         'api.whitelistitem': {
             'Meta': {'unique_together': "(('user', 'url'),)", 'object_name': 'WhiteListItem'},
