@@ -204,12 +204,13 @@ def initialize_page(request):
     d, d_created = Domain.objects.get_or_create(url=domain)
     if domain_name is not None:
       d.name = domain_name
-
     d.save()
 
     # Add page
     try: 
       p = Page.objects.get(url=url)
+      p.title = title
+      p.save()
     except:
       if len(Page.objects.filter(url=url)) == 0:
         p = Page(url=url, domain=d)
@@ -258,8 +259,14 @@ def initialize_page(request):
           sorted(ts, key=lambda x: x[1], reverse=True)
 
           errors['add_valuetags'] = []
+
+          if len(ts) == 0:
+            errors['add_valuetags'].append('No tags counted')
+
+          count = 3
           for tag in ts:
-            if tag[1] > 2:
+            if tag[1] > 2 and count > 0:
+              count -= 1
               name = tag[0]
 
               # Add tag to page
@@ -268,10 +275,7 @@ def initialize_page(request):
               except Tag.DoesNotExist:
                 try:
                   common_tag = CommonTag.objects.get(name=name)
-                  vt = Tag(
-                    page=p,
-                    common_tag=common_tag
-                  )
+                  vt = Tag(page=p, common_tag=common_tag, word_count=tag[1])
                   vt.save()
 
                   # Add tag to user
@@ -661,10 +665,19 @@ def page_summary(request):
 
   if request.POST:
     url = process_url(request.POST.get('url'))
+    domain = '{uri.netloc}'.format(uri=urlparse(url))
     summary = request.POST.get('summary')
 
     try:
-      p = Page.objects.get(url=url)
+      d, d_created = Domain.objects.get_or_create(url=domain)
+      d.save()
+
+      if len(Page.objects.filter(url=url)) == 0:
+        p = Page(url=url, domain=d)
+        p.save()
+      else:
+        p = Page.objects.get(url=url)
+
       s, s_created = Summary.objects.get_or_create(page=p)
       s.summary = summary
       s.last_editor = user
@@ -719,15 +732,17 @@ def in_trie(trie, word):
       return False
 
 def countEmote(text, trie):
+  count = 0
   emote_dict = {}
   for word in text.split(" "):
     if word.isalpha():
+      count += 1
       state = in_trie(trie, word)
       if state in emote_dict:
         emote_dict[state] += 1
       else:
         emote_dict[state] = 1
-    
-  return emote_dict
+
+  return emote_dict if count > 500 else {}
 
 

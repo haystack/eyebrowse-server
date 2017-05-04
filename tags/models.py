@@ -43,6 +43,8 @@ class Tag(models.Model):
     tag_collection = models.ForeignKey(TagCollection, on_delete=models.CASCADE, blank=True, null=True)
     subscribers = models.ManyToManyField(User, related_name="subscribers")
 
+    word_count = models.IntegerField(default=0) # temporary, for logging purposes
+
 
 class Vote(models.Model):
     date = models.DateTimeField(auto_now_add=True, blank=True)
