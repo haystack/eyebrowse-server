@@ -5,6 +5,7 @@ import requests
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 
 from annoying.decorators import ajax_request
 from urlparse import urlparse
@@ -179,6 +180,7 @@ B:
   Add value tags to user
   Returns value tags for page
 '''
+@csrf_protect
 @login_required
 @ajax_request
 def initialize_page(request):
@@ -307,6 +309,7 @@ def initialize_page(request):
 '''
 Add a vote to a value tag
 '''
+@csrf_protect
 @login_required
 @ajax_request
 def add_vote(request):
@@ -347,6 +350,7 @@ def add_vote(request):
 '''
 Remove a vote from a value tag
 '''
+@csrf_protect
 @login_required
 @ajax_request
 def remove_vote(request):
@@ -387,6 +391,7 @@ def remove_vote(request):
 '''
 Add a highlight with value tags to a page
 '''
+@csrf_protect
 @login_required
 @ajax_request
 def highlight(request):
@@ -485,6 +490,7 @@ def highlights(request):
 '''
 Delete a highlight
 '''
+@csrf_protect
 @login_required
 @ajax_request
 def delete_highlight(request):
@@ -574,6 +580,7 @@ def related_stories(request):
 '''
 Get value tags associated with a user
 '''
+@csrf_protect
 @login_required
 @ajax_request
 def user_value_tags(request):
@@ -629,6 +636,7 @@ def common_tags(request):
     'common_tags': common_tags,
   }
 
+@csrf_protect
 @login_required
 @ajax_request
 def page_summary(request):
@@ -708,7 +716,7 @@ def page_summary(request):
     'data': data,
   }
 
-
+@csrf_protect
 @login_required
 @ajax_request
 def add_comment(request):
@@ -765,6 +773,7 @@ def add_comment(request):
     'comment': comment,
   }
 
+@csrf_protect
 @login_required
 @ajax_request
 def remove_comment(request):
@@ -789,6 +798,7 @@ def remove_comment(request):
     'errors': errors,
   }
 
+@csrf_protect
 @login_required
 @ajax_request
 def edit_comment(request):
