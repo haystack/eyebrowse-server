@@ -829,7 +829,8 @@ def comments(request):
     comments = []
 
     try:
-      cs = Comment.objects.filter(tag__page__url=url, tag__common_tag__name=tag_name).order_by('date')
+      t = Tag.objects.get(highlight__id=highlight, common_tag__name=tag_name)
+      cs = Comment.objects.filter(tag=t).order_by('date')
 
       for c in cs:
         from_zone = tz.tzutc()
