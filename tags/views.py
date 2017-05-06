@@ -190,7 +190,6 @@ def initialize_page(request):
   count_tags = False
   highlights = 0
 
-  print request
   if request.POST:
     url = process_url(request.POST.get('url'))
     favIconUrl = request.POST.get('favIconUrl')
@@ -859,7 +858,7 @@ def comments(request):
         if not pic:
           pic = gravatar_for_user(c.user)
 
-        print pic
+        pic = 'https://%s' % pic[7:]
 
         comments.append({
           'comment': c.comment,
