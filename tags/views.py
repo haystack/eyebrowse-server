@@ -149,8 +149,8 @@ def tags_by_highlight(request):
           if not pic:
             pic = gravatar_for_user(v.voter)
           votes.append({
-            'name': user_profile.get_full_name(),
-            'pic': pic,
+            'name': user_profile.user.username,
+            'pic': 'https://%s' % pic[7:],
           })
         vt_info['votes'] = votes
         sorted_tags.append(vt_info)
