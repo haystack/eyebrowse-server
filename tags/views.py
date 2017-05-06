@@ -783,12 +783,13 @@ def remove_comment(request):
   errors = {}
 
   if request.POST:
-    url = process_url(request.POST.get('url'))
-    comment = request.POST.get('comment')
+    comment = request.POST.get('comment_id')
+    print comment
     errors['remove_comment'] = []
 
     try:
-      c = Comment.objects.get(tag__page__url=url, comment=comment, user=user)
+      c = Comment.objects.get(id=comment, user=user)
+      print c
       c.delete()
       success = True
     except:
