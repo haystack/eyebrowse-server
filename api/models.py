@@ -22,7 +22,7 @@ class Domain(models.Model):
     url = models.URLField(blank=False, null=False, unique=True)
 
 class Page(models.Model):
-    url = models.URLField(max_length=300, blank=False, null=False)
+    url = models.URLField(blank=False, null=False, unique=True)
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE)
 
     #from eyehistory

@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
 
 from annoying.decorators import ajax_request
 from annoying.decorators import render_to
@@ -174,6 +175,7 @@ def color_tag(request):
     return {'res': 'success'}
 
 
+@csrf_exempt
 @login_required
 @ajax_request
 def delete_tag(request):
