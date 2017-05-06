@@ -743,8 +743,8 @@ def add_comment(request):
       c = Comment(tag=t, user=user, comment=comment)
       c.save()
 
-      v = Vote(comment=c, voter=user)
-      v.save()
+      # v = Vote(comment=c, voter=user)
+      # v.save()
 
       from_zone = tz.tzutc()
       to_zone = tz.tzlocal()
