@@ -189,7 +189,7 @@ def delete_tag(request):
         tags = Tag.objects.filter(user=user, domain=domain, name=name)
         tags.delete()
     elif name and page_url:
-        tags = Tag.objects.filter(user=user, common_tag__name=name, page__url=page_url)
+        tags = Tag.objects.filter(user=user, common_tag__name=name, page__url=process_url(page_url))
         tags.delete()
     elif name:
         tags = Tag.objects.filter(user=user, name=name)
@@ -201,3 +201,11 @@ def delete_tag(request):
 @render_to('google3a0cf4e7f8daa91b.html')
 def google_verify(request):
     return {}
+
+# Helper function to parse urls minus query strings
+def process_url(url):
+  for i in range(len(url)):
+    if url[i] == "?":
+      return url[:i]
+
+  return url
