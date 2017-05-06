@@ -757,6 +757,8 @@ def add_comment(request):
 
       if not pic:
         pic = gravatar_for_user(user)
+        
+      pic = 'https://%s' % pic[7:]
 
       comment = {
         'comment': c.comment,
