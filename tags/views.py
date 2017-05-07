@@ -190,7 +190,6 @@ def initialize_page(request):
   count_tags = False
   highlights = 0
 
-  print request
   if request.POST:
     url = process_url(request.POST.get('url'))
     favIconUrl = request.POST.get('favIconUrl')
@@ -784,12 +783,10 @@ def remove_comment(request):
 
   if request.POST:
     comment = request.POST.get('comment_id')
-    print comment
     errors['remove_comment'] = []
 
     try:
       c = Comment.objects.get(id=comment, user=user)
-      print c
       c.delete()
       success = True
     except:
@@ -856,8 +853,6 @@ def comments(request):
 
         if not pic:
           pic = gravatar_for_user(c.user)
-
-        print pic
 
         comments.append({
           'comment': c.comment,
