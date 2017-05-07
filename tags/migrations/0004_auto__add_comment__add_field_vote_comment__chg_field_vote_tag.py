@@ -25,7 +25,8 @@ class Migration(SchemaMigration):
 
 
         # Changing field 'Vote.tag'
-        db.alter_column('tags_vote', 'tag_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Tag'], null=True))
+        # did not work in production.
+        # db.alter_column('tags_vote', 'tag_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Tag'], null=True))
 
     def backwards(self, orm):
         # Deleting model 'Comment'
@@ -36,7 +37,8 @@ class Migration(SchemaMigration):
 
 
         # Changing field 'Vote.tag'
-        db.alter_column('tags_vote', 'tag_id', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['tags.Tag']))
+        # did not work in production
+        # db.alter_column('tags_vote', 'tag_id', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['tags.Tag']))
 
     models = {
         'api.domain': {
