@@ -199,7 +199,9 @@ def bubble_info(request):
 
 @ajax_request
 def profilepic(request):
-    return redirect_to(request, gravatar_for_user(request.user))
+    url = gravatar_for_user(request.user)
+    url = 'https://%s' % url[7:]
+    return redirect_to(request, url)
 
 
       
