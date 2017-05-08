@@ -322,7 +322,6 @@ def mft_results_control(request):
 
 @render_to('common/mft.html')
 def mft(request, token=None):
-    print token
     part_one = {
         "Whether or not someone conformed to the traditions of society.": "a1",
         "Whether or not someone was good at math.": "b1",
