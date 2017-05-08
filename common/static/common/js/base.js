@@ -834,3 +834,33 @@ $(function() {
     setupDropdown();
 
 });
+
+var validateInputs = function validateInputs(inputs) {
+    var validForm = true;
+    var input_check = {}
+    inputs.each(function(index) {
+      var input = inputs[index];
+      var input_name = $(this).attr("name");
+      if (input.type === "radio" && $(input).is(':checked')) {
+        input_check[input_name] = true;
+      }
+    });
+    return input_check;
+}
+
+$(".mft-next").click(function() {
+    var inputs = $("form#mft input");
+    var test_inputs = validateInputs(inputs)
+    if (Object.keys(test_inputs).length === 32) {
+      $(".mft-next").attr("form", "mft");
+    } else {
+      $(".mft-errors").html("One or more questions left blank. Please answer all questions.");
+      $(".mft-errors").css({
+        "color": "#ee7b7b",
+        "margin-bottom": "10px",
+      });
+    }
+});
+
+
+
