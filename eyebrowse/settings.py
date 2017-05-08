@@ -66,6 +66,7 @@ DEFAULT_FROM_EMAIL = DEFAULT_EMAIL
 ADMINS = (
     ('eyebrowse-admins', DEFAULT_EMAIL),
     ('amy', 'axz@mit.edu'),
+    ('jessica', 'jzwang@mit.edu'),
 )
 
 MANAGERS = ADMINS
@@ -271,6 +272,14 @@ TRACK_IGNORE_URLS = ['static.*?',
                      'api/v1/whitelist',
                      'api/v1/blacklist',
                      'api/v1/history-data',
+                     'tags/initialize_page',
+                     'tags/page',
+                     'tags/tags/page',
+                     'tags/page/related_stories',
+                     'tags/page/summary',
+                     'tags/user/tags',
+                     'tags/highlights',
+                     'tags/common_tags',
                      'accounts/logout',
                      'robots.txt']
 TRACK_IGNORE_STATUS_CODES = [400, 404, 403, 405, 410, 500]

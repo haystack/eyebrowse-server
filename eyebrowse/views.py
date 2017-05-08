@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
 
 from annoying.decorators import ajax_request
 from annoying.decorators import render_to
@@ -140,6 +141,7 @@ def add_tag(request):
         if tags.count() > 0:
             tag = tags[0]
             tag.name = name
+            tag.is_private = True
             tag.save()
         else:
 
@@ -173,16 +175,21 @@ def color_tag(request):
     return {'res': 'success'}
 
 
+@csrf_exempt
 @login_required
 @ajax_request
 def delete_tag(request):
     domain = request.POST.get('domain', None)
     name = request.POST.get('tag', None)
+    page_url = request.POST.get('url', None)
 
     user = request.user
 
     if domain and name:
         tags = Tag.objects.filter(user=user, domain=domain, name=name)
+        tags.delete()
+    elif name and page_url:
+        tags = Tag.objects.filter(user=user, common_tag__name=name, page__url=process_url(page_url))
         tags.delete()
     elif name:
         tags = Tag.objects.filter(user=user, name=name)
@@ -194,3 +201,11 @@ def delete_tag(request):
 @render_to('google3a0cf4e7f8daa91b.html')
 def google_verify(request):
     return {}
+
+# Helper function to parse urls minus query strings
+def process_url(url):
+  for i in range(len(url)):
+    if url[i] == "?":
+      return url[:i]
+
+  return url

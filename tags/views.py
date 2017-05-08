@@ -5,57 +5,19 @@ import requests
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from annoying.decorators import ajax_request
 from urlparse import urlparse
 from common.templatetags.gravatar import gravatar_for_user
+from dateutil import tz
+from datetime import datetime
 
-from api.models import Domain, Page
+from api.models import Domain, Page, Summary, SummaryHistory
 from tags.models import Highlight, CommonTag, TagCollection
-from tags.models import Tag, Vote, UserTagInfo
+from tags.models import Tag, Vote, UserTagInfo, Comment
 from accounts.models import UserProfile
 
-'''
-Add a value tag
-'''
-@login_required
-@ajax_request
-def value_tag(request):
-  user = request.user
-  success = False
-  errors = {}
-
-  # Add a new tag
-  if request.POST:
-    tag_name = request.POST.get('name')
-    url = process_url(request.POST.get('url'))
-    errors['add_tag'] = []
-
-    try:
-      page = Page.objects.get(url=url)
-
-      if len(Tag.objects.filter(common_tag__name=tag_name, page__url=url)) > 0:
-        errors['add_tag'].append("Tag " + tag_name + " already exists")
-      else:
-        try:
-          common_tag = CommonTag.objects.get(name=tag_name)
-          new_tag = Tag(
-            user=user, 
-            page=page,
-            common_tag=common_tag
-          )
-          new_tag.save()
-          success = True
-        except CommonTag.DoesNotExist:
-          errors['add_tag'].append("Could not find base tag " + tag_name)
-
-    except Page.DoesNotExist:
-      errors['add_tag'].append("Page " + url + " does not exist")
-
-  return {
-    'success': success,
-    'errors': errors,
-  }
 
 '''
 Get page info
@@ -160,12 +122,8 @@ def tags_by_highlight(request):
     url = process_url(request.GET.get('url'))
     errors['get_tags'] = []
 
-    h = Highlight.objects.get(highlight=highlight, page__url=url)
-    if not h:
-      errors['get_tags'].append("Highlight " + highlight + "doesn't exist!")
-
     if not len(errors['get_tags']):
-      vts = Tag.objects.filter(highlight=h, page__url=url)
+      vts = Tag.objects.filter(highlight__id=highlight, page__url=url)
 
       # get relevant info for each value tag
       for vt in vts:
@@ -176,6 +134,7 @@ def tags_by_highlight(request):
           'description': vt.common_tag.description,
           'is_private': vt.is_private,
           'vote_count': len(Vote.objects.filter(tag=vt)),
+          'is_owner': (vt.user == user),
         }
 
         votes = []
@@ -190,11 +149,12 @@ def tags_by_highlight(request):
           if not pic:
             pic = gravatar_for_user(v.voter)
           votes.append({
-            'name': user_profile.get_full_name(),
-            'pic': pic,
+            'name': user_profile.user.username,
+            'pic': 'https://%s' % pic[7:],
           })
         vt_info['votes'] = votes
         sorted_tags.append(vt_info)
+        success = True
 
   sorted_tags = sorted(sorted_tags, key=lambda x: x["vote_count"], reverse=True)
 
@@ -220,6 +180,7 @@ B:
   Add value tags to user
   Returns value tags for page
 '''
+@csrf_exempt
 @login_required
 @ajax_request
 def initialize_page(request):
@@ -227,26 +188,46 @@ def initialize_page(request):
   errors = {}
   user = request.user
   count_tags = False
+  highlights = 0
 
   if request.POST:
     url = process_url(request.POST.get('url'))
+    favIconUrl = request.POST.get('favIconUrl')
     domain_name = request.POST.get('domain_name')
     title = request.POST.get('title')
     add_usertags = request.POST.get('add_usertags')
 
-    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=urlparse(url))
-
+    domain = '{uri.netloc}'.format(uri=urlparse(url))
     errors['add_page'] = []
-    page = None
 
-    try:
-      page = Page.objects.get(url=url)
-      vts = Tag.objects.filter(page__url=url, highlight=None)
+    title = url if title == "" else title
 
-      if len(vts) == 0:
-        # Need to generate tags for page
+    # Add domain
+    d, d_created = Domain.objects.get_or_create(url=domain)
+    if domain_name is not None:
+      d.name = domain_name
+    d.save()
+
+    # Add page
+    try: 
+      p = Page.objects.get(url=url)
+      p.title = title
+      p.save()
+    except:
+      if len(Page.objects.filter(url=url)) == 0:
+        p = Page(url=url, domain=d)
+        p.title = title
+        p.save()
         count_tags = True
+      else:
+        errors['add_page'].append("More than one page exists")
 
+    if len(errors['add_page']) == 0:
+      highlights = len(Highlight.objects.filter(page__url=url))
+      vts = Tag.objects.filter(page__url=url, highlight=None)
+      if len(vts) == 0:
+        count_tags = True
+      
       for vt in vts:
         vt_info = {
           'user_voted': False,
@@ -261,91 +242,74 @@ def initialize_page(request):
 
         # Add tag to user
         if add_usertags == "true":
-          try:
-            UserTagInfo.objects.get(user=user, page=page, tag=vt)
-          except UserTagInfo.DoesNotExist:  
-            uto = UserTagInfo(user=user, page=page, tag=vt)
-            uto.save()
-    except:
-      count_tags = True
+          uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
+          uti.save()
 
-      domain_name = domain if domain_name == "" else domain_name
-      title = url if title == "" else title
+      if count_tags:
+        errors['get_tc'] = []
+        try:
+          tc = TagCollection.objects.get(subscribers=user)
+          trie = json.loads(tc.trie_blob)
+        except: 
+          errors['get_tc'].append('User not subscribed')
 
-      # Add domain
-      d, created = Domain.objects.get_or_create(url=domain, name=domain_name)
-      d.save()
+        if len(errors['get_tc']) == 0:
+          # Count value tags for page
+          r = requests.get(url, verify=False)
+          emotes = countEmote(r.text, trie)
+          ts = [(e, emotes[e]) for e in emotes if e]
+          sorted(ts, key=lambda x: x[1], reverse=True)
 
-      if not created:
-        errors['add_domain'] = ["Domain already exists"]
+          errors['add_valuetags'] = []
 
-      # Add page
-      try:
-        page = Page(url=url, domain=d, title=title)
-        page.save()
-      except:
-        errors['add_page'].append("Could not create page")
-        count_tags = False
+          if len(ts) == 0:
+            errors['add_valuetags'].append('No tags counted')
 
-    if count_tags:
-      tc = TagCollection.objects.get(subscribers=user)
-      trie = json.loads(tc.trie_blob)
+          count = 3
+          for tag in ts:
+            if tag[1] > 2 and count > 0:
+              count -= 1
+              name = tag[0]
 
-      # Count value tags for page
-      r = requests.get(url)
-      emotes = countEmote(r.text, trie)
-      ts = [(e, emotes[e]) for e in emotes if e]
-      sorted(ts, key=lambda x: x[1], reverse=True)
-
-      errors['add_valuetags'] = []
-      for tag in ts:
-        if tag[1] > 2:
-          name = tag[0]
-
-          # Add tag to page
-          try:
-            vt = Tag.objects.get(page__url=url, common_tag__name=name, highlight=None)
-          except Tag.DoesNotExist:
-            try:
-              common_tag = CommonTag.objects.get(name=name)
-              vt = Tag(
-                user=user,
-                page=page,
-                common_tag=common_tag
-              )
-              vt.save()
-
-              # Add tag to user
-              if add_usertags == "true":
+              # Add tag to page
+              try:
+                vt = Tag.objects.get(page__url=url, common_tag__name=name, highlight=None)
+              except Tag.DoesNotExist:
                 try:
-                  UserTagInfo.objects.get(user=user, page=page, tag=vt)
-                except UserTagInfo.DoesNotExist:  
-                  uto = UserTagInfo(user=user, page=page, tag=vt)
-                  uto.save()
-            except CommonTag.DoesNotExist:
-              errors['add_valuetags'].append("Could not get base tag")
+                  common_tag = CommonTag.objects.get(name=name)
+                  vt = Tag(page=p, common_tag=common_tag, word_count=tag[1])
+                  vt.save()
 
-          if len(errors['add_valuetags']) == 0:
-            tags[name] = {
-              'name': name,
-              'color': vt.common_tag.color,
-              'description': vt.common_tag.description,
-            }
+                  # Add tag to user
+                  if add_usertags == "true":
+                    uti, created = UserTagInfo.objects.get_or_create(user=user, page=p, tag=vt)
+                    uti.save()
+                except CommonTag.DoesNotExist:
+                  errors['add_valuetags'].append("Could not get base tag")
 
-    success = True
-    for error_field in errors:
-      if errors[error_field] != []:
-        success = False
+              if len(errors['add_valuetags']) == 0:
+                tags[name] = {
+                  'name': name,
+                  'color': vt.common_tag.color,
+                  'description': vt.common_tag.description,
+                }
+
+      success = True
+      for error_field in errors:
+        if errors[error_field] != []:
+          success = False
 
     return {
       'success': success,
       'errors': errors,
       'tags': tags,
+      'highlights': highlights,
     }
 
 '''
 Add a vote to a value tag
 '''
+@csrf_exempt
 @login_required
 @ajax_request
 def add_vote(request):
@@ -359,26 +323,23 @@ def add_vote(request):
     url = process_url(request.POST.get('url'))
     highlight = request.POST.get('highlight')
     errors['add_vote'] = []
+    vt = None
 
     try:
       vt = Tag.objects.get(
         common_tag__name=tag_name, 
-        highlight__highlight=highlight, 
+        highlight__id=highlight, 
         page__url=url,
       )
-
-      vote_count = len(Vote.objects.filter(tag=vt, voter=user))
-      
-      # Ensure user hasn't already voted
-      if vote_count == 0:
-        vote = Vote(tag=vt, voter=user)
-        vote.save()
-        success = True
-
-      vote_count = len(Vote.objects.filter(tag=vt))
-
     except Tag.DoesNotExist:
       errors['add_vote'].append("Tag " + tag_name + " does not exist")
+
+    if vt is not None:
+      v, created = Vote.objects.get_or_create(tag=vt, voter=user)
+      v.save()
+
+      vote_count = len(Vote.objects.filter(tag=vt))
+      success = True
 
   return {
     'success': success,
@@ -389,6 +350,7 @@ def add_vote(request):
 '''
 Remove a vote from a value tag
 '''
+@csrf_exempt
 @login_required
 @ajax_request
 def remove_vote(request):
@@ -406,7 +368,7 @@ def remove_vote(request):
     try:
       vt = Tag.objects.get(
         common_tag__name=tag_name, 
-        highlight__highlight=highlight, 
+        highlight__id=highlight, 
         page__url=url,
       )
       old_votes = Vote.objects.filter(tag=vt, voter=user)
@@ -429,6 +391,7 @@ def remove_vote(request):
 '''
 Add a highlight with value tags to a page
 '''
+@csrf_exempt
 @login_required
 @ajax_request
 def highlight(request):
@@ -440,37 +403,45 @@ def highlight(request):
   if request.POST:
     url = process_url(request.POST.get('url'))
     highlight = request.POST.get('highlight')
+    hl_id = request.POST.get('highlight_id')
     tags = json.loads(request.POST.get('tags'))
     errors['add_highlight'] = []
 
     if not len(errors['add_highlight']) and highlight != "":
       p = Page.objects.get(url=url)
 
-      try:
-        h = Highlight.objects.get(page=p, highlight=highlight)
-      except:
-        h = Highlight(page=p, highlight=highlight)
+      if hl_id:
+        try:
+          h = Highlight.objects.get(page=p, id=hl_id)
+        except:
+          errors['add_highlight'].append('Could not get highlight')
+      else:
+        h, created = Highlight.objects.get_or_create(page=p, highlight=highlight)
+        h.user = user
         h.save()
 
-      for tag in tags:
-        if len(Tag.objects.filter(highlight=h, common_tag__name=tag)) == 0:
-          try:
-            common_tag = CommonTag.objects.get(name=tag)
-            vt = Tag(
-              page=p, 
-              highlight=h, 
-              common_tag=common_tag,
-              user=user, 
-            )
-            vt.save()
-          except CommonTag.DoesNotExist:
-            errors['add_highlight'].append("Base tag " + tag + " does not exist")
+      if not len(errors['add_highlight']):
+        for tag in tags:
+          if len(Tag.objects.filter(highlight=h, common_tag__name=tag)) == 0:
+            try:
+              common_tag = CommonTag.objects.get(name=tag)
+              vt = Tag(
+                page=p, 
+                highlight=h, 
+                common_tag=common_tag,
+                user=user, 
+              )
+              vt.save()
+            except CommonTag.DoesNotExist:
+              errors['add_highlight'].append("Base tag " + tag + " does not exist")
 
-          success = True
+        success = True
+        data['highlight_id'] = h.id
 
   return {
     'success': success,
     'errors': errors,
+    'data': data,
   }
 
 '''
@@ -481,6 +452,7 @@ Get all highlights for a page
 def highlights(request):
   success = False
   errors = {}
+  user = request.user
   data = {}
   highlights = {}
   max_tag = ()
@@ -495,14 +467,18 @@ def highlights(request):
       for h in hs:
         max_tag = ()
         max_tag_count = 0
-
         vts = Tag.objects.filter(highlight=h, page__url=url)
         for vt in vts:
           vote_count = len(Vote.objects.filter(tag=vt))
           if vote_count >= max_tag_count:
             max_tag_count = vote_count
             max_tag = (vt.common_tag.name, vt.common_tag.color)
-        highlights[h.highlight] = max_tag
+
+        highlights[h.highlight] = {
+          'max_tag': max_tag,
+          'id': h.id,
+          'is_owner': h.user == user,
+        }
       success = True
 
   return {
@@ -510,6 +486,38 @@ def highlights(request):
     'errors': errors,
     'highlights': highlights,
   }
+
+'''
+Delete a highlight
+'''
+@csrf_exempt
+@login_required
+@ajax_request
+def delete_highlight(request):
+  success = False
+  errors = {}
+  user = request.user
+  errors['delete_highlight'] = []
+
+  if request.POST:
+    highlight = request.POST.get('highlight')
+    h = None
+
+    try:
+      h = Highlight.objects.get(id=highlight)
+    except:
+      errors['delete_highlight'].append("Highlight does not exist")
+
+    if len(errors['delete_highlight']) == 0:
+      if h.user == user:
+        h.delete()
+        success = True
+
+  return {
+    'success': success,
+    'errors': errors,
+  }
+
 
 '''
 Get related stories
@@ -556,7 +564,7 @@ def related_stories(request):
           "source": item["source"]["name"],
           "domain": item["source"]["domain"],
           "logo": logo,
-          "summary": item["body"]
+          "summary": item["body"],
         }
 
       success = True
@@ -572,6 +580,7 @@ def related_stories(request):
 '''
 Get value tags associated with a user
 '''
+@csrf_exempt
 @login_required
 @ajax_request
 def user_value_tags(request):
@@ -627,6 +636,247 @@ def common_tags(request):
     'common_tags': common_tags,
   }
 
+@csrf_exempt
+@login_required
+@ajax_request
+def page_summary(request):
+  success = False
+  user = request.user
+  data = {}
+  errors = {}
+  errors['page_summary'] = []
+  data['summary'] = {
+    'summary': '',
+  }
+
+  if request.GET:
+    url = process_url(request.GET.get('url'))
+
+    try:
+      p = Page.objects.get(url=url)
+      s, s_created = Summary.objects.get_or_create(page=p)
+
+      from_zone = tz.tzutc()
+      to_zone = tz.tzlocal()
+
+      date = s.date.replace(tzinfo=from_zone)
+      local = date.astimezone(to_zone)
+
+      data['summary'] = {
+        'summary': s.summary,
+        'user': s.last_editor.username,
+        'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+      }
+      success = True
+    except:
+      errors['page_summary'].append('Could not get page ' + url)
+
+  if request.POST:
+    url = process_url(request.POST.get('url'))
+    domain = '{uri.netloc}'.format(uri=urlparse(url))
+    summary = request.POST.get('summary')
+
+    try:
+      d, d_created = Domain.objects.get_or_create(url=domain)
+      d.save()
+
+      if len(Page.objects.filter(url=url)) == 0:
+        p = Page(url=url, domain=d)
+        p.save()
+      else:
+        p = Page.objects.get(url=url)
+
+      s, s_created = Summary.objects.get_or_create(page=p)
+      prev_summary = s.summary
+      sh = SummaryHistory(user=user, new_summary=summary, previous_summary=prev_summary, summary=s)
+      sh.save()
+
+      s.summary = summary
+      s.last_editor = user
+      s.date = datetime.now()
+      s.save()
+
+      from_zone = tz.tzutc()
+      to_zone = tz.tzlocal()
+
+      local = s.date.replace(tzinfo=from_zone)
+
+      data['summary'] = {
+        'summary': summary,
+        'user': user.username,
+        'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+      }
+      success = True
+    except: 
+      errors['page_summary'].append('Could not get page ' + url)
+
+  return {
+    'success': success,
+    'errors': errors,
+    'data': data,
+  }
+
+@csrf_exempt
+@login_required
+@ajax_request
+def add_comment(request):
+  success = False
+  user = request.user
+  errors = {}
+  comment = {}
+
+  if request.POST:
+    url = process_url(request.POST.get('url'))
+    highlight = request.POST.get('highlight')
+    tag_name = request.POST.get('tag_name')
+    comment = request.POST.get('comment')
+    errors['add_comment'] = []
+    t = None
+
+    try:
+      t = Tag.objects.get(highlight__id=highlight, common_tag__name=tag_name, page__url=url)
+    except:
+      errors['add_comment'].append("Could not get tag " + tag_name)
+
+    if t:
+      c = Comment(tag=t, user=user, comment=comment)
+      c.save()
+
+      # v = Vote(comment=c, voter=user)
+      # v.save()
+
+      from_zone = tz.tzutc()
+      to_zone = tz.tzlocal()
+
+      date = c.date.replace(tzinfo=from_zone)
+      local = date.astimezone(to_zone)
+
+      user_profile = UserProfile.objects.get(user=user)
+      pic = user_profile.pic_url
+
+      if not pic:
+        pic = gravatar_for_user(user)
+        
+      pic = 'https://%s' % pic[7:]
+
+      comment = {
+        'comment': c.comment,
+        'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+        'user': c.user.username,
+        'prof_pic': pic,
+        'id': c.id,
+      }
+
+      success = True
+
+  return {
+    'success': success,
+    'errors': errors,
+    'comment': comment,
+  }
+
+@csrf_exempt
+@login_required
+@ajax_request
+def remove_comment(request):
+  success = False
+  user = request.user
+  errors = {}
+
+  if request.POST:
+    comment = request.POST.get('comment_id')
+    errors['remove_comment'] = []
+
+    try:
+      c = Comment.objects.get(id=comment, user=user)
+      c.delete()
+      success = True
+    except:
+      errors['remove_comment'].append("Could not get comment " + comment)
+
+  return {
+    'success': success,
+    'errors': errors,
+  }
+
+@csrf_exempt
+@login_required
+@ajax_request
+def edit_comment(request):
+  success = False
+  user = request.user
+  errors = {}
+
+  if request.POST:
+    comment_id = request.POST.get('comment_id')
+    new_comment = request.POST.get('new_comment')
+    errors['edit_comment'] = []
+
+    try:
+      c = Comment.objects.get(id=comment_id)
+      c.comment = new_comment
+      c.save()
+      success = True
+    except:
+      errors['edit_comment'].append("Could not get comment " + comment)
+
+  return {
+    'success': success,
+    'errors': errors,
+  }
+
+@login_required
+@ajax_request
+def comments(request):
+  success = False
+  errors = {}
+  data = {}
+
+  if request.GET:
+    url = process_url(request.GET.get('url'))
+    highlight = request.GET.get('highlight')
+    tag_name = request.GET.get('tag_name')
+    errors['comments'] = []
+    comments = []
+
+    try:
+      t = Tag.objects.get(highlight__id=highlight, common_tag__name=tag_name)
+      cs = Comment.objects.filter(tag=t).order_by('date')
+
+      for c in cs:
+        from_zone = tz.tzutc()
+        to_zone = tz.tzlocal()
+
+        date = c.date.replace(tzinfo=from_zone)
+        local = date.astimezone(to_zone)
+
+        user_profile = UserProfile.objects.get(user=c.user)
+        pic = user_profile.pic_url
+
+        if not pic:
+          pic = gravatar_for_user(c.user)
+
+        pic = 'https://%s' % pic[7:]
+
+        comments.append({
+          'comment': c.comment,
+          'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+          'user': c.user.username,
+          'prof_pic': pic,
+          'id': c.id,
+        })
+
+      data['comments'] = comments
+      success = True
+
+    except:
+      errors['comments'].append("Could not get comments for tag " + tag_name)
+
+  return {
+    'success': success,
+    'errors': errors,
+    'data': data,
+  }
 
 # Helper function to parse urls minus query strings
 def process_url(url):
@@ -656,15 +906,17 @@ def in_trie(trie, word):
       return False
 
 def countEmote(text, trie):
+  count = 0
   emote_dict = {}
   for word in text.split(" "):
     if word.isalpha():
+      count += 1
       state = in_trie(trie, word)
       if state in emote_dict:
         emote_dict[state] += 1
       else:
         emote_dict[state] = 1
-    
-  return emote_dict
+
+  return emote_dict if count > 500 else {}
 
 
