@@ -29,3 +29,12 @@ class FavData(models.Model):
 
     def __unicode__(self):
         return "FavData item %s for %s visited %s" % (self.domain, self.user.username, self.visit_count)
+
+class MoralData(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False)
+    time = models.DateTimeField(auto_now_add=True)
+    authority = models.FloatField(default=0)
+    loyalty = models.FloatField(default=0)
+    care = models.FloatField(default=0)
+    fairness = models.FloatField(default=0)
+    purity = models.FloatField(default=0)

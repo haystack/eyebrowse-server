@@ -18,6 +18,7 @@ from api.resources import MuteListResource
 
 from eyebrowse.views import about
 from eyebrowse.views import faq
+from eyebrowse.views import mft, mft_results_treatment, mft_results_control
 from eyebrowse.views import api_docs
 from eyebrowse.views import consent_accept
 from eyebrowse.views import consent
@@ -77,6 +78,9 @@ urlpatterns = patterns('',
 
                        url(r'^about', about),
                        url(r'^faq', faq),
+                       url(r'^mft/(?P<token>.+)$', mft),
+                       url(r'^mft_results/827', mft_results_treatment),
+                       url(r'^mft_results/543', mft_results_control),
                        url(r'^api_docs', api_docs),
 
                        url(r'^consent_accept$', consent_accept),

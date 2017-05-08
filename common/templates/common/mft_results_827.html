@@ -1,0 +1,144 @@
+{% extends 'common/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<div class="hero-unit well" id="mft-results">
+  <h3>Moral Foundations Questionnaire</h3>
+  <p>
+    Thank you for completing this survey!
+  </p>
+
+  <p>The scale you completed was the "Moral Foundations Questionnaire", developed by Jesse Graham and Jonathan Haidt at the University of Virginia.</p>
+
+  <p>
+    <h4>What are moral foundations?</h4>
+    <p>
+      Moral Foundations Theory states that human moral thought is based upon five fundamental psychological foundtions that are found across cultures. These five foundations are:
+    </p>
+  </p>
+  <table class="foundations">
+    <tbody>
+      <tr>
+        <td><span class="foundation" style="background-color: #ffb1b1">Care/harm</span></td>
+        <td><span class="description"> This foundation is related to an ability to feel (and dislike) the pain of others. It underlies virtues of kindness, gentleness, and nurturance.</span></td>
+      </tr>
+      <tr>
+        <td><span class="foundation" style="background-color: #ffe4b1">Fairness/cheating</span></td>
+        <td><span class="description"> This foundation generates ideas of justice, rights, and autonomy.</span></td>
+      </tr>
+      <tr>
+        <td><span class="foundation" style="background-color: #b1ffba">Loyalty/betrayal</span></td>
+        <td><span class="description"> This foundation underlies virtues of patriotism and self-sacrifice for the group. </span></td>
+      </tr>
+      <tr>
+        <td><span class="foundation" style="background-color: #b1ddff">Authority/subversion</span></td>
+        <td><span class="description"> This foundation underlies virtues of leadership and followership, including deference to legitimate authority and respect for traditions.</span></td>
+      </tr>
+      <tr>
+        <td><span class="foundation" style="background-color: #f6b1ff">Sanctity/degradation</span></td>
+        <td><span class="description">This foundation underlies notions of striving to live in an elevated, less carnal, more noble way.</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    <h4>Where does this scale come from?</h4>
+    <p>The idea behind the scale is that human morality is the result of biological and cultural evolutionary processes that made us sensitive to many different (and often competing) issues. Everyone holds each of these five foundations - just in differing proportions</p>
+
+    <p>Some of these issues are about treating other individuals well (the first two foundations - harm and fairness). Other issues are about how to be a good member of a group or supporter of social order and tradition (the last three foundations).</p>
+
+    <p>
+    <h4>Liberals and conservatives</h4>
+      Research shows that liberals and conservatives place higher value on completely different moral foundations.<p>
+    <p>
+      <strong>Liberals</strong> prioritize issues of care/harm and fairness/cheating <br/>
+      <strong>Conservatives</strong> value care/harm and fairness/cheating, <strong> but also </strong> prioritize issues of loyalty, authority, and sanctity
+    </p>
+
+    <p>This difference explains why the two sides often talk past each other in the culture war. For example, may liberals support legalizing gay marriage (to be fair and compassionate), whereas many conservatives are reluctant to change the nature of marriage and the family, basic building blocks of society.</p>
+  </p>
+
+  <p>
+    <h4>Your foundations</h4>
+    In the graph below, your scores on each foundation are shown in <strong style="color: #b5a2c3">purple</strong>. The scores of liberals are shown in <strong style="color: #97beea">blue</strong>, and the scores of conservatives are shown in <strong style="color: #ea9797">red</strong>. The liberal and conservative numbers are gathered from tens of thousands of conservatives/liberals who also took this survey.
+
+    <svg id="foundations-graph"></svg>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script>
+
+    var n = 5, // number of samples
+        m = 3; // number of series
+
+    var data = [[5 - {{ fairness }}, 5 - {{ care }}, 5 - {{ loyalty }}, 5 - {{ authority }}, 5 - {{ purity }}], [5-3.8, 5-3.7, 5-2.2, 5-2.1, 5-1.4], [5-3.1, 5-3.1, 5-3.1, 5-3.3, 5-3.0]]
+    var margin = {top: 20, right: 30, bottom: 30, left: 40},
+        width = 500 - margin.left - margin.right,
+        height = 250 - margin.top - margin.bottom;
+
+    var y = d3.scale.linear()
+        .domain([5, 0])
+        .range([0, height]);
+
+    var x0 = d3.scale.ordinal()
+        .domain(["Fairness", "Care", "Loyalty", "Authority", "Sanctity"])
+        .rangeBands([0, width], .2);
+
+    var x9 = d3.scale.ordinal()
+        .domain(d3.range(n))
+        .rangeBands([0, width], .2);
+
+    var x1 = d3.scale.ordinal()
+        .domain(d3.range(m))
+        .rangeBands([0, x0.rangeBand()]);
+
+    var z = d3.scale.category10();
+
+    var xAxis = d3.svg.axis()
+        .scale(x0)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(6);
+
+    var color = ["#b5a2c3", "#97beea", "#ea9797"]
+
+    var svg = d3.select(document.getElementById("foundations-graph"))
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("svg:g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    svg.append("g").selectAll("g")
+        .data(data)
+      .enter().append("g")
+        .style("fill", function(d, i) { return color[i]; })
+        .attr("transform", function(d, i) { return "translate(" + x1(i) + ",0)"; })
+      .selectAll("rect")
+        .data(function(d) { return d; })
+      .enter().append("rect")
+        .attr("width", x1.rangeBand())
+        .attr("height", y)
+        .attr("x", function(d, i) { return x9(i); })
+        .attr("y", function(d) { 
+          return height - y(d); 
+        });
+
+    </script>
+  </p>
+
+  <p>To learn more about "Moral Foundations Theory" and political psychology you can visit www.moralfoundations.org. This survey and response is an adaptation of the Your Morals survey on yourmorals.org.</p>
+
+</div>
+
+{% endblock %}
