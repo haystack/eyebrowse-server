@@ -9,6 +9,7 @@ class ClickItem(models.Model):
     url_referrer = models.URLField(max_length=1000, default='')
     url_clicked = models.URLField(max_length=1000, default='')
     time = models.DateTimeField(auto_now_add=True)
+    recommendation = models.BooleanField(default=False)
     
 
 class FavData(models.Model):

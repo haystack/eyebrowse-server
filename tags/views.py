@@ -785,12 +785,10 @@ def remove_comment(request):
 
   if request.POST:
     comment = request.POST.get('comment_id')
-    print comment
     errors['remove_comment'] = []
 
     try:
       c = Comment.objects.get(id=comment, user=user)
-      print c
       c.delete()
       success = True
     except:

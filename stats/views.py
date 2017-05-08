@@ -395,8 +395,14 @@ def clicked_item(request):
         ip = get_ip(request)
         url_click = request.POST.get('url_click')
         url_refer = request.POST.get('url_refer')
-        
-        _ = ClickItem.objects.create(user=user, ip_address=ip, url_clicked=url_click, url_referrer=url_refer)
+        recommendation = request.POST.get('recommendation', None)
+
+        c = ClickItem(user=user, ip_address=ip, url_clicked=url_click, url_referrer=url_refer)
+
+        if recommendation:
+            c.recommendation = True
+
+        c.save()
         
     except Exception, e:
         logger.info(e)
