@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.template import RequestContext
@@ -255,9 +256,19 @@ def mft_results_treatment(request):
         fair = float(e1 + n1 + o1 + e2 + k2 + m2) / 6.0
         pure = float(f1 + l1 + p1 + d2 + i2 + j2) / 6.0
 
-        m = MoralData(authority=auth, loyalty=loy, care=care, fairness=fair, purity=pure, user=user)
+        m = MoralData(authority=auth, loyalty=loy, care=care, fairness=fair, purity=pure, user=user, is_treatment=True)
         m.save()
 
+    else:
+        try:
+            m = MoralData.objects.get(user=user)
+            auth = m.authority
+            loy = m.loyalty
+            fair = m.fairness
+            pure = m.purity
+            care = m.care
+        except:
+            pass
 
     return _template_values(request,
                             page_title="Moral Questionnaire Results", authority=auth, loyalty=loy, fairness=fair, care=care, purity=pure);
@@ -319,9 +330,8 @@ def mft_results_control(request):
     return _template_values(request,
                             page_title="Moral Questionnaire Results");
 
-
-@render_to('common/mft.html')
 def mft(request, token=None):
+    user = request.user
     part_one = {
         "Whether or not someone conformed to the traditions of society.": "a1",
         "Whether or not someone was good at math.": "b1",
@@ -377,8 +387,26 @@ def mft(request, token=None):
 
         q2_array[rand] = {'question': q, 'class': part_two[q]}
 
-    return _template_values(request,
-                            page_title="Your Morals", token=token, part_one=q1_array, part_two=q2_array, context_instance=RequestContext(request))
+    try:
+        m = MoralData.objects.get(user=user)
+        if m.is_treatment:
+            return render(request, 'common/mft_results_827.html',
+                            {'authority':m.authority, 'loyalty':m.loyalty, 'care':m.care, 'fairness':m.fairness, 'purity':m.purity});
+        else:
+            return render(request, 'common/mft_results_543.html');
+    except:
+        pass
+
+    return render(request, 'common/mft.html', {
+            'token': token,
+            'part_one': q1_array, 
+            'part_two': q2_array,
+        })
+
+    # context_instance=RequestContext(request)
+
+    # return ren(request,
+    #                         page_title="Your Morals", token=token, part_one=q1_array, part_two=q2_array, )
 
 
 # Helper function to parse urls minus query strings
