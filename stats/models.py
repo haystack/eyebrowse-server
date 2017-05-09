@@ -38,3 +38,4 @@ class MoralData(models.Model):
     care = models.FloatField(default=0)
     fairness = models.FloatField(default=0)
     purity = models.FloatField(default=0)
+    is_treatment = models.BooleanField(default=False)
