@@ -15,6 +15,7 @@ from api.resources import EyeHistoryResource
 from api.resources import EyeHistoryMessageResource
 from api.resources import ChatMessageResource
 from api.resources import MuteListResource
+from api.resources import LoginResource
 
 from eyebrowse.views import about
 from eyebrowse.views import faq
@@ -34,6 +35,7 @@ v1_api.register(EyeHistoryResource())
 v1_api.register(EyeHistoryMessageResource())
 v1_api.register(ChatMessageResource())
 v1_api.register(MuteListResource())
+v1_api.register(LoginResource())
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
