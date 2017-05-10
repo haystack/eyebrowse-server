@@ -19,4 +19,5 @@ urlpatterns = patterns('tags.views',
                         url(r'^comment/add$', 'add_comment'),
                         url(r'^comment/edit$', 'edit_comment'),
                         url(r'^comment/remove$', 'remove_comment'),
+                        url(r'^fbshare$', 'fb_share'),
                       )

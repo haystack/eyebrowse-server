@@ -16,6 +16,7 @@ from tastypie.resources import ALL
 from tastypie.resources import ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
+from tastypie.http import HttpUnauthorized, HttpForbidden
 
 from api.defaults import DEFAULT_BLACKLIST
 from api.models import BlackListItem, check_bumps, notify_message
