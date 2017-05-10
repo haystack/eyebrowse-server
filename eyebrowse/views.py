@@ -330,6 +330,7 @@ def mft_results_control(request):
     return _template_values(request,
                             page_title="Moral Questionnaire Results");
 
+@login_required
 def mft(request, token=None):
     user = request.user
     part_one = {
