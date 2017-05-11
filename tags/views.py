@@ -21,6 +21,7 @@ from api.models import Domain, Page, Summary, SummaryHistory
 from tags.models import Highlight, CommonTag, TagCollection
 from tags.models import Tag, Vote, UserTagInfo, Comment
 from accounts.models import UserProfile
+from stats.models import FBShareData
 
 
 '''
@@ -885,9 +886,18 @@ def comments(request):
 @login_required
 @render_to('tags/fb_share.html')
 def fb_share(request):
+  user = request.user 
+  
   if request.GET:
     url = request.GET.get('url')
     text = request.GET.get('text')
+
+    try:
+      fb = FBShareData(user=user, url_shared=url, message=text);
+      fb.save()
+    except:
+      pass
+
     return _template_values(request, page_title="FB share", 
                             url=url, text=text)
 
