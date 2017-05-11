@@ -1,0 +1,60 @@
+{% extends 'common/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<div class="hero-unit well" id="mft-results" style="background-color: #fdfdfd">
+  <h3>Eyebrowse Tutorial</h3>
+  <p>Hello!</p>
+  <p>Now that you've got Eyebrowse installed in your browser, you can try it out on this page here.</p>
+  <p>You can <strong>highlight</strong> text in a paragraph by selecting it. Wait a second, and a bubble will appear over the selected text. Note that you can't make selections that overlap existing highlights. Try it out on this paragraph below! </p>
+  <p style="color: #999; padding: 7px">
+    Far out in the uncharted backwaters of the unfashionable end of the western
+    spiral arm of the Galaxy lies a small unregarded yellow sun. Orbiting
+    this at a distance of roughly ninety-two million miles is an utterly insignifi-
+    cant little blue green planet whose ape-descended life forms are so amazingly
+    primitive that they still think digital watches are a pretty neat idea.
+  </p>
+  <p>Upon clicking on the plus sign, a dialog will appear. You can select from a variety of moral values framings from which you think your selected text is written from. Hover over each moral value tag to see the definition of that moral value.</p>
+
+  <p>You'll see that you can upvote tags, as well as leave comments on them. If you feel that an existing highlight is missing a tag, you can add one by clicking "Add additional tags" at the bottom of the popup dialog of a highlight. If you created highlights and/or tags, you can also delete them.</p>
+
+  <p>Next, click on the Eye icon in your browser to open up the Eyebrowse popup. Click on the "This Page" tab in the navigation. In the "Framing" tab, you'll see a list of all the tags present on a page, whether <strong>user-tagged</strong>, as in with highlights, or <strong>auto-generated</strong> by our moral content classifier.</p>
+
+  <p>In the "Recommendations" tab, you'll see a list of recommended page based on the page you are on. This is helpful for finding new and interesting articles! You probably won't see any recommended pages for this page, however.</p>
+
+  <p>Finally, in the "Summary" tab, you'll see a paragraph that summarizes the page. This is a globally viewable and editable summary, similar to a Wiki that lives in your browser when you visit a page.</p>
+
+  <p>Feel free to try out any of the features of Eyebrowse on this page! You'll be using them for the duration of this study.</p>
+
+  <p style="color: #999; padding: 7px">
+    This planet has – or rather had – a problem, which was this: most of the
+    people on it were unhappy for pretty much of the time. Many solutions were
+    suggested for this problem, but most of these were largely concerned with the
+    movements of small green pieces of paper, which is odd because on the whole
+    it wasn’t the small green pieces of paper that were unhappy.
+  </p>
+  <p style="color: #999; padding: 7px">
+    And so the problem remained; lots of the people were mean, and most of
+    them were miserable, even the ones with digital watches.
+    Many were increasingly of the opinion that they’d all made a big mistake
+    in coming down from the trees in the first place. And some said that even the
+    trees had been a bad move, and that no one should ever have left the oceans.
+    And then, one Thursday, nearly two thousand years after one man had
+    been nailed to a tree for saying how great it would be to be nice to people
+    for a change, one girl sitting on her own in a small cafe in Rickmansworth
+    suddenly realized what it was that had been going wrong all this time, and she
+    finally knew how the world could be made a good and happy place. This time
+    it was right, it would work, and no one would have to get nailed to anything.
+  </p>
+  <p style="color: #999; padding: 7px; margin-bottom: 200px">
+    Sadly, however, before she could get to a phone to tell anyone about it, a
+    terribly stupid catastrophe occurred, and the idea was lost forever.
+    This is not her story.
+  </p>
+
+
+
+</div>
+
+{% endblock %}

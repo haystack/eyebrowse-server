@@ -47,6 +47,10 @@ def api_docs(request):
                             page_title="Eyebrowse - API Docs",
                             nav_api='active')
 
+@render_to('common/tutorial.html')
+def tutorial(request):
+    return _template_values(request)
+
 
 @render_to('common/home.html')
 def home(request):

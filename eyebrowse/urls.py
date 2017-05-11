@@ -19,6 +19,7 @@ from api.resources import LoginResource
 
 from eyebrowse.views import about
 from eyebrowse.views import faq
+from eyebrowse.views import tutorial
 from eyebrowse.views import mft, mft_results_treatment, mft_results_control
 from eyebrowse.views import api_docs
 from eyebrowse.views import consent_accept
@@ -79,6 +80,7 @@ urlpatterns = patterns('',
                        url(r'^api/', include(v1_api.urls)),
 
                        url(r'^about', about),
+                       url(r'^tutorial', tutorial),
                        url(r'^faq', faq),
                        url(r'^mft/(?P<token>.+)$', mft),
                        url(r'^mft_results/827', mft_results_treatment),
