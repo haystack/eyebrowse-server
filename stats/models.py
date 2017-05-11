@@ -39,3 +39,9 @@ class MoralData(models.Model):
     fairness = models.FloatField(default=0)
     purity = models.FloatField(default=0)
     is_treatment = models.BooleanField(default=False)
+
+class FBShareData(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False)
+    url_shared = models.URLField(max_length=1000, default='')
+    time = models.DateTimeField(auto_now_add=True)
+    message = models.CharField(max_length=5000, default='')
