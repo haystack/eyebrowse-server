@@ -17,7 +17,7 @@ from datetime import datetime
 
 from common.view_helpers import _template_values
 
-from api.models import Domain, Page, Summary, SummaryHistory
+from api.models import Domain, Page, Summary, SummaryHistory, EyeHistoryMessage
 from tags.models import Highlight, CommonTag, TagCollection
 from tags.models import Tag, Vote, UserTagInfo, Comment
 from accounts.models import UserProfile
@@ -721,69 +721,69 @@ def page_summary(request):
     'data': data,
   }
 
+# @csrf_exempt
+# @login_required
+# @ajax_request
+# def add_comment(request):
+#   success = False
+#   user = request.user
+#   errors = {}
+#   comment = {}
+
+#   if request.POST:
+#     url = process_url(request.POST.get('url'))
+#     highlight = request.POST.get('highlight')
+#     tag_name = request.POST.get('tag_name')
+#     comment = request.POST.get('comment')
+#     errors['add_comment'] = []
+#     t = None
+
+#     try:
+#       t = Tag.objects.get(highlight__id=highlight, common_tag__name=tag_name, page__url=url)
+#     except:
+#       errors['add_comment'].append("Could not get tag " + tag_name)
+
+#     if t:
+#       c = Comment(tag=t, user=user, comment=comment)
+#       c.save()
+
+#       # v = Vote(comment=c, voter=user)
+#       # v.save()
+
+#       from_zone = tz.tzutc()
+#       to_zone = tz.tzlocal()
+
+#       date = c.date.replace(tzinfo=from_zone)
+#       local = date.astimezone(to_zone)
+
+#       user_profile = UserProfile.objects.get(user=user)
+#       pic = user_profile.pic_url
+
+#       if not pic:
+#         pic = gravatar_for_user(user)
+        
+#       pic = 'https://%s' % pic[7:]
+
+#       comment = {
+#         'comment': c.comment,
+#         'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+#         'user': c.user.username,
+#         'prof_pic': pic,
+#         'id': c.id,
+#       }
+
+#       success = True
+
+#   return {
+#     'success': success,
+#     'errors': errors,
+#     'comment': comment,
+#   }
+
 @csrf_exempt
 @login_required
 @ajax_request
 def add_comment(request):
-  success = False
-  user = request.user
-  errors = {}
-  comment = {}
-
-  if request.POST:
-    url = process_url(request.POST.get('url'))
-    highlight = request.POST.get('highlight')
-    tag_name = request.POST.get('tag_name')
-    comment = request.POST.get('comment')
-    errors['add_comment'] = []
-    t = None
-
-    try:
-      t = Tag.objects.get(highlight__id=highlight, common_tag__name=tag_name, page__url=url)
-    except:
-      errors['add_comment'].append("Could not get tag " + tag_name)
-
-    if t:
-      c = Comment(tag=t, user=user, comment=comment)
-      c.save()
-
-      # v = Vote(comment=c, voter=user)
-      # v.save()
-
-      from_zone = tz.tzutc()
-      to_zone = tz.tzlocal()
-
-      date = c.date.replace(tzinfo=from_zone)
-      local = date.astimezone(to_zone)
-
-      user_profile = UserProfile.objects.get(user=user)
-      pic = user_profile.pic_url
-
-      if not pic:
-        pic = gravatar_for_user(user)
-        
-      pic = 'https://%s' % pic[7:]
-
-      comment = {
-        'comment': c.comment,
-        'date': local.strftime('%b %m, %Y,  %I:%M %p'),
-        'user': c.user.username,
-        'prof_pic': pic,
-        'id': c.id,
-      }
-
-      success = True
-
-  return {
-    'success': success,
-    'errors': errors,
-    'comment': comment,
-  }
-
-@csrf_exempt
-@login_required
-@ajax_request
-def add_comment_new(request):
   success = False
   user = request.user
   errors = {}
@@ -850,34 +850,36 @@ def comments_by_highlight(request):
   success = False
   errors = {}
   comments = {}
-  # errors['comments_by_highlight'] = []
+  errors['comments_by_highlight'] = []
 
   hl_id = request.GET.get('highlight_id')
 
-  cs = Comment.objects.filter(highlight__id=hl_id)
+  eyehist_message = EyeHistoryMessage.objects.filter(highlight__id=hl_id)
+
+  # cs = Comment.objects.filter(highlight__id=hl_id)
 
   #TODO: return tags along with comments
 
   if len(comments) != 0:
     success = True
 
-  for c in cs:
+  for m in eyehist_message:
     tags = {}
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
 
-    date = c.date.replace(tzinfo=from_zone)
+    date = m.post_time.replace(tzinfo=from_zone)
     local = date.astimezone(to_zone)
 
-    user_profile = UserProfile.objects.get(user=c.user)
+    user_profile = UserProfile.objects.get(user=m.eyehistory.user)
     pic = user_profile.pic_url
 
     if not pic:
-      pic = gravatar_for_user(c.user)
+      pic = gravatar_for_user(m.eyehistory.user)
       
     pic = 'https://%s' % pic[7:]
 
-    ts = Tag.objects.filter(comments__id=c.id)
+    ts = Tag.objects.filter(eyehists__id=m.id)
 
     for t in ts:
       tags[t.common_tag.name] = {
@@ -887,12 +889,12 @@ def comments_by_highlight(request):
       }
 
 
-    comments[c.comment] = {
-      'comment': c.comment,
+    comments[m.message] = {
+      'comment': m.message,
       'date': local.strftime('%b %m, %Y,  %I:%M %p'),
-      'user': c.user.username,
+      'user': m.eyehistory.user.username,
       'prof_pic': pic,
-      'id': c.id,
+      'id': m.id,
       'tags': tags,
     }
 

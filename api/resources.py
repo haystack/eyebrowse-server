@@ -8,6 +8,8 @@ from django.conf.urls import url
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.management import call_command
 
+from dateutil import tz
+
 from tastypie import fields
 from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import DjangoAuthorization
@@ -309,6 +311,7 @@ class EyeHistoryResource(ModelResource):
         ).all().order_by('-start_time')
         resource_name = 'history-data'
 
+        always_return_data = True
         list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
@@ -326,7 +329,30 @@ class EyeHistoryResource(ModelResource):
         bundle.data['username'] = bundle.obj.user.username
         bundle.data['pic_url'] = gravatar_for_user(
             User.objects.get(username=bundle.obj.user.username))
-        return bundle
+        
+        from_zone = tz.tzutc()
+        to_zone = tz.tzlocal()
+        date = bundle.obj.start_time.replace(tzinfo=from_zone)
+        local = date.astimezone(to_zone)
+
+        user_profile = UserProfile.objects.get(user=bundle.obj.user)
+        pic = user_profile.pic_url
+
+        if not pic:
+          pic = gravatar_for_user(bundle.obj.user)
+          
+        pic = 'https://%s' % pic[7:]
+
+        comment = EyeHistoryMessage.objects.get(eyehistory=bundle.obj)
+
+        bundle.data['comment'] = {
+            'comment': comment.message,
+            'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+            'user': bundle.obj.user.username,
+            'prof_pic': pic,
+            'id': bundle.obj.id,
+        }
+        return bundle.data
 
     def obj_create(self, bundle, request=None, **kwargs):
         url = bundle.data['url']

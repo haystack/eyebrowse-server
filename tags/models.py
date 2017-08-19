@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from api.models import Page, Domain, Highlight, Comment
+from api.models import EyeHistoryMessage
 
 # Tag grouping model object for all types of tags
 class TagCollection(models.Model):
@@ -37,7 +38,7 @@ class Tag(models.Model):
     subscribers = models.ManyToManyField(User, related_name="subscribers")
 
     word_count = models.IntegerField(default=0) # temporary, for logging purposes
-    comments = models.ManyToManyField(Comment)
+    eyehists = models.ManyToManyField(EyeHistoryMessage)
 
 
 class Vote(models.Model):
