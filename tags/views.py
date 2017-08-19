@@ -783,6 +783,128 @@ def add_comment(request):
 @csrf_exempt
 @login_required
 @ajax_request
+def add_comment_new(request):
+  success = False
+  user = request.user
+  errors = {}
+  comment = {}
+
+  if request.POST:
+    url = process_url(request.POST.get('url'))
+    hl_id = request.POST.get('highlight_id')
+    tags = json.loads(request.POST.get('tags'))
+    comment = request.POST.get('comment')
+    errors['add_comment'] = []
+    t = None
+
+    try:
+      h = Highlight.objects.get(id=hl_id)
+    except:
+      errors['add_comment'].append("Could not get highlight " + hl_id)
+
+    if h:
+      c = Comment(highlight=h, user=user, comment=comment)
+      c.save()
+
+      for tag in tags:
+        t = Tag.objects.get(common_tag__name=tag, highlight__id=hl_id)
+        t.comments.add(c)
+        t.save()
+
+      # v = Vote(comment=c, voter=user)
+      # v.save()
+
+      from_zone = tz.tzutc()
+      to_zone = tz.tzlocal()
+
+      date = c.date.replace(tzinfo=from_zone)
+      local = date.astimezone(to_zone)
+
+      user_profile = UserProfile.objects.get(user=user)
+      pic = user_profile.pic_url
+
+      if not pic:
+        pic = gravatar_for_user(user)
+        
+      pic = 'https://%s' % pic[7:]
+
+      comment = {
+        'comment': c.comment,
+        'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+        'user': c.user.username,
+        'prof_pic': pic,
+        'id': c.id,
+      }
+
+      success = True
+
+  return {
+    'success': success,
+    'errors': errors,
+    'comment': comment,
+  }
+
+@login_required
+@ajax_request
+def comments_by_highlight(request):
+  success = False
+  errors = {}
+  comments = {}
+  # errors['comments_by_highlight'] = []
+
+  hl_id = request.GET.get('highlight_id')
+
+  cs = Comment.objects.filter(highlight__id=hl_id)
+
+  #TODO: return tags along with comments
+
+  if len(comments) != 0:
+    success = True
+
+  for c in cs:
+    tags = {}
+    from_zone = tz.tzutc()
+    to_zone = tz.tzlocal()
+
+    date = c.date.replace(tzinfo=from_zone)
+    local = date.astimezone(to_zone)
+
+    user_profile = UserProfile.objects.get(user=c.user)
+    pic = user_profile.pic_url
+
+    if not pic:
+      pic = gravatar_for_user(c.user)
+      
+    pic = 'https://%s' % pic[7:]
+
+    ts = Tag.objects.filter(comments__id=c.id)
+
+    for t in ts:
+      tags[t.common_tag.name] = {
+        'name': t.common_tag.name,
+        'color': t.common_tag.color,
+        'description': t.common_tag.description
+      }
+
+
+    comments[c.comment] = {
+      'comment': c.comment,
+      'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+      'user': c.user.username,
+      'prof_pic': pic,
+      'id': c.id,
+      'tags': tags,
+    }
+
+  return {
+    'success': success,
+    'errors': errors,
+    'comments': comments,
+  }
+
+@csrf_exempt
+@login_required
+@ajax_request
 def remove_comment(request):
   success = False
   user = request.user
