@@ -15,9 +15,12 @@ from api.resources import EyeHistoryResource
 from api.resources import EyeHistoryMessageResource
 from api.resources import ChatMessageResource
 from api.resources import MuteListResource
+from api.resources import LoginResource
 
 from eyebrowse.views import about
 from eyebrowse.views import faq
+from eyebrowse.views import tutorial
+from eyebrowse.views import mft, mft_results_treatment, mft_results_control
 from eyebrowse.views import api_docs
 from eyebrowse.views import consent_accept
 from eyebrowse.views import consent
@@ -33,6 +36,7 @@ v1_api.register(EyeHistoryResource())
 v1_api.register(EyeHistoryMessageResource())
 v1_api.register(ChatMessageResource())
 v1_api.register(MuteListResource())
+v1_api.register(LoginResource())
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -76,7 +80,11 @@ urlpatterns = patterns('',
                        url(r'^api/', include(v1_api.urls)),
 
                        url(r'^about', about),
+                       url(r'^tutorial', tutorial),
                        url(r'^faq', faq),
+                       url(r'^mft/(?P<token>.+)$', mft),
+                       url(r'^mft_results/827', mft_results_treatment),
+                       url(r'^mft_results/543', mft_results_control),
                        url(r'^api_docs', api_docs),
 
                        url(r'^consent_accept$', consent_accept),

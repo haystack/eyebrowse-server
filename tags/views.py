@@ -8,15 +8,20 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from annoying.decorators import ajax_request
+from annoying.decorators import render_to
+
 from urlparse import urlparse
 from common.templatetags.gravatar import gravatar_for_user
 from dateutil import tz
 from datetime import datetime
 
+from common.view_helpers import _template_values
+
 from api.models import Domain, Page, Summary, SummaryHistory
 from tags.models import Highlight, CommonTag, TagCollection
 from tags.models import Tag, Vote, UserTagInfo, Comment
 from accounts.models import UserProfile
+from stats.models import FBShareData
 
 
 '''
@@ -877,6 +882,24 @@ def comments(request):
     'errors': errors,
     'data': data,
   }
+
+@login_required
+@render_to('tags/fb_share.html')
+def fb_share(request):
+  user = request.user 
+  
+  if request.GET:
+    url = request.GET.get('url')
+    text = request.GET.get('text')
+
+    try:
+      fb = FBShareData(user=user, url_shared=url, message=text);
+      fb.save()
+    except:
+      pass
+
+    return _template_values(request, page_title="FB share", 
+                            url=url, text=text)
 
 # Helper function to parse urls minus query strings
 def process_url(url):

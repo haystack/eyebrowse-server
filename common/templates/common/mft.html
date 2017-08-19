@@ -1,0 +1,114 @@
+{% extends 'common/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+ <div class="hero-unit well">
+        <h3>Moral Foundations Questionnaire</h3>
+        <p>Why do you care about some virtues and issues more than others? This survey takes a look at a broad overview of your morals.</p>
+<p>
+  <br/>
+  <h4>Part 1.</h4>
+  <p> 
+    When you decide whether something is right or wrong, to what extent are the following considerations relevant to your thinking? <br/>
+    Please answer on a scale from <strong>Not At All Relevant</strong> (This consideration has nothing to do with my judgments of right and wrong) to <strong>Extremely Relevant</strong> (This is one of the most important factors when I judge right and wrong)<br/>
+  </p>
+
+  <form method="post" id="mft" action="/mft_results/{{ token }}"> {% csrf_token %}
+  <p>
+    <ul>
+      {% for question in part_one %}
+        <li class={{ question.class }}><strong><h4>{{ question.question }}</h4></strong>
+          <table class="mft-questions" style="text-align: center">
+            <tbody>
+              <tr>
+                <td>
+                  <input type="radio" value="0" name={{ question.class }}>
+                </td>  
+                <td>
+                  <input type="radio" value="1" name={{ question.class }}>
+                </td>
+                <td>
+                  <input type="radio" value="2" name={{ question.class }}>
+                </td>
+                <td>
+                  <input type="radio" value="3" name={{ question.class }}>
+                </td>
+                <td>
+                  <input type="radio" value="4" name={{ question.class }}>
+                </td>
+                <td>
+                  <input type="radio" value="5" name={{ question.class }}>
+                </td>
+              </tr>
+              <tr>
+                <td>Not at all relevant</td>
+                <td>Not very relevant</td>
+                <td>Slightly relevant</td>
+                <td>Somewhat relevant</td>
+                <td>Very relevant</td>
+                <td>Extremely relevant</td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      {% endfor %}
+    </ul>
+  </p>
+
+
+  <h4>Part 2.</h4>
+  <p> 
+    Please read the following sentences and indicate your level of agreement or disagreement.
+  </p>
+
+  <p>
+    <ul>
+      {% for question in part_two %}
+        <li class={{ question.class }}><strong><h4>{{ question.question }}</h4></strong>
+          <table class="mft-questions" style="text-align: center">
+            <tbody>
+              <tr>
+                <td>
+                  <input type="radio" value="0" name={{ question.class }}>
+                </td>  
+                <td>
+                  <input type="radio" value="1" name={{ question.class }}>
+                </td>
+                <td>
+                  <input type="radio" value="2" name={{ question.class }}>
+                </td>
+                <td>
+                  <input type="radio" value="3" name={{ question.class }}>
+                </td>
+                <td>
+                  <input type="radio" value="4" name={{ question.class }}>
+                </td>
+                <td>
+                  <input type="radio" value="5" name={{ question.class }}>
+                </td>
+              </tr>
+              <tr>
+                <td>Strongly disagree</td>
+                <td>Moderately disagree</td>
+                <td>Slightly disagree</td>
+                <td>Slightly agree</td>
+                <td>Moderately agree</td>
+                <td>Strongly agree</td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      {% endfor %}
+    </ul>
+  </p>
+</form>
+
+  <p>
+    Thanks for completing this questionnaire! Please press submit to save your results.
+  </p>
+
+<div class="mft-errors"></div>
+<input type="submit" class="mft-next btn btn-primary"></input>
+
+</div>
+{% endblock %}
