@@ -47,6 +47,19 @@ class SummaryHistory(models.Model):
     new_summary = models.CharField(max_length=2000, default='')
     summary = models.ForeignKey(Summary, on_delete=models.CASCADE)
 
+# Represents a highlighted string in an article
+class Highlight(models.Model):
+    date = models.DateTimeField(auto_now_add=True, blank=True)
+    highlight = models.CharField(max_length=10000, blank=False, null=False)
+    page = models.ForeignKey(Page, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+class Comment(models.Model):
+    date = models.DateTimeField(auto_now_add=True, blank=True)
+    user = models.ForeignKey(User, null=False, blank=False)
+    comment = models.CharField(max_length=500, default='')
+    highlight = models.ForeignKey(Highlight, on_delete=models.CASCADE)
+
 class ChatMessage(models.Model):
     author = models.ForeignKey(
         User, related_name='author', null=False, blank=False)
@@ -124,12 +137,12 @@ class EyeHistory(models.Model):
     title = models.CharField(max_length=2000, default='')
 
     start_event = models.CharField(max_length=40, default='')
-    start_time = models.DateTimeField()
+    start_time = models.DateTimeField(auto_now_add=True)
 
     end_event = models.CharField(max_length=40, default='')
-    end_time = models.DateTimeField()
+    end_time = models.DateTimeField(auto_now_add=True)
 
-    total_time = models.IntegerField()  # store in ms
+    total_time = models.IntegerField(default=0)  # store in ms
 
     page = models.ForeignKey(Page, null=True, on_delete=models.SET_NULL)
 
@@ -147,6 +160,8 @@ class EyeHistoryMessage(models.Model):
     post_time = models.DateTimeField(auto_now_add=True)
     eyehistory = models.ForeignKey(
         EyeHistory, blank=True, null=True, on_delete=models.SET_NULL)
+    highlight = models.ForeignKey(Highlight, on_delete=models.CASCADE, blank=True, null=True)
+    parent_comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         ordering = ['-post_time']

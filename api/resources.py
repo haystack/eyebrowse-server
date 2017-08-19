@@ -26,6 +26,8 @@ from api.models import EyeHistoryMessage
 from api.models import MuteList
 from api.models import WhiteListItem
 from api.models import merge_histories
+from api.models import Highlight
+from api.models import Comment
 from api.resource_helpers import get_BlackListItem
 from api.resource_helpers import get_WhiteListItem
 from api.resource_helpers import get_port
@@ -332,27 +334,40 @@ class EyeHistoryResource(ModelResource):
 
         bundle.data['domain'] = domain
 
-        title = bundle.data['title']
-        start_time = bundle.data['start_time']
-        start_event = bundle.data['start_event']
-        end_time = bundle.data['end_time']
-        end_event = bundle.data['end_event']
+        title = bundle.data.get('title')
+        start_time = bundle.data.get('start_time')
+        start_event = bundle.data.get('start_event')
+        end_time = bundle.data.get('end_time')
+        end_event = bundle.data.get('end_event')
         favicon_url = bundle.data.get('favIconUrl')
         bundle.data['favicon_url'] = favicon_url
-        src = bundle.data['src']
+        src = bundle.data.get('src')
 
-        end_time = datetime.datetime.strptime(
-            end_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
-        start_time = datetime.datetime.strptime(
-            start_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
+        if end_time and start_time:
+            end_time = datetime.datetime.strptime(
+                end_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
+            start_time = datetime.datetime.strptime(
+                start_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
+        else:
+            end_time = datetime.datetime.now().replace(tzinfo=pytz.utc)
+            start_time = datetime.datetime.now().replace(tzinfo=pytz.utc)
 
         message = bundle.data.get('message')
+        highlight = bundle.data.get('highlight')
+        parent_comment = bundle.data.get('parent_comment')
 
         if message and message.strip() == '':
             message = None
 
+        if parent_comment and parent_comment == 0:
+            parent_comment = None
+
         if message:
             bundle.data.pop('message', None)
+        if highlight:
+            bundle.data.pop('highlight', None)
+        if parent_comment:
+            bundle.data.pop('parent_comment', None)
 
         try:
             exists = EyeHistory.objects.filter(user=request.user, url=url,
@@ -387,10 +402,19 @@ class EyeHistoryResource(ModelResource):
                     bundle_res = super(EyeHistoryResource, self).obj_create(
                         bundle, request, user=request.user, **kwargs)
                     check_bumps(request.user, start_time, end_time, url)
-
                     if message:
-                        eye_message, _ = EyeHistoryMessage.objects.get_or_create(
-                            eyehistory=bundle_res.obj, message=message)
+                        eye_message = None
+                        if highlight:
+                            h = Highlight.objects.get(id=highlight)
+                            eye_message, _ = EyeHistoryMessage.objects.get_or_create(
+                                eyehistory=bundle_res.obj, message=message, highlight=h)
+                        elif parent_comment:
+                            pc = Comment.objects.get(id=parent_comment)
+                            eye_message, _ = EyeHistoryMessage.objects.get_or_create(
+                                eyehistory=bundle_res.obj, message=message, parent_comment=pc)
+                        else:
+                            eye_message, _ = EyeHistoryMessage.objects.get_or_create(
+                                eyehistory=bundle_res.obj, message=message)
                         notify_message(message=eye_message)
 
                     return bundle_res
