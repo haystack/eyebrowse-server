@@ -3,7 +3,7 @@ from django.conf.urls import url
 
 urlpatterns = patterns('tags.views',
                         url(r'^tags/page', 'tags_by_page'),
-                        url(r'^tags/highlight', 'tags_by_highlight'),
+                        url(r'^tags/comment', 'tags_by_comment'),
                         url(r'^page$', 'page'),
                         url(r'^initialize_page$', 'initialize_page'),
                         url(r'^vote/add$', 'add_vote'),

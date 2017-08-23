@@ -38,7 +38,7 @@ class Tag(models.Model):
     subscribers = models.ManyToManyField(User, related_name="subscribers")
 
     word_count = models.IntegerField(default=0) # temporary, for logging purposes
-    eyehists = models.ManyToManyField(EyeHistoryMessage)
+    comment = models.ForeignKey(EyeHistoryMessage, on_delete=models.CASCADE)
 
 
 class Vote(models.Model):

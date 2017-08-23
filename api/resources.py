@@ -1,5 +1,6 @@
 import datetime
 import pytz
+import json
 
 from django.contrib.sessions.models import Session
 from django.contrib.auth.models import User
@@ -37,6 +38,8 @@ from api.resource_helpers import urlencodeSerializer
 from api.utils import humanize_time
 
 from accounts.models import UserProfile
+
+from tags.models import Tag, CommonTag
 
 from common.templatetags.filters import url_domain
 from common.templatetags.gravatar import gravatar_for_user
@@ -311,7 +314,6 @@ class EyeHistoryResource(ModelResource):
         ).all().order_by('-start_time')
         resource_name = 'history-data'
 
-        always_return_data = True
         list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post', 'put', 'delete']
         filtering = {
@@ -329,29 +331,7 @@ class EyeHistoryResource(ModelResource):
         bundle.data['username'] = bundle.obj.user.username
         bundle.data['pic_url'] = gravatar_for_user(
             User.objects.get(username=bundle.obj.user.username))
-        
-        from_zone = tz.tzutc()
-        to_zone = tz.tzlocal()
-        date = bundle.obj.start_time.replace(tzinfo=from_zone)
-        local = date.astimezone(to_zone)
 
-        user_profile = UserProfile.objects.get(user=bundle.obj.user)
-        pic = user_profile.pic_url
-
-        if not pic:
-          pic = gravatar_for_user(bundle.obj.user)
-          
-        pic = 'https://%s' % pic[7:]
-
-        comment = EyeHistoryMessage.objects.get(eyehistory=bundle.obj)
-
-        bundle.data['comment'] = {
-            'comment': comment.message,
-            'date': local.strftime('%b %m, %Y,  %I:%M %p'),
-            'user': bundle.obj.user.username,
-            'prof_pic': pic,
-            'id': bundle.obj.id,
-        }
         return bundle.data
 
     def obj_create(self, bundle, request=None, **kwargs):
@@ -368,6 +348,10 @@ class EyeHistoryResource(ModelResource):
         favicon_url = bundle.data.get('favIconUrl')
         bundle.data['favicon_url'] = favicon_url
         src = bundle.data.get('src')
+        tags = bundle.data.get('tags')
+
+        if tags:
+            tags = json.loads(tags);
 
         if end_time and start_time:
             end_time = datetime.datetime.strptime(
@@ -384,9 +368,6 @@ class EyeHistoryResource(ModelResource):
 
         if message and message.strip() == '':
             message = None
-
-        if parent_comment and parent_comment == 0:
-            parent_comment = None
 
         if message:
             bundle.data.pop('message', None)
@@ -430,19 +411,38 @@ class EyeHistoryResource(ModelResource):
                     check_bumps(request.user, start_time, end_time, url)
                     if message:
                         eye_message = None
-                        if highlight:
+                        if parent_comment:
+                            h = Highlight.objects.get(id=highlight)
+                            pc = Comment.objects.get(id=parent_comment)
+                            eye_message, _ = EyeHistoryMessage.objects.get_or_create(
+                                eyehistory=bundle_res.obj, message=message, highlight=h, parent_comment=pc)
+                        elif highlight:
                             h = Highlight.objects.get(id=highlight)
                             eye_message, _ = EyeHistoryMessage.objects.get_or_create(
                                 eyehistory=bundle_res.obj, message=message, highlight=h)
-                        elif parent_comment:
-                            pc = Comment.objects.get(id=parent_comment)
-                            eye_message, _ = EyeHistoryMessage.objects.get_or_create(
-                                eyehistory=bundle_res.obj, message=message, parent_comment=pc)
                         else:
                             eye_message, _ = EyeHistoryMessage.objects.get_or_create(
                                 eyehistory=bundle_res.obj, message=message)
-                        notify_message(message=eye_message)
 
+                        print tags
+                        if tags:
+                            for tag in tags:
+                                if len(Tag.objects.filter(comment=eye_message, common_tag__name=tag)) == 0:
+                                    try:
+                                        print "here"
+                                        common_tag = CommonTag.objects.get(name=tag)
+                                        vt = Tag(
+                                            common_tag=common_tag,
+                                            user=request.user,
+                                            comment=eye_message,
+                                            highlight=h,
+                                        )
+                                        vt.save()
+                                    except CommonTag.DoesNotExist:
+                                        pass
+
+
+                        notify_message(message=eye_message)
                     return bundle_res
         except MultipleObjectsReturned as e:
             logger.info(e)
