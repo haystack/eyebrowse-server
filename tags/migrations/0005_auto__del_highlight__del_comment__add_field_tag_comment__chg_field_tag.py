@@ -8,38 +8,56 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Deleting model 'Highlight'
+        db.delete_table('tags_highlight')
+
+        # Deleting model 'Comment'
+        db.delete_table('tags_comment')
+
         # Adding field 'Tag.comment'
         db.add_column('tags_tag', 'comment',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['api.EyeHistoryMessage']),
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.EyeHistoryMessage'], null=True, blank=True),
                       keep_default=False)
 
-        # Removing M2M table for field eyehists on 'Tag'
-        db.delete_table(db.shorten_name('tags_tag_eyehists'))
 
+        # Changing field 'Tag.highlight'
+        db.alter_column('tags_tag', 'highlight_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Highlight'], null=True))
+
+        # Changing field 'Vote.comment'
+        db.alter_column('tags_vote', 'comment_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.EyeHistoryMessage'], null=True))
 
     def backwards(self, orm):
+        # Adding model 'Highlight'
+        db.create_table('tags_highlight', (
+            ('page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Page'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
+            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('highlight', self.gf('django.db.models.fields.CharField')(max_length=10000)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        ))
+        db.send_create_signal('tags', ['Highlight'])
+
+        # Adding model 'Comment'
+        db.create_table('tags_comment', (
+            ('comment', self.gf('django.db.models.fields.CharField')(default='', max_length=500)),
+            ('tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Tag'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        ))
+        db.send_create_signal('tags', ['Comment'])
+
         # Deleting field 'Tag.comment'
         db.delete_column('tags_tag', 'comment_id')
 
-        # Adding M2M table for field eyehists on 'Tag'
-        m2m_table_name = db.shorten_name('tags_tag_eyehists')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('tag', models.ForeignKey(orm['tags.tag'], null=False)),
-            ('eyehistorymessage', models.ForeignKey(orm['api.eyehistorymessage'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['tag_id', 'eyehistorymessage_id'])
 
+        # Changing field 'Tag.highlight'
+        db.alter_column('tags_tag', 'highlight_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Highlight'], null=True))
+
+        # Changing field 'Vote.comment'
+        db.alter_column('tags_vote', 'comment_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tags.Comment'], null=True))
 
     models = {
-        'api.comment': {
-            'Meta': {'object_name': 'Comment'},
-            'comment': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '500'}),
-            'date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'highlight': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Highlight']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        },
         'api.domain': {
             'Meta': {'object_name': 'Domain'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -70,7 +88,7 @@ class Migration(SchemaMigration):
             'highlight': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Highlight']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'message': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '300'}),
-            'parent_comment': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Comment']", 'null': 'True', 'blank': 'True'}),
+            'parent_comment': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'post_time': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'})
         },
         'api.highlight': {
@@ -140,7 +158,7 @@ class Migration(SchemaMigration):
         'tags.tag': {
             'Meta': {'object_name': 'Tag'},
             'color': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'comment': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.EyeHistoryMessage']"}),
+            'comment': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.EyeHistoryMessage']", 'null': 'True', 'blank': 'True'}),
             'common_tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tags.CommonTag']", 'null': 'True', 'blank': 'True'}),
             'description': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10000'}),
             'domain': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '300'}),
@@ -172,7 +190,7 @@ class Migration(SchemaMigration):
         },
         'tags.vote': {
             'Meta': {'object_name': 'Vote'},
-            'comment': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Comment']", 'null': 'True', 'blank': 'True'}),
+            'comment': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.EyeHistoryMessage']", 'null': 'True', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['tags.Tag']", 'null': 'True', 'blank': 'True'}),

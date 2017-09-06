@@ -8,37 +8,49 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting model 'Comment'
-        db.delete_table('api_comment')
+        # Adding model 'Highlight'
+        db.create_table('api_highlight', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('highlight', self.gf('django.db.models.fields.CharField')(max_length=10000)),
+            ('page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Page'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
+        ))
+        db.send_create_signal('api', ['Highlight'])
+
+        # Adding field 'EyeHistoryMessage.highlight'
+        db.add_column('api_eyehistorymessage', 'highlight',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Highlight'], null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'EyeHistoryMessage.parent_comment'
+        db.add_column('api_eyehistorymessage', 'parent_comment',
+                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      keep_default=False)
 
 
-        # Renaming column for 'EyeHistoryMessage.parent_comment' to match new field type.
-        db.rename_column('api_eyehistorymessage', 'parent_comment_id', 'parent_comment')
-        # Changing field 'EyeHistoryMessage.parent_comment'
-        db.alter_column('api_eyehistorymessage', 'parent_comment', self.gf('django.db.models.fields.IntegerField')())
-        # Removing index on 'EyeHistoryMessage', fields ['parent_comment']
-        db.delete_index('api_eyehistorymessage', ['parent_comment_id'])
+        # Changing field 'EyeHistory.start_time'
+        db.alter_column('api_eyehistory', 'start_time', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True))
 
+        # Changing field 'EyeHistory.end_time'
+        db.alter_column('api_eyehistory', 'end_time', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True))
 
     def backwards(self, orm):
-        # Adding index on 'EyeHistoryMessage', fields ['parent_comment']
-        db.create_index('api_eyehistorymessage', ['parent_comment_id'])
+        # Deleting model 'Highlight'
+        db.delete_table('api_highlight')
 
-        # Adding model 'Comment'
-        db.create_table('api_comment', (
-            ('comment', self.gf('django.db.models.fields.CharField')(default='', max_length=500)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('highlight', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Highlight'])),
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        ))
-        db.send_create_signal('api', ['Comment'])
+        # Deleting field 'EyeHistoryMessage.highlight'
+        db.delete_column('api_eyehistorymessage', 'highlight_id')
+
+        # Deleting field 'EyeHistoryMessage.parent_comment'
+        db.delete_column('api_eyehistorymessage', 'parent_comment')
 
 
-        # Renaming column for 'EyeHistoryMessage.parent_comment' to match new field type.
-        db.rename_column('api_eyehistorymessage', 'parent_comment', 'parent_comment_id')
-        # Changing field 'EyeHistoryMessage.parent_comment'
-        db.alter_column('api_eyehistorymessage', 'parent_comment_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.Comment'], null=True))
+        # Changing field 'EyeHistory.start_time'
+        db.alter_column('api_eyehistory', 'start_time', self.gf('django.db.models.fields.DateTimeField')())
+
+        # Changing field 'EyeHistory.end_time'
+        db.alter_column('api_eyehistory', 'end_time', self.gf('django.db.models.fields.DateTimeField')())
 
     models = {
         'api.blacklistitem': {
