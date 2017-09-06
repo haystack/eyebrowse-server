@@ -424,12 +424,10 @@ class EyeHistoryResource(ModelResource):
                             eye_message, _ = EyeHistoryMessage.objects.get_or_create(
                                 eyehistory=bundle_res.obj, message=message)
 
-                        print tags
                         if tags:
                             for tag in tags:
                                 if len(Tag.objects.filter(comment=eye_message, common_tag__name=tag)) == 0:
                                     try:
-                                        print "here"
                                         common_tag = CommonTag.objects.get(name=tag)
                                         vt = Tag(
                                             common_tag=common_tag,
