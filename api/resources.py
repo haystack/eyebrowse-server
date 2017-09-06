@@ -30,7 +30,6 @@ from api.models import MuteList
 from api.models import WhiteListItem
 from api.models import merge_histories
 from api.models import Highlight
-from api.models import Comment
 from api.resource_helpers import get_BlackListItem
 from api.resource_helpers import get_WhiteListItem
 from api.resource_helpers import get_port
@@ -413,9 +412,8 @@ class EyeHistoryResource(ModelResource):
                         eye_message = None
                         if parent_comment:
                             h = Highlight.objects.get(id=highlight)
-                            pc = Comment.objects.get(id=parent_comment)
                             eye_message, _ = EyeHistoryMessage.objects.get_or_create(
-                                eyehistory=bundle_res.obj, message=message, highlight=h, parent_comment=pc)
+                                eyehistory=bundle_res.obj, message=message, highlight=h, parent_comment=parent_comment)
                         elif highlight:
                             h = Highlight.objects.get(id=highlight)
                             eye_message, _ = EyeHistoryMessage.objects.get_or_create(

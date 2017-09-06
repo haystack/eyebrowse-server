@@ -54,12 +54,6 @@ class Highlight(models.Model):
     page = models.ForeignKey(Page, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
-class Comment(models.Model):
-    date = models.DateTimeField(auto_now_add=True, blank=True)
-    user = models.ForeignKey(User, null=False, blank=False)
-    comment = models.CharField(max_length=500, default='')
-    highlight = models.ForeignKey(Highlight, on_delete=models.CASCADE)
-
 class ChatMessage(models.Model):
     author = models.ForeignKey(
         User, related_name='author', null=False, blank=False)
@@ -161,7 +155,7 @@ class EyeHistoryMessage(models.Model):
     eyehistory = models.ForeignKey(
         EyeHistory, blank=True, null=True, on_delete=models.SET_NULL)
     highlight = models.ForeignKey(Highlight, on_delete=models.CASCADE, blank=True, null=True)
-    parent_comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True)
+    parent_comment = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['-post_time']

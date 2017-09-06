@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from api.models import Page, Domain, Highlight, Comment
+from api.models import Page, Domain, Highlight
 from api.models import EyeHistoryMessage
 
 # Tag grouping model object for all types of tags
@@ -44,7 +44,7 @@ class Tag(models.Model):
 class Vote(models.Model):
     date = models.DateTimeField(auto_now_add=True, blank=True)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=True, blank=True) # one valuetag to many votes
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.ForeignKey(EyeHistoryMessage, on_delete=models.CASCADE, null=True, blank=True)
     voter = models.ForeignKey(User, null=False, blank=False) 
 
 class UserTagInfo(models.Model):
