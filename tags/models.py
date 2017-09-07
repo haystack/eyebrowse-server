@@ -1,14 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from api.models import Page, Domain
-
-# Represents a highlighted string in an article
-class Highlight(models.Model):
-    date = models.DateTimeField(auto_now_add=True, blank=True)
-    highlight = models.CharField(max_length=10000, blank=False, null=False)
-    page = models.ForeignKey(Page, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+from api.models import Page, Domain, Highlight
+from api.models import EyeHistoryMessage
 
 # Tag grouping model object for all types of tags
 class TagCollection(models.Model):
@@ -44,18 +38,13 @@ class Tag(models.Model):
     subscribers = models.ManyToManyField(User, related_name="subscribers")
 
     word_count = models.IntegerField(default=0) # temporary, for logging purposes
-
-class Comment(models.Model):
-    date = models.DateTimeField(auto_now_add=True, blank=True)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, null=False, blank=False)
-    comment = models.CharField(max_length=500, default='')
+    comment = models.ForeignKey(EyeHistoryMessage, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Vote(models.Model):
     date = models.DateTimeField(auto_now_add=True, blank=True)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=True, blank=True) # one valuetag to many votes
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.ForeignKey(EyeHistoryMessage, on_delete=models.CASCADE, null=True, blank=True)
     voter = models.ForeignKey(User, null=False, blank=False) 
 
 class UserTagInfo(models.Model):

@@ -1,5 +1,6 @@
 import datetime
 import pytz
+import json
 
 from django.contrib.sessions.models import Session
 from django.contrib.auth.models import User
@@ -7,6 +8,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.conf.urls import url
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.management import call_command
+
+from dateutil import tz
 
 from tastypie import fields
 from tastypie.authentication import BasicAuthentication
@@ -26,6 +29,7 @@ from api.models import EyeHistoryMessage
 from api.models import MuteList
 from api.models import WhiteListItem
 from api.models import merge_histories
+from api.models import Highlight
 from api.resource_helpers import get_BlackListItem
 from api.resource_helpers import get_WhiteListItem
 from api.resource_helpers import get_port
@@ -33,6 +37,8 @@ from api.resource_helpers import urlencodeSerializer
 from api.utils import humanize_time
 
 from accounts.models import UserProfile
+
+from tags.models import Tag, CommonTag
 
 from common.templatetags.filters import url_domain
 from common.templatetags.gravatar import gravatar_for_user
@@ -324,7 +330,8 @@ class EyeHistoryResource(ModelResource):
         bundle.data['username'] = bundle.obj.user.username
         bundle.data['pic_url'] = gravatar_for_user(
             User.objects.get(username=bundle.obj.user.username))
-        return bundle
+
+        return bundle.data
 
     def obj_create(self, bundle, request=None, **kwargs):
         url = bundle.data['url']
@@ -332,27 +339,41 @@ class EyeHistoryResource(ModelResource):
 
         bundle.data['domain'] = domain
 
-        title = bundle.data['title']
-        start_time = bundle.data['start_time']
-        start_event = bundle.data['start_event']
-        end_time = bundle.data['end_time']
-        end_event = bundle.data['end_event']
+        title = bundle.data.get('title')
+        start_time = bundle.data.get('start_time')
+        start_event = bundle.data.get('start_event')
+        end_time = bundle.data.get('end_time')
+        end_event = bundle.data.get('end_event')
         favicon_url = bundle.data.get('favIconUrl')
         bundle.data['favicon_url'] = favicon_url
-        src = bundle.data['src']
+        src = bundle.data.get('src')
+        tags = bundle.data.get('tags')
 
-        end_time = datetime.datetime.strptime(
-            end_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
-        start_time = datetime.datetime.strptime(
-            start_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
+        if tags:
+            tags = json.loads(tags);
+
+        if end_time and start_time:
+            end_time = datetime.datetime.strptime(
+                end_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
+            start_time = datetime.datetime.strptime(
+                start_time, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.utc)
+        else:
+            end_time = datetime.datetime.now().replace(tzinfo=pytz.utc)
+            start_time = datetime.datetime.now().replace(tzinfo=pytz.utc)
 
         message = bundle.data.get('message')
+        highlight = bundle.data.get('highlight')
+        parent_comment = bundle.data.get('parent_comment')
 
         if message and message.strip() == '':
             message = None
 
         if message:
             bundle.data.pop('message', None)
+        if highlight:
+            bundle.data.pop('highlight', None)
+        if parent_comment:
+            bundle.data.pop('parent_comment', None)
 
         try:
             exists = EyeHistory.objects.filter(user=request.user, url=url,
@@ -387,12 +408,37 @@ class EyeHistoryResource(ModelResource):
                     bundle_res = super(EyeHistoryResource, self).obj_create(
                         bundle, request, user=request.user, **kwargs)
                     check_bumps(request.user, start_time, end_time, url)
-
                     if message:
-                        eye_message, _ = EyeHistoryMessage.objects.get_or_create(
-                            eyehistory=bundle_res.obj, message=message)
-                        notify_message(message=eye_message)
+                        eye_message = None
+                        if parent_comment:
+                            h = Highlight.objects.get(id=highlight)
+                            eye_message, _ = EyeHistoryMessage.objects.get_or_create(
+                                eyehistory=bundle_res.obj, message=message, highlight=h, parent_comment=parent_comment)
+                        elif highlight:
+                            h = Highlight.objects.get(id=highlight)
+                            eye_message, _ = EyeHistoryMessage.objects.get_or_create(
+                                eyehistory=bundle_res.obj, message=message, highlight=h)
+                        else:
+                            eye_message, _ = EyeHistoryMessage.objects.get_or_create(
+                                eyehistory=bundle_res.obj, message=message)
 
+                        if tags:
+                            for tag in tags:
+                                if len(Tag.objects.filter(comment=eye_message, common_tag__name=tag)) == 0:
+                                    try:
+                                        common_tag = CommonTag.objects.get(name=tag)
+                                        vt = Tag(
+                                            common_tag=common_tag,
+                                            user=request.user,
+                                            comment=eye_message,
+                                            highlight=h,
+                                        )
+                                        vt.save()
+                                    except CommonTag.DoesNotExist:
+                                        pass
+
+
+                        notify_message(message=eye_message)
                     return bundle_res
         except MultipleObjectsReturned as e:
             logger.info(e)
