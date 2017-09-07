@@ -17,9 +17,9 @@ from datetime import datetime
 
 from common.view_helpers import _template_values
 
-from api.models import Domain, Page, Summary, SummaryHistory
+from api.models import Domain, Page, Summary, SummaryHistory, EyeHistoryMessage
 from tags.models import Highlight, CommonTag, TagCollection
-from tags.models import Tag, Vote, UserTagInfo, Comment
+from tags.models import Tag, Vote, UserTagInfo
 from accounts.models import UserProfile
 from stats.models import FBShareData
 
@@ -123,12 +123,12 @@ def tags_by_highlight(request):
   user = request.user
 
   if request.GET:
-    highlight = request.GET.get('highlight')
+    highlight_id = request.GET.get('highlight_id')
     url = process_url(request.GET.get('url'))
     errors['get_tags'] = []
 
     if not len(errors['get_tags']):
-      vts = Tag.objects.filter(highlight__id=highlight, page__url=url)
+      vts = Tag.objects.filter(highlight__id=highlight_id, page__url=url)
 
       # get relevant info for each value tag
       for vt in vts:
@@ -169,6 +169,63 @@ def tags_by_highlight(request):
     'tags': sorted_tags,
   }
 
+'''
+Get all tags associated with a comment
+'''
+@login_required
+@ajax_request
+def tags_by_comment(request):
+  success = False
+  errors = {}
+  tags = {}
+  sorted_tags = []
+  user = request.user
+
+  if request.GET:
+    eyehistory = request.GET.get('eyehistory')
+    errors['get_tags'] = []
+
+    if not len(errors['get_tags']):
+      vts = Tag.objects.filter(comment__eyehistory__id=eyehistory)
+
+      # get relevant info for each value tag
+      for vt in vts:
+        vt_info = {
+          'user_voted': False,
+          'name': vt.common_tag.name,
+          'color': vt.common_tag.color,
+          'description': vt.common_tag.description,
+          'is_private': vt.is_private,
+          'vote_count': len(Vote.objects.filter(tag=vt)),
+          'is_owner': (vt.user == user),
+        }
+
+        votes = []
+        vs = Vote.objects.filter(tag=vt)
+
+        # get vote info
+        for v in vs:
+          if user == v.voter:
+            vt_info['user_voted'] = True
+          user_profile = UserProfile.objects.get(user=v.voter)
+          pic = user_profile.pic_url
+          if not pic:
+            pic = gravatar_for_user(v.voter)
+          votes.append({
+            'name': user_profile.user.username,
+            'pic': 'https://%s' % pic[7:],
+          })
+        vt_info['votes'] = votes
+        sorted_tags.append(vt_info)
+        success = True
+
+  sorted_tags = sorted(sorted_tags, key=lambda x: x["vote_count"], reverse=True)
+
+  return {
+    'success': success,
+    'errors': errors,
+    'tags': sorted_tags,
+  }
 
 '''
 A: 
@@ -408,22 +465,29 @@ def highlight(request):
   if request.POST:
     url = process_url(request.POST.get('url'))
     highlight = request.POST.get('highlight')
-    hl_id = request.POST.get('highlight_id')
+    highlight_id = request.POST.get('highlight_id')
     tags = json.loads(request.POST.get('tags'))
     errors['add_highlight'] = []
 
-    if not len(errors['add_highlight']) and highlight != "":
+    if highlight != "" or highlight_id:
       p = Page.objects.get(url=url)
 
-      if hl_id:
+      if highlight_id: 
         try:
-          h = Highlight.objects.get(page=p, id=hl_id)
-        except:
-          errors['add_highlight'].append('Could not get highlight')
+          h = Highlight.objects.get(id=highlight_id)
+          data['highlight_id'] = h.id
+        except: 
+          errors['add_highlight'].append('Get highlight failed')
       else:
-        h, created = Highlight.objects.get_or_create(page=p, highlight=highlight)
-        h.user = user
-        h.save()
+        try:
+          h, created = Highlight.objects.get_or_create(page=p, highlight=highlight)
+          h.user = user
+          h.save()
+
+          success = True
+          data['highlight_id'] = h.id
+        except:
+          errors['add_highlight'].append('Add highlight failed')
 
       if not len(errors['add_highlight']):
         for tag in tags:
@@ -437,11 +501,9 @@ def highlight(request):
                 user=user, 
               )
               vt.save()
+              success = True
             except CommonTag.DoesNotExist:
               errors['add_highlight'].append("Base tag " + tag + " does not exist")
-
-        success = True
-        data['highlight_id'] = h.id
 
   return {
     'success': success,
@@ -472,7 +534,7 @@ def highlights(request):
       for h in hs:
         max_tag = ()
         max_tag_count = 0
-        vts = Tag.objects.filter(highlight=h, page__url=url)
+        vts = Tag.objects.filter(highlight=h)
         for vt in vts:
           vote_count = len(Vote.objects.filter(tag=vt))
           if vote_count >= max_tag_count:
@@ -721,63 +783,68 @@ def page_summary(request):
     'data': data,
   }
 
-@csrf_exempt
 @login_required
 @ajax_request
-def add_comment(request):
+def comments_by_highlight(request):
   success = False
-  user = request.user
   errors = {}
-  comment = {}
+  comments = []
+  errors['comments_by_highlight'] = []
+  user = request.user
+  user_contributed = False
 
-  if request.POST:
-    url = process_url(request.POST.get('url'))
-    highlight = request.POST.get('highlight')
-    tag_name = request.POST.get('tag_name')
-    comment = request.POST.get('comment')
-    errors['add_comment'] = []
-    t = None
+  hl_id = request.GET.get('highlight_id')
 
-    try:
-      t = Tag.objects.get(highlight__id=highlight, common_tag__name=tag_name, page__url=url)
-    except:
-      errors['add_comment'].append("Could not get tag " + tag_name)
+  eyehist_message = EyeHistoryMessage.objects.filter(highlight__id=hl_id)
 
-    if t:
-      c = Comment(tag=t, user=user, comment=comment)
-      c.save()
+  #TODO: return tags along with comments
 
-      # v = Vote(comment=c, voter=user)
-      # v.save()
+  if len(comments) != 0:
+    success = True
 
-      from_zone = tz.tzutc()
-      to_zone = tz.tzlocal()
+  if len(Tag.objects.filter(highlight__id=hl_id, user=user)) > 0:
+    user_contributed = True
 
-      date = c.date.replace(tzinfo=from_zone)
-      local = date.astimezone(to_zone)
+  for m in eyehist_message:
+    tags = {}
+    from_zone = tz.tzutc()
+    to_zone = tz.tzlocal()
 
-      user_profile = UserProfile.objects.get(user=user)
-      pic = user_profile.pic_url
+    date = m.post_time.replace(tzinfo=from_zone)
+    local = date.astimezone(to_zone)
 
-      if not pic:
-        pic = gravatar_for_user(user)
-        
-      pic = 'https://%s' % pic[7:]
+    user_profile = UserProfile.objects.get(user=m.eyehistory.user)
+    pic = user_profile.pic_url
 
-      comment = {
-        'comment': c.comment,
-        'date': local.strftime('%b %m, %Y,  %I:%M %p'),
-        'user': c.user.username,
-        'prof_pic': pic,
-        'id': c.id,
+    if not pic:
+      pic = gravatar_for_user(m.eyehistory.user)
+      
+    pic = 'https://%s' % pic[7:]
+
+    ts = Tag.objects.filter(comment__id=m.id)
+
+    for t in ts:
+      tags[t.common_tag.name] = {
+        'name': t.common_tag.name,
+        'color': t.common_tag.color,
+        'description': t.common_tag.description
       }
 
-      success = True
+    comments.append({
+      'comment': m.message,
+      'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+      'time': local.strftime("%s"),
+      'user': m.eyehistory.user.username,
+      'prof_pic': pic,
+      'id': m.id,
+      'tags': tags,
+    })
 
   return {
     'success': success,
     'errors': errors,
-    'comment': comment,
+    'comments': sorted(comments, key=lambda x:x['time']),
+    'user_contributed': user_contributed,
   }
 
 @csrf_exempt
@@ -793,7 +860,7 @@ def remove_comment(request):
     errors['remove_comment'] = []
 
     try:
-      c = Comment.objects.get(id=comment, user=user)
+      c = EyeHistoryMessage.objects.get(id=comment, eyehistory__user=user)
       c.delete()
       success = True
     except:
@@ -818,8 +885,8 @@ def edit_comment(request):
     errors['edit_comment'] = []
 
     try:
-      c = Comment.objects.get(id=comment_id)
-      c.comment = new_comment
+      c = EyeHistoryMessage.objects.get(id=comment_id)
+      c.message = new_comment
       c.save()
       success = True
     except:
@@ -830,57 +897,65 @@ def edit_comment(request):
     'errors': errors,
   }
 
+
 @login_required
 @ajax_request
-def comments(request):
+def comments_by_page(request):
   success = False
   errors = {}
   data = {}
+  highlights = {}
+  errors['comments_by_page'] = []
 
   if request.GET:
     url = process_url(request.GET.get('url'))
-    highlight = request.GET.get('highlight')
-    tag_name = request.GET.get('tag_name')
-    errors['comments'] = []
-    comments = []
 
     try:
-      t = Tag.objects.get(highlight__id=highlight, common_tag__name=tag_name)
-      cs = Comment.objects.filter(tag=t).order_by('date')
-
+      cs = EyeHistoryMessage.objects.filter(highlight__page__url=url)
       for c in cs:
         from_zone = tz.tzutc()
         to_zone = tz.tzlocal()
 
-        date = c.date.replace(tzinfo=from_zone)
+        date = c.post_time.replace(tzinfo=from_zone)
         local = date.astimezone(to_zone)
 
-        user_profile = UserProfile.objects.get(user=c.user)
+        user_profile = UserProfile.objects.get(user=c.eyehistory.user)
         pic = user_profile.pic_url
 
         if not pic:
-          pic = gravatar_for_user(c.user)
+          pic = gravatar_for_user(c.eyehistory.user)
 
         pic = 'https://%s' % pic[7:]
 
-        comments.append({
-          'comment': c.comment,
-          'date': local.strftime('%b %m, %Y,  %I:%M %p'),
-          'user': c.user.username,
-          'prof_pic': pic,
-          'id': c.id,
-        })
+        if c.highlight.id in data:
+          data[c.highlight.id].append({
+            'comment': c.message,
+            'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+            'user': c.eyehistory.user.username,
+            'prof_pic': pic,
+            'id': c.id,
+          })
 
-      data['comments'] = comments
-      success = True
+        else:
+          data[c.highlight.id] = [{
+            'comment': c.message,
+            'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+            'user': c.eyehistory.user.username,
+            'prof_pic': pic,
+            'id': c.id,
+          }]
 
+        highlights[c.highlight.id] = c.highlight.highlight
+
+        success = True
     except:
-      errors['comments'].append("Could not get comments for tag " + tag_name)
+      errors['comments_by_page'].append('Could not get comments')
 
   return {
     'success': success,
     'errors': errors,
-    'data': data,
+    'comments': data,
+    'highlights': highlights,
   }
 
 @login_required
