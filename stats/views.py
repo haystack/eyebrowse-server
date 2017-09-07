@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.views.generic.simple import redirect_to
+from django.views.decorators.csrf import csrf_exempt
 
 from ipware.ip import get_ip
 from annoying.decorators import render_to, ajax_request
@@ -384,6 +385,7 @@ def _profile_info(user=None, username=None, following=False, followers=False):
 
     return username, follows, profile_user, empty_search_msg, nav_bar
 
+@csrf_exempt
 @ajax_request
 def clicked_item(request):
     try:

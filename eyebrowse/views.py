@@ -393,8 +393,9 @@ def mft(request, token=None):
         q2_array[rand] = {'question': q, 'class': part_two[q]}
 
     try:
-        m = MoralData.objects.get(user=user)
-        if m.is_treatment:
+        md_objs = MoralData.objects.filter(user=user)
+        m = md_objs[len(md_objs) - 1]
+	if m.is_treatment:
             return render(request, 'common/mft_results_827.html',
                             {'authority':m.authority, 'loyalty':m.loyalty, 'care':m.care, 'fairness':m.fairness, 'purity':m.purity});
         else:
