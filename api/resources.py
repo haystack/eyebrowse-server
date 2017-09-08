@@ -431,7 +431,6 @@ class EyeHistoryResource(ModelResource):
                                             common_tag=common_tag,
                                             user=request.user,
                                             comment=eye_message,
-                                            highlight=h,
                                         )
                                         vt.save()
                                     except CommonTag.DoesNotExist:
