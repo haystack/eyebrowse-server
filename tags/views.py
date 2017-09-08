@@ -121,6 +121,7 @@ def tags_by_highlight(request):
   tags = {}
   sorted_tags = []
   user = request.user
+  highlight = ''
 
   if request.GET:
     highlight_id = request.GET.get('highlight_id')
@@ -129,6 +130,7 @@ def tags_by_highlight(request):
 
     if not len(errors['get_tags']):
       vts = Tag.objects.filter(highlight__id=highlight_id, page__url=url)
+      highlight = Highlight.objects.get(id=highlight_id).highlight
 
       # get relevant info for each value tag
       for vt in vts:
@@ -140,6 +142,7 @@ def tags_by_highlight(request):
           'is_private': vt.is_private,
           'vote_count': len(Vote.objects.filter(tag=vt)),
           'is_owner': (vt.user == user),
+          'id': vt.id,
         }
 
         votes = []
@@ -167,6 +170,7 @@ def tags_by_highlight(request):
     'success': success,
     'errors': errors,
     'tags': sorted_tags,
+    'highlight': highlight,
   }
 
 '''
@@ -381,18 +385,12 @@ def add_vote(request):
   vote_count = 0
 
   if request.POST:
-    tag_name = request.POST.get('valuetag')
-    url = process_url(request.POST.get('url'))
-    highlight = request.POST.get('highlight')
+    tag_id = request.POST.get('tag_id')
     errors['add_vote'] = []
     vt = None
 
     try:
-      vt = Tag.objects.get(
-        common_tag__name=tag_name, 
-        highlight__id=highlight, 
-        page__url=url,
-      )
+      vt = Tag.objects.get(id=tag_id)
     except Tag.DoesNotExist:
       errors['add_vote'].append("Tag " + tag_name + " does not exist")
 
@@ -422,17 +420,11 @@ def remove_vote(request):
   vote_count = 0
 
   if request.POST:
-    tag_name = request.POST.get('valuetag')
-    url = process_url(request.POST.get('url'))
-    highlight = request.POST.get('highlight')
+    tag_id = request.POST.get('tag_id')
     errors['remove_vote'] = []
 
     try:
-      vt = Tag.objects.get(
-        common_tag__name=tag_name, 
-        highlight__id=highlight, 
-        page__url=url,
-      )
+      vt = Tag.objects.get(id=tag_id)
       old_votes = Vote.objects.filter(tag=vt, voter=user)
 
       if len(old_votes) > 0:
@@ -804,6 +796,10 @@ def comments_by_highlight(request):
 
   if len(Tag.objects.filter(highlight__id=hl_id, user=user)) > 0:
     user_contributed = True
+
+  for tag in Tag.objects.filter(highlight__id=hl_id):
+    if len(Vote.objects.filter(tag=tag)) > 0:
+      user_contributed = True
 
   for m in eyehist_message:
     tags = {}
