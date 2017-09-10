@@ -604,8 +604,8 @@ def related_stories(request):
 
     headers = {
       "Access-Control-Allow-Origin": "*",
-      "X-AYLIEN-NewsAPI-Application-ID": "649b72e1",
-      "X-AYLIEN-NewsAPI-Application-Key": "ae45014e8f1e35a8f1435f0bba538840",
+      "X-AYLIEN-NewsAPI-Application-ID": "c3cc0e6d",
+      "X-AYLIEN-NewsAPI-Application-Key": " c548d0a8164ee2b74854d946817d8909",
     }
 
     r = requests.get(api_url, params=payload, headers=headers)
