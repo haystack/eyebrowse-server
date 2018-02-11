@@ -134,7 +134,7 @@ def feedback(request):
     return {'res': 'success'}
 
 
-@login_required
+#@login_required
 @ajax_request
 def add_tag(request):
     domain = request.POST.get('domain', None)
@@ -142,7 +142,8 @@ def add_tag(request):
     if not domain or not name:
         return {'res': 'failed'}
 
-    user = request.user
+    #user = request.user
+    user = User.objects.get(username = 'pteek')
     try:
         tags = Tag.objects.filter(user=user, domain=domain)
         if tags.count() > 0:
@@ -165,13 +166,13 @@ def add_tag(request):
     return {'res': 'success'}
 
 
-@login_required
+#@login_required
 @ajax_request
 def color_tag(request):
     name = request.POST.get('tag', None)
 
-    user = request.user
-
+    #user = request.user
+    user = User.objects.get(username = 'pteek')
     tags = Tag.objects.filter(user=user, name=name)
     r = lambda: random.randint(0, 255)
     color = '%02X%02X%02X' % (r(), r(), r())
@@ -183,14 +184,15 @@ def color_tag(request):
 
 
 @csrf_exempt
-@login_required
+#@login_required
 @ajax_request
 def delete_tag(request):
     domain = request.POST.get('domain', None)
     name = request.POST.get('tag', None)
     page_url = request.POST.get('url', None)
 
-    user = request.user
+    #user = request.user
+    user = User.objects.get(username = 'pteek')
 
     if domain and name:
         tags = Tag.objects.filter(user=user, domain=domain, name=name)
@@ -209,7 +211,7 @@ def delete_tag(request):
 def google_verify(request):
     return {}
 
-@login_required
+#@login_required
 @render_to('common/mft_results_827.html')
 def mft_results_treatment(request):
     auth = 0
@@ -217,8 +219,8 @@ def mft_results_treatment(request):
     fair = 0
     care = 0
     pure = 0
-    user = request.user
-
+    #user = request.user
+    user = User.objects.get(username = 'pteek')
     if request.POST:
         a1 = int(request.POST.get("a1")[0]) # auth
         b1 = int(request.POST.get("b1")[0]) # ???
@@ -276,7 +278,7 @@ def mft_results_treatment(request):
 
     return _template_values(request,
                             page_title="Moral Questionnaire Results", authority=auth, loyalty=loy, fairness=fair, care=care, purity=pure);
-@login_required
+#@login_required
 @render_to('common/mft_results_543.html')
 def mft_results_control(request):
     auth = 0
@@ -284,8 +286,8 @@ def mft_results_control(request):
     fair = 0
     care = 0
     pure = 0
-    user = request.user
-
+    #user = request.user
+    user = User.objects.get(username = 'pteek')
     if request.POST:
         a1 = int(request.POST.get("a1")[0]) # auth
         b1 = int(request.POST.get("b1")[0]) # ???
@@ -334,9 +336,10 @@ def mft_results_control(request):
     return _template_values(request,
                             page_title="Moral Questionnaire Results");
 
-@login_required
+#@login_required
 def mft(request, token=None):
-    user = request.user
+    #user = request.user
+    user = User.objects.get(username = 'pteek')
     part_one = {
         "Whether or not someone conformed to the traditions of society.": "a1",
         "Whether or not someone was good at math.": "b1",
