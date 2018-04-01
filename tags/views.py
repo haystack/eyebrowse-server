@@ -711,12 +711,6 @@ def common_tags(request):
 def page_summary(request):
   success = False
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   data = {}
   errors = {}
   errors['page_summary'] = []
@@ -919,7 +913,6 @@ def comments_by_page(request):
   data = {}
   highlights = {}
   errors['comments_by_page'] = []
-  user = request.user
 
   if request.GET:
     url = process_url(request.GET.get('url'))
