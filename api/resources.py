@@ -45,7 +45,6 @@ from common.templatetags.gravatar import gravatar_for_user
 
 from eyebrowse.log import logger
 
-
 class MyBasicAuthentication(BasicAuthentication):
 
     def __init__(self, *args, **kwargs):

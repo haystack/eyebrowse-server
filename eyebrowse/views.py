@@ -169,7 +169,6 @@ def add_tag(request):
 @ajax_request
 def color_tag(request):
     name = request.POST.get('tag', None)
-
     user = request.user
     tags = Tag.objects.filter(user=user, name=name)
     r = lambda: random.randint(0, 255)

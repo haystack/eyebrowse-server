@@ -32,12 +32,6 @@ Get page info
 def page(request):
   success = False
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   errors = {}
   page_info = {}
 
@@ -80,12 +74,6 @@ def tags_by_page(request):
   errors = {}
   tags = {}
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   if request.GET:
     url = process_url(request.GET.get('url'))
     errors['get_tags'] = []
@@ -132,12 +120,6 @@ def tags_by_highlight(request):
   tags = {}
   sorted_tags = []
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   highlight = ''
   highlight_owner = ''
 
@@ -204,12 +186,6 @@ def tags_by_comment(request):
   tags = {}
   sorted_tags = []
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   if request.GET:
     eyehistory = request.GET.get('eyehistory')
     errors['get_tags'] = []
@@ -278,12 +254,6 @@ def initialize_page(request):
   tags = {}
   errors = {}
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   count_tags = False
   highlights = 0
 
@@ -411,12 +381,6 @@ Add a vote to a value tag
 @ajax_request
 def add_vote(request):
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   success = False
   errors = {}
   vote_count = 0
@@ -452,12 +416,6 @@ Remove a vote from a value tag
 @ajax_request
 def remove_vote(request):
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   success = False
   errors = {}
   vote_count = 0
@@ -494,12 +452,6 @@ Add a highlight with value tags to a page
 def highlight(request):
   success = False
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   errors = {}
   data = {}
 
@@ -561,12 +513,6 @@ def highlights(request):
   success = False
   errors = {}
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   data = {}
   highlights = {}
   max_tag = ()
@@ -620,12 +566,6 @@ def delete_highlight(request):
   success = False
   errors = {}
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   errors['delete_highlight'] = []
 
   if request.POST:
@@ -717,12 +657,6 @@ def user_value_tags(request):
   errors = {}
   data = {}
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   errors['user_value_tags'] = []
 
   if request.GET:
@@ -752,17 +686,11 @@ def user_value_tags(request):
 def common_tags(request):
   success = False
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   common_tags = {}
   errors = {}
   errors['common_tags'] = []
 
-  bts = CommonTag.objects.all()[12:] #loading only certain value tags
+  bts = CommonTag.objects.all()
   for bt in bts:
     common_tags[bt.name] = {
       'description': bt.description,
@@ -871,12 +799,6 @@ def comments_by_highlight(request):
   comments = []
   errors['comments_by_highlight'] = []
   user = request.user
-  if user == None:
-    print "user not found"
-    return{
-    'success': False,
-    'errors': "user not found"
-    }
   user_contributed = False
 
   hl_id = request.GET.get('highlight_id')
@@ -903,11 +825,11 @@ def comments_by_highlight(request):
     date = m.post_time.replace(tzinfo=from_zone)
     local = date.astimezone(to_zone)
 
-    user_profile = UserProfile.objects.get(user=m.eyehistory.user) #m.eyehistory.user
+    user_profile = UserProfile.objects.get(user=m.eyehistory.user) 
     pic = user_profile.pic_url
 
     if not pic:
-      pic = gravatar_for_user(m.eyehistory.user)#m.eyehistory.user
+      pic = gravatar_for_user(m.eyehistory.user)
       
     pic = 'https://%s' % pic[7:]
 
@@ -924,7 +846,7 @@ def comments_by_highlight(request):
       'comment': m.message,
       'date': local.strftime('%b %m, %Y,  %I:%M %p'),
       'time': local.strftime("%s"),
-      'user': user.username, #m.eyehistory.user.username,
+      'user': m.eyehistory.user.username,
       'prof_pic': pic,
       'id': m.id,
       'tags': tags,
@@ -1011,11 +933,11 @@ def comments_by_page(request):
         date = c.post_time.replace(tzinfo=from_zone)
         local = date.astimezone(to_zone)
 
-        user_profile = UserProfile.objects.get(user=user) #c.eyehistory.user
+        user_profile = UserProfile.objects.get(user=c.eyehistory.user) 
         pic = user_profile.pic_url
 
         if not pic:
-          pic = gravatar_for_user(user) #c.eyehistory.user
+          pic = gravatar_for_user(c.eyehistory.user) 
 
         pic = 'https://%s' % pic[7:]
 
@@ -1023,7 +945,7 @@ def comments_by_page(request):
           data[c.highlight.id].append({
             'comment': c.message,
             'date': local.strftime('%b %m, %Y,  %I:%M %p'),
-            'user': user.username, #c.eyehistory.user.username
+            'user': c.eyehistory.user.username,
             'prof_pic': pic,
             'id': c.id,
           })
@@ -1032,7 +954,7 @@ def comments_by_page(request):
           data[c.highlight.id] = [{
             'comment': c.message,
             'date': local.strftime('%b %m, %Y,  %I:%M %p'),
-            'user': user.username, #c.eyehistory.user.username
+            'user': c.eyehistory.user.username,
             'prof_pic': pic,
             'id': c.id,
           }]
