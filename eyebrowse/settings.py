@@ -67,7 +67,6 @@ ADMINS = (
     ('eyebrowse-admins', DEFAULT_EMAIL),
     ('amy', 'axz@mit.edu'),
     ('jessica', 'jzwang@mit.edu'),
-    ('prateek','pkukreja@mit.edu')
 )
 
 MANAGERS = ADMINS

@@ -27,12 +27,11 @@ from stats.models import FBShareData
 '''
 Get page info
 '''
-#@login_required
+@login_required
 @ajax_request
 def page(request):
   success = False
-  #user = request.user
-  user = User.objects.get(username = "pteek") 
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -71,7 +70,7 @@ def page(request):
 '''
 Get all tags associated with a page (but not highlight)
 '''
-#@login_required
+@login_required
 @ajax_request
 def tags_by_page(request):
   '''
@@ -80,8 +79,7 @@ def tags_by_page(request):
   success = False
   errors = {}
   tags = {}
-  #user = request.user
-  user = User.objects.get(username = "pteek") 
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -126,15 +124,14 @@ def tags_by_page(request):
 '''
 Get all tags associated with a highlight
 '''
-#@login_required
+@login_required
 @ajax_request
 def tags_by_highlight(request):
   success = False
   errors = {}
   tags = {}
   sorted_tags = []
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -199,15 +196,14 @@ def tags_by_highlight(request):
 '''
 Get all tags associated with a comment
 '''
-#@login_required
+@login_required
 @ajax_request
 def tags_by_comment(request):
   success = False
   errors = {}
   tags = {}
   sorted_tags = []
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -276,13 +272,12 @@ B:
   Returns value tags for page
 '''
 @csrf_exempt
-#@login_required
+@login_required
 @ajax_request
 def initialize_page(request):
   tags = {}
   errors = {}
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -412,11 +407,10 @@ def initialize_page(request):
 Add a vote to a value tag
 '''
 @csrf_exempt
-#@login_required
+@login_required
 @ajax_request
 def add_vote(request):
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -454,11 +448,10 @@ def add_vote(request):
 Remove a vote from a value tag
 '''
 @csrf_exempt
-#@login_required
+@login_required
 @ajax_request
 def remove_vote(request):
- # user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -496,12 +489,11 @@ def remove_vote(request):
 Add a highlight with value tags to a page
 '''
 @csrf_exempt
-#@login_required
+@login_required
 @ajax_request
 def highlight(request):
   success = False
- # user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -563,13 +555,12 @@ def highlight(request):
 '''
 Get all highlights for a page
 '''
-#@login_required
+@login_required
 @ajax_request
 def highlights(request):
   success = False
   errors = {}
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -597,7 +588,6 @@ def highlights(request):
             max_tag_count = vote_count
             max_tag = (vt.common_tag.name, vt.common_tag.color)
 
-        #TODO add comment count here
         comments = []
         eyehist_message = EyeHistoryMessage.objects.filter(highlight__id=h.id)
         for m in eyehist_message:
@@ -624,13 +614,12 @@ def highlights(request):
 Delete a highlight
 '''
 @csrf_exempt
-#@login_required
+@login_required
 @ajax_request
 def delete_highlight(request):
   success = False
   errors = {}
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -662,7 +651,7 @@ def delete_highlight(request):
 '''
 Get related stories
 '''
-#@login_required
+@login_required
 @ajax_request
 def related_stories(request):
   success = False
@@ -721,14 +710,13 @@ def related_stories(request):
 Get value tags associated with a user
 '''
 @csrf_exempt
-#@login_required
+@login_required
 @ajax_request
 def user_value_tags(request):
   success = False
   errors = {}
   data = {}
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -759,12 +747,11 @@ def user_value_tags(request):
     'data': data,
   }
 
-#@login_required
+@login_required
 @ajax_request
 def common_tags(request):
   success = False
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -791,12 +778,11 @@ def common_tags(request):
   }
 
 @csrf_exempt
-#@login_required
+@login_required
 @ajax_request
 def page_summary(request):
   success = False
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -877,15 +863,14 @@ def page_summary(request):
     'data': data,
   }
 
-#@login_required
+@login_required
 @ajax_request
 def comments_by_highlight(request):
   success = False
   errors = {}
   comments = []
   errors['comments_by_highlight'] = []
-  #user = request.user
-  user = User.objects.get(username = "pteek") #--> do this everywhere and you'll stay logged in
+  user = request.user
   if user == None:
     print "user not found"
     return{
@@ -954,11 +939,11 @@ def comments_by_highlight(request):
 
 #delete a comment
 @csrf_exempt
-#@login_required
+@login_required
 @ajax_request
 def remove_comment(request):
   success = False
-  user = User.objects.get(username = "pteek") 
+  user = request.user
   errors = {}
 
   if request.POST:
@@ -978,11 +963,11 @@ def remove_comment(request):
   }
 
 @csrf_exempt
-#@login_required
+@login_required
 @ajax_request
 def edit_comment(request):
   success = False
-  user = User.objects.get(username = "pteek") 
+  user = request.user
   errors = {}
 
   if request.POST:
@@ -1004,7 +989,7 @@ def edit_comment(request):
   }
 
 
-#@login_required
+@login_required
 @ajax_request
 def comments_by_page(request):
   success = False
@@ -1012,7 +997,7 @@ def comments_by_page(request):
   data = {}
   highlights = {}
   errors['comments_by_page'] = []
-  user = User.objects.get(username = "pteek") #i added this in, no user var before
+  user = request.user
 
   if request.GET:
     url = process_url(request.GET.get('url'))
@@ -1065,11 +1050,10 @@ def comments_by_page(request):
     'highlights': highlights,
   }
 
-#@login_required
+@login_required
 @render_to('tags/fb_share.html')
 def fb_share(request):
-  #user = request.user 
-  user = User.objects.get(username = "pteek") 
+  user = request.user 
   if request.GET:
     url = request.GET.get('url')
     text = request.GET.get('text')
