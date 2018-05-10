@@ -284,6 +284,9 @@ class Command(NoArgsCommand):
         popular_history_item.total_time_ago += int(
             round(time_diff.total_seconds() / 3600.0))
 
+        self.log('total_time_ago %s' % popular_history_item.total_time_ago)
+        self.log('total_time_spent %s' % popular_history_item.total_time_spent)
+        
         popular_history_item.save()
 
     def _delete_old(self):
