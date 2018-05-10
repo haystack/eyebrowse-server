@@ -35,7 +35,6 @@ def delete_eyehistory(request):
     try:
         delete_everything_domain = request.POST.get('delete_domain', False)
         user = request.user
-
         if delete_everything_domain:
             domain = request.POST.get('domain', '')
             e = EyeHistory.objects.filter(domain=domain, user=user)

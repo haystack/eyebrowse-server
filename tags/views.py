@@ -74,7 +74,6 @@ def tags_by_page(request):
   errors = {}
   tags = {}
   user = request.user
-
   if request.GET:
     url = process_url(request.GET.get('url'))
     errors['get_tags'] = []
@@ -122,6 +121,7 @@ def tags_by_highlight(request):
   sorted_tags = []
   user = request.user
   highlight = ''
+  highlight_owner = ''
 
   if request.GET:
     highlight_id = request.GET.get('highlight_id')
@@ -131,7 +131,7 @@ def tags_by_highlight(request):
     if not len(errors['get_tags']):
       vts = Tag.objects.filter(highlight__id=highlight_id, page__url=url)
       highlight = Highlight.objects.get(id=highlight_id).highlight
-
+      highlight_owner =  Highlight.objects.get(id=highlight_id).user.username
       # get relevant info for each value tag
       for vt in vts:
         vt_info = {
@@ -143,6 +143,7 @@ def tags_by_highlight(request):
           'vote_count': len(Vote.objects.filter(tag=vt)),
           'is_owner': (vt.user == user),
           'id': vt.id,
+          'owner':vt.user.username, #to get the owner of the tag
         }
 
         votes = []
@@ -171,6 +172,7 @@ def tags_by_highlight(request):
     'errors': errors,
     'tags': sorted_tags,
     'highlight': highlight,
+    'highlight_owner':highlight_owner,
   }
 
 '''
@@ -184,7 +186,6 @@ def tags_by_comment(request):
   tags = {}
   sorted_tags = []
   user = request.user
-
   if request.GET:
     eyehistory = request.GET.get('eyehistory')
     errors['get_tags'] = []
@@ -234,10 +235,10 @@ def tags_by_comment(request):
 '''
 A: 
   Adds domain
-  Adds page; 
-    if page already exists;
+  Adds page 
+    if page already exists
       get value tags for page
-      if value tags don't exist;
+      if value tags don't exist
         do B
 
 B:
@@ -533,9 +534,18 @@ def highlights(request):
             max_tag_count = vote_count
             max_tag = (vt.common_tag.name, vt.common_tag.color)
 
+        comments = []
+        eyehist_message = EyeHistoryMessage.objects.filter(highlight__id=h.id)
+        for m in eyehist_message:
+          comments.append({
+            'comment': m.message,
+          })
+         
+
         highlights[h.highlight] = {
           'max_tag': max_tag,
           'id': h.id,
+          'comment_count':len(comments),
           'is_owner': h.user == user,
         }
       success = True
@@ -809,7 +819,7 @@ def comments_by_highlight(request):
     date = m.post_time.replace(tzinfo=from_zone)
     local = date.astimezone(to_zone)
 
-    user_profile = UserProfile.objects.get(user=m.eyehistory.user)
+    user_profile = UserProfile.objects.get(user=m.eyehistory.user) 
     pic = user_profile.pic_url
 
     if not pic:
@@ -843,6 +853,7 @@ def comments_by_highlight(request):
     'user_contributed': user_contributed,
   }
 
+#delete a comment
 @csrf_exempt
 @login_required
 @ajax_request
@@ -915,11 +926,11 @@ def comments_by_page(request):
         date = c.post_time.replace(tzinfo=from_zone)
         local = date.astimezone(to_zone)
 
-        user_profile = UserProfile.objects.get(user=c.eyehistory.user)
+        user_profile = UserProfile.objects.get(user=c.eyehistory.user) 
         pic = user_profile.pic_url
 
         if not pic:
-          pic = gravatar_for_user(c.eyehistory.user)
+          pic = gravatar_for_user(c.eyehistory.user) 
 
         pic = 'https://%s' % pic[7:]
 
@@ -958,13 +969,12 @@ def comments_by_page(request):
 @render_to('tags/fb_share.html')
 def fb_share(request):
   user = request.user 
-  
   if request.GET:
     url = request.GET.get('url')
     text = request.GET.get('text')
 
     try:
-      fb = FBShareData(user=user, url_shared=url, message=text);
+      fb = FBShareData(user=user, url_shared=url, message=text)
       fb.save()
     except:
       pass

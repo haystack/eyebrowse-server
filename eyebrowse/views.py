@@ -169,9 +169,7 @@ def add_tag(request):
 @ajax_request
 def color_tag(request):
     name = request.POST.get('tag', None)
-
     user = request.user
-
     tags = Tag.objects.filter(user=user, name=name)
     r = lambda: random.randint(0, 255)
     color = '%02X%02X%02X' % (r(), r(), r())
@@ -218,7 +216,6 @@ def mft_results_treatment(request):
     care = 0
     pure = 0
     user = request.user
-
     if request.POST:
         a1 = int(request.POST.get("a1")[0]) # auth
         b1 = int(request.POST.get("b1")[0]) # ???
@@ -285,7 +282,6 @@ def mft_results_control(request):
     care = 0
     pure = 0
     user = request.user
-
     if request.POST:
         a1 = int(request.POST.get("a1")[0]) # auth
         b1 = int(request.POST.get("b1")[0]) # ???
