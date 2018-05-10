@@ -278,16 +278,14 @@ class Command(NoArgsCommand):
             popular_history_item.messages.add(*e.eyehistorymessage_set.all())
 
         # we increment the total time spent and total time ago
-        popular_history_item.total_time_spent += e.total_time
-        
-        self.log('e total_time %s' % e.total_time)
+        if e.total_time > 0:
+            popular_history_item.total_time_spent += e.total_time
+        else:
+            self.log('E %s' % e.id)
 
         time_diff = timezone.now() - e.end_time
         popular_history_item.total_time_ago += int(
             round(time_diff.total_seconds() / 3600.0))
-
-        self.log('total_time_ago %s' % popular_history_item.total_time_ago)
-        self.log('total_time_spent %s' % popular_history_item.total_time_spent)
         
         popular_history_item.save()
 
