@@ -279,6 +279,8 @@ class Command(NoArgsCommand):
 
         # we increment the total time spent and total time ago
         popular_history_item.total_time_spent += e.total_time
+        
+        self.log('e total_time %s' % e.total_time)
 
         time_diff = timezone.now() - e.end_time
         popular_history_item.total_time_ago += int(
