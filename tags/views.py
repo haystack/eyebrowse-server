@@ -374,6 +374,66 @@ def initialize_page(request):
     }
 
 '''
+initialize page using highlights 
+'''
+@csrf_exempt
+@login_required
+@ajax_request
+def initialize_page_highlights(request):
+  errors = {}
+  user = request.user
+  if user == None:
+    print "user not found"
+    return{
+    'success': False,
+    'errors': "user not found"
+    }
+  highlights = 0
+
+  if request.POST:
+    url = process_url(request.POST.get('url'))
+    favIconUrl = request.POST.get('favIconUrl')
+    domain_name = request.POST.get('domain_name')
+    title = request.POST.get('title')
+
+    domain = '{uri.netloc}'.format(uri=urlparse(url))
+    errors['add_page'] = []
+
+    title = url if title == "" else title
+
+    # Add domain
+    d, d_created = Domain.objects.get_or_create(url=domain)
+    if domain_name is not None:
+      d.name = domain_name
+    d.save()
+
+    # Add page
+    try: 
+      p = Page.objects.get(url=url)
+      p.title = title
+      p.save()
+    except:
+      if len(Page.objects.filter(url=url)) == 0:
+        p = Page(url=url, domain=d)
+        p.title = title
+        p.save()
+      else:
+        errors['add_page'].append("More than one page exists")
+
+    if len(errors['add_page']) == 0:
+      highlights = len(Highlight.objects.filter(page__url=url))
+      success = True
+      for error_field in errors:
+        if errors[error_field] != []:
+          success = False
+
+    return {
+      'success': success,
+      'errors': errors,
+      'highlights': highlights,
+    }  
+  
+'''
 Add a vote to a value tag
 '''
 @csrf_exempt
@@ -444,7 +504,7 @@ def remove_vote(request):
   }
 
 '''
-Add a highlight with value tags to a page
+Add a highlight to a page
 '''
 @csrf_exempt
 @login_required
@@ -459,7 +519,6 @@ def highlight(request):
     url = process_url(request.POST.get('url'))
     highlight = request.POST.get('highlight')
     highlight_id = request.POST.get('highlight_id')
-    tags = json.loads(request.POST.get('tags'))
     errors['add_highlight'] = []
 
     if highlight != "" or highlight_id:
@@ -482,26 +541,47 @@ def highlight(request):
         except:
           errors['add_highlight'].append('Add highlight failed')
 
-      if not len(errors['add_highlight']):
-        for tag in tags:
-          if len(Tag.objects.filter(highlight=h, common_tag__name=tag)) == 0:
-            try:
-              common_tag = CommonTag.objects.get(name=tag)
-              vt = Tag(
-                page=p, 
-                highlight=h, 
-                common_tag=common_tag,
-                user=user, 
-              )
-              vt.save()
-              success = True
-            except CommonTag.DoesNotExist:
-              errors['add_highlight'].append("Base tag " + tag + " does not exist")
-
   return {
     'success': success,
     'errors': errors,
     'data': data,
+  }
+
+'''
+Get highlight by highlight id
+'''
+@login_required
+@ajax_request
+def highlight_by_id(request):
+  success = False
+  errors = {}
+  tags = {}
+  sorted_tags = []
+  user = request.user
+  if user == None:
+    print "user not found"
+    return{
+    'success': False,
+    'errors': "user not found"
+    }
+  highlight = ''
+  highlight_owner = ''
+
+  if request.GET:
+    highlight_id = request.GET.get('highlight_id')
+    url = process_url(request.GET.get('url'))
+    errors['get_highlights'] = []
+
+    if not len(errors['get_highlights']):
+      highlight = Highlight.objects.get(id=highlight_id).highlight
+      highlight_owner =  Highlight.objects.get(id=highlight_id).user.username
+      success = True
+
+  return {
+    'success': success,
+    'errors': errors,
+    'highlight': highlight,
+    'highlight_owner':highlight_owner,
   }
 
 '''
@@ -515,8 +595,6 @@ def highlights(request):
   user = request.user
   data = {}
   highlights = {}
-  max_tag = ()
-  max_tag_count = 0
 
   if request.GET:
     url = process_url(request.GET.get('url'))
@@ -525,15 +603,6 @@ def highlights(request):
     if not len(errors['get_highlights']):
       hs = Highlight.objects.filter(page__url=url)
       for h in hs:
-        max_tag = ()
-        max_tag_count = 0
-        vts = Tag.objects.filter(highlight=h)
-        for vt in vts:
-          vote_count = len(Vote.objects.filter(tag=vt))
-          if vote_count >= max_tag_count:
-            max_tag_count = vote_count
-            max_tag = (vt.common_tag.name, vt.common_tag.color)
-
         comments = []
         eyehist_message = EyeHistoryMessage.objects.filter(highlight__id=h.id)
         for m in eyehist_message:
@@ -543,7 +612,6 @@ def highlights(request):
          
 
         highlights[h.highlight] = {
-          'max_tag': max_tag,
           'id': h.id,
           'comment_count':len(comments),
           'is_owner': h.user == user,
@@ -785,6 +853,9 @@ def page_summary(request):
     'data': data,
   }
 
+'''
+load comments for each highlight
+'''
 @login_required
 @ajax_request
 def comments_by_highlight(request):
@@ -799,20 +870,10 @@ def comments_by_highlight(request):
 
   eyehist_message = EyeHistoryMessage.objects.filter(highlight__id=hl_id)
 
-  #TODO: return tags along with comments
-
   if len(comments) != 0:
     success = True
-
-  if len(Tag.objects.filter(highlight__id=hl_id, user=user)) > 0:
-    user_contributed = True
-
-  for tag in Tag.objects.filter(highlight__id=hl_id):
-    if len(Vote.objects.filter(tag=tag)) > 0:
-      user_contributed = True
-
+    
   for m in eyehist_message:
-    tags = {}
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
 
@@ -827,15 +888,6 @@ def comments_by_highlight(request):
       
     pic = 'https://%s' % pic[7:]
 
-    ts = Tag.objects.filter(comment__id=m.id)
-
-    for t in ts:
-      tags[t.common_tag.name] = {
-        'name': t.common_tag.name,
-        'color': t.common_tag.color,
-        'description': t.common_tag.description
-      }
-
     comments.append({
       'comment': m.message,
       'date': local.strftime('%b %m, %Y,  %I:%M %p'),
@@ -843,7 +895,6 @@ def comments_by_highlight(request):
       'user': m.eyehistory.user.username,
       'prof_pic': pic,
       'id': m.id,
-      'tags': tags,
     })
 
   return {
