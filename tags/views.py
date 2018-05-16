@@ -576,7 +576,7 @@ Add a highlight to a page
 @csrf_exempt
 @login_required
 @ajax_request
-def highlight(request):
+def add_highlight(request):
   success = False
   user = request.user
   errors = {}
@@ -656,7 +656,7 @@ Get all highlights for a page using value tags
 '''
 @login_required
 @ajax_request
-def highlights_tags(request):
+def tagged_highlights(request):
   success = False
   errors = {}
   user = request.user
@@ -715,7 +715,7 @@ Get all highlights for a page
 '''
 @login_required
 @ajax_request
-def highlights(request):
+def page_highlights(request):
   success = False
   errors = {}
   user = request.user
@@ -984,7 +984,7 @@ load comments for each highlight using value tags
 '''
 @login_required
 @ajax_request
-def comments_by_highlight_tags(request):
+def comments_by_tagged_highlight(request):
   success = False
   errors = {}
   comments = []
