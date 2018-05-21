@@ -509,7 +509,7 @@ Add a highlight using value tags to a page
 @csrf_exempt
 @login_required
 @ajax_request
-def highlight_tags(request):
+def highlight(request):
   success = False
   user = request.user
   if user == None:
@@ -656,7 +656,7 @@ Get all highlights for a page using value tags
 '''
 @login_required
 @ajax_request
-def tagged_highlights(request):
+def highlights(request):
   success = False
   errors = {}
   user = request.user
@@ -984,7 +984,7 @@ load comments for each highlight using value tags
 '''
 @login_required
 @ajax_request
-def comments_by_tagged_highlight(request):
+def comments_by_highlight(request):
   success = False
   errors = {}
   comments = []
@@ -1057,11 +1057,11 @@ def comments_by_tagged_highlight(request):
   }
 
 '''
-load comments for each highlight
+load comments for each highlight using highlight id
 '''
 @login_required
 @ajax_request
-def comments_by_highlight(request):
+def comments_by_highlight_id(request):
   success = False
   errors = {}
   comments = []
