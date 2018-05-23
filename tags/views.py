@@ -374,6 +374,66 @@ def initialize_page(request):
     }
 
 '''
+initialize page using highlights 
+'''
+@csrf_exempt
+@login_required
+@ajax_request
+def initialize_page_highlights(request):
+  errors = {}
+  user = request.user
+  if user == None:
+    print "user not found"
+    return{
+    'success': False,
+    'errors': "user not found"
+    }
+  highlights = 0
+
+  if request.POST:
+    url = process_url(request.POST.get('url'))
+    favIconUrl = request.POST.get('favIconUrl')
+    domain_name = request.POST.get('domain_name')
+    title = request.POST.get('title')
+
+    domain = '{uri.netloc}'.format(uri=urlparse(url))
+    errors['add_page'] = []
+
+    title = url if title == "" else title
+
+    # Add domain
+    d, d_created = Domain.objects.get_or_create(url=domain)
+    if domain_name is not None:
+      d.name = domain_name
+    d.save()
+
+    # Add page
+    try: 
+      p = Page.objects.get(url=url)
+      p.title = title
+      p.save()
+    except:
+      if len(Page.objects.filter(url=url)) == 0:
+        p = Page(url=url, domain=d)
+        p.title = title
+        p.save()
+      else:
+        errors['add_page'].append("More than one page exists")
+
+    if len(errors['add_page']) == 0:
+      highlights = len(Highlight.objects.filter(page__url=url))
+      success = True
+      for error_field in errors:
+        if errors[error_field] != []:
+          success = False
+
+    return {
+      'success': success,
+      'errors': errors,
+      'highlights': highlights,
+    }  
+  
+'''
 Add a vote to a value tag
 '''
 @csrf_exempt
@@ -444,7 +504,7 @@ def remove_vote(request):
   }
 
 '''
-Add a highlight with value tags to a page
+Add a highlight using value tags to a page
 '''
 @csrf_exempt
 @login_required
@@ -452,6 +512,12 @@ Add a highlight with value tags to a page
 def highlight(request):
   success = False
   user = request.user
+  if user == None:
+    print "user not found"
+    return{
+    'success': False,
+    'errors': "user not found"
+    }
   errors = {}
   data = {}
 
@@ -505,7 +571,88 @@ def highlight(request):
   }
 
 '''
-Get all highlights for a page
+Add a highlight to a page
+'''
+@csrf_exempt
+@login_required
+@ajax_request
+def add_highlight(request):
+  success = False
+  user = request.user
+  errors = {}
+  data = {}
+
+  if request.POST:
+    url = process_url(request.POST.get('url'))
+    highlight = request.POST.get('highlight')
+    highlight_id = request.POST.get('highlight_id')
+    errors['add_highlight'] = []
+
+    if highlight != "" or highlight_id:
+      p = Page.objects.get(url=url)
+
+      if highlight_id: 
+        try:
+          h = Highlight.objects.get(id=highlight_id)
+          data['highlight_id'] = h.id
+        except: 
+          errors['add_highlight'].append('Get highlight failed')
+      else:
+        try:
+          h, created = Highlight.objects.get_or_create(page=p, highlight=highlight)
+          h.user = user
+          h.save()
+
+          success = True
+          data['highlight_id'] = h.id
+        except:
+          errors['add_highlight'].append('Add highlight failed')
+
+  return {
+    'success': success,
+    'errors': errors,
+    'data': data,
+  }
+
+'''
+Get highlight by highlight id
+'''
+@login_required
+@ajax_request
+def highlight_by_id(request):
+  success = False
+  errors = {}
+  tags = {}
+  sorted_tags = []
+  user = request.user
+  if user == None:
+    print "user not found"
+    return{
+    'success': False,
+    'errors': "user not found"
+    }
+  highlight = ''
+  highlight_owner = ''
+
+  if request.GET:
+    highlight_id = request.GET.get('highlight_id')
+    url = process_url(request.GET.get('url'))
+    errors['get_highlights'] = []
+
+    if not len(errors['get_highlights']):
+      highlight = Highlight.objects.get(id=highlight_id).highlight
+      highlight_owner =  Highlight.objects.get(id=highlight_id).user.username
+      success = True
+
+  return {
+    'success': success,
+    'errors': errors,
+    'highlight': highlight,
+    'highlight_owner':highlight_owner,
+  }
+
+'''
+Get all highlights for a page using value tags
 '''
 @login_required
 @ajax_request
@@ -513,6 +660,12 @@ def highlights(request):
   success = False
   errors = {}
   user = request.user
+  if user == None:
+    print "user not found"
+    return{
+    'success': False,
+    'errors': "user not found"
+    }
   data = {}
   highlights = {}
   max_tag = ()
@@ -544,6 +697,47 @@ def highlights(request):
 
         highlights[h.highlight] = {
           'max_tag': max_tag,
+          'id': h.id,
+          'comment_count':len(comments),
+          'is_owner': h.user == user,
+        }
+      success = True
+
+  return {
+    'success': success,
+    'errors': errors,
+    'highlights': highlights,
+  }
+
+
+'''
+Get all highlights for a page
+'''
+@login_required
+@ajax_request
+def page_highlights(request):
+  success = False
+  errors = {}
+  user = request.user
+  data = {}
+  highlights = {}
+
+  if request.GET:
+    url = process_url(request.GET.get('url'))
+    errors['get_highlights'] = []
+
+    if not len(errors['get_highlights']):
+      hs = Highlight.objects.filter(page__url=url)
+      for h in hs:
+        comments = []
+        eyehist_message = EyeHistoryMessage.objects.filter(highlight__id=h.id)
+        for m in eyehist_message:
+          comments.append({
+            'comment': m.message,
+          })
+         
+
+        highlights[h.highlight] = {
           'id': h.id,
           'comment_count':len(comments),
           'is_owner': h.user == user,
@@ -785,6 +979,9 @@ def page_summary(request):
     'data': data,
   }
 
+'''
+load comments for each highlight using value tags
+'''
 @login_required
 @ajax_request
 def comments_by_highlight(request):
@@ -793,6 +990,12 @@ def comments_by_highlight(request):
   comments = []
   errors['comments_by_highlight'] = []
   user = request.user
+  if user == None:
+    print "user not found"
+    return{
+    'success': False,
+    'errors': "user not found"
+    }
   user_contributed = False
 
   hl_id = request.GET.get('highlight_id')
@@ -844,6 +1047,57 @@ def comments_by_highlight(request):
       'prof_pic': pic,
       'id': m.id,
       'tags': tags,
+    })
+
+  return {
+    'success': success,
+    'errors': errors,
+    'comments': sorted(comments, key=lambda x:x['time']),
+    'user_contributed': user_contributed,
+  }
+
+'''
+load comments for each highlight using highlight id
+'''
+@login_required
+@ajax_request
+def comments_by_highlight_id(request):
+  success = False
+  errors = {}
+  comments = []
+  errors['comments_by_highlight'] = []
+  user = request.user
+  user_contributed = False
+
+  hl_id = request.GET.get('highlight_id')
+
+  eyehist_message = EyeHistoryMessage.objects.filter(highlight__id=hl_id)
+
+  if len(comments) != 0:
+    success = True
+    
+  for m in eyehist_message:
+    from_zone = tz.tzutc()
+    to_zone = tz.tzlocal()
+
+    date = m.post_time.replace(tzinfo=from_zone)
+    local = date.astimezone(to_zone)
+
+    user_profile = UserProfile.objects.get(user=m.eyehistory.user) 
+    pic = user_profile.pic_url
+
+    if not pic:
+      pic = gravatar_for_user(m.eyehistory.user)
+      
+    pic = 'https://%s' % pic[7:]
+
+    comments.append({
+      'comment': m.message,
+      'date': local.strftime('%b %m, %Y,  %I:%M %p'),
+      'time': local.strftime("%s"),
+      'user': m.eyehistory.user.username,
+      'prof_pic': pic,
+      'id': m.id,
     })
 
   return {
