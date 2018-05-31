@@ -49,12 +49,11 @@ from common.templatetags.gravatar import gravatar_for_user
 
 from eyebrowse.log import logger
 
-
 class MyBasicAuthentication(BasicAuthentication):
 
     def __init__(self, *args, **kwargs):
         super(MyBasicAuthentication, self).__init__(*args, **kwargs)
-
+    
     def is_authenticated(self, request, **kwargs):
         if 'sessionid' in request.COOKIES:
             s = Session.objects.filter(pk=request.COOKIES['sessionid'])
