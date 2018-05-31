@@ -3,3 +3,7 @@
 $(function() {
     setHistoryTips();
 });
+
+$(document).ready(function(e){
+    
+});

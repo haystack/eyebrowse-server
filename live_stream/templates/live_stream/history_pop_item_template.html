@@ -7,29 +7,32 @@
 	<div id="history_item_{{item.id}}" class='row history-container infinite-scroll eye-hist' data-id="{{ item.id }}">
 {% endif %}
     <div id="history_item_{{ item.id }}_content" class="history-content">
-    	
+
         <span class="span6" style="margin-left: 0px">
             <a href="http://{{ item.popular_history.url|url_domain }}" onclick="clickItem('http://{{ item.popular_history.url|url_domain }}'); return false;" class="cut-url pointer" data-content="{{ item.popular_history.url|url_domain }}">
-                <img class="favicon" src="{{ item.popular_history.favicon_url }}"> {{ item.popular_history.url|url_domain|truncatechars:30 }} 
-            </a> | 
+							{% if item.popular_history.favicon_url %}
+								<img class="favicon" src="{{ item.popular_history.favicon_url }}">
+							{% endif %}
+								{{ item.popular_history.url|url_domain|truncatechars:30 }}
+            </a> |
             <a href="{{ item.popular_history.url }}" onclick="clickItem('{{ item.popular_history.url }}'); return false;" class="cut-url pointer" data-content="{{ item.popular_history.url }}">
-                {{ item.popular_history.url|truncatechars:43 }} 
+                {{ item.popular_history.url|truncatechars:43 }}
             </a>
-            <br />     	
+            <br />
             	 <div class="cut-content pointer" data-content="{{ item.popular_history.title}}">
             	 	<img align="left" class="popular_image img-rounded" src="{{ item.popular_history.img_url }}">
             	 	  	<a class="pointer" style="color:black; text-decoration:none;cursor:pointer" href="{{ item.popular_history.url }}" onclick="clickItem('{{ item.popular_history.url }}'); return false;">
 	            	 	    <h4>
-			                {{ item.popular_history.title|truncatechars:150 }} 
+			                {{ item.popular_history.title|truncatechars:150 }}
 			            	</h4>
 		            	</a>
-                	{{ item.popular_history.description|truncatechars:300 }} 
+                	{{ item.popular_history.description|truncatechars:300 }}
             	</div>
-            	
+
             </a>
         </span>
-            
-        <span class="pull-right author-container"> 
+
+        <span class="pull-right author-container">
 	        <span class="dropdown timeline-options pull-right">
 	        	<a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
 	        	<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
@@ -57,24 +60,24 @@
 				  </ul>
 				{% endif %}
 	        </span>
-	        
+
 	        <span>
            	{% for v in item.visitors.all %}
            		{% if filter == "firehose" or v != user %}
 		           	<a href="/users/{{ v.username }}">
-		           		<img class="author-pic img-rounded" data-content="{{ v }}" src="{% gravatar_for_user v %}"/> 
+		           		<img class="author-pic img-rounded" data-content="{{ v }}" src="{% gravatar_for_user v %}"/>
 		           	</a>
 		        {% endif %}
 	        {% endfor %}
            </span>
-	        
+
 	        <br />
 	        <span class="date">
 	        	Avg time: {{ item.humanize_avg_time }}
 	        </span>
-	        
+
 	        	<br />
-	          <span class='time-ago date' data-time-ago="{{item.avg_time_ago|date_fmt}}" data-timestamp="{{item.avg_time_ago|date_fmt}}">	
+	          <span class='time-ago date' data-time-ago="{{item.avg_time_ago|date_fmt}}" data-timestamp="{{item.avg_time_ago|date_fmt}}">
 	        </span>
 	        <br />
 	                    {% if item.tag %}
@@ -85,15 +88,15 @@
         </span>
 
     </div>
-    
-    
-    
+
+
+
     {% if messages|length > 0 %}
     <div class="span7">
     		<a data-toggle="collapse" data-target="#message_details_{{ item.id }}" class="pointer">
     			<span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
-    			
-    			{{ messages|length }} 
+
+    			{{ messages|length }}
     			{% if messages|length == 1 %}
     				note
     			{% else %}
@@ -101,29 +104,29 @@
     			{% endif %}
     		</a>
     </div>
-    
+
     <div class="collapse span7" id="message_details_{{ item.id }}">
     		{% for m in messages %}
 	            <span class="span5">
 		    		<a href="/users/{{ m.eyehistory.user.username }}">
-	           			<img class="author-pic img-rounded" data-content="{{ m.eyehistory.user }}" src="{% gravatar_for_user m.eyehistory.user %}"/> 
+	           			<img class="author-pic img-rounded" data-content="{{ m.eyehistory.user }}" src="{% gravatar_for_user m.eyehistory.user %}"/>
 	           		</a>
-    				
+
     				{% autoescape off %}{{ m.message|add_twitter }}{% endautoescape %}
 
 		    	</span>
-	        	
-	        		<span class="pull-right author-container"> 
+
+	        		<span class="pull-right author-container">
 	        			<span class="tag-area">&nbsp;</span>
 		          	<span class='time-ago pointer date' data-content="For {{ m.eyehistory.humanize_time }}, on {{m.post_time}}" data-time-ago="{{m.post_time|date_fmt}}" data-timestamp="{{m.post_time|date_fmt}}"></span>
 					</span>
 
 	      {% endfor %}
-	      
+
 	  </div>
 	   {% else %}
     	{% endif %}
-	      
+
     <!--
     <hr class='rm-margin'>
     <div class="history-footer">

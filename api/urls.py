@@ -2,7 +2,10 @@ from django.conf.urls import patterns
 from django.conf.urls import url
 
 urlpatterns = patterns('api.views',
-                       url(r'^whitelist/add/$', 'whitelist_add'),
+                       url(r'^rating/get$', 'rating_get'),
+                       url(r'^rating/update$', 'rating_update'),
+                       url(r'^whitelist/add$', 'whitelist_add'),
+                       url(r'^whitelist/get$', 'whitelist_get'),
                        url(r'^mutelist/add/$', 'mutelist_add'),
                        url(r'^typeahead/$', 'typeahead'),
                        url(r'^my_tags/$', 'my_tags'),

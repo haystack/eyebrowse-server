@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.db.models.aggregates import Sum
+from django.db.models import Avg
+from django.http import QueryDict
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -16,8 +18,15 @@ from api.models import EyeHistory
 from api.models import MuteList
 from api.models import WhiteListItem
 from tags.models import Tag
+from api.models import Domain
+from api.models import Page
+from api.models import Ratings
+
+from api.resource_helpers import get_port
+from api.resource_helpers import get_BlackListItem
 
 from common.templatetags.gravatar import gravatar_img_for_user
+from common.templatetags.filters import url_domain
 from common.view_helpers import validate_url
 from common.npl.date_parser import DateRangeParser
 
@@ -50,6 +59,80 @@ def delete_eyehistory(request):
 
     return {"res": True}
 
+@login_required
+@ajax_request
+def rating_get(request):
+    user = request.user
+    success = False
+    errors = {}
+    data = None
+    url = request.GET.get("url")
+    domain = url_domain(url)
+    errors["rating"] = []
+    data = {"url":url,"domain":domain}
+
+    domain,_ = Domain.objects.get_or_create(url=domain)
+    page,_ = Page.objects.get_or_create(url=url,domain=domain)
+    try:
+        rating = Ratings.objects.get(user=user,page=page)
+        data["score"] = rating.score
+        data["domain_score"] = 0
+        success = True
+    except Ratings.DoesNotExist:
+        errors["rating"].append("Rating does not exist")
+
+    return {
+        "success": success,
+        "errors": errors,
+        "data": data
+    }
+
+@login_required
+@ajax_request
+def rating_update(request):
+    user = request.user
+    success = False
+    errors = {}
+    data = None
+
+    if request.GET:
+        errors["rating"] = []
+        url = request.GET.get("url")
+        domain = request.GET.get("domain")
+        if url and domain:
+            data = {"url":url, "domain": domain}
+            body = QueryDict(request.body)
+            domain,_ = Domain.objects.get_or_create(url=domain)
+            page,_ = Page.objects.get_or_create(url=url,domain=domain)
+            try:
+                score = body.get("score")
+                data = {"score": score}
+            except KeyError:
+                errors["rating"].append("Include a score!")
+            '''
+            if not validate_url(url):
+                if url.strip() == "":
+                    errors["rating"].append("Enter a url!")
+                else:
+                    errors["rating"].append("%s is not a valid url." % url)
+            '''
+            if Ratings.objects.filter(user=user,page=page).exists():
+                rating = Ratings.objects.get(user=user, page=page)
+                rating.score = body.get("score")
+                rating.from_time_distribution = False
+                rating.save()
+                errors["rating"].append("Rating exists")
+                success = "Added %s" % url
+            if not len(errors["rating"]):
+                rating = Ratings.objects.create(user=user, page=page,
+                            score=body.get("score"), from_time_distribution=False)
+                data["id"] = rating.id
+                success = "Updated Rating %s" % url
+    return {
+        "success": success,
+        "errors": errors,
+        "data": data
+    }
 
 @login_required
 @ajax_request
@@ -114,51 +197,57 @@ def whitelist_add(request):
     success = False
     errors = {}
     data = None
-    _type = request.POST.get('form_type', None)
 
-    if request.POST and request.is_ajax():
+    if request.POST:
 
-        if _type == "whitelist":
-            url = request.POST.get('whitelist')
-            errors['whitelist'] = []
-            data = {'url': url}
+        url = request.POST.get('url')
+        errors['whitelist'] = []
+        data = {'url': url}
 
-            if url in DEFAULT_BLACKLIST:
-                errors['whitelist'].append("Cannot whitelist this url.")
-            elif not validate_url(url):
-                if url.strip() == "":
-                    errors['whitelist'].append("Enter a url!")
-                else:
-                    errors['whitelist'].append("%s is not a valid url." % url)
-            elif WhiteListItem.objects.filter(url=url, user=user).exists():
-                errors['whitelist'].append(
-                    "You already registered the whitelist item %s" % url)
+        if url in DEFAULT_BLACKLIST:
+            errors['whitelist'].append("Cannot whitelist this url.")
+        elif not validate_url(url):
+            if url.strip() == "":
+                errors['whitelist'].append("Enter a url!")
+            else:
+                errors['whitelist'].append("%s is not a valid url." % url)
+        elif WhiteListItem.objects.filter(url=url, user=user).exists():
+            errors['whitelist'].append(
+                "You already registered the whitelist item %s" % url)
 
-            if not len(errors['whitelist']):
-                whitelist_item = WhiteListItem(url=url, user=user)
-                whitelist_item.save()
-                data['id'] = whitelist_item.id
-                success = "Added %s" % url
+        if not len(errors['whitelist']):
+            whitelist_item = WhiteListItem(url=url, user=user)
+            whitelist_item.save()
+            data['id'] = whitelist_item.id
+            success = "Added %s" % url
 
     return {
         'success': success,
         'errors': errors,
-        'type': _type,
         'data': data,
     }
 
+@login_required
+@ajax_request
+def whitelist_get(request):
+    user = request.user
+    whitelist = WhiteListItem.objects.get(user=request.user)
+    data["whitelist"] = whitelist
+
+    return {"success": True,
+            "data": data}
 
 def search_graph_data(request):
     username = request.GET.get('username', None)
-    
+
     query = request.GET.get("query", None)
     if query == "null":
         query = None
-    
+
     date = request.GET.get("date", None)
     if date == "null":
         date = None
-    
+
     filter = request.GET.get("filter", None)
     if filter == "null":
         filter = None
