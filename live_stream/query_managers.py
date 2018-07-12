@@ -85,7 +85,7 @@ def history_search(req_user, timestamp=None,
 
     if not username and sort != "time":
         try:
-            if filter == "following" and req_user.is_authenticated():
+            if filter == "personalized" and req_user.is_authenticated():
                 history = PopularHistory.objects.filter(user=req_user)
             else:
                 history = PopularHistory.objects.filter(user=None)

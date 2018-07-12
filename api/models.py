@@ -21,8 +21,11 @@ class Domain(models.Model):
     name = models.CharField(max_length=100, default='', unique=False)
     url = models.URLField(blank=False, null=False, unique=True)
 
+    #from Ratings
+    agg_score = models.IntegerField(null=True)
+
 class Page(models.Model):
-    url = models.URLField(blank=False, null=False, unique=True)
+    url = models.URLField(blank=False, default='', max_length=2000)
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE)
 
     #from eyehistory
@@ -33,6 +36,32 @@ class Page(models.Model):
     #from popularhistory
     description = models.TextField(default='')
     img_url = models.URLField(max_length=2000, default='')
+
+    #from ratings
+    agg_score = models.IntegerField(null=True)
+
+
+class Ratings(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False,
+                            on_delete=models.CASCADE)
+    page = models.ForeignKey(Page, null=False, blank=False,
+                            on_delete=models.CASCADE)
+    score = models.IntegerField(null=False,blank=False)
+
+    from_time_distribution = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ("user", "page")
+
+class PersonalizedRatings(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False,
+                            on_delete=models.CASCADE)
+    page = models.ForeignKey(Page, null=False, blank=False,
+                            on_delete=models.CASCADE)
+    score = models.IntegerField(null=False,blank=False)
+
+    class Meta:
+        unique_together = ("user", "page")
 
 class Summary(models.Model):
     summary = models.CharField(max_length=2000, default='')
@@ -281,7 +310,7 @@ def notify_message(message=None, chat=None):
         send_message_notice(user, url, message, label)
         label = "mentioned_in_chat"
         check_message_mention(user, url, message, label)
-        
+
 def check_message_mention(sender_user, url, message, label):
     users = re.findall(r"(?<=@)\w+", message)
     for user in list(set(users)):
@@ -308,7 +337,7 @@ def send_message_notice(user, url, message, label):
                                                                   'message': message,
                                                                   'date': datetime.datetime.now()})
                     sent_user.append(bump_prof)
-    
+
 
 def check_bumps(user, start_time, end_time, url):
     earlier_time = start_time - datetime.timedelta(minutes=5)
@@ -330,4 +359,3 @@ def check_bumps(user, start_time, end_time, url):
                     Notification.objects.create(recipient=bump.user, notice_type=n, sender=user, url=url)
                     queue([bump.user], "bump_follower", sender=user, extra={'url': url, 'date': datetime.datetime.now()})
                     sent_user.append(bump_prof)
-                

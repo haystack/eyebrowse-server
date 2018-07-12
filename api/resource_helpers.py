@@ -7,14 +7,14 @@ from api.defaults import DEFAULT_BLACKLIST
 import urlparse
 
 
-def get_port(bundle):
+def get_port(data):
     """
         Helper to get the port from the bundle.
         Returns the port value or the default value
         of 80 if the port is empty
     """
     try:
-        port = bundle.data['port']
+        port = data.get("port")
     except KeyError: # if they havn't upgraded the extension
         port = None
     if not port:

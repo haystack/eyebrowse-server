@@ -30,6 +30,10 @@ from api.models import MuteList
 from api.models import WhiteListItem
 from api.models import merge_histories
 from api.models import Highlight
+from api.models import Ratings
+from api.models import Page
+from api.models import Domain
+
 from api.resource_helpers import get_BlackListItem
 from api.resource_helpers import get_WhiteListItem
 from api.resource_helpers import get_port
@@ -228,7 +232,7 @@ class WhiteListItemResource(FilterSetItemResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
         url = bundle.data['url']
-        port = get_port(bundle)
+        port = get_port(bundle.data)
         bundle.data['port'] = port
 
         # check to see if this exists
@@ -286,6 +290,60 @@ class BlackListItemResource(FilterSetItemResource):
 
         queryset = BlackListItem.objects.select_related().all()
         resource_name = 'blacklist'
+
+
+class PageResource(ModelResource):
+
+    class Meta(BaseMeta):
+        queryset = Page.objects.all()
+        resource_name = 'page-data'
+
+        list_allowed_methods = ['get']
+        detail_allowed_methods = ['get']
+
+
+class RatingsResource(ModelResource):
+    user = fields.ForeignKey(UserResource, 'user')
+    page = fields.ForeignKey(PageResource, 'page', full=True)
+
+    class Meta(BaseMeta):
+        queryset = Ratings.objects.all()
+        resource_name = 'ratings-data'
+
+        list_allowed_methods = ['get', 'post']
+        detail_allowed_methods = ['get','put','post']
+
+        filtering = {
+            'url': ALL,
+            'domain':ALL
+        }
+
+    def get_page(self,bundle):
+        url = bundle.data["url"]
+        domain = bundle.data["domain"]
+        domain,_ = Domain.objects.get_or_create(url=domain)
+        page,_ = Page.objects.get_or_create(url=url,domain=domain)
+        return page
+
+    def obj_update(self, bundle, request=None, **kwargs):
+        user = request.user
+        return super(RatingsResource,self).obj_update(bundle,request,user=user,
+                    page=self.get_page(bundle),from_time_distribution=False,
+                    **kwargs)
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        user = request.user
+        return super(RatingsResource,self).obj_create(bundle,request,user=user,
+                    page=self.get_page(bundle),**kwargs)
+
+    def obj_get(self, bundle, request=None, **kwargs):
+        user = request.user
+        return super(RatingsResource,self).obj_get(bundle,request,user=user,
+                    page=self.get_page(bundle),**kwargs)
+
+    def dehydrate(self, bundle):
+        bundle.data["url"] = bundle.data["page"].data["url"]
+        return bundle.data
 
 
 class EyeHistoryMessageResource(ModelResource):

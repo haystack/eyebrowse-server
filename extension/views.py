@@ -17,12 +17,16 @@ from accounts.models import UserProfile
 from api.models import ChatMessage, MuteList
 from api.models import EyeHistory
 from api.models import EyeHistoryMessage
+from api.models import Page
+from api.models import Domain
+from api.models import Ratings
 from api.utils import humanize_time
 from tags.models import Tag
 
 from common.view_helpers import JSONResponse
 from common.templatetags.gravatar import gravatar_for_user
 from common.templatetags.filters import url_domain
+from api.views import rating_get
 
 from eyebrowse.settings import BASE_URL
 
@@ -42,7 +46,7 @@ def logged_in(request):
 @login_required
 def ticker_info(request):
     timestamp = timezone.now() - datetime.timedelta(minutes=5)
-    
+
     followers = User.objects.filter(userprofile__followed_by=request.user)
 
     history = EyeHistory.objects.filter(
@@ -72,20 +76,20 @@ def ticker_info(request):
                     for m in mutelist_words:
                         if m in h.title:
                             show = False
-                
+
                 if show:
                     most_recent_hist = h
-                    
+
             users.append({ 'username': h.user.username,
                            'pic_url': gravatar_for_user(h.user),
                            'url': '%s/users/%s' % (BASE_URL, h.user.username),
                            })
-    
+
     res = {}
     res['online_users'] = sorted(users, key=lambda u: u['username'])
-    
+
     if most_recent_hist != None:
-        
+
         res['history_item'] = { 'username': most_recent_hist.user.username,
                                'pic_url': gravatar_for_user(most_recent_hist.user),
                                'user_url': '%s/users/%s' % (BASE_URL, most_recent_hist.user.username),
@@ -94,7 +98,7 @@ def ticker_info(request):
                                'favicon': most_recent_hist.favIconUrl,
                                'time_ago': humanize_time(timezone.now() - most_recent_hist.start_time)
                                }
-               
+
         t = Tag.objects.filter(user=request.user, domain=most_recent_hist.domain)
         if t.exists():
             res['history_item']['tag'] = {'name': t[0].name,
@@ -102,7 +106,7 @@ def ticker_info(request):
     else:
         res['history_item'] = None
     return JSONResponse(res)
-    
+
 @csrf_exempt
 @login_required
 def bubble_info(request):
@@ -143,7 +147,7 @@ def bubble_info(request):
             url_level = "site-level"
             if eyehist.url == url:
                 url_level = "page-level"
-                
+
             active.append({'username': user.username,
                            'pic_url': gravatar_for_user(user),
                            'url': '%s/users/%s' % (BASE_URL, user.username),
@@ -204,18 +208,18 @@ def profilepic(request):
     return redirect_to(request, url)
 
 
-      
+
 @login_required
 @ajax_request
 def get_friends(request):
-    
+
     query = request.GET.get('query', None).lower()
-    
+
     user_prof = UserProfile.objects.get(user=request.user)
     friends = user_prof.follows.all()
-    
+
     data = []
-    
+
     for friend in friends:
         if not query or query in friend.user.username.lower():
             data.append({'id': friend.id,
@@ -224,7 +228,7 @@ def get_friends(request):
                          'type': 'contact'})
             if len(data) > 5:
                 break
-    
+
     return {'res': data}
 
 @login_required
@@ -237,9 +241,9 @@ def get_messages(request):
     message_list = []
     for message in messages:
         eye_hist = message.eyehistory
-        
+
         m = twitter_username_re.sub(lambda m: '<a href="http://eyebrowse.csail.mit.edu/users/%s">%s</a>' % (m.group(1), m.group(0)), message.message)
-        
+
         message_list.append({'message': m,
                              'post_time': str(message.post_time),
                              'username': eye_hist.user.username,
@@ -331,7 +335,7 @@ def get_stats(visits):
             milliseconds=avg_time))
         time = re.sub('minutes', 'min', time)
         time = re.sub('minute', 'min', time)
-        
+
     return count_text, time
 
 
@@ -354,6 +358,19 @@ def stats(request):
     total_dvisits = EyeHistory.objects.filter(domain=domain)
     total_dcount, total_dtime = get_stats(total_dvisits)
 
+    domain,_ = Domain.objects.get_or_create(url=domain)
+    page,_ = Page.objects.get_or_create(url=url,domain=domain)
+    domain_score = domain.agg_score
+
+    score = 0
+    error = "Success"
+
+    try:
+        rating = Ratings.objects.get(user=my_user,page=page)
+        score = rating.score
+    except Ratings.DoesNotExist:
+        error = "Failure: Rating does not exist"
+
     res = {'my_count': my_count,
            'my_time': my_time,
            'total_count': total_count,
@@ -362,6 +379,8 @@ def stats(request):
            'my_dtime': my_dtime,
            'total_dcount': total_dcount,
            'total_dtime': total_dtime,
+           'score': score,
+           'domain_score': domain_score
            }
 
     return {

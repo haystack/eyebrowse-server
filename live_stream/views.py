@@ -39,7 +39,7 @@ def word_cloud_viz(request):
         navbar="nav_home",
         sub_navbar=_get_subnav(request),
         **template_dict)
-    
+
 @render_to('live_stream/hod_viz.html')
 def hod_viz(request):
     if request.GET.get("date") is None or request.GET.get("date") == "null" or request.GET.get("date") == "":
@@ -50,14 +50,14 @@ def hod_viz(request):
 
     template_dict = viz_page(request)
     template_dict['viz'] = 'hod'
-    
+
     return _template_values(
         request,
         page_title="live stream",
         navbar="nav_home",
         sub_navbar=_get_subnav(request),
         **template_dict)
-    
+
 @render_to('live_stream/dow_viz.html')
 def dow_viz(request):
     if request.GET.get("date") is None or request.GET.get("date") == "null" or request.GET.get("date") == "":
@@ -68,7 +68,7 @@ def dow_viz(request):
 
     template_dict = viz_page(request)
     template_dict['viz'] = 'dow'
-    
+
     return _template_values(
         request,
         page_title="live stream",
@@ -76,8 +76,7 @@ def dow_viz(request):
         sub_navbar=_get_subnav(request),
         **template_dict)
 
-   
-def viz_page(request): 
+def viz_page(request):
     user = request.user
 
 
@@ -119,7 +118,7 @@ def viz_page(request):
         'num_history': num_history,
         'num_online': online_user_count(),
     }
-    
+
     return template_dict
 
 @render_to('live_stream/live_stream.html')
