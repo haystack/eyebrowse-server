@@ -8,11 +8,13 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        pass
         # Removing unique constraint on 'Ratings', fields ['user', 'page']
     #    db.delete_unique('api_ratings', ['user_id', 'page_id'])
 
 
     def backwards(self, orm):
+        pass
         # Adding unique constraint on 'Ratings', fields ['user', 'page']
    #     db.create_unique('api_ratings', ['user_id', 'page_id'])
 
