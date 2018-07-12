@@ -30,7 +30,7 @@ from eyebrowse.settings import TWITTER_CONSUMER_SECRET
 from eyebrowse.settings import DELICIOUS_CONSUMER_KEY
 from eyebrowse.settings import DELICIOUS_CONSUMER_SECRET
 from notifications.models import Notification, NoticeType, send_now
-#from common.management.commands.update_popular_history import Command
+from common.management.commands.update_popular_history import Command
 
 
 @login_required
