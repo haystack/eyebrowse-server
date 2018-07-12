@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Removing unique constraint on 'Ratings', fields ['user', 'page']
-        db.delete_unique('api_ratings', ['user_id', 'page_id'])
+    #    db.delete_unique('api_ratings', ['user_id', 'page_id'])
 
 
     def backwards(self, orm):
