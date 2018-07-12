@@ -316,7 +316,7 @@ def sync_twitter(request):
                             sub_navbar="subnav_sync_twitter",
                             **template_dict)
 
-
+'''
 @login_required
 @ajax_request
 def connect(request):
@@ -388,3 +388,4 @@ def connect(request):
 
 
     return resp
+'''
