@@ -25,7 +25,7 @@ class Domain(models.Model):
     agg_score = models.IntegerField(null=True)
 
 class Page(models.Model):
-    url = models.URLField(blank=False, default='', max_length=2000, unique=True)
+    url = models.URLField(blank=False, default='', max_length=2000)
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE)
 
     #from eyehistory
