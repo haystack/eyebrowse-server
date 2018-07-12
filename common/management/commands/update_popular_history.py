@@ -205,7 +205,7 @@ class Command(NoArgsCommand):
             # the popularhistory item for that user
             #follow_users = UserProfile.objects.filter(
                 #follows=e.user.profile).select_related()
-            follow_users = Users.objects.all();
+            follow_users = User.objects.all();
 
             # do this outside of the loop so we can use an iterator
             user_pop, _ = PopularHistory.objects.get_or_create(
