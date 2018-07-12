@@ -244,6 +244,7 @@ def get_twitter_info(request, api, twit_obj, template_dict):
     
     template_dict['twitter_friends'] = twitter_friends
 
+'''
 @login_required
 @render_to('accounts/sync_twitter.html')
 def sync_twitter(request):
@@ -316,7 +317,7 @@ def sync_twitter(request):
                             sub_navbar="subnav_sync_twitter",
                             **template_dict)
 
-'''
+
 @login_required
 @ajax_request
 def connect(request):
