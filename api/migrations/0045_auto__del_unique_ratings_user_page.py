@@ -14,7 +14,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Adding unique constraint on 'Ratings', fields ['user', 'page']
-        db.create_unique('api_ratings', ['user_id', 'page_id'])
+   #     db.create_unique('api_ratings', ['user_id', 'page_id'])
 
 
     models = {
