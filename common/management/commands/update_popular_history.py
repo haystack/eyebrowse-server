@@ -287,10 +287,13 @@ class Command(NoArgsCommand):
         # we add every eyehistory to the firehose popularhistory counterpoint
         # and also keep track of the users and messages to that page
         if not popular_history_item.eye_hists.filter(pk=e.id).exists():
-            popular_history_item.eye_hists.add(e)
-            popular_history_item.visitors.add(e.user)
+            try:
+              popular_history_item.eye_hists.add(e)
+              popular_history_item.visitors.add(e.user)
 
-            popular_history_item.messages.add(*e.eyehistorymessage_set.all())
+              popular_history_item.messages.add(*e.eyehistorymessage_set.all())
+            except:
+              continue
 
         # we increment the total time spent and total time ago
         if e.total_time > 0:
