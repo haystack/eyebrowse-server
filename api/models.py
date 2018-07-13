@@ -38,7 +38,7 @@ class Page(models.Model):
     img_url = models.URLField(max_length=2000, default='')
 
     #from ratings
-    #agg_score = models.IntegerField(null=True)
+    agg_score = models.IntegerField(null=True)
 
 
 class Ratings(models.Model):
