@@ -293,7 +293,7 @@ class Command(NoArgsCommand):
 
               popular_history_item.messages.add(*e.eyehistorymessage_set.all())
             except:
-              continue
+              pass
 
         # we increment the total time spent and total time ago
         if e.total_time > 0:
