@@ -8,21 +8,21 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        pass
-        # Removing unique constraint on 'Ratings', fields ['user', 'page']
-    #    db.delete_unique('api_ratings', ['user_id', 'page_id'])
+        # Deleting field 'Page.agg_score'
+        db.delete_column('api_page', 'agg_score')
 
 
     def backwards(self, orm):
-        pass
-        # Adding unique constraint on 'Ratings', fields ['user', 'page']
-   #     db.create_unique('api_ratings', ['user_id', 'page_id'])
+        # Adding field 'Page.agg_score'
+        db.add_column('api_page', 'agg_score',
+                      self.gf('django.db.models.fields.IntegerField')(null=True),
+                      keep_default=False)
 
 
     models = {
         'api.blacklistitem': {
             'Meta': {'unique_together': "(('user', 'url'),)", 'object_name': 'BlackListItem'},
-            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2018, 5, 11, 0, 0)'}),
+            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2018, 7, 13, 0, 0)'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'port': ('django.db.models.fields.IntegerField', [], {'default': '80'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
@@ -104,7 +104,6 @@ class Migration(SchemaMigration):
         },
         'api.page': {
             'Meta': {'object_name': 'Page'},
-            'agg_score': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''"}),
             'domain': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Domain']"}),
             'favIconUrl': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '2000'}),
@@ -113,6 +112,13 @@ class Migration(SchemaMigration):
             'img_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '2000'}),
             'title': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2000'}),
             'url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '2000'})
+        },
+        'api.personalizedratings': {
+            'Meta': {'unique_together': "(('user', 'page'),)", 'object_name': 'PersonalizedRatings'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Page']"}),
+            'score': ('django.db.models.fields.IntegerField', [], {}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'api.popularhistory': {
             'Meta': {'unique_together': "(('user', 'popular_history'),)", 'object_name': 'PopularHistory'},
@@ -144,7 +150,8 @@ class Migration(SchemaMigration):
             'url': ('django.db.models.fields.URLField', [], {'unique': 'True', 'max_length': '255'})
         },
         'api.ratings': {
-            'Meta': {'object_name': 'Ratings'},
+            'Meta': {'unique_together': "(('user', 'page'),)", 'object_name': 'Ratings'},
+            'from_time_distribution': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['api.Page']"}),
             'score': ('django.db.models.fields.IntegerField', [], {}),
@@ -169,7 +176,7 @@ class Migration(SchemaMigration):
         },
         'api.whitelistitem': {
             'Meta': {'unique_together': "(('user', 'url'),)", 'object_name': 'WhiteListItem'},
-            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2018, 5, 11, 0, 0)'}),
+            'date_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2018, 7, 13, 0, 0)'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'port': ('django.db.models.fields.IntegerField', [], {'default': '80'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
