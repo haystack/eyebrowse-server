@@ -16,6 +16,8 @@ from api.resources import EyeHistoryMessageResource
 from api.resources import ChatMessageResource
 from api.resources import MuteListResource
 from api.resources import LoginResource
+from api.resources import RatingsResource
+from api.resources import PageResource
 
 from eyebrowse.views import about
 from eyebrowse.views import faq
@@ -37,6 +39,8 @@ v1_api.register(EyeHistoryMessageResource())
 v1_api.register(ChatMessageResource())
 v1_api.register(MuteListResource())
 v1_api.register(LoginResource())
+v1_api.register(RatingsResource())
+v1_api.register(PageResource())
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -69,12 +73,12 @@ urlpatterns = patterns('',
 
                        url(r'^accounts/', include('accounts.urls')),
                        url(r'^live_stream/', include('live_stream.urls')),
-                       
+
                        url(r'^visualizations/word_cloud/$', 'live_stream.views.word_cloud_viz'),
                         url(r'^visualizations/hour_of_day/$', 'live_stream.views.hod_viz'),
                         url(r'^visualizations/day_of_week/$', 'live_stream.views.dow_viz'),
-                       
-                       
+
+
                        url(r'^stats/', include('stats.urls')),
                        url(r'^api/', include('api.urls')),
                        url(r'^api/', include(v1_api.urls)),
@@ -93,7 +97,7 @@ urlpatterns = patterns('',
 
                        url(r'^ext/', include("extension.urls")),
                        url(r'^tags/', include("tags.urls"))
-                       
+
                        )
 
 urlpatterns += patterns('eyebrowse.views',
