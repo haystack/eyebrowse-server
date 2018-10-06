@@ -65,6 +65,11 @@ class Command(NoArgsCommand):
             "Completed %d/%d updates. [%s]" % (i, total_updates, function))
         print("Completed %d/%d updates. [%s]" % (i, total_updates, function))
 
+    def _log_updates_no_total(self, i, function):
+        self.log(
+            "Completed %d updates. [%s]" % (i, function))
+        print("Completed %d updates. [%s]" % (i, function))
+
     def _reset_values(self):
         self.log('resetting values')
 
@@ -203,9 +208,10 @@ class Command(NoArgsCommand):
             # for each of the users that are following the person
             # in this eyehistory, we add this eyehistory to the
             # the popularhistory item for that user
-            #follow_users = UserProfile.objects.filter(
-                #follows=e.user.profile).select_related()
-            follow_users = UserProfile.objects.all();
+            
+            follow_users = UserProfile.objects.filter(
+                follows=e.user.profile).select_related()
+            #follow_users = User.objects.all();
 
             # do this outside of the loop so we can use an iterator
             user_pop, _ = PopularHistory.objects.get_or_create(
@@ -304,7 +310,7 @@ class Command(NoArgsCommand):
         time_diff = timezone.now() - e.end_time
         popular_history_item.total_time_ago += int(
             round(time_diff.total_seconds() / 3600.0))
-        
+
         popular_history_item.save()
 
     def _delete_old(self):
@@ -421,20 +427,23 @@ class Command(NoArgsCommand):
 
 
     def _update_personalized_scores(self):
-        #Figure out path
-        user_item_scores = subprocess.check_output(['java', '-jar', 'recommender.jar'])\
+        user_page_scores = subprocess.check_output(['java', '-jar', 'recommender.jar'])\
                 .splitlines()
-        for user_item_score in user_item_scores:
-            user, item, score = tuple(user_item_score.split())
-            user = int(user)
-            item = int(user)
-            personalized_rating,_ = PersonalizedRatings.get_or_create(user=int(user),
-                                                                      item=int(item))
-            try:
-                personalized_rating.score = int(score)
-                personalized_rating.save()
-            except ValueError:
-                print("%d, %d score is not defined\n" % (user, item))
+
+        i = 0
+        for user_page_score in user_page_scores:
+            user, page, score = tuple(user_page_score.split())
+            if user == "SL4J":
+                continue
+            user_id = int(user)
+            page_id = int(page)
+            score = float(score)
+            score = int(score)
+            if not Ratings.objects.filter(user_id=user_id, page=page_id).exists():
+                personalized_rating,_ = PersonalizedRatings.objects.get_or_create(user_id=user_id, page_id=page_id, score=score)
+            if i != 0 and i % CHUNK_SIZE == 0:
+                self._log_updates_no_total(i, 'personalized_page_scores')
+            i+=1
 
     def _calculate_scores(self, user=None):
         self.log('_calculate_scores')
